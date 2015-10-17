@@ -31,9 +31,9 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
 import org.jraf.android.moviestoday.R;
+import org.jraf.android.moviestoday.common.model.movie.Movie;
 import org.jraf.android.moviestoday.mobile.api.Api;
 import org.jraf.android.moviestoday.mobile.api.CallResult;
-import org.jraf.android.moviestoday.mobile.model.movie.Movie;
 import org.jraf.android.util.log.wrapper.Log;
 
 import butterknife.ButterKnife;

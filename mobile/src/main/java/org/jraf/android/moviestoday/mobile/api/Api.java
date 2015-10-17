@@ -26,6 +26,7 @@ package org.jraf.android.moviestoday.mobile.api;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.Locale;
@@ -34,8 +35,8 @@ import java.util.Set;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 
-import org.jraf.android.moviestoday.mobile.model.ParseException;
-import org.jraf.android.moviestoday.mobile.model.movie.Movie;
+import org.jraf.android.moviestoday.common.model.ParseException;
+import org.jraf.android.moviestoday.common.model.movie.Movie;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -90,7 +91,7 @@ public class Api {
                 JSONObject jsonMovieShowtime = jsonMovieShowtimes.getJSONObject(i);
                 JSONObject jsonOnShow = jsonMovieShowtime.getJSONObject("onShow");
                 JSONObject jsonMovie = jsonOnShow.getJSONObject("movie");
-                Movie movie = Movie.fromJson(jsonMovie);
+                Movie movie = createMovie(jsonMovie);
                 res.add(movie);
             }
             return res;
@@ -131,5 +132,50 @@ public class Api {
                 .addPathSegment(path)
                 .addQueryParameter(QUERY_PARTNER_KEY, QUERY_PARTNER_VALUE)
                 .addQueryParameter(QUERY_FORMAT_KEY, QUERY_FORMAT_VALUE);
+    }
+
+    private static Movie createMovie(JSONObject jsonMovie) throws ParseException {
+        Movie res = new Movie();
+        try {
+            res.id = jsonMovie.getString("code");
+            res.localTitle = jsonMovie.getString("title");
+
+            JSONObject jsonCastingShort = jsonMovie.getJSONObject("castingShort");
+            res.directors = jsonCastingShort.getString("directors");
+            res.actors = jsonCastingShort.getString("actors");
+
+            JSONObject jsonRelease = jsonMovie.getJSONObject("release");
+            String releaseDateStr = jsonRelease.getString("releaseDate");
+            try {
+                res.releaseDate = Api.SIMPLE_DATE_FORMAT.parse(releaseDateStr);
+            } catch (java.text.ParseException e) {
+                throw new ParseException(e);
+            }
+
+            res.durationMinutes = jsonMovie.getInt("runtime");
+
+            JSONArray jsonGenreArray = jsonMovie.getJSONArray("genre");
+            int len = jsonGenreArray.length();
+            ArrayList<String> genres = new ArrayList<>(len);
+            for (int i = 0; i < len; i++) {
+                JSONObject jsonGenre = jsonGenreArray.getJSONObject(i);
+                genres.add(jsonGenre.getString("$"));
+            }
+            res.genres = genres.toArray(new String[len]);
+
+            JSONObject jsonPoster = jsonMovie.getJSONObject("poster");
+            res.posterUri = jsonPoster.getString("href");
+
+            JSONObject jsonTrailer = jsonMovie.getJSONObject("trailer");
+            res.trailerUri = jsonTrailer.getString("href");
+
+            JSONArray jsonLinkArray = jsonMovie.getJSONArray("link");
+            JSONObject jsonLink = jsonLinkArray.getJSONObject(0);
+            res.webUri = jsonLink.getString("href");
+
+            return res;
+        } catch (JSONException e) {
+            throw new ParseException(e);
+        }
     }
 }

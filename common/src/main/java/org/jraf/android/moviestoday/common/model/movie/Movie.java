@@ -22,20 +22,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jraf.android.moviestoday.mobile.model.movie;
+package org.jraf.android.moviestoday.common.model.movie;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-
-import org.jraf.android.moviestoday.mobile.api.Api;
-import org.jraf.android.moviestoday.mobile.model.ParseException;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 public class Movie implements Parcelable {
     public String id;
@@ -50,55 +43,6 @@ public class Movie implements Parcelable {
     public String webUri;
 
     public Movie() {}
-
-    public static Movie fromJson(JSONObject jsonMovie) throws ParseException {
-        Movie res = new Movie();
-        try {
-            res.id = jsonMovie.getString("code");
-            res.localTitle = jsonMovie.getString("title");
-
-            JSONObject jsonCastingShort = jsonMovie.getJSONObject("castingShort");
-            res.directors = jsonCastingShort.getString("directors");
-            res.actors = jsonCastingShort.getString("actors");
-
-            JSONObject jsonRelease = jsonMovie.getJSONObject("release");
-            String releaseDateStr = jsonRelease.getString("releaseDate");
-            try {
-                res.releaseDate = Api.SIMPLE_DATE_FORMAT.parse(releaseDateStr);
-            } catch (java.text.ParseException e) {
-                throw new ParseException(e);
-            }
-
-            res.durationMinutes = jsonMovie.getInt("runtime");
-
-            JSONArray jsonGenreArray = jsonMovie.getJSONArray("genre");
-            int len = jsonGenreArray.length();
-            ArrayList<String> genres = new ArrayList<>(len);
-            for (int i = 0; i < len; i++) {
-                JSONObject jsonGenre = jsonGenreArray.getJSONObject(i);
-                genres.add(jsonGenre.getString("$"));
-            }
-            res.genres = genres.toArray(new String[len]);
-
-            JSONObject jsonPoster = jsonMovie.getJSONObject("poster");
-            res.posterUri = jsonPoster.getString("href");
-
-            JSONObject jsonTrailer = jsonMovie.getJSONObject("trailer");
-            res.trailerUri = jsonTrailer.getString("href");
-
-            JSONArray jsonLinkArray = jsonMovie.getJSONArray("link");
-            len = jsonLinkArray.length();
-            for (int i = 0; i < len; i++) {
-                JSONObject jsonLink = jsonLinkArray.getJSONObject(i);
-                res.webUri = jsonLink.getString("href");
-                break;
-            }
-
-            return res;
-        } catch (JSONException e) {
-            throw new ParseException(e);
-        }
-    }
 
     @Override
     public String toString() {

@@ -22,7 +22,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jraf.android.moviestoday.mobile.model;
+package org.jraf.android.moviestoday.common.model;
 
 public class ParseException extends Exception {
     public ParseException(Throwable cause) {
