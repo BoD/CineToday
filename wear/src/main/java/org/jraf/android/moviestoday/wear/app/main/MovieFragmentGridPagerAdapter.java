@@ -53,24 +53,37 @@ public class MovieFragmentGridPagerAdapter extends FragmentGridPagerAdapter {
     @Override
     public Fragment getFragment(int row, int column) {
         Movie movie = mMovies.get(row);
-        MovieCardFragment.CardType cardType = null;
+        Fragment res = null;
         switch (column) {
             case 0:
-                cardType = MovieCardFragment.CardType.MAIN;
+            case 1:
+                MovieCardFragment.CardType cardType = null;
+                switch (column) {
+                    case 0:
+                        cardType = MovieCardFragment.CardType.MAIN;
+                        break;
+
+                    case 1:
+                        cardType = MovieCardFragment.CardType.SYNOPSIS;
+                        break;
+                }
+                CardFragment cardFragment = MovieCardFragment.create(cardType, movie);
+
+                // Advanced settings (card gravity, card expansion/scrolling)
+                cardFragment.setExpansionEnabled(true);
+                cardFragment.setExpansionDirection(CardFragment.EXPAND_DOWN);
+                cardFragment.setContentPadding(0, 0, 0, 0);
+
+                res = cardFragment;
                 break;
 
-            case 1:
-                cardType = MovieCardFragment.CardType.SYNOPSIS;
+            case 2:
+                PosterFragment posterFragment = PosterFragment.create(mPosterMap.get(movie));
+
+                res = posterFragment;
                 break;
         }
-        CardFragment cardFragment = MovieCardFragment.create(cardType, movie);
-
-        // Advanced settings (card gravity, card expansion/scrolling)
-        cardFragment.setExpansionEnabled(true);
-        cardFragment.setExpansionDirection(CardFragment.EXPAND_DOWN);
-        cardFragment.setContentPadding(0, 0, 0, 0);
-
-        return cardFragment;
+        return res;
     }
 
     @Override
@@ -80,7 +93,7 @@ public class MovieFragmentGridPagerAdapter extends FragmentGridPagerAdapter {
 
     @Override
     public int getColumnCount(int row) {
-        return 2;
+        return 3;
     }
 
     @Override

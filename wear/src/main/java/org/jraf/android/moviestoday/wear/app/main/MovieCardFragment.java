@@ -88,11 +88,11 @@ public class MovieCardFragment extends CardFragment {
     }
 
     public static MovieCardFragment create(CardType cardType, Movie movie) {
-        MovieCardFragment fragment = new MovieCardFragment();
+        MovieCardFragment res = new MovieCardFragment();
         Bundle args = new Bundle();
         args.putSerializable("cardType", cardType);
         args.putParcelable("movie", movie);
-        fragment.setArguments(args);
-        return fragment;
+        res.setArguments(args);
+        return res;
     }
 }
