@@ -22,10 +22,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jraf.android.moviestoday.mobile.api;
+package org.jraf.android.moviestoday.common.async;
 
-public interface CallResult<T> {
-    void onResult(T result);
+public class ResultOrError<T> {
+    public T result;
+    public Throwable error;
 
-    void onError(Throwable error);
+    public ResultOrError(T result) {
+        this.result = result;
+    }
+
+    public ResultOrError(Throwable error) {
+        this.error = error;
+    }
+
+    public boolean isError() {
+        return error != null;
+    }
 }

@@ -1,5 +1,5 @@
 <resources>
     <string name="app_name">MoviesToday</string>
-    <string name="hello_round">Hello Round World!</string>
-    <string name="hello_square">Hello Square World!</string>
+    <string name="movie_card_directors"><![CDATA[By <b>%1$s</b>]]></string>
+    <string name="movie_card_actors"><![CDATA[With <b>%1$s</b>]]></string>
 </resources>

@@ -24,36 +24,40 @@
  */
 package org.jraf.android.moviestoday.wear.app.main;
 
+import java.util.List;
+
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.support.wearable.view.CardFragment;
 import android.support.wearable.view.FragmentGridPagerAdapter;
 
+import org.jraf.android.moviestoday.common.model.movie.Movie;
+
 public class MovieFragmentGridPagerAdapter extends FragmentGridPagerAdapter {
     private final Context mContext;
+    private final List<Movie> mMovies;
 
-    public MovieFragmentGridPagerAdapter(Context context, FragmentManager fragmentManager) {
+    public MovieFragmentGridPagerAdapter(Context context, FragmentManager fragmentManager, List<Movie> movies) {
         super(fragmentManager);
         mContext = context;
+        mMovies = movies;
     }
 
     @Override
     public Fragment getFragment(int row, int column) {
-        String title = "Title " + row;
-        CharSequence description = "Description for row " + row;
-        CardFragment fragment = CardFragment.create(title, description);
+        Movie movie = mMovies.get(row);
+        CardFragment fragment = MovieCardFragment.create(movie.localTitle, movie.directors, movie.actors);
 
         // Advanced settings (card gravity, card expansion/scrolling)
         fragment.setExpansionEnabled(true);
         fragment.setExpansionDirection(CardFragment.EXPAND_DOWN);
-//        fragment.setExpansionFactor(page.expansionFactor);
         return fragment;
     }
 
     @Override
     public int getRowCount() {
-        return 4;
+        return mMovies.size();
     }
 
     @Override

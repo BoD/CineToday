@@ -24,11 +24,19 @@
  */
 package org.jraf.android.moviestoday.wear.app.main;
 
+import java.util.List;
+
 import android.app.Activity;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.wearable.view.GridViewPager;
+import android.view.View;
+import android.widget.ProgressBar;
 
 import org.jraf.android.moviestoday.R;
+import org.jraf.android.moviestoday.common.model.movie.Movie;
+import org.jraf.android.moviestoday.common.wear.WearHelper;
+import org.jraf.android.util.log.wrapper.Log;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -37,11 +45,32 @@ public class MainActivity extends Activity {
     @Bind(R.id.gridViewPager)
     protected GridViewPager mGridViewPager;
 
+    @Bind(R.id.pgbLoading)
+    protected ProgressBar mPgbLoading;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         ButterKnife.bind(this);
-        mGridViewPager.setAdapter(new MovieFragmentGridPagerAdapter(this, getFragmentManager()));
+
+        new AsyncTask<Void, Void, List<Movie>>() {
+            @Override
+            protected List<Movie> doInBackground(Void... params) {
+                WearHelper.get().connect(MainActivity.this);
+                return WearHelper.get().getMovies();
+            }
+
+            @Override
+            protected void onPostExecute(List<Movie> movies) {
+                if (movies == null) {
+                    Log.d("Movie list was empty");
+                } else {
+                    mPgbLoading.setVisibility(View.GONE);
+                    MovieFragmentGridPagerAdapter adapter = new MovieFragmentGridPagerAdapter(MainActivity.this, getFragmentManager(), movies);
+                    mGridViewPager.setAdapter(adapter);
+                }
+            }
+        }.execute();
     }
 }

@@ -35,6 +35,8 @@ import java.util.Set;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 
+import org.jraf.android.moviestoday.common.async.ResultCallback;
+import org.jraf.android.moviestoday.common.async.ResultOrError;
 import org.jraf.android.moviestoday.common.model.ParseException;
 import org.jraf.android.moviestoday.common.model.movie.Movie;
 import org.json.JSONArray;
@@ -100,7 +102,7 @@ public class Api {
         }
     }
 
-    public void getMovieList(final String theaterId, final Date date, final CallResult<Set<Movie>> callResult) {
+    public void getMovieList(final String theaterId, final Date date, final ResultCallback<Set<Movie>> callResult) {
         new AsyncTask<Void, Void, ResultOrError<Set<Movie>>>() {
             @Override
             protected ResultOrError<Set<Movie>> doInBackground(Void... params) {

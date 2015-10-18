@@ -27,13 +27,14 @@ package org.jraf.android.moviestoday.mobile.app.main;
 import java.util.Date;
 import java.util.Set;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
 import org.jraf.android.moviestoday.R;
 import org.jraf.android.moviestoday.common.model.movie.Movie;
+import org.jraf.android.moviestoday.common.wear.WearHelper;
 import org.jraf.android.moviestoday.mobile.api.Api;
-import org.jraf.android.moviestoday.mobile.api.CallResult;
 import org.jraf.android.util.log.wrapper.Log;
 
 import butterknife.ButterKnife;
@@ -49,18 +50,23 @@ public class MainActivity extends AppCompatActivity {
 
     @OnClick(R.id.btnCall)
     protected void onCallClicked() {
-        Api.get().getMovieList("C2954", new Date(), new CallResult<Set<Movie>>() {
+        new AsyncTask<Void, Void, Void>() {
             @Override
-            public void onResult(Set<Movie> result) {
-                for (Movie movie : result) {
+            protected Void doInBackground(Void... params) {
+                Set<Movie> movies;
+                try {
+                    movies = Api.get().getMovieList("C2954", new Date());
+                } catch (Exception e) {
+                    Log.e("Could not make call", e);
+                    return null;
+                }
+                for (Movie movie : movies) {
                     Log.d(movie.toString());
                 }
+                WearHelper.get().connect(MainActivity.this);
+                WearHelper.get().putMovies(movies);
+                return null;
             }
-
-            @Override
-            public void onError(Throwable error) {
-                Log.e("Could not make call", error);
-            }
-        });
+        }.execute();
     }
 }
