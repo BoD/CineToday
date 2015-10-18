@@ -66,7 +66,10 @@ import com.google.android.gms.wearable.Wearable;
 public class WearHelper {
     private static final WearHelper INSTANCE = new WearHelper();
 
-    private static final String PATH_MOVIES = "/movies";
+    private static final String PATH_MOVIE = "/movie";
+    private static final String PATH_MOVIE_ALL = PATH_MOVIE + "/all";
+    private static final String PATH_MOVIE_POSTER = PATH_MOVIE + "/%1$s/poster";
+
     private static final String KEY_VALUE = "KEY_VALUE";
 
     private GoogleApiClient mGoogleApiClient;
@@ -108,14 +111,14 @@ public class WearHelper {
     public void putMovies(Collection<Movie> movies) {
         Log.d();
         // First remove any old value
-        Wearable.DataApi.deleteDataItems(mGoogleApiClient, createUri(PATH_MOVIES)).await();
+        Wearable.DataApi.deleteDataItems(mGoogleApiClient, createUri(PATH_MOVIE_ALL)).await();
 
         // Create new value
         Bundle moviesBundle = new Bundle();
         ArrayList<Movie> moviesArrayList = new ArrayList<>(movies);
         moviesBundle.putParcelableArrayList(KEY_VALUE, moviesArrayList);
 
-        PutDataMapRequest putDataMapRequest = PutDataMapRequest.create(PATH_MOVIES);
+        PutDataMapRequest putDataMapRequest = PutDataMapRequest.create(PATH_MOVIE_ALL);
         DataMap dataMap = putDataMapRequest.getDataMap();
         dataMap.putAsset(KEY_VALUE, createAssetFromBundle(moviesBundle));
 
@@ -127,7 +130,7 @@ public class WearHelper {
     @WorkerThread
     @Nullable
     public List<Movie> getMovies() {
-        DataItemBuffer dataItemBuffer = Wearable.DataApi.getDataItems(mGoogleApiClient, createUri(PATH_MOVIES)).await();
+        DataItemBuffer dataItemBuffer = Wearable.DataApi.getDataItems(mGoogleApiClient, createUri(PATH_MOVIE_ALL)).await();
         try {
             if (!dataItemBuffer.getStatus().isSuccess()) return null;
             if (dataItemBuffer.getCount() == 0) return null;
@@ -141,6 +144,35 @@ public class WearHelper {
             dataItemBuffer.release();
         }
     }
+
+    public void putMoviePoster(Movie movie, Bitmap posterBitmap) {
+        Log.d();
+        PutDataMapRequest putDataMapRequest = PutDataMapRequest.create(String.format(PATH_MOVIE_POSTER, movie.id));
+        DataMap dataMap = putDataMapRequest.getDataMap();
+        dataMap.putAsset(KEY_VALUE, createAssetFromBitmap(posterBitmap));
+
+        PutDataRequest putDataRequest = putDataMapRequest.asPutDataRequest();
+
+        Wearable.DataApi.putDataItem(mGoogleApiClient, putDataRequest).await();
+    }
+
+    @WorkerThread
+    @Nullable
+    public Bitmap getMoviePoster(Movie movie) {
+        DataItemBuffer dataItemBuffer = Wearable.DataApi.getDataItems(mGoogleApiClient, createUri(String.format(PATH_MOVIE_POSTER, movie.id))).await();
+        try {
+            if (!dataItemBuffer.getStatus().isSuccess()) return null;
+            if (dataItemBuffer.getCount() == 0) return null;
+            DataMapItem dataMapItem = DataMapItem.fromDataItem(dataItemBuffer.get(0));
+            DataMap dataMap = dataMapItem.getDataMap();
+            Asset posterAsset = dataMap.getAsset(KEY_VALUE);
+            Bitmap posterBitmap = loadBitmapFromAsset(posterAsset);
+            return posterBitmap;
+        } finally {
+            dataItemBuffer.release();
+        }
+    }
+
 
     // endregion
 

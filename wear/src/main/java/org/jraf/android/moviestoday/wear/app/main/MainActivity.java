@@ -24,9 +24,11 @@
  */
 package org.jraf.android.moviestoday.wear.app.main;
 
+import java.util.HashMap;
 import java.util.List;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.wearable.view.GridViewPager;
@@ -55,10 +57,17 @@ public class MainActivity extends Activity {
         ButterKnife.bind(this);
 
         new AsyncTask<Void, Void, List<Movie>>() {
+            HashMap<Movie, Bitmap> mPosterMap = new HashMap<>();
+
             @Override
             protected List<Movie> doInBackground(Void... params) {
                 WearHelper.get().connect(MainActivity.this);
-                return WearHelper.get().getMovies();
+                List<Movie> movieList = WearHelper.get().getMovies();
+                if (movieList == null) return null;
+                for (Movie movie : movieList) {
+                    mPosterMap.put(movie, WearHelper.get().getMoviePoster(movie));
+                }
+                return movieList;
             }
 
             @Override
@@ -67,7 +76,7 @@ public class MainActivity extends Activity {
                     Log.d("Movie list was empty");
                 } else {
                     mPgbLoading.setVisibility(View.GONE);
-                    MovieFragmentGridPagerAdapter adapter = new MovieFragmentGridPagerAdapter(MainActivity.this, getFragmentManager(), movies);
+                    MovieFragmentGridPagerAdapter adapter = new MovieFragmentGridPagerAdapter(MainActivity.this, getFragmentManager(), movies, mPosterMap);
                     mGridViewPager.setAdapter(adapter);
                 }
             }

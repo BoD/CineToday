@@ -27,6 +27,7 @@ package org.jraf.android.moviestoday.mobile.app.main;
 import java.util.Date;
 import java.util.Set;
 
+import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -35,12 +36,16 @@ import org.jraf.android.moviestoday.R;
 import org.jraf.android.moviestoday.common.model.movie.Movie;
 import org.jraf.android.moviestoday.common.wear.WearHelper;
 import org.jraf.android.moviestoday.mobile.api.Api;
+import org.jraf.android.moviestoday.mobile.api.ImageCache;
 import org.jraf.android.util.log.wrapper.Log;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class MainActivity extends AppCompatActivity {
+    private static final int POSTER_THUMBNAIL_WIDTH = 240;
+    private static final int POSTER_THUMBNAIL_HEIGHT = 240;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,16 +70,26 @@ public class MainActivity extends AppCompatActivity {
                 }
                 Log.d("=====================");
 
+                WearHelper.get().connect(MainActivity.this);
+
+
                 for (Movie movie : movies) {
+                    // Get movie info
                     try {
                         Api.get().getMovieInfo(movie);
                         Log.d(movie.toString());
                     } catch (Exception e) {
                         Log.e("Could not make call", e);
                     }
+
+                    // Get poster image
+                    Bitmap posterBitmap = ImageCache.get(MainActivity.this).getBitmap(movie.posterUri, POSTER_THUMBNAIL_WIDTH, POSTER_THUMBNAIL_HEIGHT);
+                    if (posterBitmap != null) {
+                        WearHelper.get().putMoviePoster(movie, posterBitmap);
+                    }
                 }
 
-                WearHelper.get().connect(MainActivity.this);
+
                 WearHelper.get().putMovies(movies);
                 return null;
             }

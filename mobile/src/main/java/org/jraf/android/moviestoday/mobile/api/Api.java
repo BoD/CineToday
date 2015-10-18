@@ -54,7 +54,6 @@ public class Api {
     private static final Api INSTANCE = new Api();
 
     private static final OkHttpClient OK_HTTP_CLIENT = new OkHttpClient();
-
     static {
         OK_HTTP_CLIENT.setConnectTimeout(30, TimeUnit.SECONDS);
         OK_HTTP_CLIENT.setReadTimeout(30, TimeUnit.SECONDS);

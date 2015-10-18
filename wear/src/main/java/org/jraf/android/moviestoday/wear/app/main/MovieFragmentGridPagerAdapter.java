@@ -24,11 +24,15 @@
  */
 package org.jraf.android.moviestoday.wear.app.main;
 
+import java.util.HashMap;
 import java.util.List;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.support.wearable.view.CardFragment;
 import android.support.wearable.view.FragmentGridPagerAdapter;
 
@@ -37,11 +41,13 @@ import org.jraf.android.moviestoday.common.model.movie.Movie;
 public class MovieFragmentGridPagerAdapter extends FragmentGridPagerAdapter {
     private final Context mContext;
     private final List<Movie> mMovies;
+    private HashMap<Movie, Bitmap> mPosterMap;
 
-    public MovieFragmentGridPagerAdapter(Context context, FragmentManager fragmentManager, List<Movie> movies) {
+    public MovieFragmentGridPagerAdapter(Context context, FragmentManager fragmentManager, List<Movie> movies, HashMap<Movie, Bitmap> posterMap) {
         super(fragmentManager);
         mContext = context;
         mMovies = movies;
+        mPosterMap = posterMap;
     }
 
     @Override
@@ -63,6 +69,7 @@ public class MovieFragmentGridPagerAdapter extends FragmentGridPagerAdapter {
         cardFragment.setExpansionEnabled(true);
         cardFragment.setExpansionDirection(CardFragment.EXPAND_DOWN);
         cardFragment.setContentPadding(0, 0, 0, 0);
+
         return cardFragment;
     }
 
@@ -74,5 +81,12 @@ public class MovieFragmentGridPagerAdapter extends FragmentGridPagerAdapter {
     @Override
     public int getColumnCount(int row) {
         return 2;
+    }
+
+    @Override
+    public Drawable getBackgroundForRow(int row) {
+        Movie movie = mMovies.get(row);
+        Bitmap posterBitmap = mPosterMap.get(movie);
+        return new BitmapDrawable(posterBitmap);
     }
 }
