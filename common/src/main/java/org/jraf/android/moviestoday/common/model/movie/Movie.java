@@ -32,6 +32,7 @@ import android.os.Parcelable;
 
 public class Movie implements Parcelable {
     public String id;
+    public String originalTitle;
     public String localTitle;
     public String directors;
     public String actors;
@@ -41,6 +42,7 @@ public class Movie implements Parcelable {
     public String posterUri;
     public String trailerUri;
     public String webUri;
+    public String synopsis;
 
     public Movie() {}
 
@@ -48,6 +50,7 @@ public class Movie implements Parcelable {
     public String toString() {
         return "Movie{" +
                 "id='" + id + '\'' +
+                ", originalTitle='" + originalTitle + '\'' +
                 ", localTitle='" + localTitle + '\'' +
                 ", directors='" + directors + '\'' +
                 ", actors='" + actors + '\'' +
@@ -57,6 +60,7 @@ public class Movie implements Parcelable {
                 ", posterUri='" + posterUri + '\'' +
                 ", trailerUri='" + trailerUri + '\'' +
                 ", webUri='" + webUri + '\'' +
+                ", synopsis='" + synopsis + '\'' +
                 '}';
     }
 
@@ -85,6 +89,7 @@ public class Movie implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(this.id);
+        dest.writeString(this.originalTitle);
         dest.writeString(this.localTitle);
         dest.writeString(this.directors);
         dest.writeString(this.actors);
@@ -94,10 +99,12 @@ public class Movie implements Parcelable {
         dest.writeString(this.posterUri);
         dest.writeString(this.trailerUri);
         dest.writeString(this.webUri);
+        dest.writeString(this.synopsis);
     }
 
     protected Movie(Parcel in) {
         this.id = in.readString();
+        this.originalTitle = in.readString();
         this.localTitle = in.readString();
         this.directors = in.readString();
         this.actors = in.readString();
@@ -108,9 +115,10 @@ public class Movie implements Parcelable {
         this.posterUri = in.readString();
         this.trailerUri = in.readString();
         this.webUri = in.readString();
+        this.synopsis = in.readString();
     }
 
-    public static final Parcelable.Creator<Movie> CREATOR = new Parcelable.Creator<Movie>() {
+    public static final Creator<Movie> CREATOR = new Creator<Movie>() {
         public Movie createFromParcel(Parcel source) {return new Movie(source);}
 
         public Movie[] newArray(int size) {return new Movie[size];}

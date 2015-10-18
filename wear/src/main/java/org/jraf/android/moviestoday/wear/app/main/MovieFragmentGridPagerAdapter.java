@@ -47,12 +47,23 @@ public class MovieFragmentGridPagerAdapter extends FragmentGridPagerAdapter {
     @Override
     public Fragment getFragment(int row, int column) {
         Movie movie = mMovies.get(row);
-        CardFragment fragment = MovieCardFragment.create(movie.localTitle, movie.directors, movie.actors);
+        MovieCardFragment.CardType cardType = null;
+        switch (column) {
+            case 0:
+                cardType = MovieCardFragment.CardType.MAIN;
+                break;
+
+            case 1:
+                cardType = MovieCardFragment.CardType.SYNOPSIS;
+                break;
+        }
+        CardFragment cardFragment = MovieCardFragment.create(cardType, movie);
 
         // Advanced settings (card gravity, card expansion/scrolling)
-        fragment.setExpansionEnabled(true);
-        fragment.setExpansionDirection(CardFragment.EXPAND_DOWN);
-        return fragment;
+        cardFragment.setExpansionEnabled(true);
+        cardFragment.setExpansionDirection(CardFragment.EXPAND_DOWN);
+        cardFragment.setContentPadding(0, 0, 0, 0);
+        return cardFragment;
     }
 
     @Override
@@ -62,6 +73,6 @@ public class MovieFragmentGridPagerAdapter extends FragmentGridPagerAdapter {
 
     @Override
     public int getColumnCount(int row) {
-        return 1;
+        return 2;
     }
 }

@@ -63,6 +63,17 @@ public class MainActivity extends AppCompatActivity {
                 for (Movie movie : movies) {
                     Log.d(movie.toString());
                 }
+                Log.d("=====================");
+
+                for (Movie movie : movies) {
+                    try {
+                        Api.get().getMovieInfo(movie);
+                        Log.d(movie.toString());
+                    } catch (Exception e) {
+                        Log.e("Could not make call", e);
+                    }
+                }
+
                 WearHelper.get().connect(MainActivity.this);
                 WearHelper.get().putMovies(movies);
                 return null;

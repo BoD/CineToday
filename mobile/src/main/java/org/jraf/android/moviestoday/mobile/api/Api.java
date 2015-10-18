@@ -26,11 +26,11 @@ package org.jraf.android.moviestoday.mobile.api;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.Locale;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
@@ -39,6 +39,8 @@ import org.jraf.android.moviestoday.common.async.ResultCallback;
 import org.jraf.android.moviestoday.common.async.ResultOrError;
 import org.jraf.android.moviestoday.common.model.ParseException;
 import org.jraf.android.moviestoday.common.model.movie.Movie;
+import org.jraf.android.moviestoday.mobile.api.codec.movie.MovieCodec;
+import org.jraf.android.util.log.wrapper.Log;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -53,6 +55,11 @@ public class Api {
 
     private static final OkHttpClient OK_HTTP_CLIENT = new OkHttpClient();
 
+    static {
+        OK_HTTP_CLIENT.setConnectTimeout(30, TimeUnit.SECONDS);
+        OK_HTTP_CLIENT.setReadTimeout(30, TimeUnit.SECONDS);
+    }
+
     public static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
 
     private static final String SCHEME = "http";
@@ -66,6 +73,11 @@ public class Api {
     private static final String PATH_SHOWTIMELIST = "showtimelist";
     private static final String QUERY_THEATERS_KEY = "theaters";
     private static final String QUERY_DATE_KEY = "date";
+    private static final String PATH_MOVIE = "movie";
+    private static final String QUERY_CODE_KEY = "code";
+    private static final String QUERY_STRIPTAGS_KEY = "striptags";
+    private static final String QUERY_STRIPTAGS_VALUE = "true";
+
 
     private Api() {}
 
@@ -78,9 +90,7 @@ public class Api {
                 .addQueryParameter(QUERY_THEATERS_KEY, theaterId)
                 .addQueryParameter(QUERY_DATE_KEY, SIMPLE_DATE_FORMAT.format(date))
                 .build();
-        Request request = new Request.Builder().url(url).build();
-        Response response = OK_HTTP_CLIENT.newCall(request).execute();
-        String jsonStr = response.body().string();
+        String jsonStr = call(url);
         try {
             JSONObject jsonRoot = new JSONObject(jsonStr);
             JSONObject jsonFeed = jsonRoot.getJSONObject("feed");
@@ -93,7 +103,8 @@ public class Api {
                 JSONObject jsonMovieShowtime = jsonMovieShowtimes.getJSONObject(i);
                 JSONObject jsonOnShow = jsonMovieShowtime.getJSONObject("onShow");
                 JSONObject jsonMovie = jsonOnShow.getJSONObject("movie");
-                Movie movie = createMovie(jsonMovie);
+                Movie movie = new Movie();
+                MovieCodec.get().fill(movie, jsonMovie);
                 res.add(movie);
             }
             return res;
@@ -124,6 +135,29 @@ public class Api {
         }.execute();
     }
 
+    public void getMovieInfo(Movie movie) throws IOException, ParseException {
+        HttpUrl url = getBaseBuilder(PATH_MOVIE)
+                .addQueryParameter(QUERY_STRIPTAGS_KEY, QUERY_STRIPTAGS_VALUE)
+                .addQueryParameter(QUERY_CODE_KEY, movie.id)
+                .build();
+        String jsonStr = call(url);
+        try {
+            JSONObject jsonRoot = new JSONObject(jsonStr);
+            JSONObject jsonMovie = jsonRoot.getJSONObject("movie");
+            MovieCodec.get().fill(movie, jsonMovie);
+        } catch (JSONException e) {
+            throw new ParseException(e);
+        }
+    }
+
+    @NonNull
+    private String call(HttpUrl url) throws IOException {
+        Log.d("url=" + url);
+        Request request = new Request.Builder().url(url).build();
+        Response response = OK_HTTP_CLIENT.newCall(request).execute();
+        return response.body().string();
+    }
+
     @NonNull
     private HttpUrl.Builder getBaseBuilder(String path) {
         return new HttpUrl.Builder()
@@ -134,50 +168,5 @@ public class Api {
                 .addPathSegment(path)
                 .addQueryParameter(QUERY_PARTNER_KEY, QUERY_PARTNER_VALUE)
                 .addQueryParameter(QUERY_FORMAT_KEY, QUERY_FORMAT_VALUE);
-    }
-
-    private static Movie createMovie(JSONObject jsonMovie) throws ParseException {
-        Movie res = new Movie();
-        try {
-            res.id = jsonMovie.getString("code");
-            res.localTitle = jsonMovie.getString("title");
-
-            JSONObject jsonCastingShort = jsonMovie.getJSONObject("castingShort");
-            res.directors = jsonCastingShort.getString("directors");
-            res.actors = jsonCastingShort.getString("actors");
-
-            JSONObject jsonRelease = jsonMovie.getJSONObject("release");
-            String releaseDateStr = jsonRelease.getString("releaseDate");
-            try {
-                res.releaseDate = Api.SIMPLE_DATE_FORMAT.parse(releaseDateStr);
-            } catch (java.text.ParseException e) {
-                throw new ParseException(e);
-            }
-
-            res.durationMinutes = jsonMovie.getInt("runtime");
-
-            JSONArray jsonGenreArray = jsonMovie.getJSONArray("genre");
-            int len = jsonGenreArray.length();
-            ArrayList<String> genres = new ArrayList<>(len);
-            for (int i = 0; i < len; i++) {
-                JSONObject jsonGenre = jsonGenreArray.getJSONObject(i);
-                genres.add(jsonGenre.getString("$"));
-            }
-            res.genres = genres.toArray(new String[len]);
-
-            JSONObject jsonPoster = jsonMovie.getJSONObject("poster");
-            res.posterUri = jsonPoster.getString("href");
-
-            JSONObject jsonTrailer = jsonMovie.getJSONObject("trailer");
-            res.trailerUri = jsonTrailer.getString("href");
-
-            JSONArray jsonLinkArray = jsonMovie.getJSONArray("link");
-            JSONObject jsonLink = jsonLinkArray.getJSONObject(0);
-            res.webUri = jsonLink.getString("href");
-
-            return res;
-        } catch (JSONException e) {
-            throw new ParseException(e);
-        }
     }
 }

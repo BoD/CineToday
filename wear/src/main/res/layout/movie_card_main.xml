@@ -7,7 +7,7 @@
 
     <TextView
         android:id="@+id/txtTitle"
-        style="@style/CardTitle"
+        style="@style/movieCardTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
@@ -15,12 +15,14 @@
         android:id="@+id/txtDirectors"
         style="@style/CardText"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp" />
 
     <TextView
         android:id="@+id/txtActors"
         style="@style/CardText"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp" />
 
 </LinearLayout>

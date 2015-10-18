@@ -1,0 +1,5 @@
+<resources>
+    <string name="movie_card_directors"><![CDATA[De <i>%1$s</i>]]></string>
+    <string name="movie_card_actors"><![CDATA[Avec <i>%1$s</i>]]></string>
+    <string name="movie_card_originalTitle"><![CDATA[Titre original : <i>%1$s</i>]]></string>
+</resources>
