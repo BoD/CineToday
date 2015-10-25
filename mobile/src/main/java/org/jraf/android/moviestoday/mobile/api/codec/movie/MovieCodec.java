@@ -26,6 +26,8 @@ package org.jraf.android.moviestoday.mobile.api.codec.movie;
 
 import java.util.ArrayList;
 
+import android.text.Html;
+
 import org.jraf.android.moviestoday.common.model.ParseException;
 import org.jraf.android.moviestoday.common.model.movie.Movie;
 import org.jraf.android.moviestoday.mobile.api.Api;
@@ -49,10 +51,14 @@ public class MovieCodec implements Codec<Movie> {
             movie.localTitle = jsonMovie.getString("title");
             movie.originalTitle = jsonMovie.optString("originalTitle");
             movie.synopsis = jsonMovie.optString("synopsis");
+            if (movie.synopsis != null) {
+                // Strip html
+                movie.synopsis = Html.fromHtml(movie.synopsis).toString().trim();
+            }
 
             JSONObject jsonCastingShort = jsonMovie.getJSONObject("castingShort");
-            movie.directors = jsonCastingShort.getString("directors");
-            movie.actors = jsonCastingShort.getString("actors");
+            movie.directors = jsonCastingShort.optString("directors");
+            movie.actors = jsonCastingShort.optString("actors");
 
             JSONObject jsonRelease = jsonMovie.getJSONObject("release");
             String releaseDateStr = jsonRelease.getString("releaseDate");

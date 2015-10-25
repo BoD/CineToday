@@ -59,10 +59,20 @@ public class MovieCardFragment extends CardFragment {
                 txtTitle.setText(movie.localTitle);
 
                 TextView txtDescription = (TextView) view.findViewById(R.id.txtDirectors);
-                txtDescription.setText(getHtml(R.string.movie_card_directors, movie.directors));
+                if (movie.directors == null) {
+                    txtDescription.setVisibility(View.GONE);
+                } else {
+                    txtDescription.setVisibility(View.VISIBLE);
+                    txtDescription.setText(getHtml(R.string.movie_card_directors, movie.directors));
+                }
 
                 TextView txtActors = (TextView) view.findViewById(R.id.txtActors);
-                txtActors.setText(getHtml(R.string.movie_card_actors, movie.actors));
+                if (movie.actors == null) {
+                    txtActors.setVisibility(View.GONE);
+                } else {
+                    txtActors.setVisibility(View.VISIBLE);
+                    txtActors.setText(getHtml(R.string.movie_card_actors, movie.actors));
+                }
                 break;
 
             case SYNOPSIS:
@@ -76,7 +86,11 @@ public class MovieCardFragment extends CardFragment {
                 txtSynopsis.setText(movie.synopsis);
 
                 TextView txtOriginalTitle = (TextView) view.findViewById(R.id.txtOriginalTitle);
-                txtOriginalTitle.setText(getHtml(R.string.movie_card_originalTitle, movie.originalTitle));
+                if (movie.originalTitle.equals(movie.localTitle)) {
+                    txtOriginalTitle.setVisibility(View.GONE);
+                } else {
+                    txtOriginalTitle.setText(getHtml(R.string.movie_card_originalTitle, movie.originalTitle));
+                }
                 break;
         }
 
