@@ -43,6 +43,7 @@ public class Movie implements Parcelable {
     public String trailerUri;
     public String webUri;
     public String synopsis;
+    public String[] todayShowtimes;
 
     public Movie() {}
 
@@ -61,6 +62,7 @@ public class Movie implements Parcelable {
                 ", trailerUri='" + trailerUri + '\'' +
                 ", webUri='" + webUri + '\'' +
                 ", synopsis='" + synopsis + '\'' +
+                ", todayShowtimes=" + Arrays.toString(todayShowtimes) +
                 '}';
     }
 
@@ -100,6 +102,7 @@ public class Movie implements Parcelable {
         dest.writeString(this.trailerUri);
         dest.writeString(this.webUri);
         dest.writeString(this.synopsis);
+        dest.writeStringArray(this.todayShowtimes);
     }
 
     protected Movie(Parcel in) {
@@ -116,6 +119,7 @@ public class Movie implements Parcelable {
         this.trailerUri = in.readString();
         this.webUri = in.readString();
         this.synopsis = in.readString();
+        this.todayShowtimes = in.createStringArray();
     }
 
     public static final Creator<Movie> CREATOR = new Creator<Movie>() {

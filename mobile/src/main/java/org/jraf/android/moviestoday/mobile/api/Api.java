@@ -40,6 +40,7 @@ import org.jraf.android.moviestoday.common.async.ResultOrError;
 import org.jraf.android.moviestoday.common.model.ParseException;
 import org.jraf.android.moviestoday.common.model.movie.Movie;
 import org.jraf.android.moviestoday.mobile.api.codec.movie.MovieCodec;
+import org.jraf.android.moviestoday.mobile.api.codec.showtime.ShowtimeCodec;
 import org.jraf.android.util.log.wrapper.Log;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -54,6 +55,7 @@ public class Api {
     private static final Api INSTANCE = new Api();
 
     private static final OkHttpClient OK_HTTP_CLIENT = new OkHttpClient();
+
     static {
         OK_HTTP_CLIENT.setConnectTimeout(30, TimeUnit.SECONDS);
         OK_HTTP_CLIENT.setReadTimeout(30, TimeUnit.SECONDS);
@@ -103,7 +105,23 @@ public class Api {
                 JSONObject jsonOnShow = jsonMovieShowtime.getJSONObject("onShow");
                 JSONObject jsonMovie = jsonOnShow.getJSONObject("movie");
                 Movie movie = new Movie();
+
+                // Movie
                 MovieCodec.get().fill(movie, jsonMovie);
+                // See if the movie was already in the set, if yes use this one, so the showtimes are merged
+                if (res.contains(movie)) {
+                    // Already in the set: find it
+                    for (Movie m : res) {
+                        if (m.equals(movie)) {
+                            // Found it: discard the new one, use the old one instead
+                            movie = m;
+                            break;
+                        }
+                    }
+                }
+
+                // Showtimes
+                ShowtimeCodec.get().fill(movie, jsonMovieShowtime);
                 res.add(movie);
             }
             return res;
