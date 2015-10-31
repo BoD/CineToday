@@ -1,6 +1,7 @@
 <resources>
-    <string name="app_name">MoviesToday</string>
+    <string name="app_name" translatable="false">MoviesToday</string>
     <string name="movie_card_directors"><![CDATA[By <i>%1$s</i>]]></string>
     <string name="movie_card_actors"><![CDATA[With <i>%1$s</i>]]></string>
     <string name="movie_card_originalTitle"><![CDATA[Original title: <i>%1$s</i>]]></string>
+    <string name="movie_card_showtimes_title">Show times today:</string>
 </resources>

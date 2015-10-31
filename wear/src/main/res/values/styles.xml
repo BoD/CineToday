@@ -9,4 +9,9 @@
         <item name="android:textColor">@color/secondary_text_light</item>
     </style>
 
+    <style name="movieCardShowtimes" parent="CardText">
+        <item name="android:lineSpacingMultiplier">1.2</item>
+    </style>
+
+
 </resources>

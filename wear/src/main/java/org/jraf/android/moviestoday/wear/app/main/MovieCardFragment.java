@@ -41,6 +41,7 @@ public class MovieCardFragment extends CardFragment {
     public enum CardType {
         MAIN,
         SYNOPSIS,
+        SHOWTIMES,
     }
 
     public View onCreateContentView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -91,6 +92,21 @@ public class MovieCardFragment extends CardFragment {
                 } else {
                     txtOriginalTitle.setText(getHtml(R.string.movie_card_originalTitle, movie.originalTitle));
                 }
+                break;
+
+            case SHOWTIMES:
+                view = inflater.inflate(R.layout.movie_card_showtimes, container, false);
+
+                TextView txtShowtimes = (TextView) view.findViewById(R.id.txtShowtimes);
+                StringBuilder showtimesStr = new StringBuilder();
+                String[] todayShowtimes = movie.todayShowtimes;
+                for (int i = 0; i < todayShowtimes.length; i++) {
+                    String showtime = todayShowtimes[i];
+                    showtimesStr.append(" · ");
+                    showtimesStr.append(showtime);
+                    if (i < todayShowtimes.length - 1) showtimesStr.append("\n");
+                }
+                txtShowtimes.setText(showtimesStr);
                 break;
         }
 

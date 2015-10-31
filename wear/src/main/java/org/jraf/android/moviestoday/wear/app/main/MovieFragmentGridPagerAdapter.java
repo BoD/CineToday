@@ -39,6 +39,11 @@ import android.support.wearable.view.FragmentGridPagerAdapter;
 import org.jraf.android.moviestoday.common.model.movie.Movie;
 
 public class MovieFragmentGridPagerAdapter extends FragmentGridPagerAdapter {
+    private static final int INDEX_MAIN = 0;
+    private static final int INDEX_SYNOPSIS = 1;
+    private static final int INDEX_POSTER = 2;
+    private static final int INDEX_SHOWTIMES = 3;
+
     private final Context mContext;
     private final List<Movie> mMovies;
     private HashMap<Movie, Bitmap> mPosterMap;
@@ -55,17 +60,23 @@ public class MovieFragmentGridPagerAdapter extends FragmentGridPagerAdapter {
         Movie movie = mMovies.get(row);
         Fragment res = null;
         switch (column) {
-            case 0:
-            case 1:
+            case INDEX_MAIN:
+            case INDEX_SYNOPSIS:
+            case INDEX_SHOWTIMES:
                 MovieCardFragment.CardType cardType = null;
                 switch (column) {
-                    case 0:
+                    case INDEX_MAIN:
                         cardType = MovieCardFragment.CardType.MAIN;
                         break;
 
-                    case 1:
+                    case INDEX_SYNOPSIS:
                         cardType = MovieCardFragment.CardType.SYNOPSIS;
                         break;
+
+                    case INDEX_SHOWTIMES:
+                        cardType = MovieCardFragment.CardType.SHOWTIMES;
+                        break;
+
                 }
                 CardFragment cardFragment = MovieCardFragment.create(cardType, movie);
 
@@ -77,7 +88,7 @@ public class MovieFragmentGridPagerAdapter extends FragmentGridPagerAdapter {
                 res = cardFragment;
                 break;
 
-            case 2:
+            case INDEX_POSTER:
                 PosterFragment posterFragment = PosterFragment.create(mPosterMap.get(movie));
 
                 res = posterFragment;
@@ -93,7 +104,7 @@ public class MovieFragmentGridPagerAdapter extends FragmentGridPagerAdapter {
 
     @Override
     public int getColumnCount(int row) {
-        return 3;
+        return 4;
     }
 
     @Override
