@@ -60,12 +60,14 @@ public class MovieCodec implements Codec<Movie> {
             movie.directors = jsonCastingShort.optString("directors");
             movie.actors = jsonCastingShort.optString("actors");
 
-            JSONObject jsonRelease = jsonMovie.getJSONObject("release");
-            String releaseDateStr = jsonRelease.getString("releaseDate");
-            try {
-                movie.releaseDate = Api.SIMPLE_DATE_FORMAT.parse(releaseDateStr);
-            } catch (java.text.ParseException e) {
-                throw new ParseException(e);
+            JSONObject jsonRelease = jsonMovie.optJSONObject("release");
+            if (jsonRelease != null) {
+                String releaseDateStr = jsonRelease.getString("releaseDate");
+                try {
+                    movie.releaseDate = Api.SIMPLE_DATE_FORMAT.parse(releaseDateStr);
+                } catch (java.text.ParseException e) {
+                    throw new ParseException(e);
+                }
             }
 
             movie.durationMinutes = jsonMovie.getInt("runtime");

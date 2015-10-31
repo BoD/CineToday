@@ -70,9 +70,12 @@ public class ImageCache {
     @WorkerThread
     @Nullable
     public Bitmap getBitmap(String uri, int maxWidth, int maxHeight) {
+        Log.d("uri=" + uri);
         File cachedFile = getCachedFile(uri, maxWidth, maxHeight);
-        if (!cachedFile.exists()) {
-            // Cache miss
+        if (cachedFile.exists()) {
+            Log.d("Cache hit for " + uri);
+        } else {
+            Log.d("Cache miss for " + uri);
             try {
                 downloadAndResize(uri, maxWidth, maxHeight);
             } catch (IOException e) {

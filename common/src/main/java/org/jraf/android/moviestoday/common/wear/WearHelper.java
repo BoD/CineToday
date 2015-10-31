@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -71,6 +72,7 @@ public class WearHelper {
     private static final String PATH_MOVIE_POSTER = PATH_MOVIE + "/%1$s/poster";
 
     private static final String KEY_VALUE = "KEY_VALUE";
+    private static final long AWAIT_TIME_S = 5;
 
     private GoogleApiClient mGoogleApiClient;
 
@@ -111,7 +113,7 @@ public class WearHelper {
     public void putMovies(Collection<Movie> movies) {
         Log.d();
         // First remove any old value
-        Wearable.DataApi.deleteDataItems(mGoogleApiClient, createUri(PATH_MOVIE_ALL)).await();
+        Wearable.DataApi.deleteDataItems(mGoogleApiClient, createUri(PATH_MOVIE_ALL)).await(AWAIT_TIME_S, TimeUnit.SECONDS);
 
         // Create new value
         Bundle moviesBundle = new Bundle();
@@ -124,13 +126,13 @@ public class WearHelper {
 
         PutDataRequest putDataRequest = putDataMapRequest.asPutDataRequest();
 
-        Wearable.DataApi.putDataItem(mGoogleApiClient, putDataRequest).await();
+        Wearable.DataApi.putDataItem(mGoogleApiClient, putDataRequest).await(AWAIT_TIME_S, TimeUnit.SECONDS);
     }
 
     @WorkerThread
     @Nullable
     public List<Movie> getMovies() {
-        DataItemBuffer dataItemBuffer = Wearable.DataApi.getDataItems(mGoogleApiClient, createUri(PATH_MOVIE_ALL)).await();
+        DataItemBuffer dataItemBuffer = Wearable.DataApi.getDataItems(mGoogleApiClient, createUri(PATH_MOVIE_ALL)).await(AWAIT_TIME_S, TimeUnit.SECONDS);
         try {
             if (!dataItemBuffer.getStatus().isSuccess()) return null;
             if (dataItemBuffer.getCount() == 0) return null;
@@ -153,13 +155,14 @@ public class WearHelper {
 
         PutDataRequest putDataRequest = putDataMapRequest.asPutDataRequest();
 
-        Wearable.DataApi.putDataItem(mGoogleApiClient, putDataRequest).await();
+        Wearable.DataApi.putDataItem(mGoogleApiClient, putDataRequest).await(AWAIT_TIME_S, TimeUnit.SECONDS);
     }
 
     @WorkerThread
     @Nullable
     public Bitmap getMoviePoster(Movie movie) {
-        DataItemBuffer dataItemBuffer = Wearable.DataApi.getDataItems(mGoogleApiClient, createUri(String.format(PATH_MOVIE_POSTER, movie.id))).await();
+        DataItemBuffer dataItemBuffer =
+                Wearable.DataApi.getDataItems(mGoogleApiClient, createUri(String.format(PATH_MOVIE_POSTER, movie.id))).await(AWAIT_TIME_S, TimeUnit.SECONDS);
         try {
             if (!dataItemBuffer.getStatus().isSuccess()) return null;
             if (dataItemBuffer.getCount() == 0) return null;
@@ -186,9 +189,9 @@ public class WearHelper {
     private void sendMessage(String path, @Nullable final byte[] payload) {
         Log.d("path=" + path);
         HashSet<String> results = new HashSet<>();
-        NodeApi.GetConnectedNodesResult nodesResult = Wearable.NodeApi.getConnectedNodes(mGoogleApiClient).await();
+        NodeApi.GetConnectedNodesResult nodesResult = Wearable.NodeApi.getConnectedNodes(mGoogleApiClient).await(AWAIT_TIME_S, TimeUnit.SECONDS);
         for (Node node : nodesResult.getNodes()) {
-            Wearable.MessageApi.sendMessage(mGoogleApiClient, node.getId(), path, payload).await();
+            Wearable.MessageApi.sendMessage(mGoogleApiClient, node.getId(), path, payload).await(AWAIT_TIME_S, TimeUnit.SECONDS);
         }
     }
 
@@ -212,7 +215,7 @@ public class WearHelper {
 
     @WorkerThread
     public Bitmap loadBitmapFromAsset(Asset asset) {
-        DataApi.GetFdForAssetResult fd = Wearable.DataApi.getFdForAsset(mGoogleApiClient, asset).await();
+        DataApi.GetFdForAssetResult fd = Wearable.DataApi.getFdForAsset(mGoogleApiClient, asset).await(AWAIT_TIME_S, TimeUnit.SECONDS);
         InputStream inputStream = fd.getInputStream();
         return BitmapFactory.decodeStream(inputStream);
     }
@@ -226,7 +229,7 @@ public class WearHelper {
     @WorkerThread
     @Nullable
     public Bundle loadBundleFromAsset(Asset asset) {
-        DataApi.GetFdForAssetResult fd = Wearable.DataApi.getFdForAsset(mGoogleApiClient, asset).await();
+        DataApi.GetFdForAssetResult fd = Wearable.DataApi.getFdForAsset(mGoogleApiClient, asset).await(AWAIT_TIME_S, TimeUnit.SECONDS);
         InputStream inputStream = fd.getInputStream();
         ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
         try {
