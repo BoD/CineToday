@@ -27,8 +27,10 @@ package org.jraf.android.moviestoday.mobile.app.theater.search;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
+import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import org.jraf.android.moviestoday.R;
@@ -37,12 +39,16 @@ import org.jraf.android.util.log.wrapper.Log;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import butterknife.OnEditorAction;
 import butterknife.OnTextChanged;
 
 public class TheaterSearchActivity extends AppCompatActivity implements TheaterCallbacks {
     @Bind(R.id.edtSearch)
     protected EditText mEdtSearch;
+
+    @Bind(R.id.btnClear)
+    protected ImageButton mBtnClear;
 
     private TheaterSearchFragment mTheaterSearchFragment;
 
@@ -51,6 +57,7 @@ public class TheaterSearchActivity extends AppCompatActivity implements TheaterC
         super.onCreate(savedInstanceState);
         setContentView(R.layout.theater_search);
         ButterKnife.bind(this);
+        mBtnClear.setVisibility(View.GONE);
     }
 
     @OnEditorAction(R.id.edtSearch)
@@ -65,6 +72,11 @@ public class TheaterSearchActivity extends AppCompatActivity implements TheaterC
     public void onSearchTextChanged() {
         String query = mEdtSearch.getText().toString().trim();
         getTheaterSearchFragment().search(query);
+        if (query.length() == 0) {
+            mBtnClear.setVisibility(View.GONE);
+        } else {
+            mBtnClear.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -77,5 +89,10 @@ public class TheaterSearchActivity extends AppCompatActivity implements TheaterC
             mTheaterSearchFragment = (TheaterSearchFragment) getSupportFragmentManager().findFragmentById(R.id.fraTheaterSearch);
         }
         return mTheaterSearchFragment;
+    }
+
+    @OnClick(R.id.btnClear)
+    protected void onClearClicked() {
+        mEdtSearch.getText().clear();
     }
 }

@@ -72,12 +72,17 @@ public class TheaterSearchFragment extends BaseFragment<TheaterCallbacks> implem
     public void search(String query) {
         if (mAdapter != null) mAdapter.clear();
 
-        mPgbLoading.setVisibility(View.VISIBLE);
-        mTxtEmpty.setVisibility(View.GONE);
+        if (query.length() == 0) {
+            mPgbLoading.setVisibility(View.GONE);
+            mTxtEmpty.setVisibility(View.GONE);
+        } else {
+            mPgbLoading.setVisibility(View.VISIBLE);
+            mTxtEmpty.setVisibility(View.GONE);
 
-        Bundle args = new Bundle();
-        args.putString("query", query);
-        getLoaderManager().restartLoader(0, args, this);
+            Bundle args = new Bundle();
+            args.putString("query", query);
+            getLoaderManager().restartLoader(0, args, this);
+        }
     }
 
 

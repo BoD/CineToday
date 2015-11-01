@@ -1,12 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:background="?attr/selectableItemBackground"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingBottom="8dp"
+    android:paddingTop="8dp">
 
-    <TextView
-        android:id="@+id/txtName"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="0px"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/txtName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSearchResultTitle"
+            tools:text="MK2 Bibliothèque" />
+
+        <TextView
+            android:id="@+id/txtAddress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:textAppearance="?android:attr/textAppearanceSearchResultSubtitle"
+            tools:text="23 rue Nationale\n75013\nPARIS" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/imgThumbnail"
+        android:layout_width="100dp"
+        android:layout_height="80dp"
+        android:layout_marginLeft="8dp" />
 </LinearLayout>

@@ -32,10 +32,13 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.jraf.android.moviestoday.R;
 import org.jraf.android.moviestoday.common.model.theater.Theater;
+
+import com.squareup.picasso.Picasso;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -57,6 +60,12 @@ public class TheaterAdapter extends RecyclerView.Adapter<TheaterAdapter.ViewHold
         @Bind(R.id.txtName)
         public TextView txtName;
 
+        @Bind(R.id.txtAddress)
+        public TextView txtAddress;
+
+        @Bind(R.id.imgThumbnail)
+        public ImageView imgThumbnail;
+
         public ViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
@@ -74,6 +83,9 @@ public class TheaterAdapter extends RecyclerView.Adapter<TheaterAdapter.ViewHold
     public void onBindViewHolder(TheaterAdapter.ViewHolder holder, int position) {
         Theater theater = mObjects.get(position);
         holder.txtName.setText(theater.name);
+        holder.txtAddress.setText(theater.address);
+        Picasso.with(mContext).load(theater.posterUri).fit().placeholder(R.drawable.theater_list_item_placeholder).error(
+                R.drawable.theater_list_item_placeholder).into(holder.imgThumbnail);
 
         // Callback
         holder.itemView.setTag(position);

@@ -43,7 +43,7 @@ public class TheaterCodec implements Codec<Theater> {
         try {
             theater.id = jsonTheater.getString("code");
             theater.name = jsonTheater.getString("name");
-            theater.address = jsonTheater.getString("address") + "\n" + jsonTheater.getString("postalCode") + "\n" + jsonTheater.getString("city");
+            theater.address = jsonTheater.getString("address") + "\n" + jsonTheater.getString("postalCode") + " " + jsonTheater.getString("city");
 
             JSONObject jsonPoster = jsonTheater.optJSONObject("poster");
             if (jsonPoster != null) {
