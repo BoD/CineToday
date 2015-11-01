@@ -26,21 +26,26 @@ package org.jraf.android.moviestoday.mobile.api;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import android.support.annotation.WorkerThread;
 
 import org.jraf.android.moviestoday.common.async.ResultCallback;
 import org.jraf.android.moviestoday.common.async.ResultOrError;
 import org.jraf.android.moviestoday.common.model.ParseException;
 import org.jraf.android.moviestoday.common.model.movie.Movie;
+import org.jraf.android.moviestoday.common.model.theater.Theater;
 import org.jraf.android.moviestoday.mobile.api.codec.movie.MovieCodec;
 import org.jraf.android.moviestoday.mobile.api.codec.showtime.ShowtimeCodec;
+import org.jraf.android.moviestoday.mobile.api.codec.theater.TheaterCodec;
 import org.jraf.android.util.log.wrapper.Log;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -78,7 +83,12 @@ public class Api {
     private static final String QUERY_CODE_KEY = "code";
     private static final String QUERY_STRIPTAGS_KEY = "striptags";
     private static final String QUERY_STRIPTAGS_VALUE = "true";
-
+    private static final String PATH_SEARCH = "search";
+    private static final String QUERY_COUNT_KEY = "count";
+    private static final String QUERY_COUNT_VALUE = "10";
+    private static final String QUERY_QUERY_KEY = "q";
+    private static final String QUERY_FILTER_KEY = "filter";
+    private static final String QUERY_FILTER_VALUE = "theater";
 
     private Api() {}
 
@@ -86,6 +96,7 @@ public class Api {
         return INSTANCE;
     }
 
+    @WorkerThread
     public Set<Movie> getMovieList(String theaterId, Date date) throws IOException, ParseException {
         HttpUrl url = getBaseBuilder(PATH_SHOWTIMELIST)
                 .addQueryParameter(QUERY_THEATERS_KEY, theaterId)
@@ -152,6 +163,7 @@ public class Api {
         }.execute();
     }
 
+    @WorkerThread
     public void getMovieInfo(Movie movie) throws IOException, ParseException {
         HttpUrl url = getBaseBuilder(PATH_MOVIE)
                 .addQueryParameter(QUERY_STRIPTAGS_KEY, QUERY_STRIPTAGS_VALUE)
@@ -167,6 +179,40 @@ public class Api {
         }
     }
 
+    @WorkerThread
+    public List<Theater> searchTheaters(String query) throws IOException, ParseException {
+        if (query.length() < 3) return new ArrayList<>();
+
+        HttpUrl url = getBaseBuilder(PATH_SEARCH)
+                .addQueryParameter(QUERY_COUNT_KEY, QUERY_COUNT_VALUE)
+                .addQueryParameter(QUERY_FILTER_KEY, QUERY_FILTER_VALUE)
+                .addQueryParameter(QUERY_QUERY_KEY, query)
+                .build();
+        String jsonStr = call(url);
+        try {
+            JSONObject jsonRoot = new JSONObject(jsonStr);
+            JSONObject jsonFeed = jsonRoot.getJSONObject("feed");
+            int totalResults = jsonFeed.getInt("totalResults");
+            if (totalResults == 0) return new ArrayList<>();
+
+            JSONArray jsonTheaters = jsonFeed.getJSONArray("theater");
+            int len = jsonTheaters.length();
+            List<Theater> res = new ArrayList<>(len);
+            for (int i = 0; i < len; i++) {
+                JSONObject jsonTheater = jsonTheaters.getJSONObject(i);
+                Theater theater = new Theater();
+
+                // Theater
+                TheaterCodec.get().fill(theater, jsonTheater);
+                res.add(theater);
+            }
+            return res;
+        } catch (JSONException e) {
+            throw new ParseException(e);
+        }
+    }
+
+    @WorkerThread
     @NonNull
     private String call(HttpUrl url) throws IOException {
         Log.d("url=" + url);

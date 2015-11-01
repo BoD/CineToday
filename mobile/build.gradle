@@ -27,6 +27,7 @@ dependencies {
     compile project(':common')
     wearApp project(':wear')
     compile 'com.android.support:appcompat-v7:23.1.0'
+    compile 'com.android.support:recyclerview-v7:23.1.0'
     compile 'com.google.android.gms:play-services:8.1.0'
     compile 'com.squareup.okhttp:okhttp:2.5.0'
     compile 'com.jakewharton:butterknife:7.0.1'

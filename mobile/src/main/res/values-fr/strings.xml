@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="theater_search_edtSearch_hint">Nom du cinéma</string>
+    <string name="theater_search_noResults">Aucun résultat</string>
+    <string name="theater_search_title">Recherche de cinéma</string>
+</resources>

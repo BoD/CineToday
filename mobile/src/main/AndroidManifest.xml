@@ -20,6 +20,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".mobile.app.theater.search.TheaterSearchActivity"
+            android:label="@string/theater_search_title" />
     </application>
 
 </manifest>

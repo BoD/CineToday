@@ -27,6 +27,7 @@ package org.jraf.android.moviestoday.mobile.app.main;
 import java.util.Date;
 import java.util.Set;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -37,6 +38,7 @@ import org.jraf.android.moviestoday.common.model.movie.Movie;
 import org.jraf.android.moviestoday.common.wear.WearHelper;
 import org.jraf.android.moviestoday.mobile.api.Api;
 import org.jraf.android.moviestoday.mobile.api.ImageCache;
+import org.jraf.android.moviestoday.mobile.app.theater.search.TheaterSearchActivity;
 import org.jraf.android.util.log.wrapper.Log;
 
 import butterknife.ButterKnife;
@@ -94,5 +96,10 @@ public class MainActivity extends AppCompatActivity {
                 return null;
             }
         }.execute();
+    }
+
+    @OnClick(R.id.btnSearch)
+    protected void onSearchClicked() {
+        startActivity(new Intent(this, TheaterSearchActivity.class));
     }
 }

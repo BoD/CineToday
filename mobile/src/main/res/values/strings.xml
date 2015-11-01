@@ -1,3 +1,6 @@
 <resources>
-    <string name="app_name">MoviesToday</string>
+    <string name="app_name" translatable="false">MoviesToday</string>
+    <string name="theater_search_edtSearch_hint">Theater name</string>
+    <string name="theater_search_noResults">No results</string>
+    <string name="theater_search_title">Theater search</string>
 </resources>
