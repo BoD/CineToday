@@ -24,11 +24,19 @@
  */
 package org.jraf.android.moviestoday.wear.app.main;
 
+import java.util.Calendar;
+
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
+import android.support.v4.app.ActivityCompat;
 import android.support.wearable.view.CardFragment;
 import android.text.Html;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
+import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -98,19 +106,38 @@ public class MovieCardFragment extends CardFragment {
                 view = inflater.inflate(R.layout.movie_card_showtimes, container, false);
 
                 TextView txtShowtimes = (TextView) view.findViewById(R.id.txtShowtimes);
-                StringBuilder showtimesStr = new StringBuilder();
-                String[] todayShowtimes = movie.todayShowtimes;
-                for (int i = 0; i < todayShowtimes.length; i++) {
-                    String showtime = todayShowtimes[i];
-                    showtimesStr.append(" · ");
-                    showtimesStr.append(showtime);
-                    if (i < todayShowtimes.length - 1) showtimesStr.append("\n");
-                }
-                txtShowtimes.setText(showtimesStr);
+                CharSequence showtimesForDisplay = getShowtimesForDisplay(movie);
+                txtShowtimes.setText(showtimesForDisplay);
                 break;
         }
 
         return view;
+    }
+
+    @NonNull
+    private CharSequence getShowtimesForDisplay(Movie movie) {
+        Calendar nowCalendar = Calendar.getInstance();
+        Calendar showtimeCalendar = Calendar.getInstance();
+        SpannableStringBuilder res = new SpannableStringBuilder();
+        String[] todayShowtimes = movie.todayShowtimes;
+        for (int i = 0; i < todayShowtimes.length; i++) {
+            String[] hourMinutes = todayShowtimes[i].split(":");
+            showtimeCalendar.set(Calendar.HOUR_OF_DAY, Integer.valueOf(hourMinutes[0]));
+            showtimeCalendar.set(Calendar.MINUTE, Integer.valueOf(hourMinutes[1]));
+            String showtimeStr = " · " + todayShowtimes[i];
+
+            if (showtimeCalendar.before(nowCalendar)) {
+                Spannable showtimeSpannable = new SpannableString(showtimeStr);
+                showtimeSpannable
+                        .setSpan(new ForegroundColorSpan(ActivityCompat.getColor(getActivity(), R.color.secondary_text_light)), 0, showtimeStr.length(),
+                                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                res.append(showtimeSpannable);
+            } else {
+                res.append(showtimeStr);
+            }
+            if (i < todayShowtimes.length - 1) res.append("\n");
+        }
+        return res;
     }
 
     private CharSequence getHtml(@StringRes int stringResId, Object... args) {

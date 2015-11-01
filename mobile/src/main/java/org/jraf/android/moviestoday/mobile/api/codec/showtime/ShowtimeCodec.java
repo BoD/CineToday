@@ -41,7 +41,7 @@ import org.json.JSONObject;
 public class ShowtimeCodec implements Codec<Movie> {
     private static final ShowtimeCodec INSTANCE = new ShowtimeCodec();
 
-    public static final SimpleDateFormat DAY_DATE_FORMAT = new SimpleDateFormat("dd MMMM", Locale.FRENCH);
+    public static final SimpleDateFormat DAY_DATE_FORMAT = new SimpleDateFormat("d MMMM", Locale.FRENCH);
 
     private ShowtimeCodec() {}
 

@@ -133,7 +133,13 @@ public class Api {
 
                 // Showtimes
                 ShowtimeCodec.get().fill(movie, jsonMovieShowtime);
-                res.add(movie);
+
+                // If there is no showtimes for today, skip the movie
+                if (movie.todayShowtimes == null || movie.todayShowtimes.length == 0) {
+                    Log.w("Could not movie " + movie.id + " has no shotimes: skip it");
+                } else {
+                    res.add(movie);
+                }
             }
             return res;
         } catch (JSONException e) {
