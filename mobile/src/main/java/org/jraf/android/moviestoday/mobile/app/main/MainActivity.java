@@ -32,6 +32,7 @@ import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.TextView;
 
 import org.jraf.android.moviestoday.R;
 import org.jraf.android.moviestoday.common.model.movie.Movie;
@@ -41,6 +42,7 @@ import org.jraf.android.moviestoday.mobile.api.ImageCache;
 import org.jraf.android.moviestoday.mobile.app.theater.search.TheaterSearchActivity;
 import org.jraf.android.util.log.wrapper.Log;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
@@ -48,11 +50,16 @@ public class MainActivity extends AppCompatActivity {
     private static final int POSTER_THUMBNAIL_WIDTH = 240;
     private static final int POSTER_THUMBNAIL_HEIGHT = 240;
 
+    @Bind(R.id.txtLogs)
+    protected TextView mTxtLogs;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         ButterKnife.bind(this);
+        Log.setLogTextView(mTxtLogs);
+        Log.d();
     }
 
     @OnClick(R.id.btnCall)

@@ -56,9 +56,11 @@ public class MovieCodec implements Codec<Movie> {
                 movie.synopsis = Html.fromHtml(movie.synopsis).toString().trim();
             }
 
-            JSONObject jsonCastingShort = jsonMovie.getJSONObject("castingShort");
-            movie.directors = jsonCastingShort.optString("directors");
-            movie.actors = jsonCastingShort.optString("actors");
+            JSONObject jsonCastingShort = jsonMovie.optJSONObject("castingShort");
+            if (jsonCastingShort != null) {
+                movie.directors = jsonCastingShort.optString("directors");
+                movie.actors = jsonCastingShort.optString("actors");
+            }
 
             JSONObject jsonRelease = jsonMovie.optJSONObject("release");
             if (jsonRelease != null) {

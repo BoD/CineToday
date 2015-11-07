@@ -85,7 +85,7 @@ public class Api {
     private static final String QUERY_STRIPTAGS_VALUE = "true";
     private static final String PATH_SEARCH = "search";
     private static final String QUERY_COUNT_KEY = "count";
-    private static final String QUERY_COUNT_VALUE = "10";
+    private static final String QUERY_COUNT_VALUE = "15";
     private static final String QUERY_QUERY_KEY = "q";
     private static final String QUERY_FILTER_KEY = "filter";
     private static final String QUERY_FILTER_VALUE = "theater";
