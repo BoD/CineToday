@@ -94,7 +94,11 @@ public class MainActivity extends AppCompatActivity {
                     // Get poster image
                     Bitmap posterBitmap = ImageCache.get(MainActivity.this).getBitmap(movie.posterUri, POSTER_THUMBNAIL_WIDTH, POSTER_THUMBNAIL_HEIGHT);
                     if (posterBitmap != null) {
-                        WearHelper.get().putMoviePoster(movie, posterBitmap);
+                        // Save it for Wear (only if not already there)
+                        Bitmap currentBitmap = WearHelper.get().getMoviePoster(movie);
+                        if (currentBitmap == null) {
+                            WearHelper.get().putMoviePoster(movie, posterBitmap);
+                        }
                     }
                 }
 
