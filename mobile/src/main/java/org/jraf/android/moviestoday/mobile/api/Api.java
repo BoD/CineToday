@@ -24,6 +24,7 @@
  */
 package org.jraf.android.moviestoday.mobile.api;
 
+import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -34,6 +35,7 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.annotation.WorkerThread;
@@ -51,6 +53,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.squareup.okhttp.Cache;
 import com.squareup.okhttp.HttpUrl;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -58,13 +61,6 @@ import com.squareup.okhttp.Response;
 
 public class Api {
     private static final Api INSTANCE = new Api();
-
-    private static final OkHttpClient OK_HTTP_CLIENT = new OkHttpClient();
-
-    static {
-        OK_HTTP_CLIENT.setConnectTimeout(30, TimeUnit.SECONDS);
-        OK_HTTP_CLIENT.setReadTimeout(30, TimeUnit.SECONDS);
-    }
 
     public static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
 
@@ -90,9 +86,15 @@ public class Api {
     private static final String QUERY_FILTER_KEY = "filter";
     private static final String QUERY_FILTER_VALUE = "theater";
 
+    private static final long CACHE_SIZE = 10 * 1024 * 1024;
+
+    private Context mContext;
+    private OkHttpClient mOkHttpClient;
+
     private Api() {}
 
-    public static Api get() {
+    public static Api get(Context context) {
+        if (INSTANCE.mContext == null) INSTANCE.mContext = context.getApplicationContext();
         return INSTANCE;
     }
 
@@ -223,8 +225,19 @@ public class Api {
     private String call(HttpUrl url) throws IOException {
         Log.d("url=" + url);
         Request request = new Request.Builder().url(url).build();
-        Response response = OK_HTTP_CLIENT.newCall(request).execute();
+        Response response = getOkHttpClient().newCall(request).execute();
         return response.body().string();
+    }
+
+    private OkHttpClient getOkHttpClient() {
+        if (mOkHttpClient == null) {
+            mOkHttpClient = new OkHttpClient();
+            mOkHttpClient.setConnectTimeout(30, TimeUnit.SECONDS);
+            mOkHttpClient.setReadTimeout(30, TimeUnit.SECONDS);
+            File httpCacheDir = new File(mContext.getCacheDir(), "http");
+            mOkHttpClient.setCache(new Cache(httpCacheDir, CACHE_SIZE));
+        }
+        return mOkHttpClient;
     }
 
     @NonNull

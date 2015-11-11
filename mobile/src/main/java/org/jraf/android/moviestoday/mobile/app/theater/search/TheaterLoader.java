@@ -46,7 +46,7 @@ public class TheaterLoader extends AsyncTaskLoader<List<Theater>> {
     public List<Theater> loadInBackground() {
         Log.d();
         try {
-            return Api.get().searchTheaters(mQuery);
+            return Api.get(getContext()).searchTheaters(mQuery);
         } catch (Exception e) {
             Log.w("Could not search for theaters", e);
             return null;

@@ -3,4 +3,7 @@
     <string name="theater_search_edtSearch_hint">Theater name</string>
     <string name="theater_search_noResults">No results</string>
     <string name="theater_search_title">Theater search</string>
+    <string name="main_lastUpdateDate_none">Never updated</string>
+    <string name="main_lastUpdateDate">Last update: %1$s</string>
+    <string name="main_lastUpdateDate_ongoing">Update ongoing…</string>
 </resources>

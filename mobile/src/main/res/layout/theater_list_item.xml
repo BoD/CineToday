@@ -28,7 +28,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
             android:textAppearance="?android:attr/textAppearanceSearchResultSubtitle"
-            tools:text="23 rue Nationale\n75013\nPARIS" />
+            tools:text="23 rue Nationale\n75013 PARIS" />
     </LinearLayout>
 
     <ImageView

@@ -24,6 +24,7 @@
  */
 package org.jraf.android.moviestoday.mobile.app.theater.search;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
@@ -44,6 +45,9 @@ import butterknife.OnEditorAction;
 import butterknife.OnTextChanged;
 
 public class TheaterSearchActivity extends AppCompatActivity implements TheaterCallbacks {
+    private static final String PREFIX = TheaterSearchActivity.class.getName() + ".";
+    public static final String EXTRA_RESULT = PREFIX + "EXTRA_RESULT";
+
     @Bind(R.id.edtSearch)
     protected EditText mEdtSearch;
 
@@ -82,6 +86,10 @@ public class TheaterSearchActivity extends AppCompatActivity implements TheaterC
     @Override
     public void onTheaterClicked(Theater theater) {
         Log.d("theater=" + theater);
+        Intent result = new Intent();
+        result.putExtra(EXTRA_RESULT, theater);
+        setResult(RESULT_OK, result);
+        finish();
     }
 
     public TheaterSearchFragment getTheaterSearchFragment() {

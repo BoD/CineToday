@@ -3,4 +3,7 @@
     <string name="theater_search_edtSearch_hint">Nom du cinéma</string>
     <string name="theater_search_noResults">Aucun résultat</string>
     <string name="theater_search_title">Recherche de cinéma</string>
+    <string name="main_lastUpdateDate_none">Jamais mis à jour</string>
+    <string name="main_lastUpdateDate">Dernière mise à jour : %1$s</string>
+    <string name="main_lastUpdateDate_ongoing">Mise à jour en cours…</string>
 </resources>
