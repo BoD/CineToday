@@ -30,4 +30,6 @@ public interface LoadMoviesListener {
     void onLoadMoviesProgress(int currentMovie, int totalMovies);
 
     void onLoadMoviesFinished();
+
+    void onLoadMoviesError(Throwable t);
 }

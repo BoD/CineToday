@@ -24,14 +24,28 @@
  */
 package org.jraf.android.moviestoday.mobile.app.api;
 
+import java.util.Date;
+import java.util.Set;
+
 import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
-import android.os.SystemClock;
+import android.graphics.Bitmap;
+
+import org.jraf.android.moviestoday.common.model.movie.Movie;
+import org.jraf.android.moviestoday.common.wear.WearHelper;
+import org.jraf.android.moviestoday.mobile.api.Api;
+import org.jraf.android.moviestoday.mobile.api.ImageCache;
+import org.jraf.android.moviestoday.mobile.prefs.MainPrefs;
+import org.jraf.android.util.log.wrapper.Log;
 
 public class LoadMoviesIntentService extends IntentService {
     private static final String PREFIX = LoadMoviesIntentService.class.getName() + ".";
     private static final String ACTION_LOAD_MOVIES = PREFIX + "LOAD_MOVIES";
+
+    private static final int POSTER_THUMBNAIL_WIDTH = 240;
+    private static final int POSTER_THUMBNAIL_HEIGHT = 240;
+
 
     public LoadMoviesIntentService() {
         super(LoadMoviesIntentService.class.getName());
@@ -62,8 +76,51 @@ public class LoadMoviesIntentService extends IntentService {
      * Handle action ACTION_LOAD_MOVIES in the provided background thread.
      */
     private void handleActionLoadMovies() {
-        LoadMoviesHelper.get().onLoadMoviesStarted();
-        SystemClock.sleep(8000);
-        LoadMoviesHelper.get().onLoadMoviesFinished();
+        LoadMoviesHelper loadMoviesHelper = LoadMoviesHelper.get();
+        loadMoviesHelper.onLoadMoviesStarted();
+
+        Set<Movie> movies;
+        try {
+            String theaterId = MainPrefs.get(this).getTheaterId();
+            movies = Api.get(this).getMovieList(theaterId, new Date());
+        } catch (Exception e) {
+            loadMoviesHelper.onLoadMoviesError(e);
+            return;
+        }
+
+        WearHelper wearHelper = WearHelper.get();
+        wearHelper.connect(this);
+
+        int size = movies.size();
+        int i = 0;
+        for (Movie movie : movies) {
+            // Get movie info
+            try {
+                Api.get(this).getMovieInfo(movie);
+                Log.d(movie.toString());
+            } catch (Exception e) {
+                loadMoviesHelper.onLoadMoviesError(e);
+                return;
+            }
+
+            // Get poster image
+            Bitmap posterBitmap = ImageCache.get(this).getBitmap(movie.posterUri, POSTER_THUMBNAIL_WIDTH, POSTER_THUMBNAIL_HEIGHT);
+            if (posterBitmap != null) {
+                // Save it for Wear (only if not already there)
+                Bitmap currentBitmap = wearHelper.getMoviePoster(movie);
+                if (currentBitmap == null) {
+                    wearHelper.putMoviePoster(movie, posterBitmap);
+                }
+            }
+            i++;
+
+            loadMoviesHelper.onLoadMoviesProgress(i, size);
+        }
+        wearHelper.putMovies(movies);
+
+        MainPrefs.get(this).putLastUpdateDate(System.currentTimeMillis());
+
+        loadMoviesHelper.resetError();
+        loadMoviesHelper.onLoadMoviesFinished();
     }
 }

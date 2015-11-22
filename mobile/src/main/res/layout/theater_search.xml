@@ -33,7 +33,7 @@
             android:layout_alignParentRight="true"
             android:layout_marginBottom="@dimen/theater_search_btnClear_margin_bottom"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_content_clear" />
+            android:src="@drawable/ic_action_clear" />
     </RelativeLayout>
 
     <fragment

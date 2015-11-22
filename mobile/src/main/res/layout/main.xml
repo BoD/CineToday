@@ -57,6 +57,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:background="?attr/selectableItemBackgroundBorderless"
+                        android:padding="8dp"
                         android:src="@drawable/ic_edit" />
 
                 </LinearLayout>

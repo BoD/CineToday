@@ -24,12 +24,7 @@
  */
 package org.jraf.android.moviestoday.mobile.app.main;
 
-import java.util.Date;
-import java.util.Set;
-
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -40,11 +35,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import org.jraf.android.moviestoday.R;
-import org.jraf.android.moviestoday.common.model.movie.Movie;
 import org.jraf.android.moviestoday.common.model.theater.Theater;
-import org.jraf.android.moviestoday.common.wear.WearHelper;
-import org.jraf.android.moviestoday.mobile.api.Api;
-import org.jraf.android.moviestoday.mobile.api.ImageCache;
 import org.jraf.android.moviestoday.mobile.app.api.LoadMoviesHelper;
 import org.jraf.android.moviestoday.mobile.app.api.LoadMoviesIntentService;
 import org.jraf.android.moviestoday.mobile.app.api.LoadMoviesListener;
@@ -57,8 +48,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class MainActivity extends AppCompatActivity {
-    private static final int POSTER_THUMBNAIL_WIDTH = 240;
-    private static final int POSTER_THUMBNAIL_HEIGHT = 240;
     private static final int REQUEST_PICK_THEATER = 0;
 
     @Bind(R.id.txtTheaterName)
@@ -120,52 +109,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    protected void onCallClicked() {
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... params) {
-                Set<Movie> movies;
-                try {
-                    movies = Api.get(MainActivity.this).getMovieList("C2954", new Date());
-                } catch (Exception e) {
-                    Log.e("Could not make call", e);
-                    return null;
-                }
-                for (Movie movie : movies) {
-                    Log.d(movie.toString());
-                }
-                Log.d("=====================");
-
-                WearHelper.get().connect(MainActivity.this);
-
-
-                for (Movie movie : movies) {
-                    // Get movie info
-                    try {
-                        Api.get(MainActivity.this).getMovieInfo(movie);
-                        Log.d(movie.toString());
-                    } catch (Exception e) {
-                        Log.e("Could not make call", e);
-                    }
-
-                    // Get poster image
-                    Bitmap posterBitmap = ImageCache.get(MainActivity.this).getBitmap(movie.posterUri, POSTER_THUMBNAIL_WIDTH, POSTER_THUMBNAIL_HEIGHT);
-                    if (posterBitmap != null) {
-                        // Save it for Wear (only if not already there)
-                        Bitmap currentBitmap = WearHelper.get().getMoviePoster(movie);
-                        if (currentBitmap == null) {
-                            WearHelper.get().putMoviePoster(movie, posterBitmap);
-                        }
-                    }
-                }
-
-
-                WearHelper.get().putMovies(movies);
-                return null;
-            }
-        }.execute();
-    }
-
     @OnClick(R.id.btnPickTheater)
     protected void onPickTheaterClicked() {
         Intent intent = new Intent(this, TheaterSearchActivity.class);
@@ -214,7 +157,8 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onLoadMoviesProgress(int currentMovie, int totalMovies) {
-
+            mPgbLoadingProgress.setMax(totalMovies);
+            mPgbLoadingProgress.setProgress(currentMovie);
         }
 
         @Override
@@ -222,6 +166,11 @@ public class MainActivity extends AppCompatActivity {
             updateLastUpdateDateLabel();
             mPgbLoadingProgress.setVisibility(View.GONE);
             mSwiRefresh.setRefreshing(false);
+        }
+
+        @Override
+        public void onLoadMoviesError(Throwable t) {
+//TODO
         }
     };
 }

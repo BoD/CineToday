@@ -31,6 +31,9 @@ public class LoadMoviesHelper implements LoadMoviesListener {
 
     private boolean mStarted;
     private Listeners<LoadMoviesListener> mListeners = new Listeners<>();
+    private Throwable mError;
+    private Integer mCurrentMovie;
+    private Integer mTotalMovie;
 
     private LoadMoviesHelper() {
         mListeners.setNewListenerDispatcher(new Listeners.Dispatcher<LoadMoviesListener>() {
@@ -41,6 +44,8 @@ public class LoadMoviesHelper implements LoadMoviesListener {
                 } else {
                     listener.onLoadMoviesFinished();
                 }
+                if (mError != null) listener.onLoadMoviesError(mError);
+                if (mCurrentMovie != null && mTotalMovie != null) listener.onLoadMoviesProgress(mCurrentMovie, mTotalMovie);
             }
         });
     }
@@ -70,6 +75,8 @@ public class LoadMoviesHelper implements LoadMoviesListener {
 
     @Override
     public void onLoadMoviesProgress(final int currentMovie, final int totalMovies) {
+        mCurrentMovie = currentMovie;
+        mTotalMovie = totalMovies;
         mListeners.dispatch(new Listeners.Dispatcher<LoadMoviesListener>() {
             @Override
             public void dispatch(LoadMoviesListener listener) {
@@ -81,11 +88,27 @@ public class LoadMoviesHelper implements LoadMoviesListener {
     @Override
     public void onLoadMoviesFinished() {
         mStarted = false;
+        mCurrentMovie = mTotalMovie = null;
         mListeners.dispatch(new Listeners.Dispatcher<LoadMoviesListener>() {
             @Override
             public void dispatch(LoadMoviesListener listener) {
                 listener.onLoadMoviesFinished();
             }
         });
+    }
+
+    @Override
+    public void onLoadMoviesError(final Throwable error) {
+        mError = error;
+        mListeners.dispatch(new Listeners.Dispatcher<LoadMoviesListener>() {
+            @Override
+            public void dispatch(LoadMoviesListener listener) {
+                listener.onLoadMoviesError(error);
+            }
+        });
+    }
+
+    public void resetError() {
+        mError = null;
     }
 }
