@@ -24,6 +24,8 @@
  */
 package org.jraf.android.moviestoday.mobile.app.main;
 
+import java.util.concurrent.TimeUnit;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
@@ -40,9 +42,13 @@ import org.jraf.android.moviestoday.common.model.theater.Theater;
 import org.jraf.android.moviestoday.mobile.app.api.LoadMoviesHelper;
 import org.jraf.android.moviestoday.mobile.app.api.LoadMoviesIntentService;
 import org.jraf.android.moviestoday.mobile.app.api.LoadMoviesListener;
+import org.jraf.android.moviestoday.mobile.app.api.LoadMoviesTaskService;
 import org.jraf.android.moviestoday.mobile.app.theater.search.TheaterSearchActivity;
 import org.jraf.android.moviestoday.mobile.prefs.MainPrefs;
 import org.jraf.android.util.log.wrapper.Log;
+
+import com.google.android.gms.gcm.GcmNetworkManager;
+import com.google.android.gms.gcm.PeriodicTask;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -107,7 +113,6 @@ public class MainActivity extends AppCompatActivity {
         if (lastUpdateDate == null) {
             mTxtLastUpdateDate.setText(R.string.main_lastUpdateDate_none);
         } else {
-//            Date date = new Date(lastUpdateDate);
             String dateStr = DateUtils.formatDateTime(this, lastUpdateDate, DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_TIME);
             mTxtLastUpdateDate.setText(getString(R.string.main_lastUpdateDate, dateStr));
         }
@@ -137,7 +142,25 @@ public class MainActivity extends AppCompatActivity {
 
                 // Update now
                 LoadMoviesIntentService.startActionLoadMovies(this);
+
+                // Schedule the daily task
+                scheduleTask();
         }
+    }
+
+    private void scheduleTask() {
+//        long periodSecs = TimeUnit.DAYS.toSeconds(1);
+        long periodSecs = TimeUnit.HOURS.toSeconds(12);
+        long flexSecs = TimeUnit.HOURS.toSeconds(1);
+        String tag = "dailyLoadMovies";
+        PeriodicTask periodicTask = new PeriodicTask.Builder()
+                .setTag(tag)
+                .setService(LoadMoviesTaskService.class)
+                .setPeriod(periodSecs)
+                .setFlex(flexSecs)
+                .setPersisted(true)
+                .build();
+        GcmNetworkManager.getInstance(this).schedule(periodicTask);
     }
 
     private SwipeRefreshLayout.OnRefreshListener mOnRefreshListener = new SwipeRefreshLayout.OnRefreshListener() {

@@ -67,7 +67,11 @@ public class LoadMoviesIntentService extends IntentService {
         if (intent != null) {
             final String action = intent.getAction();
             if (ACTION_LOAD_MOVIES.equals(action)) {
-                handleActionLoadMovies();
+                try {
+                    handleActionLoadMovies(this);
+                } catch (Exception ignore) {
+                    // Do nothing, it was already handled inside handleActionLoadMovies
+                }
             }
         }
     }
@@ -75,36 +79,36 @@ public class LoadMoviesIntentService extends IntentService {
     /**
      * Handle action ACTION_LOAD_MOVIES in the provided background thread.
      */
-    private void handleActionLoadMovies() {
+    static void handleActionLoadMovies(Context context) throws Exception {
         LoadMoviesHelper loadMoviesHelper = LoadMoviesHelper.get();
         loadMoviesHelper.onLoadMoviesStarted();
 
         Set<Movie> movies;
         try {
-            String theaterId = MainPrefs.get(this).getTheaterId();
-            movies = Api.get(this).getMovieList(theaterId, new Date());
+            String theaterId = MainPrefs.get(context).getTheaterId();
+            movies = Api.get(context).getMovieList(theaterId, new Date());
         } catch (Exception e) {
             loadMoviesHelper.onLoadMoviesError(e);
-            return;
+            throw e;
         }
 
         WearHelper wearHelper = WearHelper.get();
-        wearHelper.connect(this);
+        wearHelper.connect(context);
 
         int size = movies.size();
         int i = 0;
         for (Movie movie : movies) {
             // Get movie info
             try {
-                Api.get(this).getMovieInfo(movie);
+                Api.get(context).getMovieInfo(movie);
                 Log.d(movie.toString());
             } catch (Exception e) {
                 loadMoviesHelper.onLoadMoviesError(e);
-                return;
+                throw e;
             }
 
             // Get poster image
-            Bitmap posterBitmap = ImageCache.get(this).getBitmap(movie.posterUri, POSTER_THUMBNAIL_WIDTH, POSTER_THUMBNAIL_HEIGHT);
+            Bitmap posterBitmap = ImageCache.get(context).getBitmap(movie.posterUri, POSTER_THUMBNAIL_WIDTH, POSTER_THUMBNAIL_HEIGHT);
             if (posterBitmap != null) {
                 // Save it for Wear (only if not already there)
                 Bitmap currentBitmap = wearHelper.getMoviePoster(movie);
@@ -118,7 +122,7 @@ public class LoadMoviesIntentService extends IntentService {
         }
         wearHelper.putMovies(movies);
 
-        MainPrefs.get(this).putLastUpdateDate(System.currentTimeMillis());
+        MainPrefs.get(context).putLastUpdateDate(System.currentTimeMillis());
 
         loadMoviesHelper.resetError();
         loadMoviesHelper.onLoadMoviesFinished();
