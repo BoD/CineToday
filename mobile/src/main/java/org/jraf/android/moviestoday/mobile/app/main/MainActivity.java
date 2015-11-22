@@ -31,6 +31,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.text.format.DateUtils;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -58,6 +59,9 @@ public class MainActivity extends AppCompatActivity {
 
     @Bind(R.id.txtLastUpdateDate)
     protected TextView mTxtLastUpdateDate;
+
+    @Bind((R.id.btnPickTheater))
+    protected ImageButton mBtnPickTheater;
 
     @Bind((R.id.swiRefresh))
     protected SwipeRefreshLayout mSwiRefresh;
@@ -130,6 +134,9 @@ public class MainActivity extends AppCompatActivity {
                         .apply();
                 // Update labels
                 updateTheaterLabels();
+
+                // Update now
+                LoadMoviesIntentService.startActionLoadMovies(this);
         }
     }
 
@@ -153,6 +160,7 @@ public class MainActivity extends AppCompatActivity {
                     mSwiRefresh.setRefreshing(true);
                 }
             });
+            mBtnPickTheater.setEnabled(false);
         }
 
         @Override
@@ -166,6 +174,7 @@ public class MainActivity extends AppCompatActivity {
             updateLastUpdateDateLabel();
             mPgbLoadingProgress.setVisibility(View.GONE);
             mSwiRefresh.setRefreshing(false);
+            mBtnPickTheater.setEnabled(true);
         }
 
         @Override
