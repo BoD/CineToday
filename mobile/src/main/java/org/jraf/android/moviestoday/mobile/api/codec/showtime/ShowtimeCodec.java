@@ -34,7 +34,7 @@ import java.util.TreeSet;
 import org.jraf.android.moviestoday.common.model.ParseException;
 import org.jraf.android.moviestoday.common.model.movie.Movie;
 import org.jraf.android.moviestoday.mobile.api.codec.Codec;
-import org.jraf.android.util.log.wrapper.Log;
+import org.jraf.android.util.log.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 

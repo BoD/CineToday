@@ -1,14 +1,19 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
+import java.text.SimpleDateFormat
+
+ext.globalProjectName = 'MoviesToday'
+
 buildscript {
     repositories {
         jcenter()
+        maven {
+            url 'https://maven.fabric.io/public'
+        }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:1.5.0'
-
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
+        classpath 'com.android.tools.build:gradle:2.0.0-alpha1'
+        classpath 'com.github.ben-manes:gradle-versions-plugin:0.11.3'
     }
 }
 
@@ -22,3 +27,23 @@ allprojects {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
+apply plugin: 'com.github.ben-manes.versions'
+
+def gitSha1() {
+    return 'git rev-parse --short HEAD'.execute().text.trim()
+}
+
+def buildDate() {
+    def dateFormat = new SimpleDateFormat('yyyy-MM-dd\'T\'HH:mm\'Z\'')
+    dateFormat.setTimeZone(TimeZone.getTimeZone('UTC'))
+    return dateFormat.format(new Date())
+}
+
+ext.buildProperties = new Properties()
+buildProperties.load(new FileInputStream(file('build.properties')))
+
+ext.buildNumberFile = file('build.number')
+ext.buildNumberProperties = new Properties()
+buildNumberProperties.load(new FileInputStream(buildNumberFile))
+ext.buildNumber = buildNumberProperties['build.number'].toInteger()

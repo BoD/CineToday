@@ -38,7 +38,7 @@ import android.widget.ProgressBar;
 import org.jraf.android.moviestoday.R;
 import org.jraf.android.moviestoday.common.model.movie.Movie;
 import org.jraf.android.moviestoday.common.wear.WearHelper;
-import org.jraf.android.util.log.wrapper.Log;
+import org.jraf.android.util.log.Log;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;

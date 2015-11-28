@@ -32,11 +32,15 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.text.format.DateUtils;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import org.jraf.android.moviestoday.BuildConfig;
 import org.jraf.android.moviestoday.R;
 import org.jraf.android.moviestoday.common.model.theater.Theater;
 import org.jraf.android.moviestoday.mobile.app.api.LoadMoviesHelper;
@@ -45,7 +49,8 @@ import org.jraf.android.moviestoday.mobile.app.api.LoadMoviesListener;
 import org.jraf.android.moviestoday.mobile.app.api.LoadMoviesTaskService;
 import org.jraf.android.moviestoday.mobile.app.theater.search.TheaterSearchActivity;
 import org.jraf.android.moviestoday.mobile.prefs.MainPrefs;
-import org.jraf.android.util.log.wrapper.Log;
+import org.jraf.android.util.about.AboutActivityIntentBuilder;
+import org.jraf.android.util.log.Log;
 
 import com.google.android.gms.gcm.GcmNetworkManager;
 import com.google.android.gms.gcm.PeriodicTask;
@@ -100,6 +105,26 @@ public class MainActivity extends AppCompatActivity {
         LoadMoviesHelper.get().removeListener(mLoadMoviesListener);
         super.onStop();
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_about:
+                onAboutClicked();
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
 
     private void updateTheaterLabels() {
         MainPrefs prefs = MainPrefs.get(this);
@@ -205,4 +230,20 @@ public class MainActivity extends AppCompatActivity {
 //TODO
         }
     };
+
+    private void onAboutClicked() {
+        AboutActivityIntentBuilder builder = new AboutActivityIntentBuilder();
+        builder.setAppName(getString(R.string.app_name));
+        builder.setBuildDate(BuildConfig.BUILD_DATE);
+        builder.setGitSha1(BuildConfig.GIT_SHA1);
+        builder.setAuthorCopyright(getString(R.string.about_authorCopyright));
+        builder.setLicense(getString(R.string.about_License));
+        builder.setShareTextSubject(getString(R.string.about_shareText_subject));
+        builder.setShareTextBody(getString(R.string.about_shareText_body));
+        builder.setBackgroundResId(R.drawable.about_bg);
+        builder.addLink(getString(R.string.about_email_uri), getString(R.string.about_email_text));
+        builder.addLink(getString(R.string.about_web_uri), getString(R.string.about_web_text));
+        builder.addLink(getString(R.string.about_sources_uri), getString(R.string.about_sources_text));
+        startActivity(builder.build(this));
+    }
 }

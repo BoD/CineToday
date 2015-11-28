@@ -19,18 +19,82 @@ android {
         applicationId 'org.jraf.android.moviestoday'
         minSdkVersion 18
         targetSdkVersion 23
-        versionCode 1
-        versionName '1.0.0'
+        versionCode buildNumber
+        versionName buildProperties['versionName']
+
+        buildConfigField 'String', 'GIT_SHA1', '"' + gitSha1() + '"'
+        buildConfigField 'String', 'BUILD_DATE', '"' + buildDate() + '"'
+        // For now we enable strict mode for all the configs
+        buildConfigField 'boolean', 'STRICT_MODE', 'true'
+
+        resConfigs 'en', 'fr'
     }
-    buildTypes {
+
+    signingConfigs {
         release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            storeFile file(buildProperties['key-store'])
+            storePassword buildProperties['key-store-password']
+            keyAlias buildProperties['key-alias']
+            keyPassword buildProperties['key-alias-password']
         }
     }
 
-    lintOptions {
-        disable 'InvalidPackage'
+    buildTypes {
+        debug {
+            buildConfigField 'boolean', 'CRASH_REPORT', 'false'
+
+            minifyEnabled false
+        }
+
+        release {
+            buildConfigField 'boolean', 'CRASH_REPORT', 'true'
+
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            shrinkResources true
+            signingConfig signingConfigs.release
+        }
+    }
+}
+
+def releaseTask = tasks.create('release')
+releaseTask << {
+    // Increment build number
+    buildNumberProperties['build.number'] = (buildNumber + 1).toString()
+    buildNumberProperties.store(buildNumberFile.newWriter(), null)
+}
+
+android.applicationVariants.all { variant ->
+    if (variant.buildType.name == 'release') {
+        variant.outputs.each { output ->
+            def apkName = "${globalProjectName}-${android.defaultConfig.versionCode}-${variant.flavorName}-signed.apk"
+            // Copy the apk to the 'etc' folder
+            def copyApkTask = tasks.create("copy${variant.name.capitalize()}ApkToEtc", Copy)
+            copyApkTask.from(output.outputFile)
+            copyApkTask.into('../etc/apk')
+            copyApkTask.rename output.outputFile.name, apkName
+            copyApkTask.dependsOn variant.assemble
+
+            releaseTask.dependsOn copyApkTask
+
+            // Copy the apk to the deploy folder
+            copyApkTask = tasks.create("copy${variant.name.capitalize()}ApkToDeploy", Copy)
+            copyApkTask.from(output.outputFile)
+            copyApkTask.into(buildProperties['deploy-folder'])
+            copyApkTask.rename output.outputFile.name, apkName
+            copyApkTask.dependsOn variant.assemble
+
+            releaseTask.dependsOn copyApkTask
+        }
+
+        // Copy the proguard mapping to the 'etc' folder
+        def copyMappingTask = tasks.create("copy${variant.name.capitalize()}ProguardMappingToEtc", Copy)
+        copyMappingTask.from(variant.mappingFile)
+        copyMappingTask.into('../etc/proguard')
+        copyMappingTask.rename variant.mappingFile.name, "mapping-${android.defaultConfig.versionCode}-${variant.flavorName}.txt"
+        copyMappingTask.dependsOn variant.assemble
+
+        releaseTask.dependsOn copyMappingTask
     }
 }
 

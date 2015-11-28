@@ -31,7 +31,7 @@ import android.support.v4.content.AsyncTaskLoader;
 
 import org.jraf.android.moviestoday.common.model.theater.Theater;
 import org.jraf.android.moviestoday.mobile.api.Api;
-import org.jraf.android.util.log.wrapper.Log;
+import org.jraf.android.util.log.Log;
 
 public class TheaterLoader extends AsyncTaskLoader<List<Theater>> {
     private final String mQuery;
@@ -48,7 +48,7 @@ public class TheaterLoader extends AsyncTaskLoader<List<Theater>> {
         try {
             return Api.get(getContext()).searchTheaters(mQuery);
         } catch (Exception e) {
-            Log.w("Could not search for theaters", e);
+            Log.w(e, "Could not search for theaters");
             return null;
         }
     }

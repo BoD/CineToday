@@ -37,7 +37,7 @@ import android.widget.TextView;
 
 import org.jraf.android.moviestoday.R;
 import org.jraf.android.moviestoday.common.model.theater.Theater;
-import org.jraf.android.util.log.wrapper.Log;
+import org.jraf.android.util.log.Log;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -97,7 +97,7 @@ public class TheaterSearchActivity extends AppCompatActivity implements TheaterC
 
     @Override
     public void onTheaterClicked(Theater theater) {
-        Log.d("theater=" + theater);
+        Log.d("theater=%s", theater);
         Intent result = new Intent();
         result.putExtra(EXTRA_RESULT, theater);
         setResult(RESULT_OK, result);

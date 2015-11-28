@@ -37,7 +37,7 @@ import org.jraf.android.moviestoday.common.wear.WearHelper;
 import org.jraf.android.moviestoday.mobile.api.Api;
 import org.jraf.android.moviestoday.mobile.api.ImageCache;
 import org.jraf.android.moviestoday.mobile.prefs.MainPrefs;
-import org.jraf.android.util.log.wrapper.Log;
+import org.jraf.android.util.log.Log;
 
 public class LoadMoviesIntentService extends IntentService {
     private static final String PREFIX = LoadMoviesIntentService.class.getName() + ".";

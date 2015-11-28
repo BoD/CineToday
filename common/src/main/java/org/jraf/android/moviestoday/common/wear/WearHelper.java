@@ -44,7 +44,7 @@ import android.support.annotation.WorkerThread;
 
 import org.jraf.android.moviestoday.common.model.movie.Movie;
 import org.jraf.android.util.io.IoUtil;
-import org.jraf.android.util.log.wrapper.Log;
+import org.jraf.android.util.log.Log;
 import org.jraf.android.util.parcelable.ParcelableUtil;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -187,7 +187,7 @@ public class WearHelper {
 
     @WorkerThread
     private void sendMessage(String path, @Nullable final byte[] payload) {
-        Log.d("path=" + path);
+        Log.d("path=%s", path);
         HashSet<String> results = new HashSet<>();
         NodeApi.GetConnectedNodesResult nodesResult = Wearable.NodeApi.getConnectedNodes(mGoogleApiClient).await(AWAIT_TIME_S, TimeUnit.SECONDS);
         for (Node node : nodesResult.getNodes()) {
@@ -235,7 +235,7 @@ public class WearHelper {
         try {
             IoUtil.copy(inputStream, byteStream);
         } catch (IOException e) {
-            Log.w("Could not read from asset", e);
+            Log.w(e, "Could not read from asset");
             return null;
         }
         byte[] byteArray = byteStream.toByteArray();

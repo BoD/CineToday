@@ -39,7 +39,7 @@ import android.support.annotation.WorkerThread;
 
 import org.jraf.android.util.bitmap.BitmapUtil;
 import org.jraf.android.util.file.FileUtil;
-import org.jraf.android.util.log.wrapper.Log;
+import org.jraf.android.util.log.Log;
 
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -70,16 +70,16 @@ public class ImageCache {
     @WorkerThread
     @Nullable
     public Bitmap getBitmap(String uri, int maxWidth, int maxHeight) {
-        Log.d("uri=" + uri);
+        Log.d("uri=%s", uri);
         File cachedFile = getCachedFile(uri, maxWidth, maxHeight);
         if (cachedFile.exists()) {
-            Log.d("Cache hit for " + uri);
+            Log.d("Cache hit for %s", uri);
         } else {
-            Log.d("Cache miss for " + uri);
+            Log.d("Cache miss for %s", uri);
             try {
                 downloadAndResize(uri, maxWidth, maxHeight);
             } catch (IOException e) {
-                Log.w("Could not download image uri=" + uri);
+                Log.w(e, "Could not download image uri=%s", uri);
                 return null;
             }
         }
@@ -88,7 +88,7 @@ public class ImageCache {
 
     @WorkerThread
     private void downloadAndResize(String uri, int maxWidth, int maxHeight) throws IOException {
-        Log.d("uri=" + uri);
+        Log.d("uri=%s", uri);
         // Download the full sized image to a temporary file
         Request request = new Request.Builder().url(uri).build();
         Response response = OK_HTTP_CLIENT.newCall(request).execute();

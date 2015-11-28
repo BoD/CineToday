@@ -48,7 +48,7 @@ import org.jraf.android.moviestoday.common.model.theater.Theater;
 import org.jraf.android.moviestoday.mobile.api.codec.movie.MovieCodec;
 import org.jraf.android.moviestoday.mobile.api.codec.showtime.ShowtimeCodec;
 import org.jraf.android.moviestoday.mobile.api.codec.theater.TheaterCodec;
-import org.jraf.android.util.log.wrapper.Log;
+import org.jraf.android.util.log.Log;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -138,7 +138,7 @@ public class Api {
 
                 // If there is no showtimes for today, skip the movie
                 if (movie.todayShowtimes == null || movie.todayShowtimes.length == 0) {
-                    Log.w("Could not movie " + movie.id + " has no shotimes: skip it");
+                    Log.w("Movie %s has no showtimes: skip it", movie.id);
                 } else {
                     res.add(movie);
                 }
@@ -223,7 +223,7 @@ public class Api {
     @WorkerThread
     @NonNull
     private String call(HttpUrl url) throws IOException {
-        Log.d("url=" + url);
+        Log.d("url=%s", url);
         Request request = new Request.Builder().url(url).build();
         Response response = getOkHttpClient().newCall(request).execute();
         return response.body().string();
