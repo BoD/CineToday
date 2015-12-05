@@ -5,12 +5,18 @@
     <string name="main_lastUpdateDate_none">Never updated</string>
     <string name="main_lastUpdateDate">Last update: %1$s</string>
     <string name="main_lastUpdateDate_ongoing">Update ongoing…</string>
+    <string name="main_action_settings">Settings</string>
     <string name="main_action_about">About</string>
 
     <!-- Theater search -->
     <string name="theater_search_edtSearch_hint">Theater name</string>
     <string name="theater_search_noResults">No results</string>
     <string name="theater_search_title">Theater search</string>
+
+    <!-- Preferences -->
+    <string name="preference_showNewReleasesNotification_title">New releases notifications</string>
+    <string name="preference_showNewReleasesNotification_summary">Show a notification on new movie release day</string>
+    <string name="preferences_title">Settings</string>
 
     <!-- About -->
     <string name="about_authorCopyright" translatable="false" tools:ignore="TypographyOther">Copyright (C) 2015–2016 Benoit \'BoD\' Lubek.</string>

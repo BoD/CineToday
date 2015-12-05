@@ -22,26 +22,25 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jraf.android.moviestoday.mobile.app.logs;
+package org.jraf.android.moviestoday.mobile.app.prefs;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.os.AsyncTask;
+import android.os.Bundle;
+import android.support.v7.preference.PreferenceFragmentCompat;
 
-import org.jraf.android.util.log.Log;
+import org.jraf.android.moviestoday.R;
 
-public class SendLogsBroadcastReceiver extends BroadcastReceiver {
-    public SendLogsBroadcastReceiver() {}
+public class PreferencesFragment extends PreferenceFragmentCompat {
+
+    public PreferencesActivity getCallbacks() {
+        return (PreferencesActivity) getActivity();
+    }
 
     @Override
-    public void onReceive(final Context context, Intent intent) {
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... params) {
-                Log.sendAppLogsByMail(context, "BoD@JRAF.org");
-                return null;
-            }
-        }.execute();
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        addPreferencesFromResource(R.xml.preferences);
     }
+
+    @Override
+    public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {}
 }

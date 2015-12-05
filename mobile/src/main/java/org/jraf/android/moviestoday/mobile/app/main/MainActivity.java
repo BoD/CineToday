@@ -47,6 +47,7 @@ import org.jraf.android.moviestoday.mobile.app.api.LoadMoviesHelper;
 import org.jraf.android.moviestoday.mobile.app.api.LoadMoviesIntentService;
 import org.jraf.android.moviestoday.mobile.app.api.LoadMoviesListener;
 import org.jraf.android.moviestoday.mobile.app.api.LoadMoviesTaskService;
+import org.jraf.android.moviestoday.mobile.app.prefs.PreferencesActivity;
 import org.jraf.android.moviestoday.mobile.app.theater.search.TheaterSearchActivity;
 import org.jraf.android.moviestoday.mobile.prefs.MainPrefs;
 import org.jraf.android.util.about.AboutActivityIntentBuilder;
@@ -118,6 +119,11 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.action_about:
                 onAboutClicked();
+                return true;
+
+            case R.id.action_settings:
+                Intent intent = new Intent(this, PreferencesActivity.class);
+                startActivity(intent);
                 return true;
 
             default:

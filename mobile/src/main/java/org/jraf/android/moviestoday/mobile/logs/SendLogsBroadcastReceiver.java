@@ -22,41 +22,26 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jraf.android.moviestoday.mobile.prefs;
+package org.jraf.android.moviestoday.mobile.logs;
 
-import org.jraf.android.prefs.DefaultBoolean;
-import org.jraf.android.prefs.DefaultString;
-import org.jraf.android.prefs.Prefs;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.os.AsyncTask;
 
-@Prefs
-public class Main {
-    /**
-     * Theater id.
-     */
-    @DefaultString("C2954")
-    String theaterId;
+import org.jraf.android.util.log.Log;
 
-    /**
-     * Theater name.
-     */
-    @DefaultString("MK2 Bibliothèque")
-    String theaterName;
+public class SendLogsBroadcastReceiver extends BroadcastReceiver {
+    public SendLogsBroadcastReceiver() {}
 
-    /**
-     * Theater address.
-     */
-    @DefaultString("128-162 avenue de France\\n75013 Paris 13e arrondissement")
-    String theaterAddress;
-
-    /**
-     * Last time an update was successfully called.
-     */
-    Long lastUpdateDate;
-
-    /**
-     * Show a notification on new movie release day.
-     */
-    @DefaultBoolean(true)
-    Boolean showNewReleasesNotification;
-
+    @Override
+    public void onReceive(final Context context, Intent intent) {
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                Log.sendAppLogsByMail(context, "BoD@JRAF.org");
+                return null;
+            }
+        }.execute();
+    }
 }

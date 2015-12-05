@@ -4,12 +4,18 @@
     <string name="main_lastUpdateDate_none">Jamais mis à jour</string>
     <string name="main_lastUpdateDate">Dernière mise à jour : %1$s</string>
     <string name="main_lastUpdateDate_ongoing">Mise à jour en cours…</string>
+    <string name="main_action_settings">Paramètres</string>
     <string name="main_action_about">À propos</string>
 
     <!-- Theater search -->
     <string name="theater_search_edtSearch_hint">Nom du cinéma</string>
     <string name="theater_search_noResults">Aucun résultat</string>
     <string name="theater_search_title">Recherche de cinéma</string>
+
+    <!-- Preferences -->
+    <string name="preference_showNewReleasesNotification_title">Notifications de nouvelles sorties</string>
+    <string name="preference_showNewReleasesNotification_summary">Afficher une notification le jour des sorties ciné</string>
+    <string name="preferences_title">Paramètres</string>
 
     <!-- About -->
     <string name="about_shareText_subject">Une super app!</string>
