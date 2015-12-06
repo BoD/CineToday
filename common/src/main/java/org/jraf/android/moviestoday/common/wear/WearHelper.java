@@ -28,9 +28,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.SortedSet;
 import java.util.concurrent.TimeUnit;
 
 import android.content.Context;
@@ -71,8 +71,12 @@ public class WearHelper {
     private static final String PATH_MOVIE_ALL = PATH_MOVIE + "/all";
     private static final String PATH_MOVIE_POSTER = PATH_MOVIE + "/%1$s/poster";
 
-    private static final String KEY_VALUE = "KEY_VALUE";
+    private static final String PATH_NOTIFICATION = "/notification";
+
     private static final long AWAIT_TIME_S = 5;
+
+    private static final String KEY_VALUE = "KEY_VALUE";
+    public static final String KEY_NEW_MOVIES = "KEY_NEW_MOVIES";
 
     private GoogleApiClient mGoogleApiClient;
 
@@ -110,7 +114,7 @@ public class WearHelper {
     // region
 
     @WorkerThread
-    public void putMovies(Collection<Movie> movies) {
+    public void putMovies(SortedSet<Movie> movies) {
         Log.d();
         // First remove any old value
         Wearable.DataApi.deleteDataItems(mGoogleApiClient, createUri(PATH_MOVIE_ALL)).await(AWAIT_TIME_S, TimeUnit.SECONDS);
@@ -176,6 +180,18 @@ public class WearHelper {
         }
     }
 
+    @WorkerThread
+    public void putNotification(ArrayList<String> newMovies) {
+        Log.d();
+        PutDataMapRequest putDataMapRequest = PutDataMapRequest.create(PATH_NOTIFICATION);
+        DataMap dataMap = putDataMapRequest.getDataMap();
+        dataMap.putStringArrayList(KEY_NEW_MOVIES, newMovies);
+
+        PutDataRequest putDataRequest = putDataMapRequest.asPutDataRequest();
+        putDataRequest.setUrgent();
+
+        Wearable.DataApi.putDataItem(mGoogleApiClient, putDataRequest).await(AWAIT_TIME_S, TimeUnit.SECONDS);
+    }
 
     // endregion
 

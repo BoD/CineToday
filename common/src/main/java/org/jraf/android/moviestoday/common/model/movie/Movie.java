@@ -25,6 +25,7 @@
 package org.jraf.android.moviestoday.common.model.movie;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Date;
 
 import android.os.Parcel;
@@ -129,4 +130,16 @@ public class Movie implements Parcelable {
     };
 
     // endregion
+
+    /**
+     * Compares in reverse release date order.
+     */
+    public static final Comparator<Movie> COMPARATOR = new Comparator<Movie>() {
+        @Override
+        public int compare(Movie lhs, Movie rhs) {
+            int res = rhs.releaseDate.compareTo(lhs.releaseDate);
+            if (res == 0) return lhs.id.compareTo(rhs.id);
+            return res;
+        }
+    };
 }

@@ -12,6 +12,7 @@ android {
     }
     buildTypes {
         release {
+            // Do not minify a library (that would trim everything!)
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
@@ -21,4 +22,5 @@ android {
 dependencies {
     compile 'com.google.android.gms:play-services-wearable:8.3.0'
     compile 'org.jraf:jraf-android-util:1.0.0'
+    compile 'com.jakewharton:butterknife:7.0.1'
 }

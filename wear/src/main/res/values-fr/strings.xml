@@ -3,4 +3,6 @@
     <string name="movie_card_actors"><![CDATA[Avec <i>%1$s</i>]]></string>
     <string name="movie_card_originalTitle"><![CDATA[Titre original : <i>%1$s</i>]]></string>
     <string name="movie_card_showtimes_title">Séances aujourd\'hui :</string>
+
+    <string name="notif_title">Nouvelles sorties ciné!</string>
 </resources>

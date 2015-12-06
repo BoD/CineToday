@@ -29,10 +29,11 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
 
 import android.content.Context;
@@ -99,7 +100,7 @@ public class Api {
     }
 
     @WorkerThread
-    public Set<Movie> getMovieList(String theaterId, Date date) throws IOException, ParseException {
+    public SortedSet<Movie> getMovieList(String theaterId, Date date) throws IOException, ParseException {
         HttpUrl url = getBaseBuilder(PATH_SHOWTIMELIST)
                 .addQueryParameter(QUERY_THEATERS_KEY, theaterId)
                 .addQueryParameter(QUERY_DATE_KEY, SIMPLE_DATE_FORMAT.format(date))
@@ -112,7 +113,7 @@ public class Api {
             JSONObject jsonTheaterShowtime = jsonTheaterShowtimes.getJSONObject(0);
             JSONArray jsonMovieShowtimes = jsonTheaterShowtime.getJSONArray("movieShowtimes");
             int len = jsonMovieShowtimes.length();
-            LinkedHashSet<Movie> res = new LinkedHashSet<>(len);
+            TreeSet<Movie> res = new TreeSet<>(Movie.COMPARATOR);
             for (int i = 0; i < len; i++) {
                 JSONObject jsonMovieShowtime = jsonMovieShowtimes.getJSONObject(i);
                 JSONObject jsonOnShow = jsonMovieShowtime.getJSONObject("onShow");
@@ -150,9 +151,9 @@ public class Api {
     }
 
     public void getMovieList(final String theaterId, final Date date, final ResultCallback<Set<Movie>> callResult) {
-        new AsyncTask<Void, Void, ResultOrError<Set<Movie>>>() {
+        new AsyncTask<Void, Void, ResultOrError<SortedSet<Movie>>>() {
             @Override
-            protected ResultOrError<Set<Movie>> doInBackground(Void... params) {
+            protected ResultOrError<SortedSet<Movie>> doInBackground(Void... params) {
                 try {
                     return new ResultOrError<>(getMovieList(theaterId, date));
                 } catch (Throwable t) {
@@ -161,7 +162,7 @@ public class Api {
             }
 
             @Override
-            protected void onPostExecute(ResultOrError<Set<Movie>> resultOrError) {
+            protected void onPostExecute(ResultOrError<SortedSet<Movie>> resultOrError) {
                 if (resultOrError.isError()) {
                     callResult.onError(resultOrError.error);
                 } else {

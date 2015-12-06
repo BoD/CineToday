@@ -26,8 +26,8 @@ package org.jraf.android.moviestoday.mobile.app.api;
 
 import org.jraf.android.util.listeners.Listeners;
 
-public class LoadMoviesHelper implements LoadMoviesListener {
-    private static final LoadMoviesHelper INSTANCE = new LoadMoviesHelper();
+public class LoadMoviesListenerHelper implements LoadMoviesListener {
+    private static final LoadMoviesListenerHelper INSTANCE = new LoadMoviesListenerHelper();
 
     private boolean mStarted;
     private Listeners<LoadMoviesListener> mListeners = new Listeners<>();
@@ -35,7 +35,7 @@ public class LoadMoviesHelper implements LoadMoviesListener {
     private Integer mCurrentMovie;
     private Integer mTotalMovie;
 
-    private LoadMoviesHelper() {
+    private LoadMoviesListenerHelper() {
         mListeners.setNewListenerDispatcher(new Listeners.Dispatcher<LoadMoviesListener>() {
             @Override
             public void dispatch(LoadMoviesListener listener) {
@@ -50,7 +50,7 @@ public class LoadMoviesHelper implements LoadMoviesListener {
         });
     }
 
-    public static LoadMoviesHelper get() {
+    public static LoadMoviesListenerHelper get() {
         return INSTANCE;
     }
 

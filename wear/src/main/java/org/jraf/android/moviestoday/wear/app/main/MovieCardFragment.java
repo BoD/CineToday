@@ -68,7 +68,7 @@ public class MovieCardFragment extends CardFragment {
                 txtTitle.setText(movie.localTitle);
 
                 TextView txtDescription = (TextView) view.findViewById(R.id.txtDirectors);
-                if (movie.directors == null) {
+                if (TextUtils.isEmpty((movie.directors))) {
                     txtDescription.setVisibility(View.GONE);
                 } else {
                     txtDescription.setVisibility(View.VISIBLE);
@@ -76,7 +76,7 @@ public class MovieCardFragment extends CardFragment {
                 }
 
                 TextView txtActors = (TextView) view.findViewById(R.id.txtActors);
-                if (movie.actors == null) {
+                if (movie.actors == null || movie.actors.isEmpty()) {
                     txtActors.setVisibility(View.GONE);
                 } else {
                     txtActors.setVisibility(View.VISIBLE);

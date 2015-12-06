@@ -24,8 +24,13 @@
  */
 package org.jraf.android.moviestoday.mobile.app.api;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
-import java.util.Set;
+import java.util.Iterator;
+import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import android.app.IntentService;
 import android.content.Context;
@@ -80,15 +85,15 @@ public class LoadMoviesIntentService extends IntentService {
      * Handle action ACTION_LOAD_MOVIES in the provided background thread.
      */
     static void handleActionLoadMovies(Context context) throws Exception {
-        LoadMoviesHelper loadMoviesHelper = LoadMoviesHelper.get();
-        loadMoviesHelper.onLoadMoviesStarted();
+        LoadMoviesListenerHelper loadMoviesListenerHelper = LoadMoviesListenerHelper.get();
+        loadMoviesListenerHelper.onLoadMoviesStarted();
 
-        Set<Movie> movies;
+        SortedSet<Movie> movies;
         try {
             String theaterId = MainPrefs.get(context).getTheaterId();
             movies = Api.get(context).getMovieList(theaterId, new Date());
         } catch (Exception e) {
-            loadMoviesHelper.onLoadMoviesError(e);
+            loadMoviesListenerHelper.onLoadMoviesError(e);
             throw e;
         }
 
@@ -103,7 +108,7 @@ public class LoadMoviesIntentService extends IntentService {
                 Api.get(context).getMovieInfo(movie);
                 Log.d(movie.toString());
             } catch (Exception e) {
-                loadMoviesHelper.onLoadMoviesError(e);
+                loadMoviesListenerHelper.onLoadMoviesError(e);
                 throw e;
             }
 
@@ -118,13 +123,41 @@ public class LoadMoviesIntentService extends IntentService {
             }
             i++;
 
-            loadMoviesHelper.onLoadMoviesProgress(i, size);
+            loadMoviesListenerHelper.onLoadMoviesProgress(i, size);
         }
+        List<Movie> previousMovies = wearHelper.getMovies();
         wearHelper.putMovies(movies);
 
         MainPrefs.get(context).putLastUpdateDate(System.currentTimeMillis());
 
-        loadMoviesHelper.resetError();
-        loadMoviesHelper.onLoadMoviesFinished();
+        if (previousMovies != null) {
+            // Show notification
+            showNotification(wearHelper, previousMovies, movies);
+        }
+
+        wearHelper.disconnect();
+
+        loadMoviesListenerHelper.resetError();
+        loadMoviesListenerHelper.onLoadMoviesFinished();
+    }
+
+    private static void showNotification(WearHelper wearHelper, Collection<Movie> previousMovies, Collection<Movie> currentMovies) {
+        TreeSet<Movie> newMovies = new TreeSet<>(Movie.COMPARATOR);
+        for (Movie currentMovie : currentMovies) {
+            if (!previousMovies.contains(currentMovie)) newMovies.add(currentMovie);
+        }
+
+        if (newMovies.isEmpty()) {
+            Log.d("No new movies: do not show a notifications");
+            return;
+        }
+
+        ArrayList<String> firstThreeNewMovies = new ArrayList<>(3);
+        int i = 0;
+        for (Iterator<Movie> iterator = newMovies.iterator(); iterator.hasNext() && i < 3; i++) {
+            Movie newMovie = iterator.next();
+            firstThreeNewMovies.add(newMovie.localTitle);
+        }
+        wearHelper.putNotification(firstThreeNewMovies);
     }
 }

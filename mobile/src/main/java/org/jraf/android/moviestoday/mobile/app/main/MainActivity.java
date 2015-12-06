@@ -43,9 +43,9 @@ import android.widget.TextView;
 import org.jraf.android.moviestoday.BuildConfig;
 import org.jraf.android.moviestoday.R;
 import org.jraf.android.moviestoday.common.model.theater.Theater;
-import org.jraf.android.moviestoday.mobile.app.api.LoadMoviesHelper;
 import org.jraf.android.moviestoday.mobile.app.api.LoadMoviesIntentService;
 import org.jraf.android.moviestoday.mobile.app.api.LoadMoviesListener;
+import org.jraf.android.moviestoday.mobile.app.api.LoadMoviesListenerHelper;
 import org.jraf.android.moviestoday.mobile.app.api.LoadMoviesTaskService;
 import org.jraf.android.moviestoday.mobile.app.prefs.PreferencesActivity;
 import org.jraf.android.moviestoday.mobile.app.theater.search.TheaterSearchActivity;
@@ -98,12 +98,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        LoadMoviesHelper.get().addListener(mLoadMoviesListener);
+        LoadMoviesListenerHelper.get().addListener(mLoadMoviesListener);
     }
 
     @Override
     protected void onStop() {
-        LoadMoviesHelper.get().removeListener(mLoadMoviesListener);
+        LoadMoviesListenerHelper.get().removeListener(mLoadMoviesListener);
         super.onStop();
     }
 
