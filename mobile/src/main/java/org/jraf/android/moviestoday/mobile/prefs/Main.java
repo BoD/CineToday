@@ -25,7 +25,6 @@
 package org.jraf.android.moviestoday.mobile.prefs;
 
 import org.jraf.android.prefs.DefaultBoolean;
-import org.jraf.android.prefs.DefaultString;
 import org.jraf.android.prefs.Prefs;
 
 @Prefs
@@ -33,19 +32,16 @@ public class Main {
     /**
      * Theater id.
      */
-    @DefaultString("C2954")
     String theaterId;
 
     /**
      * Theater name.
      */
-    @DefaultString("MK2 Bibliothèque")
     String theaterName;
 
     /**
      * Theater address.
      */
-    @DefaultString("128-162 avenue de France\\n75013 Paris 13e arrondissement")
     String theaterAddress;
 
     /**

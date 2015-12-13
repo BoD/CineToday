@@ -50,7 +50,6 @@ import org.jraf.android.moviestoday.mobile.app.prefs.PreferencesActivity;
 import org.jraf.android.moviestoday.mobile.app.theater.search.TheaterSearchActivity;
 import org.jraf.android.moviestoday.mobile.prefs.MainPrefs;
 import org.jraf.android.util.about.AboutActivityIntentBuilder;
-import org.jraf.android.util.log.Log;
 
 import com.google.android.gms.gcm.GcmNetworkManager;
 import com.google.android.gms.gcm.PeriodicTask;
@@ -91,7 +90,10 @@ public class MainActivity extends AppCompatActivity {
 
         updateTheaterLabels();
 
-        Log.d();
+        // First use: pick a theater
+        if (!MainPrefs.get(this).containsTheaterId()) {
+            onPickTheaterClicked();
+        }
     }
 
     @Override
@@ -151,6 +153,7 @@ public class MainActivity extends AppCompatActivity {
     @OnClick(R.id.conTheater)
     protected void onPickTheaterClicked() {
         Intent intent = new Intent(this, TheaterSearchActivity.class);
+        intent.putExtra(TheaterSearchActivity.EXTRA_FIRST_USE, !MainPrefs.get(this).containsTheaterId());
         startActivityForResult(intent, REQUEST_PICK_THEATER);
     }
 
@@ -159,7 +162,13 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case REQUEST_PICK_THEATER:
-                if (resultCode == RESULT_CANCELED) break;
+                if (resultCode == RESULT_CANCELED) {
+                    if (!MainPrefs.get(this).containsTheaterId()) {
+                        // First use case, no theater was picked: finish now
+                        finish();
+                    }
+                    break;
+                }
                 Theater theater = data.getParcelableExtra(TheaterSearchActivity.EXTRA_RESULT);
                 // Save picked theater to prefs
                 MainPrefs.get(this).edit()

@@ -47,6 +47,7 @@ import butterknife.OnTextChanged;
 
 public class TheaterSearchActivity extends AppCompatActivity implements TheaterCallbacks {
     private static final String PREFIX = TheaterSearchActivity.class.getName() + ".";
+    public static final String EXTRA_FIRST_USE = PREFIX + "EXTRA_FIRST_USE";
     public static final String EXTRA_RESULT = PREFIX + "EXTRA_RESULT";
 
     @Bind(R.id.edtSearch)
@@ -63,7 +64,10 @@ public class TheaterSearchActivity extends AppCompatActivity implements TheaterC
         setContentView(R.layout.theater_search);
         ButterKnife.bind(this);
         mBtnClear.setVisibility(View.GONE);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        if (!getIntent().getBooleanExtra(EXTRA_FIRST_USE, false)) {
+            // Do not show the up arrow if in 'first use' mode
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
     }
 
     @Override
