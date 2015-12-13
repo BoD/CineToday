@@ -46,6 +46,14 @@
                     android:scheme="wear" />
             </intent-filter>
         </service>
+
+        <!-- Configuration service -->
+        <service android:name=".wear.app.configure.ConfigureIntentService" />
+
+        <!-- Confirmation -->
+        <activity
+            android:name="android.support.wearable.activity.ConfirmationActivity"
+            android:theme="@style/Theme.Confirmation" />
     </application>
 
 </manifest>

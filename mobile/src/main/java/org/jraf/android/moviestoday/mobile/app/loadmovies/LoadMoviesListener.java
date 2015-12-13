@@ -22,20 +22,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jraf.android.moviestoday.mobile.app.api;
+package org.jraf.android.moviestoday.mobile.app.loadmovies;
 
-import com.google.android.gms.gcm.GcmNetworkManager;
-import com.google.android.gms.gcm.GcmTaskService;
-import com.google.android.gms.gcm.TaskParams;
+public interface LoadMoviesListener {
+    void onLoadMoviesStarted();
 
-public class LoadMoviesTaskService extends GcmTaskService {
-    @Override
-    public int onRunTask(TaskParams taskParams) {
-        try {
-            LoadMoviesIntentService.handleActionLoadMovies(this);
-        } catch (Exception e) {
-            return GcmNetworkManager.RESULT_RESCHEDULE;
-        }
-        return GcmNetworkManager.RESULT_SUCCESS;
-    }
+    void onLoadMoviesProgress(int currentMovie, int totalMovies);
+
+    void onLoadMoviesFinished();
+
+    void onLoadMoviesError(Throwable t);
 }

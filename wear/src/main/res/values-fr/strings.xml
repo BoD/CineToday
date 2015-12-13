@@ -1,8 +1,17 @@
 <resources>
+    <!-- Main -->
+    <string name="main_empty_intro">Aucun cinéma choisi</string>
+    <string name="main_empty_pickTheater">Choisir un cinéma</string>
+
+    <!-- Movie card -->
     <string name="movie_card_directors"><![CDATA[De <i>%1$s</i>]]></string>
     <string name="movie_card_actors"><![CDATA[Avec <i>%1$s</i>]]></string>
     <string name="movie_card_originalTitle"><![CDATA[Titre original : <i>%1$s</i>]]></string>
     <string name="movie_card_showtimes_title">Séances aujourd\'hui :</string>
 
+    <!-- Notif -->
     <string name="notif_title">Nouvelles sorties ciné!</string>
+
+    <!-- Configure -->
+    <string name="configure_openedOnPhone">Ouvert sur téléphone</string>
 </resources>

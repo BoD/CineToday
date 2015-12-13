@@ -41,18 +41,34 @@
             android:label="@string/about_title" />
 
 
+        <!-- Load movies -->
         <service
-            android:name=".mobile.app.api.LoadMoviesIntentService"
+            android:name=".mobile.app.loadmovies.LoadMoviesIntentService"
             android:exported="false">
         </service>
         <service
-            android:name=".mobile.app.api.LoadMoviesTaskService"
+            android:name=".mobile.app.loadmovies.LoadMoviesTaskService"
             android:exported="true"
             android:permission="com.google.android.gms.permission.BIND_NETWORK_TASK_SERVICE">
             <intent-filter>
                 <action android:name="com.google.android.gms.gcm.ACTION_TASK_READY" />
             </intent-filter>
         </service>
+
+        <!-- Configure -->
+        <service
+            android:name=".mobile.app.configure.ConfigureWearableListenerService"
+            android:exported="true"
+            tools:ignore="ExportedService">
+            <intent-filter>
+                <action android:name="com.google.android.gms.wearable.MESSAGE_RECEIVED" />
+                <data
+                    android:host="*"
+                    android:pathPrefix="/action"
+                    android:scheme="wear" />
+            </intent-filter>
+        </service>
+
 
         <!-- Send logs -->
         <receiver

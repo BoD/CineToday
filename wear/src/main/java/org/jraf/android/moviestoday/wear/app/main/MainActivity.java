@@ -28,20 +28,24 @@ import java.util.HashMap;
 import java.util.List;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.wearable.view.GridViewPager;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
 import org.jraf.android.moviestoday.R;
 import org.jraf.android.moviestoday.common.model.movie.Movie;
 import org.jraf.android.moviestoday.common.wear.WearHelper;
+import org.jraf.android.moviestoday.wear.app.configure.ConfigureIntentService;
 import org.jraf.android.util.log.Log;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class MainActivity extends Activity {
     @Bind(R.id.gridViewPager)
@@ -49,6 +53,9 @@ public class MainActivity extends Activity {
 
     @Bind(R.id.pgbLoading)
     protected ProgressBar mPgbLoading;
+
+    @Bind(R.id.conEmpty)
+    protected LinearLayout mConEmpty;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,14 +79,23 @@ public class MainActivity extends Activity {
 
             @Override
             protected void onPostExecute(List<Movie> movies) {
+                mPgbLoading.setVisibility(View.GONE);
                 if (movies == null) {
                     Log.d("Movie list was empty");
+                    mConEmpty.setVisibility(View.VISIBLE);
+                    mGridViewPager.setVisibility(View.GONE);
                 } else {
-                    mPgbLoading.setVisibility(View.GONE);
                     MovieFragmentGridPagerAdapter adapter = new MovieFragmentGridPagerAdapter(MainActivity.this, getFragmentManager(), movies, mPosterMap);
                     mGridViewPager.setAdapter(adapter);
                 }
             }
         }.execute();
+    }
+
+    @OnClick(R.id.btnConfigure)
+    protected void onConfigureClicked() {
+        Intent intent = new Intent(this, ConfigureIntentService.class);
+        intent.setAction(ConfigureIntentService.ACTION_CONFIGURE);
+        startService(intent);
     }
 }

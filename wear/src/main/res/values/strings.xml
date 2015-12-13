@@ -1,9 +1,19 @@
 <resources>
     <string name="app_name" translatable="false">MoviesToday</string>
+
+    <!-- Main -->
+    <string name="main_empty_intro">No theater was chosen</string>
+    <string name="main_empty_pickTheater">Choose a theater</string>
+
+    <!-- Movie card -->
     <string name="movie_card_directors"><![CDATA[By <i>%1$s</i>]]></string>
     <string name="movie_card_actors"><![CDATA[With <i>%1$s</i>]]></string>
     <string name="movie_card_originalTitle"><![CDATA[Original title: <i>%1$s</i>]]></string>
     <string name="movie_card_showtimes_title">Show times today:</string>
 
+    <!-- Notif -->
     <string name="notif_title">New movies released!</string>
+
+    <!-- Configure -->
+    <string name="configure_openedOnPhone">Opened on phone</string>
 </resources>

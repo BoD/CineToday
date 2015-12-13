@@ -73,6 +73,9 @@ public class WearHelper {
 
     private static final String PATH_NOTIFICATION = "/notification";
 
+    private static final String PATH_ACTION = "/action";
+    public static final String PATH_ACTION_OPEN_CONFIGURE_ACTIVITY = PATH_ACTION + "/openConfigureActivity";
+
     private static final long AWAIT_TIME_S = 5;
 
     private static final String KEY_VALUE = "KEY_VALUE";
@@ -209,6 +212,11 @@ public class WearHelper {
         for (Node node : nodesResult.getNodes()) {
             Wearable.MessageApi.sendMessage(mGoogleApiClient, node.getId(), path, payload).await(AWAIT_TIME_S, TimeUnit.SECONDS);
         }
+    }
+
+    @WorkerThread
+    public void sendMessageOpenConfigureActivity() {
+        sendMessage(PATH_ACTION_OPEN_CONFIGURE_ACTIVITY, null);
     }
 
     // endregion
