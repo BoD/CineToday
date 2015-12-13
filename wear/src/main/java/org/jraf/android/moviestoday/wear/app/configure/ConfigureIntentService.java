@@ -36,8 +36,6 @@ import org.jraf.android.util.string.StringUtil;
 public class ConfigureIntentService extends IntentService {
     public static final String ACTION_CONFIGURE = "ACTION_CONFIGURE";
 
-    private WearHelper mWearHelper = WearHelper.get();
-
     public ConfigureIntentService() {
         super(ConfigureIntentService.class.getName());
     }
@@ -46,13 +44,13 @@ public class ConfigureIntentService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         Log.d("intent=%s", StringUtil.toString(intent));
 
-        // Blocking
-        mWearHelper.connect(this);
-
         String action = intent.getAction();
         switch (action) {
             case ACTION_CONFIGURE:
-                mWearHelper.sendMessageOpenConfigureActivity();
+                WearHelper wearHelper = WearHelper.get();
+                wearHelper.connect(this);
+                wearHelper.sendMessageOpenConfigureActivity();
+                wearHelper.disconnect();
                 showOpenOnPhoneAnimation();
                 break;
         }
@@ -64,11 +62,5 @@ public class ConfigureIntentService extends IntentService {
         intent.putExtra(ConfirmationActivity.EXTRA_MESSAGE, getString(R.string.configure_openedOnPhone));
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
-    }
-
-    @Override
-    public void onDestroy() {
-        mWearHelper.disconnect();
-        super.onDestroy();
     }
 }

@@ -36,6 +36,7 @@ import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.support.annotation.WorkerThread;
 
 import org.jraf.android.moviestoday.common.model.movie.Movie;
 import org.jraf.android.moviestoday.common.wear.WearHelper;
@@ -84,6 +85,7 @@ public class LoadMoviesIntentService extends IntentService {
     /**
      * Handle action ACTION_LOAD_MOVIES in the provided background thread.
      */
+    @WorkerThread
     static void handleActionLoadMovies(Context context) throws Exception {
         LoadMoviesListenerHelper loadMoviesListenerHelper = LoadMoviesListenerHelper.get();
         loadMoviesListenerHelper.onLoadMoviesStarted();
@@ -99,46 +101,49 @@ public class LoadMoviesIntentService extends IntentService {
 
         WearHelper wearHelper = WearHelper.get();
         wearHelper.connect(context);
-
-        int size = movies.size();
-        int i = 0;
-        for (Movie movie : movies) {
-            // Get movie info
-            try {
-                Api.get(context).getMovieInfo(movie);
-                Log.d(movie.toString());
-            } catch (Exception e) {
-                loadMoviesListenerHelper.onLoadMoviesError(e);
-                throw e;
-            }
-
-            // Get poster image
-            Bitmap posterBitmap = ImageCache.get(context).getBitmap(movie.posterUri, POSTER_THUMBNAIL_WIDTH, POSTER_THUMBNAIL_HEIGHT);
-            if (posterBitmap != null) {
-                // Save it for Wear (only if not already there)
-                Bitmap currentBitmap = wearHelper.getMoviePoster(movie);
-                if (currentBitmap == null) {
-                    wearHelper.putMoviePoster(movie, posterBitmap);
+        wearHelper.putMoviesLoading(true);
+        try {
+            int size = movies.size();
+            int i = 0;
+            for (Movie movie : movies) {
+                // Get movie info
+                try {
+                    Api.get(context).getMovieInfo(movie);
+                    Log.d(movie.toString());
+                } catch (Exception e) {
+                    loadMoviesListenerHelper.onLoadMoviesError(e);
+                    throw e;
                 }
+
+                // Get poster image
+                Bitmap posterBitmap = ImageCache.get(context).getBitmap(movie.posterUri, POSTER_THUMBNAIL_WIDTH, POSTER_THUMBNAIL_HEIGHT);
+                if (posterBitmap != null) {
+                    // Save it for Wear (only if not already there)
+                    Bitmap currentBitmap = wearHelper.getMoviePoster(movie);
+                    if (currentBitmap == null) {
+                        wearHelper.putMoviePoster(movie, posterBitmap);
+                    }
+                }
+                i++;
+
+                loadMoviesListenerHelper.onLoadMoviesProgress(i, size);
             }
-            i++;
+            List<Movie> previousMovies = wearHelper.getMovies();
+            wearHelper.putMovies(movies);
 
-            loadMoviesListenerHelper.onLoadMoviesProgress(i, size);
+            MainPrefs.get(context).putLastUpdateDate(System.currentTimeMillis());
+
+            if (previousMovies != null) {
+                // Show notification
+                showNotification(wearHelper, previousMovies, movies);
+            }
+
+            loadMoviesListenerHelper.resetError();
+            loadMoviesListenerHelper.onLoadMoviesFinished();
+        } finally {
+            wearHelper.putMoviesLoading(false);
+            wearHelper.disconnect();
         }
-        List<Movie> previousMovies = wearHelper.getMovies();
-        wearHelper.putMovies(movies);
-
-        MainPrefs.get(context).putLastUpdateDate(System.currentTimeMillis());
-
-        if (previousMovies != null) {
-            // Show notification
-            showNotification(wearHelper, previousMovies, movies);
-        }
-
-        wearHelper.disconnect();
-
-        loadMoviesListenerHelper.resetError();
-        loadMoviesListenerHelper.onLoadMoviesFinished();
     }
 
     private static void showNotification(WearHelper wearHelper, Collection<Movie> previousMovies, Collection<Movie> currentMovies) {

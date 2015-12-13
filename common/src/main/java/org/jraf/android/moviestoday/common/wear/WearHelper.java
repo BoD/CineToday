@@ -68,8 +68,9 @@ public class WearHelper {
     private static final WearHelper INSTANCE = new WearHelper();
 
     private static final String PATH_MOVIE = "/movie";
-    private static final String PATH_MOVIE_ALL = PATH_MOVIE + "/all";
+    public static final String PATH_MOVIE_ALL = PATH_MOVIE + "/all";
     private static final String PATH_MOVIE_POSTER = PATH_MOVIE + "/%1$s/poster";
+    public static final String PATH_MOVIE_LOADING = PATH_MOVIE + "/loading";
 
     private static final String PATH_NOTIFICATION = "/notification";
 
@@ -78,10 +79,11 @@ public class WearHelper {
 
     private static final long AWAIT_TIME_S = 5;
 
-    private static final String KEY_VALUE = "KEY_VALUE";
+    public static final String KEY_VALUE = "KEY_VALUE";
     public static final String KEY_NEW_MOVIES = "KEY_NEW_MOVIES";
 
     private GoogleApiClient mGoogleApiClient;
+    private int mUsers;
 
     private WearHelper() {}
 
@@ -92,8 +94,9 @@ public class WearHelper {
     @WorkerThread
     public synchronized void connect(Context context) {
         Log.d();
+        mUsers++;
         if (mGoogleApiClient != null) {
-            Log.d("Already connected");
+            Log.d("Already connected, mUsers=%s", mUsers);
             return;
         }
 
@@ -101,20 +104,38 @@ public class WearHelper {
         // Blocking
         ConnectionResult connectionResult = mGoogleApiClient.blockingConnect();
         if (!connectionResult.isSuccess()) {
+            Log.d("Could not connect, errorCode=%s errorMessage='%s' mUsers=%s", connectionResult.getErrorCode(), connectionResult.getErrorMessage(), mUsers);
             // TODO handle failures
+        } else {
+            Log.d("Now connected, mUsers=%s", mUsers);
         }
     }
 
     public synchronized void disconnect() {
-        Log.d();
-        if (mGoogleApiClient != null) mGoogleApiClient.disconnect();
-        mGoogleApiClient = null;
+        mUsers--;
+        Log.d("mUsers=%s", mUsers);
+        if (mUsers == 0) {
+            if (mGoogleApiClient != null) mGoogleApiClient.disconnect();
+            mGoogleApiClient = null;
+        }
     }
 
     /*
      * Data.
      */
     // region
+
+    @WorkerThread
+    public void addListener(DataApi.DataListener listener) {
+        Log.d();
+        Wearable.DataApi.addListener(mGoogleApiClient, listener).await(AWAIT_TIME_S, TimeUnit.SECONDS);
+    }
+
+    @WorkerThread
+    public void removeListener(DataApi.DataListener listener) {
+        Log.d();
+        Wearable.DataApi.removeListener(mGoogleApiClient, listener).await(AWAIT_TIME_S, TimeUnit.SECONDS);
+    }
 
     @WorkerThread
     public void putMovies(SortedSet<Movie> movies) {
@@ -132,6 +153,7 @@ public class WearHelper {
         dataMap.putAsset(KEY_VALUE, createAssetFromBundle(moviesBundle));
 
         PutDataRequest putDataRequest = putDataMapRequest.asPutDataRequest();
+        putDataRequest.setUrgent();
 
         Wearable.DataApi.putDataItem(mGoogleApiClient, putDataRequest).await(AWAIT_TIME_S, TimeUnit.SECONDS);
     }
@@ -189,6 +211,19 @@ public class WearHelper {
         PutDataMapRequest putDataMapRequest = PutDataMapRequest.create(PATH_NOTIFICATION);
         DataMap dataMap = putDataMapRequest.getDataMap();
         dataMap.putStringArrayList(KEY_NEW_MOVIES, newMovies);
+
+        PutDataRequest putDataRequest = putDataMapRequest.asPutDataRequest();
+//        putDataRequest.setUrgent();
+
+        Wearable.DataApi.putDataItem(mGoogleApiClient, putDataRequest).await(AWAIT_TIME_S, TimeUnit.SECONDS);
+    }
+
+    @WorkerThread
+    public void putMoviesLoading(boolean loading) {
+        Log.d("loading=%s", loading);
+        PutDataMapRequest putDataMapRequest = PutDataMapRequest.create(PATH_MOVIE_LOADING);
+        DataMap dataMap = putDataMapRequest.getDataMap();
+        dataMap.putBoolean(KEY_VALUE, loading);
 
         PutDataRequest putDataRequest = putDataMapRequest.asPutDataRequest();
         putDataRequest.setUrgent();

@@ -30,6 +30,7 @@ import java.util.List;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.wearable.view.GridViewPager;
@@ -42,6 +43,13 @@ import org.jraf.android.moviestoday.common.model.movie.Movie;
 import org.jraf.android.moviestoday.common.wear.WearHelper;
 import org.jraf.android.moviestoday.wear.app.configure.ConfigureIntentService;
 import org.jraf.android.util.log.Log;
+
+import com.google.android.gms.wearable.DataApi;
+import com.google.android.gms.wearable.DataEvent;
+import com.google.android.gms.wearable.DataEventBuffer;
+import com.google.android.gms.wearable.DataItem;
+import com.google.android.gms.wearable.DataMap;
+import com.google.android.gms.wearable.DataMapItem;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -57,39 +65,53 @@ public class MainActivity extends Activity {
     @Bind(R.id.conEmpty)
     protected LinearLayout mConEmpty;
 
+    protected boolean mHasConnected;
+
+    private class loadMoviesAsyncTask extends AsyncTask<Void, Void, List<Movie>> {
+        HashMap<Movie, Bitmap> mPosterMap = new HashMap<>();
+
+        @Override
+        protected List<Movie> doInBackground(Void... params) {
+            WearHelper wearHelper = WearHelper.get();
+            if (!mHasConnected) {
+                wearHelper.connect(MainActivity.this);
+                mHasConnected = true;
+            }
+
+            wearHelper.addListener(mDataListener);
+
+            List<Movie> movieList = wearHelper.getMovies();
+            if (movieList == null) return null;
+            for (Movie movie : movieList) {
+                mPosterMap.put(movie, wearHelper.getMoviePoster(movie));
+            }
+            return movieList;
+        }
+
+        @Override
+        protected void onPostExecute(List<Movie> movies) {
+            mPgbLoading.setVisibility(View.GONE);
+            if (movies == null) {
+                Log.d("Movie list was empty");
+                mConEmpty.setVisibility(View.VISIBLE);
+                mGridViewPager.setVisibility(View.GONE);
+            } else {
+                mConEmpty.setVisibility(View.GONE);
+                mGridViewPager.setVisibility(View.VISIBLE);
+                MovieFragmentGridPagerAdapter adapter = new MovieFragmentGridPagerAdapter(MainActivity.this, getFragmentManager(), movies, mPosterMap);
+                mGridViewPager.setAdapter(adapter);
+            }
+        }
+    }
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         ButterKnife.bind(this);
 
-        new AsyncTask<Void, Void, List<Movie>>() {
-            HashMap<Movie, Bitmap> mPosterMap = new HashMap<>();
-
-            @Override
-            protected List<Movie> doInBackground(Void... params) {
-                WearHelper.get().connect(MainActivity.this);
-                List<Movie> movieList = WearHelper.get().getMovies();
-                if (movieList == null) return null;
-                for (Movie movie : movieList) {
-                    mPosterMap.put(movie, WearHelper.get().getMoviePoster(movie));
-                }
-                return movieList;
-            }
-
-            @Override
-            protected void onPostExecute(List<Movie> movies) {
-                mPgbLoading.setVisibility(View.GONE);
-                if (movies == null) {
-                    Log.d("Movie list was empty");
-                    mConEmpty.setVisibility(View.VISIBLE);
-                    mGridViewPager.setVisibility(View.GONE);
-                } else {
-                    MovieFragmentGridPagerAdapter adapter = new MovieFragmentGridPagerAdapter(MainActivity.this, getFragmentManager(), movies, mPosterMap);
-                    mGridViewPager.setAdapter(adapter);
-                }
-            }
-        }.execute();
+        new loadMoviesAsyncTask().execute();
     }
 
     @OnClick(R.id.btnConfigure)
@@ -98,4 +120,63 @@ public class MainActivity extends Activity {
         intent.setAction(ConfigureIntentService.ACTION_CONFIGURE);
         startService(intent);
     }
+
+    private DataApi.DataListener mDataListener = new DataApi.DataListener() {
+        @Override
+        public void onDataChanged(DataEventBuffer dataEventBuffer) {
+            int count = dataEventBuffer.getCount();
+            Log.d("count=%s", count);
+            for (int i = 0; i < count; i++) {
+                DataEvent dataEvent = dataEventBuffer.get(i);
+
+                if (dataEvent.getType() != DataEvent.TYPE_CHANGED) continue;
+                DataItem dataItem = dataEvent.getDataItem();
+                Uri uri = dataItem.getUri();
+                Log.d("uri=" + uri);
+                String path = uri.getPath();
+                Log.d("path=" + path);
+
+                switch (path) {
+                    case WearHelper.PATH_MOVIE_ALL:
+                        new loadMoviesAsyncTask().execute();
+                        break;
+
+                    case WearHelper.PATH_MOVIE_LOADING:
+                        DataMapItem dataMapItem = DataMapItem.fromDataItem(dataItem);
+                        DataMap dataMap = dataMapItem.getDataMap();
+                        boolean loading = dataMap.getBoolean(WearHelper.KEY_VALUE);
+                        handleLoadingChanged(loading);
+                        break;
+                }
+            }
+        }
+    };
+
+    private void handleLoadingChanged(boolean loading) {
+        Log.d("loading=%s", loading);
+        if (loading) {
+            mPgbLoading.setVisibility(View.VISIBLE);
+            mConEmpty.setVisibility(View.GONE);
+        } else {
+            mPgbLoading.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (mHasConnected) {
+            new AsyncTask<Void, Void, Void>() {
+                @Override
+                protected Void doInBackground(Void... params) {
+                    WearHelper wearHelper = WearHelper.get();
+                    wearHelper.removeListener(mDataListener);
+                    wearHelper.disconnect();
+                    return null;
+                }
+            }.execute();
+        }
+        super.onDestroy();
+    }
 }
+
+
