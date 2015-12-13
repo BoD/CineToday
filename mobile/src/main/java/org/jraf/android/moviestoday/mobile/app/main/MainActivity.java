@@ -36,7 +36,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -63,6 +62,9 @@ import butterknife.OnClick;
 public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_PICK_THEATER = 0;
 
+    @Bind(R.id.conTheater)
+    protected View mConTheater;
+
     @Bind(R.id.txtTheaterName)
     protected TextView mTxtTheaterName;
 
@@ -71,9 +73,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Bind(R.id.txtLastUpdateDate)
     protected TextView mTxtLastUpdateDate;
-
-    @Bind((R.id.btnPickTheater))
-    protected ImageButton mBtnPickTheater;
 
     @Bind((R.id.swiRefresh))
     protected SwipeRefreshLayout mSwiRefresh;
@@ -149,7 +148,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    @OnClick(R.id.btnPickTheater)
+    @OnClick(R.id.conTheater)
     protected void onPickTheaterClicked() {
         Intent intent = new Intent(this, TheaterSearchActivity.class);
         startActivityForResult(intent, REQUEST_PICK_THEATER);
@@ -172,11 +171,16 @@ public class MainActivity extends AppCompatActivity {
                 updateTheaterLabels();
 
                 // Update now
-                LoadMoviesIntentService.startActionLoadMovies(this);
-
-                // Schedule the daily task
-                scheduleTask();
+                updateNowAndScheduleTask();
         }
+    }
+
+    private void updateNowAndScheduleTask() {
+        // Update now
+        LoadMoviesIntentService.startActionLoadMovies(this);
+
+        // Schedule the daily task
+        scheduleTask();
     }
 
     private void scheduleTask() {
@@ -197,7 +201,7 @@ public class MainActivity extends AppCompatActivity {
     private SwipeRefreshLayout.OnRefreshListener mOnRefreshListener = new SwipeRefreshLayout.OnRefreshListener() {
         @Override
         public void onRefresh() {
-            LoadMoviesIntentService.startActionLoadMovies(MainActivity.this);
+            updateNowAndScheduleTask();
         }
     };
 
@@ -214,7 +218,7 @@ public class MainActivity extends AppCompatActivity {
                     mSwiRefresh.setRefreshing(true);
                 }
             });
-            mBtnPickTheater.setEnabled(false);
+            mConTheater.setEnabled(false);
         }
 
         @Override
@@ -228,7 +232,7 @@ public class MainActivity extends AppCompatActivity {
             updateLastUpdateDateLabel();
             mPgbLoadingProgress.setVisibility(View.GONE);
             mSwiRefresh.setRefreshing(false);
-            mBtnPickTheater.setEnabled(true);
+            mConTheater.setEnabled(true);
         }
 
         @Override

@@ -147,6 +147,12 @@ public class LoadMoviesIntentService extends IntentService {
             if (!previousMovies.contains(currentMovie)) newMovies.add(currentMovie);
         }
 
+//        // XXX Testing only
+//        Movie fakeMovie = new Movie();
+//        fakeMovie.localTitle = "Fake movie " + new Date();
+//        fakeMovie.releaseDate = new Date();
+//        newMovies.add(fakeMovie);
+
         if (newMovies.isEmpty()) {
             Log.d("No new movies: do not show a notifications");
             return;

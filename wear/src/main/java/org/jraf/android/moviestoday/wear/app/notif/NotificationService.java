@@ -28,11 +28,14 @@ import java.util.ArrayList;
 
 import android.app.Notification;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 
 import org.jraf.android.moviestoday.R;
 import org.jraf.android.moviestoday.common.wear.WearHelper;
+import org.jraf.android.moviestoday.wear.app.main.MainActivity;
 import org.jraf.android.util.log.Log;
 
 import com.google.android.gms.wearable.DataEvent;
@@ -102,9 +105,19 @@ public class NotificationService extends WearableListenerService {
         }
         mainNotifBuilder.setStyle(inboxStyle);
 
+        // Content intent
+        Intent mainActivityIntent = new Intent(this, MainActivity.class);
+        mainActivityIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        PendingIntent mainActivityPendingIntent = PendingIntent.getActivity(this, 0, mainActivityIntent, 0);
+        mainNotifBuilder.setContentIntent(mainActivityPendingIntent);
+
         // Wear specifics
         Notification.WearableExtender wearableExtender = new Notification.WearableExtender();
-//        wearableExtender.setBackground(BitmapFactory.decodeResource(getResources(), R.drawable.ic_notif_logo)); // TODO
+        // TODO
+//        wearableExtender.setBackground(BitmapFactory.decodeResource(getResources(), R.drawable.ic_notif_logo));
+//        wearableExtender.addAction(new Notification.Action.Builder(R.mipmap.ic_launcher, "Open", mainActivityPendingIntent).build());
+//        wearableExtender.setContentAction(0);
+
 
         Notification.Builder wearableNotifBuilder = wearableExtender.extend(mainNotifBuilder);
         Notification res = wearableNotifBuilder.build();

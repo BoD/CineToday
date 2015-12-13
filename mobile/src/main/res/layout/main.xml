@@ -24,42 +24,31 @@
                 android:layout_height="wrap_content">
 
                 <LinearLayout
+                    android:id="@+id/conTheater"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:padding="16dp">
+                    android:background="?attr/selectableItemBackground"
+                    android:orientation="vertical"
+                    android:paddingBottom="16dp"
+                    android:paddingLeft="8dp"
+                    android:paddingRight="8dp"
+                    android:paddingTop="16dp">
 
-                    <LinearLayout
-                        android:layout_width="0px"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:id="@+id/txtTheaterName"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textAppearance="?android:attr/textAppearanceSearchResultTitle"
-                            tools:text="MK2 Bibliothèque" />
-
-                        <TextView
-                            android:id="@+id/txtTheaterAddress"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
-                            android:textAppearance="?android:attr/textAppearanceSearchResultSubtitle"
-                            tools:text="23 rue Nationale\n75013 PARIS" />
-                    </LinearLayout>
-
-                    <ImageButton
-                        android:id="@+id/btnPickTheater"
+                    <TextView
+                        android:id="@+id/txtTheaterName"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:background="?attr/selectableItemBackgroundBorderless"
-                        android:padding="8dp"
-                        android:src="@drawable/ic_edit" />
+                        android:fontFamily="sans-serif-condensed"
+                        android:textAppearance="?android:attr/textAppearanceSearchResultTitle"
+                        tools:text="MK2 Bibliothèque" />
 
+                    <TextView
+                        android:id="@+id/txtTheaterAddress"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-light"
+                        android:textAppearance="?android:attr/textAppearanceSearchResultSubtitle"
+                        tools:text="23 rue Nationale\n75013 PARIS" />
                 </LinearLayout>
             </android.support.v7.widget.CardView>
 

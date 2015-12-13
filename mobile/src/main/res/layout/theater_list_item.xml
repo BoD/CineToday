@@ -19,6 +19,7 @@
             android:id="@+id/txtName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-condensed"
             android:textAppearance="?android:attr/textAppearanceSearchResultTitle"
             tools:text="MK2 Bibliothèque" />
 
@@ -26,7 +27,7 @@
             android:id="@+id/txtAddress"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
+            android:fontFamily="sans-serif-light"
             android:textAppearance="?android:attr/textAppearanceSearchResultSubtitle"
             tools:text="23 rue Nationale\n75013 PARIS" />
     </LinearLayout>
