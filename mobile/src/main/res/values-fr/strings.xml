@@ -18,7 +18,7 @@
     <string name="preferences_title">Paramètres</string>
 
     <!-- About -->
-    <string name="about_shareText_subject">Une super app!</string>
-    <string name="about_shareText_body">Cette app affiche les infos des films à l\'affiche dans votre cinéma préféré.\nRendez-vous ici:\nhttp://play.google.com/store/apps/details?id=%s</string>
+    <string name="about_shareText_subject">Une super app !</string>
+    <string name="about_shareText_body">Cette app affiche sur smart watch les films à l\'affiche dans votre cinéma préféré !\nRendez-vous ici:\nhttp://play.google.com/store/apps/details?id=%s</string>
 
 </resources>

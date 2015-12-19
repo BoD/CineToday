@@ -16,7 +16,7 @@ android {
     buildToolsVersion '23.0.2'
 
     defaultConfig {
-        applicationId 'org.jraf.android.moviestoday'
+        applicationId 'org.jraf.android.cinetoday'
         minSdkVersion 18
         targetSdkVersion 23
         versionCode buildNumber

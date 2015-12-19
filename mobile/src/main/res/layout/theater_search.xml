@@ -38,7 +38,7 @@
 
     <fragment
         android:id="@+id/fraTheaterSearch"
-        android:name="org.jraf.android.moviestoday.mobile.app.theater.search.TheaterSearchFragment"
+        android:name="org.jraf.android.cinetoday.mobile.app.theater.search.TheaterSearchFragment"
         android:layout_width="match_parent"
         android:layout_height="0px"
         android:layout_marginTop="8dp"

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name" translatable="false">MoviesToday</string>
+    <string name="app_name" translatable="false">CineToday</string>
 
     <!-- Main -->
     <string name="main_empty_intro">No theater was chosen</string>
