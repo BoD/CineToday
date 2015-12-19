@@ -106,6 +106,8 @@ public class LoadMoviesIntentService extends IntentService {
             int size = movies.size();
             int i = 0;
             for (Movie movie : movies) {
+                loadMoviesListenerHelper.onLoadMoviesProgress(i, size, movie.localTitle);
+
                 // Get movie info
                 try {
                     Api.get(context).getMovieInfo(movie);
@@ -126,7 +128,7 @@ public class LoadMoviesIntentService extends IntentService {
                 }
                 i++;
 
-                loadMoviesListenerHelper.onLoadMoviesProgress(i, size);
+                loadMoviesListenerHelper.onLoadMoviesProgress(i, size, movie.localTitle);
             }
             List<Movie> previousMovies = wearHelper.getMovies();
             wearHelper.putMovies(movies);
@@ -139,7 +141,7 @@ public class LoadMoviesIntentService extends IntentService {
             }
 
             loadMoviesListenerHelper.resetError();
-            loadMoviesListenerHelper.onLoadMoviesFinished();
+            loadMoviesListenerHelper.onLoadMoviesSuccess();
         } finally {
             wearHelper.putMoviesLoading(false);
             wearHelper.disconnect();

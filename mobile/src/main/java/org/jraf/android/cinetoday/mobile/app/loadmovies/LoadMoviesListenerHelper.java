@@ -32,7 +32,8 @@ public class LoadMoviesListenerHelper implements LoadMoviesListener {
     private boolean mStarted;
     private Listeners<LoadMoviesListener> mListeners = new Listeners<>();
     private Throwable mError;
-    private Integer mCurrentMovie;
+    private Integer mCurrentMovieIndex;
+    private String mCurrentMovieName;
     private Integer mTotalMovie;
 
     private LoadMoviesListenerHelper() {
@@ -42,10 +43,12 @@ public class LoadMoviesListenerHelper implements LoadMoviesListener {
                 if (mStarted) {
                     listener.onLoadMoviesStarted();
                 } else {
-                    listener.onLoadMoviesFinished();
+                    listener.onLoadMoviesSuccess();
                 }
                 if (mError != null) listener.onLoadMoviesError(mError);
-                if (mCurrentMovie != null && mTotalMovie != null) listener.onLoadMoviesProgress(mCurrentMovie, mTotalMovie);
+                if (mCurrentMovieIndex != null && mTotalMovie != null && mCurrentMovieName != null) {
+                    listener.onLoadMoviesProgress(mCurrentMovieIndex, mTotalMovie, mCurrentMovieName);
+                }
             }
         });
     }
@@ -74,25 +77,27 @@ public class LoadMoviesListenerHelper implements LoadMoviesListener {
     }
 
     @Override
-    public void onLoadMoviesProgress(final int currentMovie, final int totalMovies) {
-        mCurrentMovie = currentMovie;
+    public void onLoadMoviesProgress(final int currentMovie, final int totalMovies, final String movieName) {
+        mCurrentMovieIndex = currentMovie;
         mTotalMovie = totalMovies;
+        mCurrentMovieName = movieName;
         mListeners.dispatch(new Listeners.Dispatcher<LoadMoviesListener>() {
             @Override
             public void dispatch(LoadMoviesListener listener) {
-                listener.onLoadMoviesProgress(currentMovie, totalMovies);
+                listener.onLoadMoviesProgress(currentMovie, totalMovies, movieName);
             }
         });
     }
 
     @Override
-    public void onLoadMoviesFinished() {
+    public void onLoadMoviesSuccess() {
         mStarted = false;
-        mCurrentMovie = mTotalMovie = null;
+        mCurrentMovieIndex = mTotalMovie = null;
+        mCurrentMovieName = null;
         mListeners.dispatch(new Listeners.Dispatcher<LoadMoviesListener>() {
             @Override
             public void dispatch(LoadMoviesListener listener) {
-                listener.onLoadMoviesFinished();
+                listener.onLoadMoviesSuccess();
             }
         });
     }
@@ -100,6 +105,9 @@ public class LoadMoviesListenerHelper implements LoadMoviesListener {
     @Override
     public void onLoadMoviesError(final Throwable error) {
         mError = error;
+        mStarted = false;
+        mCurrentMovieIndex = mTotalMovie = null;
+        mCurrentMovieName = null;
         mListeners.dispatch(new Listeners.Dispatcher<LoadMoviesListener>() {
             @Override
             public void dispatch(LoadMoviesListener listener) {

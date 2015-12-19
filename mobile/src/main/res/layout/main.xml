@@ -54,15 +54,40 @@
 
             <!-- Update info -->
 
-            <TextView
-                android:id="@+id/txtLastUpdateDate"
+            <LinearLayout
+                android:id="@+id/conStatus"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:layout_margin="8dp"
-                android:orientation="horizontal"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                tools:text="Last update: 2015-11-08 at 9:00" />
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/txtStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:orientation="horizontal"
+                    android:singleLine="true"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    tools:text="Last update: 2015-11-08" />
+
+                <TextView
+                    android:id="@+id/txtCurrentMovie"
+                    android:layout_width="0px"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:gravity="right"
+                    android:maxLines="1"
+                    android:orientation="horizontal"
+                    android:singleLine="true"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textStyle="italic"
+                    tools:text="Star Wars Episode VII" />
+            </LinearLayout>
 
             <!-- Loading progress -->
 
@@ -71,7 +96,7 @@
                 style="?android:attr/progressBarStyleHorizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_above="@+id/txtLastUpdateDate"
+                android:layout_above="@+id/conStatus"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp" />
 

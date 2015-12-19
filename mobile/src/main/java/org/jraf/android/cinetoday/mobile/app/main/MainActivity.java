@@ -70,8 +70,11 @@ public class MainActivity extends AppCompatActivity {
     @Bind(R.id.txtTheaterAddress)
     protected TextView mTxtTheaterAddress;
 
-    @Bind(R.id.txtLastUpdateDate)
-    protected TextView mTxtLastUpdateDate;
+    @Bind(R.id.txtStatus)
+    protected TextView mTxtStatus;
+
+    @Bind(R.id.txtCurrentMovie)
+    protected TextView mTxtCurrentMovie;
 
     @Bind((R.id.swiRefresh))
     protected SwipeRefreshLayout mSwiRefresh;
@@ -143,10 +146,10 @@ public class MainActivity extends AppCompatActivity {
         MainPrefs prefs = MainPrefs.get(this);
         Long lastUpdateDate = prefs.getLastUpdateDate();
         if (lastUpdateDate == null) {
-            mTxtLastUpdateDate.setText(R.string.main_lastUpdateDate_none);
+            mTxtStatus.setText(R.string.main_lastUpdateDate_none);
         } else {
             String dateStr = DateUtils.formatDateTime(this, lastUpdateDate, DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_TIME);
-            mTxtLastUpdateDate.setText(getString(R.string.main_lastUpdateDate, dateStr));
+            mTxtStatus.setText(getString(R.string.main_lastUpdateDate, dateStr));
         }
     }
 
@@ -193,7 +196,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void scheduleTask() {
-//        long periodSecs = TimeUnit.DAYS.toSeconds(1);
         long periodSecs = TimeUnit.HOURS.toSeconds(12);
         long flexSecs = TimeUnit.HOURS.toSeconds(1);
         String tag = "dailyLoadMovies";
@@ -217,7 +219,7 @@ public class MainActivity extends AppCompatActivity {
     private LoadMoviesListener mLoadMoviesListener = new LoadMoviesListener() {
         @Override
         public void onLoadMoviesStarted() {
-            mTxtLastUpdateDate.setText(R.string.main_lastUpdateDate_ongoing);
+            mTxtStatus.setText(R.string.main_lastUpdateDate_ongoing);
             mPgbLoadingProgress.setVisibility(View.VISIBLE);
             // XXX Do this in a post  because it won't work if called before the SwipeRefreshView's onMeasure
             // (see https://code.google.com/p/android/issues/detail?id=77712)
@@ -231,22 +233,29 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onLoadMoviesProgress(int currentMovie, int totalMovies) {
+        public void onLoadMoviesProgress(int currentMovie, int totalMovies, String movieName) {
             mPgbLoadingProgress.setMax(totalMovies);
             mPgbLoadingProgress.setProgress(currentMovie);
+            mTxtCurrentMovie.setText(movieName);
         }
 
         @Override
-        public void onLoadMoviesFinished() {
+        public void onLoadMoviesSuccess() {
             updateLastUpdateDateLabel();
             mPgbLoadingProgress.setVisibility(View.GONE);
             mSwiRefresh.setRefreshing(false);
             mConTheater.setEnabled(true);
+            mTxtCurrentMovie.setText(null);
         }
 
         @Override
         public void onLoadMoviesError(Throwable t) {
-//TODO
+            // TODO
+            updateLastUpdateDateLabel();
+            mPgbLoadingProgress.setVisibility(View.GONE);
+            mSwiRefresh.setRefreshing(false);
+            mConTheater.setEnabled(true);
+            mTxtCurrentMovie.setText(null);
         }
     };
 

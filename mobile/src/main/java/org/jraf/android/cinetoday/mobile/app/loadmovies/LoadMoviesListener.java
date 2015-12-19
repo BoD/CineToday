@@ -27,9 +27,9 @@ package org.jraf.android.cinetoday.mobile.app.loadmovies;
 public interface LoadMoviesListener {
     void onLoadMoviesStarted();
 
-    void onLoadMoviesProgress(int currentMovie, int totalMovies);
+    void onLoadMoviesProgress(int currentMovie, int totalMovies, String movieName);
 
-    void onLoadMoviesFinished();
+    void onLoadMoviesSuccess();
 
     void onLoadMoviesError(Throwable t);
 }
