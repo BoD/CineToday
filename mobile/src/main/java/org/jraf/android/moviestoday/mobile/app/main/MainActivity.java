@@ -263,6 +263,7 @@ public class MainActivity extends AppCompatActivity {
         builder.addLink(getString(R.string.about_email_uri), getString(R.string.about_email_text));
         builder.addLink(getString(R.string.about_web_uri), getString(R.string.about_web_text));
         builder.addLink(getString(R.string.about_sources_uri), getString(R.string.about_sources_text));
+        builder.addLink(getString(R.string.about_artwork_uri), getString(R.string.about_artwork_text));
         startActivity(builder.build(this));
     }
 }
