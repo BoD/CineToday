@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         mSwiRefresh.setOnRefreshListener(mOnRefreshListener);
-        mSwiRefresh.setColorSchemeColors(ActivityCompat.getColor(this, R.color.colorAccent), ActivityCompat.getColor(this, R.color.colorPrimary));
+        mSwiRefresh.setColorSchemeColors(ActivityCompat.getColor(this, R.color.accent), ActivityCompat.getColor(this, R.color.primary));
 
         updateTheaterLabels();
 
@@ -264,6 +264,7 @@ public class MainActivity extends AppCompatActivity {
         builder.addLink(getString(R.string.about_web_uri), getString(R.string.about_web_text));
         builder.addLink(getString(R.string.about_sources_uri), getString(R.string.about_sources_text));
         builder.addLink(getString(R.string.about_artwork_uri), getString(R.string.about_artwork_text));
+        builder.setIsLightIcons(true);
         startActivity(builder.build(this));
     }
 }
