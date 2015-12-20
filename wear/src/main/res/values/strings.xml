@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name" translatable="false">CineToday</string>
+    <string name="app_name" translatable="false">Cine Today</string>
 
     <!-- Main -->
     <string name="main_empty_intro">No theater was chosen</string>
@@ -12,7 +12,7 @@
     <string name="movie_card_showtimes_title">Show times today:</string>
 
     <!-- Notif -->
-    <string name="notif_title">New movies released!</string>
+    <string name="notif_title">New releases!</string>
 
     <!-- Configure -->
     <string name="configure_openedOnPhone">Opened on phone</string>

@@ -149,6 +149,7 @@ public class LoadMoviesIntentService extends IntentService {
     }
 
     private static void showNotification(WearHelper wearHelper, Collection<Movie> previousMovies, Collection<Movie> currentMovies) {
+        Log.d();
         TreeSet<Movie> newMovies = new TreeSet<>(Movie.COMPARATOR);
         for (Movie currentMovie : currentMovies) {
             if (!previousMovies.contains(currentMovie)) newMovies.add(currentMovie);
@@ -156,9 +157,16 @@ public class LoadMoviesIntentService extends IntentService {
 
 //        // XXX Testing only
 //        Movie fakeMovie = new Movie();
-//        fakeMovie.localTitle = "Fake movie " + new Date();
+//        fakeMovie.id = "0";
+//        fakeMovie.localTitle = "Star Wars Episode VII: The Force Awakens               " + new Date();
 //        fakeMovie.releaseDate = new Date();
 //        newMovies.add(fakeMovie);
+//        fakeMovie = new Movie();
+//        fakeMovie.id = "1";
+//        fakeMovie.localTitle = "007 Spectre";
+//        fakeMovie.releaseDate = new Date();
+//        newMovies.add(fakeMovie);
+
 
         if (newMovies.isEmpty()) {
             Log.d("No new movies: do not show a notifications");

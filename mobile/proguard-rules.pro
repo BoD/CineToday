@@ -11,3 +11,7 @@
 
 # Picasso
 -dontwarn com.squareup.okhttp.**
+
+# OkHttp (Okio)
+-dontwarn okio.**
+

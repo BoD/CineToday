@@ -10,7 +10,7 @@
     <string name="movie_card_showtimes_title">Séances aujourd\'hui :</string>
 
     <!-- Notif -->
-    <string name="notif_title">Nouvelles sorties ciné!</string>
+    <string name="notif_title">Nouvelles sorties!</string>
 
     <!-- Configure -->
     <string name="configure_openedOnPhone">Ouvert sur téléphone</string>

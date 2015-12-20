@@ -27,7 +27,7 @@
     <string name="about_web_text">Author\'s web page</string>
     <string name="about_sources_uri" translatable="false">https://github.com/BoD/CineToday/</string>
     <string name="about_sources_text">Source code on Github</string>
-    <string name="about_artwork_uri" translatable="false">david.rodriguez@hotmail.fr</string>
+    <string name="about_artwork_uri" translatable="false">mailto:david.rodriguez@hotmail.fr</string>
     <string name="about_artwork_text">Contact David Rodriguez</string>
     <string name="about_shareText_subject">Checkout out this app!</string>
     <string name="about_shareText_body">This app lists movies showing at your favorite theater, on your watch.\nCheck it out here:\nhttp://play.google.com/store/apps/details?id=%s</string>
