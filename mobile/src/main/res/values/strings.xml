@@ -15,20 +15,20 @@
 
     <!-- Preferences -->
     <string name="preference_showNewReleasesNotification_title">New releases notifications</string>
-    <string name="preference_showNewReleasesNotification_summary">Show a notification on new movie release day</string>
+    <string name="preference_showNewReleasesNotification_summary">Show a notification when new movies have been released</string>
     <string name="preferences_title">Settings</string>
 
     <!-- About -->
     <string name="about_authorCopyright" translatable="false" tools:ignore="TypographyOther">Copyright (C) 2015–2016 Benoit \'BoD\' Lubek.\nLogo and artwork by David Rodriguez.</string>
     <string name="about_License" translatable="false">Licensed under the terms of the GNU General Public License.</string>
     <string name="about_email_uri" translatable="false">mailto:BoD@JRAF.org</string>
-    <string name="about_email_text" translatable="false">Contact the author</string>
+    <string name="about_email_text">Contact the author</string>
     <string name="about_web_uri" translatable="false">http://JRAF.org/android/</string>
-    <string name="about_web_text" translatable="false">Author\'s web page</string>
+    <string name="about_web_text">Author\'s web page</string>
     <string name="about_sources_uri" translatable="false">https://github.com/BoD/CineToday/</string>
-    <string name="about_sources_text" translatable="false">Source code on Github</string>
+    <string name="about_sources_text">Source code on Github</string>
     <string name="about_artwork_uri" translatable="false">david.rodriguez@hotmail.fr</string>
-    <string name="about_artwork_text" translatable="false">Contact David Rodriguez</string>
+    <string name="about_artwork_text">Contact David Rodriguez</string>
     <string name="about_shareText_subject">Checkout out this app!</string>
     <string name="about_shareText_body">This app lists movies showing at your favorite theater, on your watch.\nCheck it out here:\nhttp://play.google.com/store/apps/details?id=%s</string>
 

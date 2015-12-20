@@ -92,7 +92,7 @@ public class NotificationService extends WearableListenerService {
         Notification.Builder mainNotifBuilder = new Notification.Builder(this);
 
         // Small icon
-        mainNotifBuilder.setSmallIcon(R.mipmap.ic_launcher);
+        mainNotifBuilder.setSmallIcon(R.drawable.ic_notif);
 
         // Title
         String title = getString(R.string.notif_title);
