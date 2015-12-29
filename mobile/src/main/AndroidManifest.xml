@@ -17,7 +17,8 @@
         tools:ignore="AllowBackup">
 
         <!-- Main -->
-        <activity android:name=".mobile.app.main.MainActivity">
+        <activity
+            android:name=".mobile.app.main.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

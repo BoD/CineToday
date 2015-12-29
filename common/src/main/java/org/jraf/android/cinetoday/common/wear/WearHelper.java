@@ -161,6 +161,7 @@ public class WearHelper {
     @WorkerThread
     @Nullable
     public List<Movie> getMovies() {
+        Log.d();
         DataItemBuffer dataItemBuffer = Wearable.DataApi.getDataItems(mGoogleApiClient, createUri(PATH_MOVIE_ALL)).await(AWAIT_TIME_S, TimeUnit.SECONDS);
         try {
             if (!dataItemBuffer.getStatus().isSuccess()) return null;
@@ -190,6 +191,7 @@ public class WearHelper {
     @WorkerThread
     @Nullable
     public Bitmap getMoviePoster(Movie movie) {
+        Log.d("movie=%s", movie.id);
         DataItemBuffer dataItemBuffer =
                 Wearable.DataApi.getDataItems(mGoogleApiClient, createUri(String.format(PATH_MOVIE_POSTER, movie.id))).await(AWAIT_TIME_S, TimeUnit.SECONDS);
         try {
@@ -229,6 +231,21 @@ public class WearHelper {
         putDataRequest.setUrgent();
 
         Wearable.DataApi.putDataItem(mGoogleApiClient, putDataRequest).await(AWAIT_TIME_S, TimeUnit.SECONDS);
+    }
+
+    @WorkerThread
+    public boolean getMoviesLoading() {
+        Log.d();
+        DataItemBuffer dataItemBuffer = Wearable.DataApi.getDataItems(mGoogleApiClient, createUri(PATH_MOVIE_LOADING)).await(AWAIT_TIME_S, TimeUnit.SECONDS);
+        try {
+            if (!dataItemBuffer.getStatus().isSuccess()) return false;
+            if (dataItemBuffer.getCount() == 0) return false;
+            DataMapItem dataMapItem = DataMapItem.fromDataItem(dataItemBuffer.get(0));
+            DataMap dataMap = dataMapItem.getDataMap();
+            return dataMap.getBoolean(KEY_VALUE, false);
+        } finally {
+            dataItemBuffer.release();
+        }
     }
 
     // endregion

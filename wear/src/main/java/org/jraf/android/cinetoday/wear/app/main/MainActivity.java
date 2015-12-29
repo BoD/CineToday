@@ -67,38 +67,63 @@ public class MainActivity extends Activity {
 
     protected boolean mHasConnected;
 
-    private class loadMoviesAsyncTask extends AsyncTask<Void, Void, List<Movie>> {
-        HashMap<Movie, Bitmap> mPosterMap = new HashMap<>();
+    private class LoadMoviesAsyncTask extends AsyncTask<Void, Void, Void> {
+        private List<Movie> mMovieList;
+        private HashMap<Movie, Bitmap> mPosterMap = new HashMap<>();
+        private boolean mLoading;
 
         @Override
-        protected List<Movie> doInBackground(Void... params) {
+        protected void onPreExecute() {
+            mPgbLoading.setVisibility(View.VISIBLE);
+            mConEmpty.setVisibility(View.GONE);
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
             WearHelper wearHelper = WearHelper.get();
             if (!mHasConnected) {
                 wearHelper.connect(MainActivity.this);
                 mHasConnected = true;
             }
-
             wearHelper.addListener(mDataListener);
 
-            List<Movie> movieList = wearHelper.getMovies();
-            if (movieList == null) return null;
-            for (Movie movie : movieList) {
-                mPosterMap.put(movie, wearHelper.getMoviePoster(movie));
+            mMovieList = wearHelper.getMovies();
+            if (mMovieList == null) {
+                Log.d("Movie list was empty");
+                mLoading = wearHelper.getMoviesLoading();
+                Log.d("mLoading=%s", mLoading);
+            } else {
+                mPosterMap.clear();
+                // Call gc here because we may have a few bitmap in memory that we want to get rid of
+                System.gc();
+                for (Movie movie : mMovieList) {
+                    Bitmap moviePoster = wearHelper.getMoviePoster(movie);
+                    mPosterMap.put(movie, moviePoster);
+                }
             }
-            return movieList;
+            return null;
         }
 
         @Override
-        protected void onPostExecute(List<Movie> movies) {
-            mPgbLoading.setVisibility(View.GONE);
-            if (movies == null) {
-                Log.d("Movie list was empty");
-                mConEmpty.setVisibility(View.VISIBLE);
+        protected void onPostExecute(Void result) {
+            if (mMovieList == null) {
+                // No movies
                 mGridViewPager.setVisibility(View.GONE);
+                if (mLoading) {
+                    // Because currently loading
+                    mConEmpty.setVisibility(View.GONE);
+                    mPgbLoading.setVisibility(View.VISIBLE);
+                } else {
+                    // Because no theater was selected
+                    mConEmpty.setVisibility(View.VISIBLE);
+                    mPgbLoading.setVisibility(View.GONE);
+                }
             } else {
+                // We have movies
                 mConEmpty.setVisibility(View.GONE);
+                mPgbLoading.setVisibility(View.GONE);
                 mGridViewPager.setVisibility(View.VISIBLE);
-                MovieFragmentGridPagerAdapter adapter = new MovieFragmentGridPagerAdapter(MainActivity.this, getFragmentManager(), movies, mPosterMap);
+                MovieFragmentGridPagerAdapter adapter = new MovieFragmentGridPagerAdapter(MainActivity.this, getFragmentManager(), mMovieList, mPosterMap);
                 mGridViewPager.setAdapter(adapter);
             }
         }
@@ -111,7 +136,7 @@ public class MainActivity extends Activity {
         setContentView(R.layout.main);
         ButterKnife.bind(this);
 
-        new loadMoviesAsyncTask().execute();
+        new LoadMoviesAsyncTask().execute();
     }
 
     @OnClick(R.id.btnConfigure)
@@ -138,29 +163,23 @@ public class MainActivity extends Activity {
 
                 switch (path) {
                     case WearHelper.PATH_MOVIE_ALL:
-                        new loadMoviesAsyncTask().execute();
+                        new LoadMoviesAsyncTask().execute();
                         break;
 
                     case WearHelper.PATH_MOVIE_LOADING:
                         DataMapItem dataMapItem = DataMapItem.fromDataItem(dataItem);
                         DataMap dataMap = dataMapItem.getDataMap();
                         boolean loading = dataMap.getBoolean(WearHelper.KEY_VALUE);
-                        handleLoadingChanged(loading);
+                        Log.d("loading=%s", loading);
+                        if (loading) {
+                            mPgbLoading.setVisibility(View.VISIBLE);
+                            mConEmpty.setVisibility(View.GONE);
+                        }
                         break;
                 }
             }
         }
     };
-
-    private void handleLoadingChanged(boolean loading) {
-        Log.d("loading=%s", loading);
-        if (loading) {
-            mPgbLoading.setVisibility(View.VISIBLE);
-            mConEmpty.setVisibility(View.GONE);
-        } else {
-            mPgbLoading.setVisibility(View.GONE);
-        }
-    }
 
     @Override
     protected void onDestroy() {

@@ -1,3 +1,8 @@
+# Global
+-dontobfuscate
+-keepattributes SourceFile, LineNumberTable
+-dontoptimize
+
 # Butterknife
 -keep class butterknife.** { *; }
 -dontwarn butterknife.internal.**

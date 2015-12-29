@@ -82,9 +82,17 @@ public class MainActivity extends AppCompatActivity {
     @Bind((R.id.pgbLoadingProgress))
     protected ProgressBar mPgbLoadingProgress;
 
+    /**
+     * If {@code true}, this activity is running.
+     */
+    private static boolean sRunning;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        sRunning = true;
+
         setContentView(R.layout.main);
         ButterKnife.bind(this);
 
@@ -275,5 +283,15 @@ public class MainActivity extends AppCompatActivity {
         builder.addLink(getString(R.string.about_artwork_uri), getString(R.string.about_artwork_text));
         builder.setIsLightIcons(true);
         startActivity(builder.build(this));
+    }
+
+    @Override
+    protected void onDestroy() {
+        sRunning = false;
+        super.onDestroy();
+    }
+
+    public static boolean isRunning() {
+        return sRunning;
     }
 }

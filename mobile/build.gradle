@@ -49,6 +49,7 @@ android {
         release {
             buildConfigField 'boolean', 'CRASH_REPORT', 'true'
 
+//            minifyEnabled false
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             shrinkResources true
@@ -87,14 +88,15 @@ android.applicationVariants.all { variant ->
             releaseTask.dependsOn copyApkTask
         }
 
-        // Copy the proguard mapping to the 'etc' folder
-        def copyMappingTask = tasks.create("copy${variant.name.capitalize()}ProguardMappingToEtc", Copy)
-        copyMappingTask.from(variant.mappingFile)
-        copyMappingTask.into('../etc/proguard')
-        copyMappingTask.rename variant.mappingFile.name, "mapping-${android.defaultConfig.versionCode}-${variant.flavorName}.txt"
-        copyMappingTask.dependsOn variant.assemble
-
-        releaseTask.dependsOn copyMappingTask
+        // Commented for now since we don't obfuscate (so we don't have a mapping.txt file)
+//        // Copy the proguard mapping to the 'etc' folder
+//        def copyMappingTask = tasks.create("copy${variant.name.capitalize()}ProguardMappingToEtc", Copy)
+//        copyMappingTask.from(variant.mappingFile)
+//        copyMappingTask.into('../etc/proguard')
+//        copyMappingTask.rename variant.mappingFile.name, "mapping-${android.defaultConfig.versionCode}-${variant.flavorName}.txt"
+//        copyMappingTask.dependsOn variant.assemble
+//
+//        releaseTask.dependsOn copyMappingTask
     }
 }
 

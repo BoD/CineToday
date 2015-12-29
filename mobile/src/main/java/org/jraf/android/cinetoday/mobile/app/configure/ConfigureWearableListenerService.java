@@ -55,6 +55,10 @@ public class ConfigureWearableListenerService extends WearableListenerService {
     }
 
     private void openConfigureActivity() {
+        if (MainActivity.isRunning()) {
+            Log.d("Main activity already running, don't do anything");
+            return;
+        }
         Intent intent = new Intent(this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
