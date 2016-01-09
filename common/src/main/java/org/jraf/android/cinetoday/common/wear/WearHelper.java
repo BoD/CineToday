@@ -67,6 +67,8 @@ import com.google.android.gms.wearable.Wearable;
 public class WearHelper {
     private static final WearHelper INSTANCE = new WearHelper();
 
+    private static final long AWAIT_TIME_S = 5;
+
     private static final String PATH_MOVIE = "/movie";
     public static final String PATH_MOVIE_ALL = PATH_MOVIE + "/all";
     private static final String PATH_MOVIE_POSTER = PATH_MOVIE + "/%1$s/poster";
@@ -76,8 +78,6 @@ public class WearHelper {
 
     private static final String PATH_ACTION = "/action";
     public static final String PATH_ACTION_OPEN_CONFIGURE_ACTIVITY = PATH_ACTION + "/openConfigureActivity";
-
-    private static final long AWAIT_TIME_S = 5;
 
     public static final String KEY_VALUE = "KEY_VALUE";
     public static final String KEY_NEW_MOVIES = "KEY_NEW_MOVIES";

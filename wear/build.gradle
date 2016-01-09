@@ -1,6 +1,5 @@
 apply plugin: 'com.android.application'
 
-
 android {
     compileSdkVersion 23
     buildToolsVersion '23.0.2'
@@ -11,6 +10,9 @@ android {
         targetSdkVersion 23
         versionCode buildNumber
         versionName buildProperties['versionName']
+
+        // For now we enable strict mode for all the configs
+        buildConfigField 'boolean', 'STRICT_MODE', 'true'
 
         resConfigs 'en', 'fr'
     }
@@ -26,7 +28,6 @@ android {
 
     buildTypes {
         release {
-//            minifyEnabled false
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             shrinkResources true

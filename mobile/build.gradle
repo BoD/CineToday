@@ -42,14 +42,11 @@ android {
     buildTypes {
         debug {
             buildConfigField 'boolean', 'CRASH_REPORT', 'false'
-
-            minifyEnabled false
         }
 
         release {
             buildConfigField 'boolean', 'CRASH_REPORT', 'true'
 
-//            minifyEnabled false
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             shrinkResources true
@@ -66,6 +63,7 @@ releaseTask << {
 }
 
 android.applicationVariants.all { variant ->
+    // Create new copy tasks, for release builds
     if (variant.buildType.name == 'release') {
         variant.outputs.each { output ->
             def apkName = "${globalProjectName}-${android.defaultConfig.versionCode}-${variant.flavorName}-signed.apk"
@@ -108,7 +106,7 @@ dependencies {
     compile 'com.android.support:cardview-v7:23.1.1'
     compile 'com.android.support:preference-v7:23.1.1'
     compile 'com.android.support:preference-v14:23.1.1'
-    compile 'com.squareup.okhttp:okhttp:2.7.0'
+    compile 'com.squareup.okhttp:okhttp:2.7.2'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.google.android.gms:play-services-gcm:8.4.0'
     apt 'org.jraf:prefs-compiler:1.0.1'
