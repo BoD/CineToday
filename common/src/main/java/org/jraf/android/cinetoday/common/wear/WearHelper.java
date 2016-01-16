@@ -219,7 +219,7 @@ public class WearHelper {
         dataMap.putStringArrayList(KEY_NEW_MOVIES, newMovies);
 
         PutDataRequest putDataRequest = putDataMapRequest.asPutDataRequest();
-//        putDataRequest.setUrgent();
+        putDataRequest.setUrgent();
 
         Wearable.DataApi.putDataItem(mGoogleApiClient, putDataRequest).await(AWAIT_TIME_S, TimeUnit.SECONDS);
     }
@@ -232,7 +232,7 @@ public class WearHelper {
         dataMap.putBoolean(KEY_VALUE, loading);
 
         PutDataRequest putDataRequest = putDataMapRequest.asPutDataRequest();
-//        putDataRequest.setUrgent();
+        putDataRequest.setUrgent();
 
         Wearable.DataApi.putDataItem(mGoogleApiClient, putDataRequest).await(AWAIT_TIME_S, TimeUnit.SECONDS);
     }
