@@ -25,7 +25,6 @@
 package org.jraf.android.cinetoday.mobile.api.codec.showtime;
 
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Locale;
@@ -33,6 +32,7 @@ import java.util.TreeSet;
 
 import org.jraf.android.cinetoday.common.model.ParseException;
 import org.jraf.android.cinetoday.common.model.movie.Movie;
+import org.jraf.android.cinetoday.common.model.movie.Showtime;
 import org.jraf.android.cinetoday.mobile.api.codec.Codec;
 import org.jraf.android.util.log.Log;
 import org.json.JSONException;
@@ -73,29 +73,40 @@ public class ShowtimeCodec implements Codec<Movie> {
                 return;
             }
 
+            // Is 3D?
+            JSONObject screenFormat = jsonMovieShowtime.getJSONObject("screenFormat");
+            String screenFormatStr = screenFormat.getString("$");
+            boolean is3d = "3D".equalsIgnoreCase(screenFormatStr);
+
             // Remove first part
             todayShowtimesStr = todayShowtimesStr.substring(todayShowtimesStr.indexOf(':') + 2);
 
             // Split times
-            String[] todayShowtimes = todayShowtimesStr.split(", ");
+            String[] todayShowtimesStrElem = todayShowtimesStr.split(", ");
 
             // Clean up
-            for (int i = 0; i < todayShowtimes.length; i++) {
-                String todayShowtime = todayShowtimes[i];
+            for (int i = 0; i < todayShowtimesStrElem.length; i++) {
+                String todayShowtime = todayShowtimesStrElem[i];
                 int spaceIdx = todayShowtime.indexOf(' ');
                 if (spaceIdx != -1) {
                     todayShowtime = todayShowtime.substring(0, spaceIdx);
                 }
-                todayShowtimes[i] = todayShowtime;
+                todayShowtimesStrElem[i] = todayShowtime;
             }
 
             // Make a set and merge it with the previous one if any
-            TreeSet<String> todayShowtimesSet = new TreeSet<>(Arrays.asList(todayShowtimes));
+            TreeSet<Showtime> todayShowtimesSet = new TreeSet<>();
+            for (String time : todayShowtimesStrElem) {
+                Showtime showtime = new Showtime();
+                showtime.is3d = is3d;
+                showtime.time = time;
+                todayShowtimesSet.add(showtime);
+            }
             if (movie.todayShowtimes != null) {
                 // The movie already has showtimes: merge them with the new ones
                 Collections.addAll(todayShowtimesSet, movie.todayShowtimes);
             }
-            movie.todayShowtimes = todayShowtimesSet.toArray(new String[todayShowtimesSet.size()]);
+            movie.todayShowtimes = todayShowtimesSet.toArray(new Showtime[todayShowtimesSet.size()]);
 
         } catch (JSONException e) {
             throw new ParseException(e);

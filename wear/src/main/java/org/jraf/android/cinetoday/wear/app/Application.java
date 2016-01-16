@@ -27,8 +27,10 @@ package org.jraf.android.cinetoday.wear.app;
 import org.jraf.android.util.log.Log;
 
 public class Application extends android.app.Application {
-
     private static final String TAG = "CineToday";
+
+    // FUCK YOU ANDROID!!!!!!!!!!!!
+    public static boolean sIsRound;
 
     @Override
     public void onCreate() {

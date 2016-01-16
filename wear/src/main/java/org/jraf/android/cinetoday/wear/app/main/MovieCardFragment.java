@@ -29,14 +29,10 @@ import java.util.Calendar;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
-import android.support.v4.app.ActivityCompat;
 import android.support.wearable.view.CardFragment;
 import android.text.Html;
-import android.text.Spannable;
-import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
-import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,6 +40,8 @@ import android.widget.TextView;
 
 import org.jraf.android.cinetoday.R;
 import org.jraf.android.cinetoday.common.model.movie.Movie;
+import org.jraf.android.cinetoday.common.model.movie.Showtime;
+import org.jraf.android.cinetoday.wear.app.Application;
 
 public class MovieCardFragment extends CardFragment {
     public enum CardType {
@@ -62,7 +60,11 @@ public class MovieCardFragment extends CardFragment {
         View view = null;
         switch (cardType) {
             case MAIN:
-                view = inflater.inflate(R.layout.movie_card_main, container, false);
+                if (Application.sIsRound) {
+                    view = inflater.inflate(R.layout.movie_card_main_round, container, false);
+                } else {
+                    view = inflater.inflate(R.layout.movie_card_main_square, container, false);
+                }
 
                 TextView txtTitle = (TextView) view.findViewById(R.id.txtTitle);
                 txtTitle.setText(movie.localTitle);
@@ -85,7 +87,11 @@ public class MovieCardFragment extends CardFragment {
                 break;
 
             case SYNOPSIS:
-                view = inflater.inflate(R.layout.movie_card_synopsis, container, false);
+                if (Application.sIsRound) {
+                    view = inflater.inflate(R.layout.movie_card_synopsis_round, container, false);
+                } else {
+                    view = inflater.inflate(R.layout.movie_card_synopsis_square, container, false);
+                }
 
                 TextView txtGenres = (TextView) view.findViewById(R.id.txtGenres);
                 String genresStr = TextUtils.join(" · ", movie.genres);
@@ -103,11 +109,14 @@ public class MovieCardFragment extends CardFragment {
                 break;
 
             case SHOWTIMES:
-                view = inflater.inflate(R.layout.movie_card_showtimes, container, false);
+                if (Application.sIsRound) {
+                    view = inflater.inflate(R.layout.movie_card_showtimes_round, container, false);
+                } else {
+                    view = inflater.inflate(R.layout.movie_card_showtimes_square, container, false);
+                }
 
-                TextView txtShowtimes = (TextView) view.findViewById(R.id.txtShowtimes);
-                CharSequence showtimesForDisplay = getShowtimesForDisplay(movie);
-                txtShowtimes.setText(showtimesForDisplay);
+                ViewGroup conShowtimes = (ViewGroup) view.findViewById(R.id.conShowtimes);
+                addShowtimes(conShowtimes, movie, inflater);
                 break;
         }
 
@@ -115,29 +124,31 @@ public class MovieCardFragment extends CardFragment {
     }
 
     @NonNull
-    private CharSequence getShowtimesForDisplay(Movie movie) {
+    private void addShowtimes(ViewGroup conShowtimes, Movie movie, LayoutInflater inflater) {
         Calendar nowCalendar = Calendar.getInstance();
         Calendar showtimeCalendar = Calendar.getInstance();
         SpannableStringBuilder res = new SpannableStringBuilder();
-        String[] todayShowtimes = movie.todayShowtimes;
+        Showtime[] todayShowtimes = movie.todayShowtimes;
         for (int i = 0; i < todayShowtimes.length; i++) {
-            String[] hourMinutes = todayShowtimes[i].split(":");
+            String[] hourMinutes = todayShowtimes[i].time.split(":");
             showtimeCalendar.set(Calendar.HOUR_OF_DAY, Integer.valueOf(hourMinutes[0]));
             showtimeCalendar.set(Calendar.MINUTE, Integer.valueOf(hourMinutes[1]));
-            String showtimeStr = " · " + todayShowtimes[i];
+            boolean isTooLate = showtimeCalendar.before(nowCalendar);
 
-            if (showtimeCalendar.before(nowCalendar)) {
-                Spannable showtimeSpannable = new SpannableString(showtimeStr);
-                showtimeSpannable
-                        .setSpan(new ForegroundColorSpan(ActivityCompat.getColor(getActivity(), R.color.secondary_text_light)), 0, showtimeStr.length(),
-                                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                res.append(showtimeSpannable);
+            View conShowtimeItem = inflater.inflate(R.layout.movie_card_showtime_item, conShowtimes, false);
+            TextView txtShowtime = (TextView) conShowtimeItem.findViewById(R.id.txtShowtime);
+            txtShowtime.setText(todayShowtimes[i].time);
+            TextView txtIs3d = (TextView) conShowtimeItem.findViewById(R.id.txtIs3d);
+            if (todayShowtimes[i].is3d) {
+                txtIs3d.setVisibility(View.VISIBLE);
             } else {
-                res.append(showtimeStr);
+                txtIs3d.setVisibility(View.GONE);
             }
-            if (i < todayShowtimes.length - 1) res.append("\n");
+            if (isTooLate) {
+                conShowtimeItem.setAlpha(.33f);
+            }
+            conShowtimes.addView(conShowtimeItem);
         }
-        return res;
     }
 
     private CharSequence getHtml(@StringRes int stringResId, Object... args) {

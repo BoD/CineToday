@@ -2,20 +2,23 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:gravity="center_horizontal"
     android:orientation="vertical"
     android:paddingTop="@dimen/card_content_padding_rect_top">
 
     <TextView
         style="@style/CardText"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         android:text="@string/movie_card_showtimes_title" />
 
-    <TextView
-        android:id="@+id/txtShowtimes"
-        style="@style/movieCardShowtimes"
+    <LinearLayout
+        android:id="@+id/conShowtimes"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp" />
+        android:layout_marginTop="8dp"
+        android:gravity="center_horizontal"
+        android:orientation="vertical" />
 
 </LinearLayout>

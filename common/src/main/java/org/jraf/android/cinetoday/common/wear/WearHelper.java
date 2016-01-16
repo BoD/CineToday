@@ -153,7 +153,7 @@ public class WearHelper {
         dataMap.putAsset(KEY_VALUE, createAssetFromBundle(moviesBundle));
 
         PutDataRequest putDataRequest = putDataMapRequest.asPutDataRequest();
-        putDataRequest.setUrgent();
+//        putDataRequest.setUrgent();
 
         Wearable.DataApi.putDataItem(mGoogleApiClient, putDataRequest).await(AWAIT_TIME_S, TimeUnit.SECONDS);
     }
@@ -172,6 +172,10 @@ public class WearHelper {
             Bundle moviesBundle = loadBundleFromAsset(moviesAsset);
             moviesBundle.setClassLoader(Movie.class.getClassLoader()); // Not sure why this is needed
             return moviesBundle.getParcelableArrayList(KEY_VALUE);
+        } catch (Exception e) {
+            // Unmarshalling could fail when upgrading the app from an incompatible version
+            Log.w(e, "Could not get movies");
+            return null;
         } finally {
             dataItemBuffer.release();
         }
@@ -228,7 +232,7 @@ public class WearHelper {
         dataMap.putBoolean(KEY_VALUE, loading);
 
         PutDataRequest putDataRequest = putDataMapRequest.asPutDataRequest();
-        putDataRequest.setUrgent();
+//        putDataRequest.setUrgent();
 
         Wearable.DataApi.putDataItem(mGoogleApiClient, putDataRequest).await(AWAIT_TIME_S, TimeUnit.SECONDS);
     }

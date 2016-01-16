@@ -44,7 +44,7 @@ public class Movie implements Parcelable {
     public String trailerUri;
     public String webUri;
     public String synopsis;
-    public String[] todayShowtimes;
+    public Showtime[] todayShowtimes;
 
     public Movie() {}
 
@@ -81,6 +81,7 @@ public class Movie implements Parcelable {
         return id.hashCode();
     }
 
+
     /*
      * Parcelable implementation.
      */
@@ -103,7 +104,7 @@ public class Movie implements Parcelable {
         dest.writeString(this.trailerUri);
         dest.writeString(this.webUri);
         dest.writeString(this.synopsis);
-        dest.writeStringArray(this.todayShowtimes);
+        dest.writeTypedArray(this.todayShowtimes, 0);
     }
 
     protected Movie(Parcel in) {
@@ -120,7 +121,7 @@ public class Movie implements Parcelable {
         this.trailerUri = in.readString();
         this.webUri = in.readString();
         this.synopsis = in.readString();
-        this.todayShowtimes = in.createStringArray();
+        this.todayShowtimes = in.createTypedArray(Showtime.CREATOR);
     }
 
     public static final Creator<Movie> CREATOR = new Creator<Movie>() {
@@ -130,6 +131,7 @@ public class Movie implements Parcelable {
     };
 
     // endregion
+
 
     /**
      * Compares in reverse release date order.

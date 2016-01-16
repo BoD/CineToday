@@ -9,8 +9,14 @@
         <item name="android:textColor">@color/secondary_text_light</item>
     </style>
 
-    <style name="movieCardShowtimes" parent="CardText">
-        <item name="android:lineSpacingMultiplier">1.2</item>
+    <style name="movieCardShowtime" parent="CardText">
+        <item name="android:background">@drawable/shape_showtime_bg</item>
+        <item name="android:paddingTop">4dp</item>
+        <item name="android:paddingBottom">4dp</item>
+        <item name="android:paddingLeft">8dp</item>
+        <item name="android:paddingRight">8dp</item>
+        <item name="android:elevation">2dp</item>
+        <item name="android:fontFamily">sans-serif</item>
     </style>
 
     <style name="Widget.AppTheme.Button.Colored" parent="@android:style/Widget.DeviceDefault.Button">

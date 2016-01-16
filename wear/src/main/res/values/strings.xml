@@ -9,7 +9,8 @@
     <string name="movie_card_directors"><![CDATA[By <i>%1$s</i>]]></string>
     <string name="movie_card_actors"><![CDATA[With <i>%1$s</i>]]></string>
     <string name="movie_card_originalTitle"><![CDATA[Original title: <i>%1$s</i>]]></string>
-    <string name="movie_card_showtimes_title">Show times today:</string>
+    <string name="movie_card_showtimes_title">Show times today</string>
+    <string name="movie_card_showtimes_3d">3D</string>
 
     <!-- Notif -->
     <string name="notif_title">New releases!</string>

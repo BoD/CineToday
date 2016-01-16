@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -35,12 +36,15 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.wearable.view.GridViewPager;
 import android.view.View;
+import android.view.WindowInsets;
+import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
 import org.jraf.android.cinetoday.R;
 import org.jraf.android.cinetoday.common.model.movie.Movie;
 import org.jraf.android.cinetoday.common.wear.WearHelper;
+import org.jraf.android.cinetoday.wear.app.Application;
 import org.jraf.android.cinetoday.wear.app.configure.ConfigureIntentService;
 import org.jraf.android.util.log.Log;
 
@@ -135,6 +139,18 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         ButterKnife.bind(this);
+
+        // Determine if round or not
+        // This is FUCKED UP srsly
+        WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
+        View contentView = getWindow().getDecorView().findViewById(android.R.id.content);
+        contentView.setOnApplyWindowInsetsListener(new View.OnApplyWindowInsetsListener() {
+            @Override
+            public WindowInsets onApplyWindowInsets(View v, WindowInsets insets) {
+                Application.sIsRound = insets.isRound();
+                return insets;
+            }
+        });
 
         new LoadMoviesAsyncTask().execute();
     }
