@@ -18,7 +18,8 @@
 
         <!-- Main -->
         <activity
-            android:name=".mobile.app.main.MainActivity">
+            android:name=".mobile.app.main.MainActivity"
+            android:launchMode="singleInstance">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

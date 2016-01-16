@@ -45,6 +45,12 @@ public class Main {
     String theaterAddress;
 
     /**
+     * Theater picture uri.
+     * Can be {@null}.
+     */
+    String theaterPictureUri;
+
+    /**
      * Last time an update was successfully called.
      */
     Long lastUpdateDate;

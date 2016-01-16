@@ -2,6 +2,7 @@
 <android.support.v4.widget.SwipeRefreshLayout
     android:id="@+id/swiRefresh"
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -14,12 +15,12 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="8dp">
+            android:layout_height="wrap_content">
 
             <!-- Theater -->
 
-            <android.support.v7.widget.CardView
+            <android.support.design.widget.CoordinatorLayout
+                android:id="@+id/conTheaterCoord"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -27,30 +28,95 @@
                     android:id="@+id/conTheater"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="?attr/selectableItemBackground"
-                    android:orientation="vertical"
-                    android:paddingBottom="16dp"
-                    android:paddingLeft="8dp"
-                    android:paddingRight="8dp"
-                    android:paddingTop="16dp">
+                    android:orientation="vertical">
 
-                    <TextView
-                        android:id="@+id/txtTheaterName"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-condensed"
-                        android:textAppearance="?android:attr/textAppearanceSearchResultTitle"
-                        tools:text="MK2 Bibliothèque" />
+                    <ImageView
+                        android:id="@+id/imgTheaterPicture"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/main_theaterPicture_height"
+                        android:background="@color/placeholderBg"
+                        android:scaleType="fitCenter" />
 
-                    <TextView
-                        android:id="@+id/txtTheaterAddress"
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:id="@+id/conTheaterDetails"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-light"
-                        android:textAppearance="?android:attr/textAppearanceSearchResultSubtitle"
-                        tools:text="23 rue Nationale\n75013 PARIS" />
+                        android:background="@color/accent"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:id="@+id/txtTheaterName"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif-condensed"
+                            android:textAppearance="?android:attr/textAppearanceSearchResultTitle"
+                            android:textColor="@android:color/white"
+                            tools:text="MK2 Bibliothèque" />
+
+                        <TextView
+                            android:id="@+id/txtTheaterAddress"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif-light"
+                            android:textAppearance="?android:attr/textAppearanceSearchResultSubtitle"
+                            android:textColor="@android:color/white"
+                            tools:text="23 rue Nationale\n75013 PARIS" />
+                    </LinearLayout>
+
+
                 </LinearLayout>
-            </android.support.v7.widget.CardView>
+
+                <android.support.design.widget.FloatingActionButton
+                    android:id="@+id/fabPickTheater"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/main_fab_marginEnd"
+                    android:src="@drawable/ic_edit"
+                    android:tint="@color/accent"
+                    app:backgroundTint="@android:color/white"
+                    app:layout_anchor="@id/imgTheaterPicture"
+                    app:layout_anchorGravity="bottom|end" />
+
+            </android.support.design.widget.CoordinatorLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/conTheaterCoord"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btnNavigate"
+                    android:layout_width="96dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:background="?selectableItemBackgroundBorderless"
+                    android:drawablePadding="8dp"
+                    android:drawableTop="@drawable/ic_navigation_24"
+                    android:paddingBottom="16dp"
+                    android:paddingTop="16dp"
+                    android:text="@string/main_navigate"
+                    android:textColor="@color/accent" />
+
+                <Button
+                    android:id="@+id/btnWebSite"
+                    android:layout_width="96dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:background="?selectableItemBackgroundBorderless"
+                    android:drawablePadding="8dp"
+                    android:drawableTop="@drawable/ic_web_24"
+                    android:paddingBottom="16dp"
+                    android:paddingTop="16dp"
+                    android:text="@string/main_webSite"
+                    android:textColor="@color/accent" />
+
+
+            </LinearLayout>
 
             <!-- Update info -->
 
@@ -59,7 +125,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:layout_margin="8dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="8dp"
                 android:orientation="horizontal">
 
                 <TextView
@@ -77,7 +146,7 @@
                     android:id="@+id/txtCurrentMovie"
                     android:layout_width="0px"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="16dp"
+                    android:layout_marginStart="16dp"
                     android:layout_weight="1"
                     android:ellipsize="end"
                     android:gravity="right"
@@ -97,8 +166,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_above="@+id/conStatus"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp" />
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp" />
 
         </RelativeLayout>
     </ScrollView>

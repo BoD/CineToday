@@ -24,10 +24,14 @@
  */
 package org.jraf.android.cinetoday.mobile.app.main;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.concurrent.TimeUnit;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -36,6 +40,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -53,6 +58,7 @@ import org.jraf.android.util.about.AboutActivityIntentBuilder;
 
 import com.google.android.gms.gcm.GcmNetworkManager;
 import com.google.android.gms.gcm.PeriodicTask;
+import com.squareup.picasso.Picasso;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -61,14 +67,17 @@ import butterknife.OnClick;
 public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_PICK_THEATER = 0;
 
-    @Bind(R.id.conTheater)
-    protected View mConTheater;
+    @Bind(R.id.fabPickTheater)
+    protected FloatingActionButton mFabPickTheater;
 
     @Bind(R.id.txtTheaterName)
     protected TextView mTxtTheaterName;
 
     @Bind(R.id.txtTheaterAddress)
     protected TextView mTxtTheaterAddress;
+
+    @Bind(R.id.imgTheaterPicture)
+    protected ImageView mImgTheaterPicture;
 
     @Bind(R.id.txtStatus)
     protected TextView mTxtStatus;
@@ -99,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
         mSwiRefresh.setOnRefreshListener(mOnRefreshListener);
         mSwiRefresh.setColorSchemeColors(ActivityCompat.getColor(this, R.color.accent), ActivityCompat.getColor(this, R.color.primary));
 
-        updateTheaterLabels();
+        updateTheaterInfo();
 
         // First use: pick a theater
         if (!MainPrefs.get(this).containsTheaterId()) {
@@ -144,10 +153,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void updateTheaterLabels() {
+    private void updateTheaterInfo() {
         MainPrefs prefs = MainPrefs.get(this);
         mTxtTheaterName.setText(prefs.getTheaterName());
         mTxtTheaterAddress.setText(prefs.getTheaterAddress());
+        Picasso.with(this).load(prefs.getTheaterPictureUri()).placeholder(R.drawable.theater_list_item_placeholder).error(
+                R.drawable.theater_list_item_placeholder).fit().centerCrop().into(mImgTheaterPicture);
     }
 
     private void updateLastUpdateDateLabel() {
@@ -161,7 +172,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    @OnClick(R.id.conTheater)
+    @OnClick(R.id.fabPickTheater)
     protected void onPickTheaterClicked() {
         Intent intent = new Intent(this, TheaterSearchActivity.class);
         intent.putExtra(TheaterSearchActivity.EXTRA_FIRST_USE, !MainPrefs.get(this).containsTheaterId());
@@ -186,9 +197,10 @@ public class MainActivity extends AppCompatActivity {
                         .putTheaterId(theater.id)
                         .putTheaterName(theater.name)
                         .putTheaterAddress(theater.address)
+                        .putTheaterPictureUri(theater.posterUri)
                         .apply();
                 // Update labels
-                updateTheaterLabels();
+                updateTheaterInfo();
 
                 // Update now
                 updateNowAndScheduleTask();
@@ -237,7 +249,7 @@ public class MainActivity extends AppCompatActivity {
                     mSwiRefresh.setRefreshing(true);
                 }
             });
-            mConTheater.setEnabled(false);
+            mFabPickTheater.setEnabled(false);
         }
 
         @Override
@@ -252,7 +264,7 @@ public class MainActivity extends AppCompatActivity {
             updateLastUpdateDateLabel();
             mPgbLoadingProgress.setVisibility(View.GONE);
             mSwiRefresh.setRefreshing(false);
-            mConTheater.setEnabled(true);
+            mFabPickTheater.setEnabled(true);
             mTxtCurrentMovie.setText(null);
         }
 
@@ -262,7 +274,7 @@ public class MainActivity extends AppCompatActivity {
             updateLastUpdateDateLabel();
             mPgbLoadingProgress.setVisibility(View.GONE);
             mSwiRefresh.setRefreshing(false);
-            mConTheater.setEnabled(true);
+            mFabPickTheater.setEnabled(true);
             mTxtCurrentMovie.setText(null);
         }
     };
@@ -279,8 +291,8 @@ public class MainActivity extends AppCompatActivity {
         builder.setBackgroundResId(R.drawable.about_bg);
         builder.addLink(getString(R.string.about_email_uri), getString(R.string.about_email_text));
         builder.addLink(getString(R.string.about_web_uri), getString(R.string.about_web_text));
-        builder.addLink(getString(R.string.about_sources_uri), getString(R.string.about_sources_text));
         builder.addLink(getString(R.string.about_artwork_uri), getString(R.string.about_artwork_text));
+        builder.addLink(getString(R.string.about_sources_uri), getString(R.string.about_sources_text));
         builder.setIsLightIcons(true);
         startActivity(builder.build(this));
     }
@@ -294,4 +306,31 @@ public class MainActivity extends AppCompatActivity {
     public static boolean isRunning() {
         return sRunning;
     }
+
+    @OnClick(R.id.btnNavigate)
+    protected void onNavigateClick() {
+        MainPrefs prefs = MainPrefs.get(this);
+        String address = prefs.getTheaterAddress();
+        try {
+            address = URLEncoder.encode(address, "utf-8");
+        } catch (UnsupportedEncodingException ignored) {}
+        Uri uri = Uri.parse("http://maps.google.com/maps?f=d&daddr=" + address);
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        startActivity(intent);
+    }
+
+    @OnClick(R.id.btnWebSite)
+    protected void onWebSiteClick() {
+        MainPrefs prefs = MainPrefs.get(this);
+        String name = prefs.getTheaterName();
+        // Try to improve DuckDuckGo "I'm feeling ducky" results
+        name = "cinema " + name;
+        try {
+            name = URLEncoder.encode(name, "utf-8");
+        } catch (UnsupportedEncodingException ignored) {}
+        Uri uri = Uri.parse("https://www.google.com/search?sourceid=navclient&btnI=I&q=" + name);
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        startActivity(intent);
+    }
+
 }

@@ -2,4 +2,6 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="theater_search_btnClear_margin_bottom">12dp</dimen>
+    <dimen name="main_theaterPicture_height">180dp</dimen>
+    <dimen name="main_fab_marginEnd">4dp</dimen>
 </resources>
