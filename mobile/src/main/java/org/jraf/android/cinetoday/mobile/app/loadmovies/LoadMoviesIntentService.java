@@ -95,6 +95,7 @@ public class LoadMoviesIntentService extends IntentService {
             String theaterId = MainPrefs.get(context).getTheaterId();
             movies = Api.get(context).getMovieList(theaterId, new Date());
         } catch (Exception e) {
+            Log.e(e, "Could not load movies");
             loadMoviesListenerHelper.onLoadMoviesError(e);
             throw e;
         }

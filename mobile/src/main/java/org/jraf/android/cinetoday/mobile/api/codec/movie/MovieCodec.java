@@ -86,8 +86,8 @@ public class MovieCodec implements Codec<Movie> {
             JSONObject jsonPoster = jsonMovie.getJSONObject("poster");
             movie.posterUri = jsonPoster.getString("href");
 
-            JSONObject jsonTrailer = jsonMovie.getJSONObject("trailer");
-            movie.trailerUri = jsonTrailer.getString("href");
+            JSONObject jsonTrailer = jsonMovie.optJSONObject("trailer");
+            if (jsonTrailer != null) movie.trailerUri = jsonTrailer.getString("href");
 
             JSONArray jsonLinkArray = jsonMovie.getJSONArray("link");
             JSONObject jsonLink = jsonLinkArray.getJSONObject(0);
