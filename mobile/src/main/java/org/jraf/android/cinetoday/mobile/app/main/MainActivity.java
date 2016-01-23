@@ -158,7 +158,7 @@ public class MainActivity extends AppCompatActivity {
         mTxtTheaterName.setText(prefs.getTheaterName());
         mTxtTheaterAddress.setText(prefs.getTheaterAddress());
         Picasso.with(this).load(prefs.getTheaterPictureUri()).placeholder(R.drawable.theater_list_item_placeholder).error(
-                R.drawable.theater_list_item_placeholder).fit().centerCrop().into(mImgTheaterPicture);
+                R.drawable.theater_list_item_placeholder).fit().centerCrop().noFade().into(mImgTheaterPicture);
     }
 
     private void updateLastUpdateDateLabel() {
