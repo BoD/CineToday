@@ -29,7 +29,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.concurrent.TimeUnit;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -37,27 +36,18 @@ import android.graphics.BitmapFactory;
 import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
 
+import org.jraf.android.cinetoday.mobile.api.http.HttpUtil;
 import org.jraf.android.util.bitmap.BitmapUtil;
 import org.jraf.android.util.file.FileUtil;
 import org.jraf.android.util.log.Log;
 
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
-
+import okhttp3.Request;
+import okhttp3.Response;
 import okio.BufferedSink;
 import okio.Okio;
 
 public class ImageCache {
     private static final ImageCache INSTANCE = new ImageCache();
-
-    private static final OkHttpClient OK_HTTP_CLIENT = new OkHttpClient();
-
-    static {
-        OK_HTTP_CLIENT.setConnectTimeout(30, TimeUnit.SECONDS);
-        OK_HTTP_CLIENT.setReadTimeout(30, TimeUnit.SECONDS);
-    }
-
     private Context mContext;
 
     public static ImageCache get(Context context) {
@@ -91,7 +81,7 @@ public class ImageCache {
         Log.d("uri=%s", uri);
         // Download the full sized image to a temporary file
         Request request = new Request.Builder().url(uri).build();
-        Response response = OK_HTTP_CLIENT.newCall(request).execute();
+        Response response = HttpUtil.getOkHttpClient(mContext).newCall(request).execute();
         File temporaryFile = getTemporaryDownloadFile(uri, maxWidth, maxHeight);
         BufferedSink sink = Okio.buffer(Okio.sink(temporaryFile));
         sink.writeAll(response.body().source());

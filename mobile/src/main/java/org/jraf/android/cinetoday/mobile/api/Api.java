@@ -24,7 +24,6 @@
  */
 package org.jraf.android.cinetoday.mobile.api;
 
-import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -34,7 +33,6 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import java.util.concurrent.TimeUnit;
 
 import android.content.Context;
 import android.os.AsyncTask;
@@ -49,16 +47,15 @@ import org.jraf.android.cinetoday.common.model.theater.Theater;
 import org.jraf.android.cinetoday.mobile.api.codec.movie.MovieCodec;
 import org.jraf.android.cinetoday.mobile.api.codec.showtime.ShowtimeCodec;
 import org.jraf.android.cinetoday.mobile.api.codec.theater.TheaterCodec;
+import org.jraf.android.cinetoday.mobile.api.http.HttpUtil;
 import org.jraf.android.util.log.Log;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.squareup.okhttp.Cache;
-import com.squareup.okhttp.HttpUrl;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
+import okhttp3.HttpUrl;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class Api {
     private static final Api INSTANCE = new Api();
@@ -87,10 +84,7 @@ public class Api {
     private static final String QUERY_FILTER_KEY = "filter";
     private static final String QUERY_FILTER_VALUE = "theater";
 
-    private static final long CACHE_SIZE = 10 * 1024 * 1024;
-
     private Context mContext;
-    private OkHttpClient mOkHttpClient;
 
     private Api() {}
 
@@ -226,19 +220,8 @@ public class Api {
     private String call(HttpUrl url) throws IOException {
         Log.d("url=%s", url);
         Request request = new Request.Builder().url(url).build();
-        Response response = getOkHttpClient().newCall(request).execute();
+        Response response = HttpUtil.getOkHttpClient(mContext).newCall(request).execute();
         return response.body().string();
-    }
-
-    private OkHttpClient getOkHttpClient() {
-        if (mOkHttpClient == null) {
-            mOkHttpClient = new OkHttpClient();
-            mOkHttpClient.setConnectTimeout(30, TimeUnit.SECONDS);
-            mOkHttpClient.setReadTimeout(30, TimeUnit.SECONDS);
-            File httpCacheDir = new File(mContext.getCacheDir(), "http");
-            mOkHttpClient.setCache(new Cache(httpCacheDir, CACHE_SIZE));
-        }
-        return mOkHttpClient;
     }
 
     @NonNull

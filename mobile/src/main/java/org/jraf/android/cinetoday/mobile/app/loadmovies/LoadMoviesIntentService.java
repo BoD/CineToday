@@ -27,8 +27,8 @@ package org.jraf.android.cinetoday.mobile.app.loadmovies;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -138,7 +138,7 @@ public class LoadMoviesIntentService extends IntentService {
 
             if (previousMovies != null) {
                 // Show notification
-                showNotification(wearHelper, previousMovies, movies);
+                showNotification(context, wearHelper, previousMovies, movies);
             }
 
             loadMoviesListenerHelper.resetError();
@@ -149,12 +149,20 @@ public class LoadMoviesIntentService extends IntentService {
         }
     }
 
-    private static void showNotification(WearHelper wearHelper, Collection<Movie> previousMovies, Collection<Movie> currentMovies) {
+    private static void showNotification(Context context, WearHelper wearHelper, Collection<Movie> previousMovies, Collection<Movie> currentMovies) {
         Log.d();
+
+        MainPrefs mainPrefs = MainPrefs.get(context);
+        Set<String> notifiedMovieIds = mainPrefs.getNotifiedMovieIds();
+
         TreeSet<Movie> newMovies = new TreeSet<>(Movie.COMPARATOR);
         for (Movie currentMovie : currentMovies) {
-            if (!previousMovies.contains(currentMovie)) newMovies.add(currentMovie);
+            if (!previousMovies.contains(currentMovie) && !notifiedMovieIds.contains(currentMovie.id)) {
+                newMovies.add(currentMovie);
+                notifiedMovieIds.add(currentMovie.id);
+            }
         }
+        mainPrefs.putNotifiedMovieIds(notifiedMovieIds);
 
 //        // XXX Testing only
 //        Movie fakeMovie = new Movie();
@@ -174,12 +182,10 @@ public class LoadMoviesIntentService extends IntentService {
             return;
         }
 
-        ArrayList<String> firstThreeNewMovies = new ArrayList<>(3);
-        int i = 0;
-        for (Iterator<Movie> iterator = newMovies.iterator(); iterator.hasNext() && i < 3; i++) {
-            Movie newMovie = iterator.next();
-            firstThreeNewMovies.add(newMovie.localTitle);
+        ArrayList<String> newMovieTitles = new ArrayList<>(3);
+        for (Movie newMovie : newMovies) {
+            newMovieTitles.add(newMovie.localTitle);
         }
-        wearHelper.putNotification(firstThreeNewMovies);
+        wearHelper.putNotification(newMovieTitles);
     }
 }
