@@ -26,7 +26,6 @@ package org.jraf.android.cinetoday.mobile.app.main;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.concurrent.TimeUnit;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -56,8 +55,6 @@ import org.jraf.android.cinetoday.mobile.app.theater.search.TheaterSearchActivit
 import org.jraf.android.cinetoday.mobile.prefs.MainPrefs;
 import org.jraf.android.util.about.AboutActivityIntentBuilder;
 
-import com.google.android.gms.gcm.GcmNetworkManager;
-import com.google.android.gms.gcm.PeriodicTask;
 import com.squareup.picasso.Picasso;
 
 import butterknife.Bind;
@@ -212,21 +209,7 @@ public class MainActivity extends AppCompatActivity {
         LoadMoviesIntentService.startActionLoadMovies(this);
 
         // Schedule the daily task
-        scheduleTask();
-    }
-
-    private void scheduleTask() {
-        long periodSecs = TimeUnit.HOURS.toSeconds(12);
-        long flexSecs = TimeUnit.HOURS.toSeconds(1);
-        String tag = "dailyLoadMovies";
-        PeriodicTask periodicTask = new PeriodicTask.Builder()
-                .setTag(tag)
-                .setService(LoadMoviesTaskService.class)
-                .setPeriod(periodSecs)
-                .setFlex(flexSecs)
-                .setPersisted(true)
-                .build();
-        GcmNetworkManager.getInstance(this).schedule(periodicTask);
+        LoadMoviesTaskService.scheduleTask(this);
     }
 
     private SwipeRefreshLayout.OnRefreshListener mOnRefreshListener = new SwipeRefreshLayout.OnRefreshListener() {

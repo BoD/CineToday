@@ -24,8 +24,13 @@
  */
 package org.jraf.android.cinetoday.mobile.app.loadmovies;
 
+import java.util.concurrent.TimeUnit;
+
+import android.content.Context;
+
 import com.google.android.gms.gcm.GcmNetworkManager;
 import com.google.android.gms.gcm.GcmTaskService;
+import com.google.android.gms.gcm.PeriodicTask;
 import com.google.android.gms.gcm.TaskParams;
 
 public class LoadMoviesTaskService extends GcmTaskService {
@@ -37,5 +42,26 @@ public class LoadMoviesTaskService extends GcmTaskService {
             return GcmNetworkManager.RESULT_RESCHEDULE;
         }
         return GcmNetworkManager.RESULT_SUCCESS;
+    }
+
+    @Override
+    public void onInitializeTasks() {
+        // This is called when the app is re-installed, after all the tasks have been canceled.
+        // Simply re-schedule the task.
+        scheduleTask(this);
+    }
+
+    public static void scheduleTask(Context context) {
+        long periodSecs = TimeUnit.HOURS.toSeconds(12);
+        long flexSecs = TimeUnit.HOURS.toSeconds(1);
+        String tag = "dailyLoadMovies";
+        PeriodicTask periodicTask = new PeriodicTask.Builder()
+                .setTag(tag)
+                .setService(LoadMoviesTaskService.class)
+                .setPeriod(periodSecs)
+                .setFlex(flexSecs)
+                .setPersisted(true)
+                .build();
+        GcmNetworkManager.getInstance(context).schedule(periodicTask);
     }
 }
