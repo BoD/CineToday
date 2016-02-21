@@ -53,6 +53,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import okhttp3.CacheControl;
 import okhttp3.HttpUrl;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -99,7 +100,7 @@ public class Api {
                 .addQueryParameter(QUERY_THEATERS_KEY, theaterId)
                 .addQueryParameter(QUERY_DATE_KEY, SIMPLE_DATE_FORMAT.format(date))
                 .build();
-        String jsonStr = call(url);
+        String jsonStr = call(url, false);
         try {
             JSONObject jsonRoot = new JSONObject(jsonStr);
             JSONObject jsonFeed = jsonRoot.getJSONObject("feed");
@@ -172,7 +173,7 @@ public class Api {
                 .addQueryParameter(QUERY_STRIPTAGS_KEY, QUERY_STRIPTAGS_VALUE)
                 .addQueryParameter(QUERY_CODE_KEY, movie.id)
                 .build();
-        String jsonStr = call(url);
+        String jsonStr = call(url, true);
         try {
             JSONObject jsonRoot = new JSONObject(jsonStr);
             JSONObject jsonMovie = jsonRoot.getJSONObject("movie");
@@ -191,7 +192,7 @@ public class Api {
                 .addQueryParameter(QUERY_FILTER_KEY, QUERY_FILTER_VALUE)
                 .addQueryParameter(QUERY_QUERY_KEY, query)
                 .build();
-        String jsonStr = call(url);
+        String jsonStr = call(url, true);
         try {
             JSONObject jsonRoot = new JSONObject(jsonStr);
             JSONObject jsonFeed = jsonRoot.getJSONObject("feed");
@@ -217,9 +218,11 @@ public class Api {
 
     @WorkerThread
     @NonNull
-    private String call(HttpUrl url) throws IOException {
+    private String call(HttpUrl url, boolean useCache) throws IOException {
         Log.d("url=%s", url);
-        Request request = new Request.Builder().url(url).build();
+        Request.Builder urlBuilder = new Request.Builder().url(url);
+        if (!useCache) urlBuilder.cacheControl(CacheControl.FORCE_NETWORK);
+        Request request = urlBuilder.build();
         Response response = HttpUtil.getOkHttpClient(mContext).newCall(request).execute();
         return response.body().string();
     }
