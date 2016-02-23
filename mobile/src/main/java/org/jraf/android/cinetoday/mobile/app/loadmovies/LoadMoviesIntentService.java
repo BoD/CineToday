@@ -153,6 +153,11 @@ public class LoadMoviesIntentService extends IntentService {
         Log.d();
 
         MainPrefs mainPrefs = MainPrefs.get(context);
+        if (!mainPrefs.getShowNewReleasesNotification()) {
+            Log.d("Notifications are disabled: do not show one");
+            return;
+        }
+
         Set<String> notifiedMovieIds = mainPrefs.getNotifiedMovieIds();
 
         TreeSet<Movie> newMovies = new TreeSet<>(Movie.COMPARATOR);
