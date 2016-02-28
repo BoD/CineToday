@@ -38,7 +38,7 @@ public class Movie implements Parcelable {
     public String directors;
     public String actors;
     public Date releaseDate;
-    public int durationMinutes;
+    public int durationSeconds;
     public String[] genres;
     public String posterUri;
     public String trailerUri;
@@ -57,7 +57,7 @@ public class Movie implements Parcelable {
                 ", directors='" + directors + '\'' +
                 ", actors='" + actors + '\'' +
                 ", releaseDate=" + releaseDate +
-                ", durationMinutes=" + durationMinutes +
+                ", durationSeconds=" + durationSeconds +
                 ", genres=" + Arrays.toString(genres) +
                 ", posterUri='" + posterUri + '\'' +
                 ", trailerUri='" + trailerUri + '\'' +
@@ -98,7 +98,7 @@ public class Movie implements Parcelable {
         dest.writeString(this.directors);
         dest.writeString(this.actors);
         dest.writeLong(releaseDate != null ? releaseDate.getTime() : -1);
-        dest.writeInt(this.durationMinutes);
+        dest.writeInt(this.durationSeconds);
         dest.writeStringArray(this.genres);
         dest.writeString(this.posterUri);
         dest.writeString(this.trailerUri);
@@ -115,7 +115,7 @@ public class Movie implements Parcelable {
         this.actors = in.readString();
         long tmpReleaseDate = in.readLong();
         this.releaseDate = tmpReleaseDate == -1 ? null : new Date(tmpReleaseDate);
-        this.durationMinutes = in.readInt();
+        this.durationSeconds = in.readInt();
         this.genres = in.createStringArray();
         this.posterUri = in.readString();
         this.trailerUri = in.readString();

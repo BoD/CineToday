@@ -8,6 +8,7 @@
     <!-- Movie card -->
     <string name="movie_card_directors"><![CDATA[By <i>%1$s</i>]]></string>
     <string name="movie_card_actors"><![CDATA[With <i>%1$s</i>]]></string>
+    <string name="movie_card_duration"><![CDATA[Duration: <i>%1$s</i>]]></string>
     <string name="movie_card_originalTitle"><![CDATA[Original title: <i>%1$s</i>]]></string>
     <string name="movie_card_showtimes_title">Show times today</string>
     <string name="movie_card_showtimes_3d">3D</string>
@@ -17,4 +18,12 @@
 
     <!-- Configure -->
     <string name="configure_openedOnPhone">Opened on phone</string>
+
+    <!-- Duration -->
+    <string name="durationMinutes">%1$d minutes</string>
+    <string name="durationHoursMinutes">%1$dh%2$02d</string>
+    <plurals name="durationHours">
+        <item quantity="one">%1$d hour</item>
+        <item quantity="other">%1$d hours</item>
+    </plurals>
 </resources>

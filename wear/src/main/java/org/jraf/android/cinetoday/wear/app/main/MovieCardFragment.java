@@ -27,11 +27,9 @@ package org.jraf.android.cinetoday.wear.app.main;
 import java.util.Calendar;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.support.wearable.view.CardFragment;
 import android.text.Html;
-import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -66,9 +64,11 @@ public class MovieCardFragment extends CardFragment {
                     view = inflater.inflate(R.layout.movie_card_main_square, container, false);
                 }
 
+                // Title
                 TextView txtTitle = (TextView) view.findViewById(R.id.txtTitle);
                 txtTitle.setText(movie.localTitle);
 
+                // Description
                 TextView txtDescription = (TextView) view.findViewById(R.id.txtDirectors);
                 if (TextUtils.isEmpty((movie.directors))) {
                     txtDescription.setVisibility(View.GONE);
@@ -77,6 +77,7 @@ public class MovieCardFragment extends CardFragment {
                     txtDescription.setText(getHtml(R.string.movie_card_directors, movie.directors));
                 }
 
+                // Actors
                 TextView txtActors = (TextView) view.findViewById(R.id.txtActors);
                 if (movie.actors == null || movie.actors.isEmpty()) {
                     txtActors.setVisibility(View.GONE);
@@ -93,13 +94,21 @@ public class MovieCardFragment extends CardFragment {
                     view = inflater.inflate(R.layout.movie_card_synopsis_square, container, false);
                 }
 
+                // Genres
                 TextView txtGenres = (TextView) view.findViewById(R.id.txtGenres);
                 String genresStr = TextUtils.join(" · ", movie.genres);
                 txtGenres.setText(genresStr);
 
+                // Synopsis
                 TextView txtSynopsis = (TextView) view.findViewById(R.id.txtSynopsis);
                 txtSynopsis.setText(movie.synopsis);
 
+                // Duration
+                TextView txtDuration = (TextView) view.findViewById(R.id.txtDuration);
+                String durationStr = formatDuration(movie.durationSeconds);
+                txtDuration.setText(getHtml(R.string.movie_card_duration, durationStr));
+
+                // Original title
                 TextView txtOriginalTitle = (TextView) view.findViewById(R.id.txtOriginalTitle);
                 if (movie.originalTitle.equals(movie.localTitle)) {
                     txtOriginalTitle.setVisibility(View.GONE);
@@ -115,6 +124,7 @@ public class MovieCardFragment extends CardFragment {
                     view = inflater.inflate(R.layout.movie_card_showtimes_square, container, false);
                 }
 
+                // Show times
                 ViewGroup conShowtimes = (ViewGroup) view.findViewById(R.id.conShowtimes);
                 addShowtimes(conShowtimes, movie, inflater);
                 break;
@@ -123,23 +133,29 @@ public class MovieCardFragment extends CardFragment {
         return view;
     }
 
-    @NonNull
+    private String formatDuration(int durationSeconds) {
+        if (durationSeconds < 60 * 60) return getString(R.string.durationMinutes, durationSeconds / 60);
+        int hours = durationSeconds / (60 * 60);
+        int minutes = (durationSeconds % (60 * 60)) / 60;
+        if (minutes == 0) return getResources().getQuantityString(R.plurals.durationHours, hours, hours);
+        return getString(R.string.durationHoursMinutes, hours, minutes);
+    }
+
     private void addShowtimes(ViewGroup conShowtimes, Movie movie, LayoutInflater inflater) {
         Calendar nowCalendar = Calendar.getInstance();
         Calendar showtimeCalendar = Calendar.getInstance();
-        SpannableStringBuilder res = new SpannableStringBuilder();
         Showtime[] todayShowtimes = movie.todayShowtimes;
-        for (int i = 0; i < todayShowtimes.length; i++) {
-            String[] hourMinutes = todayShowtimes[i].time.split(":");
+        for (Showtime todayShowtime : todayShowtimes) {
+            String[] hourMinutes = todayShowtime.time.split(":");
             showtimeCalendar.set(Calendar.HOUR_OF_DAY, Integer.valueOf(hourMinutes[0]));
             showtimeCalendar.set(Calendar.MINUTE, Integer.valueOf(hourMinutes[1]));
             boolean isTooLate = showtimeCalendar.before(nowCalendar);
 
             View conShowtimeItem = inflater.inflate(R.layout.movie_card_showtime_item, conShowtimes, false);
             TextView txtShowtime = (TextView) conShowtimeItem.findViewById(R.id.txtShowtime);
-            txtShowtime.setText(todayShowtimes[i].time);
+            txtShowtime.setText(todayShowtime.time);
             TextView txtIs3d = (TextView) conShowtimeItem.findViewById(R.id.txtIs3d);
-            if (todayShowtimes[i].is3d) {
+            if (todayShowtime.is3d) {
                 txtIs3d.setVisibility(View.VISIBLE);
             } else {
                 txtIs3d.setVisibility(View.GONE);

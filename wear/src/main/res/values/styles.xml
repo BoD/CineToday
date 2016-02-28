@@ -9,6 +9,9 @@
         <item name="android:textColor">@color/secondary_text_light</item>
     </style>
 
+    <style name="movieCardDuration" parent="CardText">
+    </style>
+
     <style name="movieCardShowtime" parent="CardText">
         <item name="android:background">@drawable/shape_showtime_bg</item>
         <item name="android:paddingTop">4dp</item>

@@ -21,10 +21,16 @@
         android:layout_marginTop="2dp" />
 
     <TextView
+        android:id="@+id/txtDuration"
+        style="@style/movieCardDuration"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp" />
+
+    <TextView
         android:id="@+id/txtOriginalTitle"
         style="@style/movieCardOriginalTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="2dp" />
-
 </LinearLayout>

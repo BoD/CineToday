@@ -72,7 +72,7 @@ public class MovieCodec implements Codec<Movie> {
                 }
             }
 
-            movie.durationMinutes = jsonMovie.getInt("runtime");
+            movie.durationSeconds = jsonMovie.getInt("runtime");
 
             JSONArray jsonGenreArray = jsonMovie.getJSONArray("genre");
             int len = jsonGenreArray.length();
