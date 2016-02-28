@@ -28,6 +28,8 @@ android {
         buildConfigField 'boolean', 'STRICT_MODE', 'true'
 
         resConfigs 'en', 'fr'
+
+        vectorDrawables.useSupportLibrary = true
     }
 
     signingConfigs {
@@ -101,12 +103,11 @@ android.applicationVariants.all { variant ->
 dependencies {
     compile project(':common')
     wearApp project(':wear')
-    compile 'com.android.support:appcompat-v7:23.1.1'
-    compile 'com.android.support:recyclerview-v7:23.1.1'
-    compile 'com.android.support:cardview-v7:23.1.1'
-    compile 'com.android.support:preference-v7:23.1.1'
-    compile 'com.android.support:preference-v14:23.1.1'
-    compile 'com.android.support:design:23.1.1'
+    compile 'com.android.support:recyclerview-v7:23.2.0'
+    compile 'com.android.support:cardview-v7:23.2.0'
+    compile 'com.android.support:preference-v7:23.2.0'
+    compile 'com.android.support:preference-v14:23.2.0'
+    compile 'com.android.support:design:23.2.0'
     compile 'com.squareup.okhttp3:okhttp:3.1.2'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.google.android.gms:play-services-gcm:8.4.0'
