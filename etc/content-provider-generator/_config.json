@@ -1,0 +1,13 @@
+{
+  "syntaxVersion": 3,
+  "projectPackageId": "org.jraf.android.cinetoday",
+  "authority": "org.jraf.android.cinetoday.mobile.provider",
+  "providerJavaPackage": "org.jraf.android.cinetoday.mobile.provider",
+  "providerClassName": "CineTodayProvider",
+  "sqliteOpenHelperClassName": "CineTodaySQLiteOpenHelper",
+  "sqliteOpenHelperCallbacksClassName": "CineTodaySQLiteOpenHelperCallbacks",
+  "databaseFileName": "cinetoday.db",
+  "databaseVersion": 1,
+  "enableForeignKeys": true,
+  "useAnnotations": true
+}

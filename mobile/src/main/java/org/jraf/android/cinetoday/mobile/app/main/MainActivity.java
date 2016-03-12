@@ -24,14 +24,14 @@
  */
 package org.jraf.android.cinetoday.mobile.app.main;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-
 import android.content.Intent;
-import android.net.Uri;
+import android.database.Cursor;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.text.format.DateUtils;
@@ -39,42 +39,29 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import org.jraf.android.cinetoday.BuildConfig;
 import org.jraf.android.cinetoday.R;
-import org.jraf.android.cinetoday.common.model.theater.Theater;
 import org.jraf.android.cinetoday.mobile.app.loadmovies.LoadMoviesIntentService;
 import org.jraf.android.cinetoday.mobile.app.loadmovies.LoadMoviesListener;
 import org.jraf.android.cinetoday.mobile.app.loadmovies.LoadMoviesListenerHelper;
 import org.jraf.android.cinetoday.mobile.app.loadmovies.LoadMoviesTaskService;
 import org.jraf.android.cinetoday.mobile.app.prefs.PreferencesActivity;
-import org.jraf.android.cinetoday.mobile.app.theater.search.TheaterSearchActivity;
 import org.jraf.android.cinetoday.mobile.prefs.MainPrefs;
+import org.jraf.android.cinetoday.mobile.provider.theater.TheaterColumns;
+import org.jraf.android.cinetoday.mobile.provider.theater.TheaterCursor;
 import org.jraf.android.util.about.AboutActivityIntentBuilder;
-
-import com.squareup.picasso.Picasso;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
     private static final int REQUEST_PICK_THEATER = 0;
 
-    @Bind(R.id.fabPickTheater)
-    protected FloatingActionButton mFabPickTheater;
-
-    @Bind(R.id.txtTheaterName)
-    protected TextView mTxtTheaterName;
-
-    @Bind(R.id.txtTheaterAddress)
-    protected TextView mTxtTheaterAddress;
-
-    @Bind(R.id.imgTheaterPicture)
-    protected ImageView mImgTheaterPicture;
+    @Bind(R.id.conViewPager)
+    protected ViewPager mConViewPager;
 
     @Bind(R.id.txtStatus)
     protected TextView mTxtStatus;
@@ -105,12 +92,7 @@ public class MainActivity extends AppCompatActivity {
         mSwiRefresh.setOnRefreshListener(mOnRefreshListener);
         mSwiRefresh.setColorSchemeColors(ActivityCompat.getColor(this, R.color.accent), ActivityCompat.getColor(this, R.color.primary));
 
-        updateTheaterInfo();
-
-        // First use: pick a theater
-        if (!MainPrefs.get(this).containsTheaterId()) {
-            onPickTheaterClicked();
-        }
+        getSupportLoaderManager().initLoader(0, null, this);
     }
 
     @Override
@@ -149,15 +131,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
-    private void updateTheaterInfo() {
-        MainPrefs prefs = MainPrefs.get(this);
-        mTxtTheaterName.setText(prefs.getTheaterName());
-        mTxtTheaterAddress.setText(prefs.getTheaterAddress());
-        Picasso.with(this).load(prefs.getTheaterPictureUri()).placeholder(R.drawable.theater_list_item_placeholder).error(
-                R.drawable.theater_list_item_placeholder).fit().centerCrop().noFade().into(mImgTheaterPicture);
-    }
-
     private void updateLastUpdateDateLabel() {
         MainPrefs prefs = MainPrefs.get(this);
         Long lastUpdateDate = prefs.getLastUpdateDate();
@@ -169,40 +142,33 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    @OnClick(R.id.fabPickTheater)
-    protected void onPickTheaterClicked() {
-        Intent intent = new Intent(this, TheaterSearchActivity.class);
-        intent.putExtra(TheaterSearchActivity.EXTRA_FIRST_USE, !MainPrefs.get(this).containsTheaterId());
-        startActivityForResult(intent, REQUEST_PICK_THEATER);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode) {
-            case REQUEST_PICK_THEATER:
-                if (resultCode == RESULT_CANCELED) {
-                    if (!MainPrefs.get(this).containsTheaterId()) {
-                        // First use case, no theater was picked: finish now
-                        finish();
-                    }
-                    break;
-                }
-                Theater theater = data.getParcelableExtra(TheaterSearchActivity.EXTRA_RESULT);
-                // Save picked theater to prefs
-                MainPrefs.get(this).edit()
-                        .putTheaterId(theater.id)
-                        .putTheaterName(theater.name)
-                        .putTheaterAddress(theater.address)
-                        .putTheaterPictureUri(theater.posterUri)
-                        .apply();
-                // Update labels
-                updateTheaterInfo();
-
-                // Update now
-                updateNowAndScheduleTask();
-        }
-    }
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//        switch (requestCode) {
+//            case REQUEST_PICK_THEATER:
+//                if (resultCode == RESULT_CANCELED) {
+//                    if (!MainPrefs.get(this).containsTheaterId()) {
+//                        // First use case, no theater was picked: finish now
+//                        finish();
+//                    }
+//                    break;
+//                }
+//                Theater theater = data.getParcelableExtra(TheaterSearchActivity.EXTRA_RESULT);
+//                // Save picked theater to prefs
+//                MainPrefs.get(this).edit()
+//                        .putTheaterId(theater.id)
+//                        .putTheaterName(theater.name)
+//                        .putTheaterAddress(theater.address)
+//                        .putTheaterPictureUri(theater.posterUri)
+//                        .apply();
+//                // Update labels
+//                updateTheaterInfo();
+//
+//                // Update now
+//                updateNowAndScheduleTask();
+//        }
+//    }
 
     private void updateNowAndScheduleTask() {
         // Update now
@@ -232,7 +198,6 @@ public class MainActivity extends AppCompatActivity {
                     mSwiRefresh.setRefreshing(true);
                 }
             });
-            mFabPickTheater.setEnabled(false);
         }
 
         @Override
@@ -247,7 +212,6 @@ public class MainActivity extends AppCompatActivity {
             updateLastUpdateDateLabel();
             mPgbLoadingProgress.setVisibility(View.GONE);
             mSwiRefresh.setRefreshing(false);
-            mFabPickTheater.setEnabled(true);
             mTxtCurrentMovie.setText(null);
         }
 
@@ -257,7 +221,6 @@ public class MainActivity extends AppCompatActivity {
             updateLastUpdateDateLabel();
             mPgbLoadingProgress.setVisibility(View.GONE);
             mSwiRefresh.setRefreshing(false);
-            mFabPickTheater.setEnabled(true);
             mTxtCurrentMovie.setText(null);
         }
     };
@@ -290,30 +253,29 @@ public class MainActivity extends AppCompatActivity {
         return sRunning;
     }
 
-    @OnClick(R.id.btnNavigate)
-    protected void onNavigateClick() {
-        MainPrefs prefs = MainPrefs.get(this);
-        String address = prefs.getTheaterAddress();
-        try {
-            address = URLEncoder.encode(address, "utf-8");
-        } catch (UnsupportedEncodingException ignored) {}
-        Uri uri = Uri.parse("http://maps.google.com/maps?f=d&daddr=" + address);
-        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-        startActivity(intent);
+
+    /*
+     * Loader.
+     */
+    //region
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        return new CursorLoader(this, TheaterColumns.CONTENT_URI, null, null, null, null) {
+            @Override
+            public Cursor loadInBackground() {
+                return new TheaterCursor(super.loadInBackground());
+            }
+        };
     }
 
-    @OnClick(R.id.btnWebSite)
-    protected void onWebSiteClick() {
-        MainPrefs prefs = MainPrefs.get(this);
-        String name = prefs.getTheaterName();
-        // Try to improve DuckDuckGo "I'm feeling ducky" results
-        name = "cinema " + name;
-        try {
-            name = URLEncoder.encode(name, "utf-8");
-        } catch (UnsupportedEncodingException ignored) {}
-        Uri uri = Uri.parse("https://www.google.com/search?sourceid=navclient&btnI=I&q=" + name);
-        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-        startActivity(intent);
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        mConViewPager.setAdapter(new TheaterFragmentStatePagerAdapter(getSupportFragmentManager(), (TheaterCursor) data));
     }
 
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {}
+
+    //endregion
 }
