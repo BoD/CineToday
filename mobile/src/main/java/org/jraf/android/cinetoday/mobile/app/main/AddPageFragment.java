@@ -32,8 +32,12 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import org.jraf.android.cinetoday.R;
+import org.jraf.android.util.app.base.BaseFragment;
 
-public class AddPageFragment extends Fragment {
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
+public class AddPageFragment extends BaseFragment<MainCallbacks> {
     public static Fragment newInstance() {
         AddPageFragment res = new AddPageFragment();
         return res;
@@ -43,7 +47,13 @@ public class AddPageFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View res = inflater.inflate(R.layout.page_add, container, false);
+        ButterKnife.bind(this, res);
         return res;
+    }
+
+    @OnClick(R.id.btnAdd)
+    protected void onAddClicked() {
+        getCallbacks().onAddTheater();
     }
 }
 

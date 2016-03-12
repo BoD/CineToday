@@ -66,7 +66,7 @@ public class TheaterPageFragment extends Fragment {
         Bundle args = new Bundle();
         args.putString("name", theaterCursor.getName());
         args.putString("address", theaterCursor.getAddress());
-        args.putString("pictureUri", theaterCursor.getPictureuri());
+        args.putString("pictureUri", theaterCursor.getPictureUri());
         res.setArguments(args);
         return res;
     }

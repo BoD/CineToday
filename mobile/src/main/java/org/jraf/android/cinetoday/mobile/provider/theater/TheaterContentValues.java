@@ -94,13 +94,13 @@ public class TheaterContentValues extends AbstractContentValues {
     /**
      * The uri of a picture for this theater.
      */
-    public TheaterContentValues putPictureuri(@Nullable String value) {
-        mContentValues.put(TheaterColumns.PICTUREURI, value);
+    public TheaterContentValues putPictureUri(@Nullable String value) {
+        mContentValues.put(TheaterColumns.PICTURE_URI, value);
         return this;
     }
 
-    public TheaterContentValues putPictureuriNull() {
-        mContentValues.putNull(TheaterColumns.PICTUREURI);
+    public TheaterContentValues putPictureUriNull() {
+        mContentValues.putNull(TheaterColumns.PICTURE_URI);
         return this;
     }
 }
