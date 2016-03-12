@@ -16,6 +16,12 @@
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup">
 
+        <!-- Content provider -->
+        <provider
+            android:name="org.jraf.android.cinetoday.mobile.provider.CineTodayProvider"
+            android:authorities="org.jraf.android.cinetoday.mobile.provider"
+            android:exported="false" />
+
         <!-- Main -->
         <activity
             android:name=".mobile.app.main.MainActivity"
