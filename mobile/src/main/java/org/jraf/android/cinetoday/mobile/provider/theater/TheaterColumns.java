@@ -59,7 +59,7 @@ public class TheaterColumns implements BaseColumns {
     /**
      * The uri of a picture for this theater.
      */
-    public static final String PICTUREURI = "pictureUri";
+    public static final String PICTURE_URI = "picture_uri";
 
 
     public static final String DEFAULT_ORDER = TABLE_NAME + "." + _ID;
@@ -70,7 +70,7 @@ public class TheaterColumns implements BaseColumns {
             PUBLIC_ID,
             NAME,
             ADDRESS,
-            PICTUREURI
+            PICTURE_URI
     };
     // @formatter:on
 
@@ -80,7 +80,7 @@ public class TheaterColumns implements BaseColumns {
             if (c.equals(PUBLIC_ID) || c.contains("." + PUBLIC_ID)) return true;
             if (c.equals(NAME) || c.contains("." + NAME)) return true;
             if (c.equals(ADDRESS) || c.contains("." + ADDRESS)) return true;
-            if (c.equals(PICTUREURI) || c.contains("." + PICTUREURI)) return true;
+            if (c.equals(PICTURE_URI) || c.contains("." + PICTURE_URI)) return true;
         }
         return false;
     }

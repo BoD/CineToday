@@ -47,7 +47,7 @@ public class TheaterCodec implements Codec<Theater> {
 
             JSONObject jsonPoster = jsonTheater.optJSONObject("poster");
             if (jsonPoster != null) {
-                theater.posterUri = jsonPoster.getString("href");
+                theater.pictureUri = jsonPoster.getString("href");
             }
         } catch (JSONException e) {
             throw new ParseException(e);

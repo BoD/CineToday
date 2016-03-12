@@ -31,7 +31,7 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import org.jraf.android.cinetoday.mobile.provider.theater.TheaterCursor;
 
 public class TheaterFragmentStatePagerAdapter extends FragmentStatePagerAdapter {
-    private final TheaterCursor mTheaterCursor;
+    private TheaterCursor mTheaterCursor;
 
     public TheaterFragmentStatePagerAdapter(FragmentManager fm, TheaterCursor theaterCursor) {
         super(fm);
@@ -52,5 +52,15 @@ public class TheaterFragmentStatePagerAdapter extends FragmentStatePagerAdapter 
     @Override
     public int getCount() {
         return mTheaterCursor.getCount() + 1;
+    }
+
+    @Override
+    public int getItemPosition(Object object) {
+        return POSITION_NONE;
+    }
+
+    public void swapTheaterCursor(TheaterCursor theaterCursor) {
+        mTheaterCursor = theaterCursor;
+        notifyDataSetChanged();
     }
 }

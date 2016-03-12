@@ -52,7 +52,7 @@ public class CineTodaySQLiteOpenHelper extends SQLiteOpenHelper {
             + TheaterColumns.PUBLIC_ID + " TEXT NOT NULL, "
             + TheaterColumns.NAME + " TEXT NOT NULL, "
             + TheaterColumns.ADDRESS + " TEXT NOT NULL, "
-            + TheaterColumns.PICTUREURI + " TEXT "
+            + TheaterColumns.PICTURE_URI + " TEXT "
             + ", CONSTRAINT unique_public_id UNIQUE (public_id) ON CONFLICT REPLACE"
             + " );";
 

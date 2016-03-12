@@ -84,7 +84,7 @@ public class TheaterAdapter extends RecyclerView.Adapter<TheaterAdapter.ViewHold
         Theater theater = mObjects.get(position);
         holder.txtName.setText(theater.name);
         holder.txtAddress.setText(theater.address);
-        Picasso.with(mContext).load(theater.posterUri).fit().centerCrop().placeholder(R.drawable.theater_list_item_placeholder).error(
+        Picasso.with(mContext).load(theater.pictureUri).fit().centerCrop().placeholder(R.drawable.theater_list_item_placeholder).error(
                 R.drawable.theater_list_item_placeholder).noFade().into(holder.imgThumbnail);
 
         // Callback

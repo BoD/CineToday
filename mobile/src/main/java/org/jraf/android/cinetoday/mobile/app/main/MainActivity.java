@@ -26,6 +26,7 @@ package org.jraf.android.cinetoday.mobile.app.main;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
@@ -44,24 +45,28 @@ import android.widget.TextView;
 
 import org.jraf.android.cinetoday.BuildConfig;
 import org.jraf.android.cinetoday.R;
+import org.jraf.android.cinetoday.common.model.theater.Theater;
 import org.jraf.android.cinetoday.mobile.app.loadmovies.LoadMoviesIntentService;
 import org.jraf.android.cinetoday.mobile.app.loadmovies.LoadMoviesListener;
 import org.jraf.android.cinetoday.mobile.app.loadmovies.LoadMoviesListenerHelper;
 import org.jraf.android.cinetoday.mobile.app.loadmovies.LoadMoviesTaskService;
 import org.jraf.android.cinetoday.mobile.app.prefs.PreferencesActivity;
+import org.jraf.android.cinetoday.mobile.app.theater.search.TheaterSearchActivity;
 import org.jraf.android.cinetoday.mobile.prefs.MainPrefs;
 import org.jraf.android.cinetoday.mobile.provider.theater.TheaterColumns;
+import org.jraf.android.cinetoday.mobile.provider.theater.TheaterContentValues;
 import org.jraf.android.cinetoday.mobile.provider.theater.TheaterCursor;
+import org.jraf.android.cinetoday.mobile.ui.ZoomOutPageTransformer;
 import org.jraf.android.util.about.AboutActivityIntentBuilder;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
-    private static final int REQUEST_PICK_THEATER = 0;
+public class MainActivity extends AppCompatActivity implements MainCallbacks, LoaderCallbacks<Cursor> {
+    private static final int REQUEST_ADD_THEATER = 0;
 
-    @Bind(R.id.conViewPager)
-    protected ViewPager mConViewPager;
+    @Bind(R.id.vpgTheaters)
+    protected ViewPager mVpgTheaters;
 
     @Bind(R.id.txtStatus)
     protected TextView mTxtStatus;
@@ -69,8 +74,8 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<C
     @Bind(R.id.txtCurrentMovie)
     protected TextView mTxtCurrentMovie;
 
-    @Bind((R.id.swiRefresh))
-    protected SwipeRefreshLayout mSwiRefresh;
+    @Bind((R.id.swrRefresh))
+    protected SwipeRefreshLayout mSwrRefresh;
 
     @Bind((R.id.pgbLoadingProgress))
     protected ProgressBar mPgbLoadingProgress;
@@ -79,6 +84,7 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<C
      * If {@code true}, this activity is running.
      */
     private static boolean sRunning;
+    private TheaterFragmentStatePagerAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,8 +95,24 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<C
         setContentView(R.layout.main);
         ButterKnife.bind(this);
 
-        mSwiRefresh.setOnRefreshListener(mOnRefreshListener);
-        mSwiRefresh.setColorSchemeColors(ActivityCompat.getColor(this, R.color.accent), ActivityCompat.getColor(this, R.color.primary));
+        mSwrRefresh.setOnRefreshListener(mOnRefreshListener);
+        mSwrRefresh.setColorSchemeColors(ActivityCompat.getColor(this, R.color.accent), ActivityCompat.getColor(this, R.color.primary));
+
+        // Prevent the swipe refresh view to be triggered when swiping the view pager
+        mVpgTheaters.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {}
+
+            @Override
+            public void onPageSelected(int position) {}
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+                mSwrRefresh.setEnabled(state == ViewPager.SCROLL_STATE_IDLE);
+            }
+        });
+        mVpgTheaters.setPageTransformer(true, new ZoomOutPageTransformer());
+        mVpgTheaters.setPageMargin(0);
 
         getSupportLoaderManager().initLoader(0, null, this);
     }
@@ -142,33 +164,43 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<C
         }
     }
 
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//        switch (requestCode) {
-//            case REQUEST_PICK_THEATER:
-//                if (resultCode == RESULT_CANCELED) {
-//                    if (!MainPrefs.get(this).containsTheaterId()) {
-//                        // First use case, no theater was picked: finish now
-//                        finish();
-//                    }
-//                    break;
-//                }
-//                Theater theater = data.getParcelableExtra(TheaterSearchActivity.EXTRA_RESULT);
-//                // Save picked theater to prefs
-//                MainPrefs.get(this).edit()
-//                        .putTheaterId(theater.id)
-//                        .putTheaterName(theater.name)
-//                        .putTheaterAddress(theater.address)
-//                        .putTheaterPictureUri(theater.posterUri)
-//                        .apply();
-//                // Update labels
-//                updateTheaterInfo();
-//
-//                // Update now
-//                updateNowAndScheduleTask();
-//        }
-//    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case REQUEST_ADD_THEATER:
+                if (resultCode == RESULT_CANCELED) {
+                    if (!MainPrefs.get(this).containsTheaterId()) {
+                        // First use case, no theater was picked: finish now
+                        finish();
+                    }
+                    break;
+                }
+                final Theater theater = data.getParcelableExtra(TheaterSearchActivity.EXTRA_RESULT);
+
+                new AsyncTask<Void, Void, Void>() {
+                    @Override
+                    protected Void doInBackground(Void... params) {
+                        // Insert the picked theater into list
+                        TheaterContentValues values = new TheaterContentValues();
+                        values.putPublicId(theater.id)
+                                .putName(theater.name)
+                                .putAddress(theater.address)
+                                .putPictureUri(theater.pictureUri);
+                        values.insert(MainActivity.this);
+                        return null;
+                    }
+
+                    @Override
+                    protected void onPostExecute(Void result) {
+                        // Refresh the view pager
+
+//                        // Update now
+//                        updateNowAndScheduleTask();
+                    }
+                }.execute();
+        }
+    }
 
     private void updateNowAndScheduleTask() {
         // Update now
@@ -192,10 +224,10 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<C
             mPgbLoadingProgress.setVisibility(View.VISIBLE);
             // XXX Do this in a post  because it won't work if called before the SwipeRefreshView's onMeasure
             // (see https://code.google.com/p/android/issues/detail?id=77712)
-            mSwiRefresh.post(new Runnable() {
+            mSwrRefresh.post(new Runnable() {
                 @Override
                 public void run() {
-                    mSwiRefresh.setRefreshing(true);
+                    mSwrRefresh.setRefreshing(true);
                 }
             });
         }
@@ -211,7 +243,7 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<C
         public void onLoadMoviesSuccess() {
             updateLastUpdateDateLabel();
             mPgbLoadingProgress.setVisibility(View.GONE);
-            mSwiRefresh.setRefreshing(false);
+            mSwrRefresh.setRefreshing(false);
             mTxtCurrentMovie.setText(null);
         }
 
@@ -220,7 +252,7 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<C
             // TODO
             updateLastUpdateDateLabel();
             mPgbLoadingProgress.setVisibility(View.GONE);
-            mSwiRefresh.setRefreshing(false);
+            mSwrRefresh.setRefreshing(false);
             mTxtCurrentMovie.setText(null);
         }
     };
@@ -271,11 +303,30 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<C
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        mConViewPager.setAdapter(new TheaterFragmentStatePagerAdapter(getSupportFragmentManager(), (TheaterCursor) data));
+        if (mAdapter == null) {
+            mAdapter = new TheaterFragmentStatePagerAdapter(getSupportFragmentManager(), (TheaterCursor) data);
+            mVpgTheaters.setAdapter(mAdapter);
+        } else {
+            mAdapter.swapTheaterCursor((TheaterCursor) data);
+        }
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {}
+
+    //endregion
+
+
+    /*
+     * MainCallbacks.
+     */
+    //region
+
+    @Override
+    public void onAddTheater() {
+        Intent intent = new Intent(this, TheaterSearchActivity.class);
+        startActivityForResult(intent, REQUEST_ADD_THEATER);
+    }
 
     //endregion
 }
