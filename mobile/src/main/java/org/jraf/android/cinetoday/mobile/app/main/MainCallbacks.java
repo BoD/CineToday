@@ -22,43 +22,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jraf.android.cinetoday.mobile.provider.theater;
+package org.jraf.android.cinetoday.mobile.app.main;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-
-import org.jraf.android.cinetoday.mobile.provider.base.BaseModel;
-
-/**
- * A theater.
- */
-public interface TheaterModel extends BaseModel {
-
-    /**
-     * Public id of this theater.
-     * Cannot be {@code null}.
-     */
-    @NonNull
-    String getPublicId();
-
-    /**
-     * Name of this theater.
-     * Cannot be {@code null}.
-     */
-    @NonNull
-    String getName();
-
-    /**
-     * Address of this theater.
-     * Cannot be {@code null}.
-     */
-    @NonNull
-    String getAddress();
-
-    /**
-     * The uri of a picture for this theater.
-     * Can be {@code null}.
-     */
-    @Nullable
-    String getPictureUri();
+public interface MainCallbacks {
+    void onAddTheater();
 }

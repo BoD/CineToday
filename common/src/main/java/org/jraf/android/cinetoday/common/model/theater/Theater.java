@@ -31,7 +31,7 @@ public class Theater implements Parcelable {
     public String id;
     public String name;
     public String address;
-    public String posterUri;
+    public String pictureUri;
 
     public Theater() {}
 
@@ -41,7 +41,7 @@ public class Theater implements Parcelable {
                 "id='" + id + '\'' +
                 ", name='" + name + '\'' +
                 ", address='" + address + '\'' +
-                ", posterUri='" + posterUri + '\'' +
+                ", pictureUri='" + pictureUri + '\'' +
                 '}';
     }
 
@@ -72,14 +72,14 @@ public class Theater implements Parcelable {
         dest.writeString(this.id);
         dest.writeString(this.name);
         dest.writeString(this.address);
-        dest.writeString(this.posterUri);
+        dest.writeString(this.pictureUri);
     }
 
     protected Theater(Parcel in) {
         this.id = in.readString();
         this.name = in.readString();
         this.address = in.readString();
-        this.posterUri = in.readString();
+        this.pictureUri = in.readString();
     }
 
     public static final Creator<Theater> CREATOR = new Creator<Theater>() {

@@ -52,6 +52,7 @@ public class CineTodayProvider extends BaseContentProvider {
     private static final int URI_TYPE_THEATER_ID = 1;
 
 
+
     private static final UriMatcher URI_MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
 
     static {

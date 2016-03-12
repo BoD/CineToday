@@ -56,7 +56,6 @@ public abstract class BaseContentProvider extends ContentProvider {
 
 
     protected abstract QueryParams getQueryParams(Uri uri, String selection, String[] projection);
-
     protected abstract boolean hasDebug();
 
     protected abstract SQLiteOpenHelper createSqLiteOpenHelper();

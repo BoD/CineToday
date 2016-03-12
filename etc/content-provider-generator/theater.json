@@ -22,7 +22,7 @@
     },
     {
       "documentation": "The uri of a picture for this theater.",
-      "name": "pictureUri",
+      "name": "picture_uri",
       "type": "String",
       "nullable": true
     }

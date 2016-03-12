@@ -220,43 +220,43 @@ public class TheaterSelection extends AbstractSelection<TheaterSelection> {
         return this;
     }
 
-    public TheaterSelection pictureuri(String... value) {
-        addEquals(TheaterColumns.PICTUREURI, value);
+    public TheaterSelection pictureUri(String... value) {
+        addEquals(TheaterColumns.PICTURE_URI, value);
         return this;
     }
 
-    public TheaterSelection pictureuriNot(String... value) {
-        addNotEquals(TheaterColumns.PICTUREURI, value);
+    public TheaterSelection pictureUriNot(String... value) {
+        addNotEquals(TheaterColumns.PICTURE_URI, value);
         return this;
     }
 
-    public TheaterSelection pictureuriLike(String... value) {
-        addLike(TheaterColumns.PICTUREURI, value);
+    public TheaterSelection pictureUriLike(String... value) {
+        addLike(TheaterColumns.PICTURE_URI, value);
         return this;
     }
 
-    public TheaterSelection pictureuriContains(String... value) {
-        addContains(TheaterColumns.PICTUREURI, value);
+    public TheaterSelection pictureUriContains(String... value) {
+        addContains(TheaterColumns.PICTURE_URI, value);
         return this;
     }
 
-    public TheaterSelection pictureuriStartsWith(String... value) {
-        addStartsWith(TheaterColumns.PICTUREURI, value);
+    public TheaterSelection pictureUriStartsWith(String... value) {
+        addStartsWith(TheaterColumns.PICTURE_URI, value);
         return this;
     }
 
-    public TheaterSelection pictureuriEndsWith(String... value) {
-        addEndsWith(TheaterColumns.PICTUREURI, value);
+    public TheaterSelection pictureUriEndsWith(String... value) {
+        addEndsWith(TheaterColumns.PICTURE_URI, value);
         return this;
     }
 
-    public TheaterSelection orderByPictureuri(boolean desc) {
-        orderBy(TheaterColumns.PICTUREURI, desc);
+    public TheaterSelection orderByPictureUri(boolean desc) {
+        orderBy(TheaterColumns.PICTURE_URI, desc);
         return this;
     }
 
-    public TheaterSelection orderByPictureuri() {
-        orderBy(TheaterColumns.PICTUREURI, false);
+    public TheaterSelection orderByPictureUri() {
+        orderBy(TheaterColumns.PICTURE_URI, false);
         return this;
     }
 }

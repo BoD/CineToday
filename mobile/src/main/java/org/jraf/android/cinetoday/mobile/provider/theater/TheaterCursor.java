@@ -89,8 +89,8 @@ public class TheaterCursor extends AbstractCursor implements TheaterModel {
      * Can be {@code null}.
      */
     @Nullable
-    public String getPictureuri() {
-        String res = getStringOrNull(TheaterColumns.PICTUREURI);
+    public String getPictureUri() {
+        String res = getStringOrNull(TheaterColumns.PICTURE_URI);
         return res;
     }
 }
