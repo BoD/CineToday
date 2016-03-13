@@ -56,6 +56,7 @@ import org.jraf.android.cinetoday.mobile.prefs.MainPrefs;
 import org.jraf.android.cinetoday.mobile.provider.theater.TheaterColumns;
 import org.jraf.android.cinetoday.mobile.provider.theater.TheaterContentValues;
 import org.jraf.android.cinetoday.mobile.provider.theater.TheaterCursor;
+import org.jraf.android.cinetoday.mobile.provider.theater.TheaterSelection;
 import org.jraf.android.cinetoday.mobile.ui.ZoomOutPageTransformer;
 import org.jraf.android.util.about.AboutActivityIntentBuilder;
 import org.jraf.android.util.log.Log;
@@ -194,8 +195,6 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks, Lo
 
                     @Override
                     protected void onPostExecute(Void result) {
-                        // Refresh the view pager
-
 //                        // Update now
 //                        updateNowAndScheduleTask();
                     }
@@ -330,8 +329,23 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks, Lo
     }
 
     @Override
-    public void onDeleteTheater(long id) {
+    public void onDeleteTheater(final long id) {
         Log.d("id=%s", id);
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                TheaterSelection theaterSelection = new TheaterSelection();
+                theaterSelection.id(id);
+                theaterSelection.delete(MainActivity.this);
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void result) {
+//                        // Update now
+//                        updateNowAndScheduleTask();
+            }
+        }.execute();
     }
 
     //endregion
