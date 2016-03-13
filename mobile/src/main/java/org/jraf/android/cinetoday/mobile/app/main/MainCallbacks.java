@@ -26,4 +26,6 @@ package org.jraf.android.cinetoday.mobile.app.main;
 
 public interface MainCallbacks {
     void onAddTheater();
+
+    void onDeleteTheater(long id);
 }
