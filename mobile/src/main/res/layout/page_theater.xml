@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -8,65 +7,46 @@
 
     <!-- Theater details -->
 
-    <android.support.design.widget.CoordinatorLayout
-        android:id="@+id/conTheaterCoord"
+    <LinearLayout
+        android:id="@+id/conTheater"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/imgTheaterPicture"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/main_theaterPicture_height"
+            android:background="@color/placeholderBg"
+            android:scaleType="fitCenter" />
 
         <LinearLayout
-            android:id="@+id/conTheater"
+            android:id="@+id/conTheaterDetails"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:background="@color/accent"
+            android:orientation="vertical"
+            android:padding="16dp">
 
-            <ImageView
-                android:id="@+id/imgTheaterPicture"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/main_theaterPicture_height"
-                android:background="@color/placeholderBg"
-                android:scaleType="fitCenter" />
-
-            <LinearLayout
-                android:id="@+id/conTheaterDetails"
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/txtTheaterName"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@color/accent"
-                android:orientation="vertical"
-                android:padding="16dp">
+                android:fontFamily="sans-serif-condensed"
+                android:textAppearance="?android:attr/textAppearanceSearchResultTitle"
+                android:textColor="@android:color/white"
+                tools:text="MK2 Bibliothèque" />
 
-                <TextView
-                    android:id="@+id/txtTheaterName"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif-condensed"
-                    android:textAppearance="?android:attr/textAppearanceSearchResultTitle"
-                    android:textColor="@android:color/white"
-                    tools:text="MK2 Bibliothèque" />
-
-                <TextView
-                    android:id="@+id/txtTheaterAddress"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif-light"
-                    android:textAppearance="?android:attr/textAppearanceSearchResultSubtitle"
-                    android:textColor="@android:color/white"
-                    tools:text="23 rue Nationale\n75013 PARIS" />
-            </LinearLayout>
+            <TextView
+                android:id="@+id/txtTheaterAddress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-light"
+                android:textAppearance="?android:attr/textAppearanceSearchResultSubtitle"
+                android:textColor="@android:color/white"
+                tools:text="23 rue Nationale\n75013 PARIS" />
         </LinearLayout>
-
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fabPickTheater"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/main_fab_marginEnd"
-            android:src="@drawable/selector_edit_24"
-            android:tint="@color/accent"
-            app:backgroundTint="@android:color/white"
-            app:layout_anchor="@id/imgTheaterPicture"
-            app:layout_anchorGravity="bottom|end" />
-
-    </android.support.design.widget.CoordinatorLayout>
-
+    </LinearLayout>
 
     <!-- Buttons -->
 
@@ -102,6 +82,20 @@
             android:paddingBottom="16dp"
             android:paddingTop="16dp"
             android:text="@string/main_webSite"
+            android:textColor="@color/accent" />
+
+        <Button
+            android:id="@+id/btnDelete"
+            android:layout_width="96dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:background="?selectableItemBackgroundBorderless"
+            android:drawablePadding="8dp"
+            android:drawableTop="@drawable/selector_delete_24"
+            android:paddingBottom="16dp"
+            android:paddingTop="16dp"
+            android:text="@string/main_delete"
             android:textColor="@color/accent" />
     </LinearLayout>
 

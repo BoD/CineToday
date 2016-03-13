@@ -8,6 +8,9 @@
     <string name="main_action_about">À propos</string>
     <string name="main_navigate">Naviguer</string>
     <string name="main_webSite">Site web</string>
+    <string name="main_delete">Supprimer</string>
+    <string name="main_theater_delete_confirm_title">Supprimer</string>
+    <string name="main_theater_delete_confirm_message">Voulez-vous supprimer ce cinéma ?</string>
 
     <!-- Theater search -->
     <string name="theater_search_edtSearch_hint">Nom du cinéma</string>
