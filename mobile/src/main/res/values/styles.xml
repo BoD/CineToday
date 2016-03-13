@@ -5,4 +5,8 @@
         <item name="colorButtonNormal">@color/accent</item>
         <item name="android:textColor">@android:color/white</item>
     </style>
+
+    <style name="AppTheme.Dialog.Alert" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="colorAccent">@color/accent</item>
+    </style>
 </resources>

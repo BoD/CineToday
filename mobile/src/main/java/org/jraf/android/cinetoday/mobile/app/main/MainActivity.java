@@ -58,6 +58,7 @@ import org.jraf.android.cinetoday.mobile.provider.theater.TheaterContentValues;
 import org.jraf.android.cinetoday.mobile.provider.theater.TheaterCursor;
 import org.jraf.android.cinetoday.mobile.ui.ZoomOutPageTransformer;
 import org.jraf.android.util.about.AboutActivityIntentBuilder;
+import org.jraf.android.util.log.Log;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -326,6 +327,11 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks, Lo
     public void onAddTheater() {
         Intent intent = new Intent(this, TheaterSearchActivity.class);
         startActivityForResult(intent, REQUEST_ADD_THEATER);
+    }
+
+    @Override
+    public void onDeleteTheater(long id) {
+        Log.d("id=%s", id);
     }
 
     //endregion

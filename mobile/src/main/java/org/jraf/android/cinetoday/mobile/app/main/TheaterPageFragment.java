@@ -31,7 +31,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,6 +40,9 @@ import android.widget.TextView;
 
 import org.jraf.android.cinetoday.R;
 import org.jraf.android.cinetoday.mobile.provider.theater.TheaterCursor;
+import org.jraf.android.util.app.base.BaseFragment;
+import org.jraf.android.util.dialog.AlertDialogFragment;
+import org.jraf.android.util.dialog.AlertDialogListener;
 
 import com.squareup.picasso.Picasso;
 
@@ -48,9 +50,8 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class TheaterPageFragment extends Fragment {
-    @Bind(R.id.fabPickTheater)
-    protected FloatingActionButton mFabPickTheater;
+public class TheaterPageFragment extends BaseFragment<MainCallbacks> implements AlertDialogListener {
+    private static final int DIALOG_DELETE_CONFIRM = 0;
 
     @Bind(R.id.txtTheaterName)
     protected TextView mTxtTheaterName;
@@ -61,9 +62,12 @@ public class TheaterPageFragment extends Fragment {
     @Bind(R.id.imgTheaterPicture)
     protected ImageView mImgTheaterPicture;
 
+    private long mId;
+
     public static Fragment newInstance(TheaterCursor theaterCursor) {
         TheaterPageFragment res = new TheaterPageFragment();
         Bundle args = new Bundle();
+        args.putLong("id", theaterCursor.getId());
         args.putString("name", theaterCursor.getName());
         args.putString("address", theaterCursor.getAddress());
         args.putString("pictureUri", theaterCursor.getPictureUri());
@@ -77,19 +81,13 @@ public class TheaterPageFragment extends Fragment {
         View res = inflater.inflate(R.layout.page_theater, container, false);
         ButterKnife.bind(this, res);
         Bundle args = getArguments();
+        mId = args.getLong("id");
         mTxtTheaterName.setText(args.getString("name"));
         mTxtTheaterAddress.setText(args.getString("address"));
         String pictureUri = args.getString("pictureUri");
         Picasso.with(getContext()).load(pictureUri).placeholder(R.drawable.theater_list_item_placeholder).error(
                 R.drawable.theater_list_item_placeholder).fit().centerCrop().noFade().into(mImgTheaterPicture);
         return res;
-    }
-
-    @OnClick(R.id.fabPickTheater)
-    protected void onPickTheaterClicked() {
-//        Intent intent = new Intent(this, TheaterSearchActivity.class);
-//        intent.putExtra(TheaterSearchActivity.EXTRA_FIRST_USE, !MainPrefs.get(this).containsTheaterId());
-//        startActivityForResult(intent, REQUEST_PICK_THEATER);
     }
 
     @OnClick(R.id.btnNavigate)
@@ -115,5 +113,34 @@ public class TheaterPageFragment extends Fragment {
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
         startActivity(intent);
     }
+
+    @OnClick(R.id.btnDelete)
+    protected void onDeleteClick() {
+        AlertDialogFragment.newInstance(DIALOG_DELETE_CONFIRM)
+                .title(R.string.main_theater_delete_confirm_title)
+                .message(R.string.main_theater_delete_confirm_message)
+                .positiveButton(android.R.string.ok)
+                .negativeButton(android.R.string.cancel)
+                .show(this);
+    }
+
+
+    /*
+     * AlertDialogListener.
+     */
+    //region
+
+    @Override
+    public void onDialogClickPositive(int tag, Object payload) {
+        getCallbacks().onDeleteTheater(mId);
+    }
+
+    @Override
+    public void onDialogClickNegative(int tag, Object payload) {}
+
+    @Override
+    public void onDialogClickListItem(int tag, int index, Object payload) {}
+
+    //endregion
 }
 
