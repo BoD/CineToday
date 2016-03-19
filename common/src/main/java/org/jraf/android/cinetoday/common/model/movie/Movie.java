@@ -48,7 +48,7 @@ public class Movie implements Parcelable {
     public String synopsis;
 
     /**
-     * Keys: name of the theater ({@code String}).<br/>
+     * Keys: name of the theater, prefixed by its index, e.g. "0/MK2 Bibliothèque" ({@code String}).<br/>
      * Values: showtimes for today at a given theater ({@code ArrayList<Showtime>}).
      */
     public Bundle todayShowtimes;
@@ -128,7 +128,7 @@ public class Movie implements Parcelable {
         this.trailerUri = in.readString();
         this.webUri = in.readString();
         this.synopsis = in.readString();
-        this.todayShowtimes = in.readBundle();
+        this.todayShowtimes = in.readBundle(getClass().getClassLoader());
     }
 
     public static final Creator<Movie> CREATOR = new Creator<Movie>() {

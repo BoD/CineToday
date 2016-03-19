@@ -39,10 +39,10 @@ import android.support.wearable.view.FragmentGridPagerAdapter;
 import org.jraf.android.cinetoday.common.model.movie.Movie;
 
 public class MovieFragmentGridPagerAdapter extends FragmentGridPagerAdapter {
-    private static final int INDEX_MAIN = 0;
-    private static final int INDEX_SYNOPSIS = 1;
-    private static final int INDEX_POSTER = 2;
-    private static final int INDEX_SHOWTIMES = 3;
+    public static final int INDEX_MAIN = 0;
+    public static final int INDEX_SYNOPSIS = 1;
+    public static final int INDEX_POSTER = 2;
+    public static final int INDEX_SHOWTIMES = 3;
 
     private final Context mContext;
     private final List<Movie> mMovies;
@@ -59,40 +59,17 @@ public class MovieFragmentGridPagerAdapter extends FragmentGridPagerAdapter {
     public Fragment getFragment(int row, int column) {
         Movie movie = mMovies.get(row);
         Fragment res = null;
-        switch (column) {
-            case INDEX_MAIN:
-            case INDEX_SYNOPSIS:
-            case INDEX_SHOWTIMES:
-                MovieCardFragment.CardType cardType = null;
-                switch (column) {
-                    case INDEX_MAIN:
-                        cardType = MovieCardFragment.CardType.MAIN;
-                        break;
+        if (column == INDEX_MAIN || column == INDEX_SYNOPSIS || column >= INDEX_SHOWTIMES) {
+            MovieCardFragment.CardType cardType = MovieCardFragment.CardType.fromIndex(column);
+            CardFragment cardFragment = MovieCardFragment.create(cardType, movie, column);
 
-                    case INDEX_SYNOPSIS:
-                        cardType = MovieCardFragment.CardType.SYNOPSIS;
-                        break;
-
-                    case INDEX_SHOWTIMES:
-                        cardType = MovieCardFragment.CardType.SHOWTIMES;
-                        break;
-
-                }
-                CardFragment cardFragment = MovieCardFragment.create(cardType, movie);
-
-                // Advanced settings (card gravity, card expansion/scrolling)
-                cardFragment.setExpansionEnabled(true);
-                cardFragment.setExpansionDirection(CardFragment.EXPAND_DOWN);
-                cardFragment.setContentPadding(0, 0, 0, 0);
-
-                res = cardFragment;
-                break;
-
-            case INDEX_POSTER:
-                PosterFragment posterFragment = PosterFragment.create(mPosterMap.get(movie));
-
-                res = posterFragment;
-                break;
+            // Advanced settings (card gravity, card expansion/scrolling)
+            cardFragment.setExpansionEnabled(true);
+            cardFragment.setExpansionDirection(CardFragment.EXPAND_DOWN);
+            cardFragment.setContentPadding(0, 0, 0, 0);
+            res = cardFragment;
+        } else if (column == INDEX_POSTER) {
+            res = PosterFragment.create(mPosterMap.get(movie));
         }
         return res;
     }
@@ -104,7 +81,7 @@ public class MovieFragmentGridPagerAdapter extends FragmentGridPagerAdapter {
 
     @Override
     public int getColumnCount(int row) {
-        return 4;
+        return INDEX_SHOWTIMES + mMovies.get(row).todayShowtimes.size();
     }
 
     @Override

@@ -7,11 +7,11 @@
     android:paddingTop="@dimen/card_content_padding_rect_top">
 
     <TextView
+        android:id="@+id/txtTheaterName"
         style="@style/CardText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:text="@string/movie_card_showtimes_title" />
+        android:layout_marginTop="10dp" />
 
     <LinearLayout
         android:id="@+id/conShowtimes"

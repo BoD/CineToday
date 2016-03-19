@@ -103,7 +103,8 @@ public class LoadMoviesIntentService extends IntentService {
         try {
             while (theaterCursor.moveToNext()) {
                 String theaterId = theaterCursor.getPublicId();
-                Api.get(context).getMovieList(movies, theaterId, new Date());
+                String theaterName = theaterCursor.getName();
+                Api.get(context).getMovieList(movies, theaterId, theaterName, theaterCursor.getPosition(), new Date());
             }
         } catch (Exception e) {
             Log.e(e, "Could not load movies");

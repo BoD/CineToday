@@ -6,10 +6,10 @@
     android:paddingTop="@dimen/card_content_padding_rect_top">
 
     <TextView
+        android:id="@+id/txtTheaterName"
         style="@style/CardText"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/movie_card_showtimes_title" />
+        android:layout_height="wrap_content" />
 
     <LinearLayout
         android:id="@+id/conShowtimes"
