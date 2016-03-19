@@ -24,7 +24,7 @@
     <string name="preferences_title">Settings</string>
 
     <!-- About -->
-    <string name="about_authorCopyright" translatable="false" tools:ignore="TypographyOther">Copyright (C) 2015–2016 Benoit \'BoD\' Lubek.\nLogo and artwork by David Rodriguez.</string>
+    <string name="about_authorCopyright" translatable="false" tools:ignore="TypographyOther">Copyright (C) 2015–2016 Benoit \'BoD\' Lubek.\nLogo and artwork by David Rodriguez.\nAdditional code by Carmen Alvarez.</string>
     <string name="about_License" translatable="false">Licensed under the terms of the GNU General Public License.</string>
     <string name="about_email_uri" translatable="false">mailto:BoD@JRAF.org</string>
     <string name="about_email_text">Contact the author</string>
