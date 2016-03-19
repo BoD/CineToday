@@ -26,6 +26,7 @@ package org.jraf.android.cinetoday.mobile.app.theater.search;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.MenuItem;
@@ -50,6 +51,8 @@ public class TheaterSearchActivity extends AppCompatActivity implements TheaterC
     public static final String EXTRA_FIRST_USE = PREFIX + "EXTRA_FIRST_USE";
     public static final String EXTRA_RESULT = PREFIX + "EXTRA_RESULT";
 
+    private Handler mHandler;
+
     @Bind(R.id.edtSearch)
     protected EditText mEdtSearch;
 
@@ -68,6 +71,7 @@ public class TheaterSearchActivity extends AppCompatActivity implements TheaterC
             // Do not show the up arrow if in 'first use' mode
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
+        mHandler = new Handler();
     }
 
     @Override
@@ -90,13 +94,8 @@ public class TheaterSearchActivity extends AppCompatActivity implements TheaterC
 
     @OnTextChanged(R.id.edtSearch)
     public void onSearchTextChanged() {
-        String query = mEdtSearch.getText().toString().trim();
-        getTheaterSearchFragment().search(query);
-        if (query.length() == 0) {
-            mBtnClear.setVisibility(View.GONE);
-        } else {
-            mBtnClear.setVisibility(View.VISIBLE);
-        }
+        mHandler.removeCallbacks(mQueryRunnable);
+        mHandler.postDelayed(mQueryRunnable, 500);
     }
 
     @Override
@@ -118,5 +117,24 @@ public class TheaterSearchActivity extends AppCompatActivity implements TheaterC
     @OnClick(R.id.btnClear)
     protected void onClearClicked() {
         mEdtSearch.getText().clear();
+    }
+
+    private final Runnable mQueryRunnable = new Runnable(){
+        @Override
+        public void run() {
+            String query = mEdtSearch.getText().toString().trim();
+            getTheaterSearchFragment().search(query);
+            if (query.length() == 0) {
+                mBtnClear.setVisibility(View.GONE);
+            } else {
+                mBtnClear.setVisibility(View.VISIBLE);
+            }
+        }
+    };
+
+    @Override
+    protected void onDestroy() {
+        mHandler.removeCallbacks(mQueryRunnable);
+        super.onDestroy();
     }
 }
