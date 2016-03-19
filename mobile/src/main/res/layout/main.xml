@@ -21,6 +21,12 @@
             android:layout_height="0px"
             android:layout_weight="1" />
 
+        <!-- Page indicator -->
+        <org.jraf.android.cinetoday.mobile.ui.CirclePageIndicator
+            android:id="@+id/cpiTheaters"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal" />
 
         <!-- Loading progress -->
 
