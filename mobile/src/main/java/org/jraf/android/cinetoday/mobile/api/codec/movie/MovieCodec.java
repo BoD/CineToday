@@ -31,12 +31,11 @@ import android.text.Html;
 import org.jraf.android.cinetoday.common.model.ParseException;
 import org.jraf.android.cinetoday.common.model.movie.Movie;
 import org.jraf.android.cinetoday.mobile.api.Api;
-import org.jraf.android.cinetoday.mobile.api.codec.Codec;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class MovieCodec implements Codec<Movie> {
+public class MovieCodec {
     private static final MovieCodec INSTANCE = new MovieCodec();
 
     private MovieCodec() {}

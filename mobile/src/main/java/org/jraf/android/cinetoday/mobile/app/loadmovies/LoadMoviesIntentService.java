@@ -43,6 +43,8 @@ import org.jraf.android.cinetoday.common.wear.WearHelper;
 import org.jraf.android.cinetoday.mobile.api.Api;
 import org.jraf.android.cinetoday.mobile.api.ImageCache;
 import org.jraf.android.cinetoday.mobile.prefs.MainPrefs;
+import org.jraf.android.cinetoday.mobile.provider.theater.TheaterCursor;
+import org.jraf.android.cinetoday.mobile.provider.theater.TheaterSelection;
 import org.jraf.android.util.log.Log;
 
 public class LoadMoviesIntentService extends IntentService {
@@ -90,19 +92,28 @@ public class LoadMoviesIntentService extends IntentService {
         LoadMoviesListenerHelper loadMoviesListenerHelper = LoadMoviesListenerHelper.get();
         loadMoviesListenerHelper.onLoadMoviesStarted();
 
-        SortedSet<Movie> movies;
+        WearHelper wearHelper = WearHelper.get();
+        wearHelper.connect(context);
+        wearHelper.putMoviesLoading(true);
+
+        // Retrieve list of movies, for all the theaters
+        SortedSet<Movie> movies = new TreeSet<>(Movie.COMPARATOR);
+        TheaterSelection theaterSelection = new TheaterSelection();
+        TheaterCursor theaterCursor = theaterSelection.query(context);
         try {
-            String theaterId = MainPrefs.get(context).getTheaterId();
-            movies = Api.get(context).getMovieList(theaterId, new Date());
+            while (theaterCursor.moveToNext()) {
+                String theaterId = theaterCursor.getPublicId();
+                Api.get(context).getMovieList(movies, theaterId, new Date());
+            }
         } catch (Exception e) {
             Log.e(e, "Could not load movies");
             loadMoviesListenerHelper.onLoadMoviesError(e);
             throw e;
+        } finally {
+            theaterCursor.close();
         }
 
-        WearHelper wearHelper = WearHelper.get();
-        wearHelper.connect(context);
-        wearHelper.putMoviesLoading(true);
+
         try {
             int size = movies.size();
             int i = 0;
