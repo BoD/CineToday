@@ -57,6 +57,7 @@ import org.jraf.android.cinetoday.mobile.provider.theater.TheaterColumns;
 import org.jraf.android.cinetoday.mobile.provider.theater.TheaterContentValues;
 import org.jraf.android.cinetoday.mobile.provider.theater.TheaterCursor;
 import org.jraf.android.cinetoday.mobile.provider.theater.TheaterSelection;
+import org.jraf.android.cinetoday.mobile.ui.CirclePageIndicator;
 import org.jraf.android.cinetoday.mobile.ui.ZoomOutPageTransformer;
 import org.jraf.android.util.about.AboutActivityIntentBuilder;
 import org.jraf.android.util.log.Log;
@@ -81,6 +82,9 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks, Lo
 
     @Bind((R.id.pgbLoadingProgress))
     protected ProgressBar mPgbLoadingProgress;
+
+    @Bind((R.id.cpiTheaters))
+    protected CirclePageIndicator mCpiTheaters;
 
     /**
      * If {@code true}, this activity is running.
@@ -306,6 +310,7 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks, Lo
         if (mAdapter == null) {
             mAdapter = new TheaterFragmentStatePagerAdapter(getSupportFragmentManager(), (TheaterCursor) data);
             mVpgTheaters.setAdapter(mAdapter);
+            mCpiTheaters.setViewPager(mVpgTheaters);
         } else {
             mAdapter.swapTheaterCursor((TheaterCursor) data);
         }
