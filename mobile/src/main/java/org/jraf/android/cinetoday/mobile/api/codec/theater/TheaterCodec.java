@@ -26,11 +26,10 @@ package org.jraf.android.cinetoday.mobile.api.codec.theater;
 
 import org.jraf.android.cinetoday.common.model.ParseException;
 import org.jraf.android.cinetoday.common.model.theater.Theater;
-import org.jraf.android.cinetoday.mobile.api.codec.Codec;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class TheaterCodec implements Codec<Theater> {
+public class TheaterCodec {
     private static final TheaterCodec INSTANCE = new TheaterCodec();
 
     private TheaterCodec() {}
