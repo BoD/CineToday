@@ -28,6 +28,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
 
+import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
@@ -45,7 +46,12 @@ public class Movie implements Parcelable {
     public @Nullable String trailerUri;
     public String webUri;
     public String synopsis;
-    public Showtime[] todayShowtimes;
+
+    /**
+     * Keys: name of the theater ({@code String}).<br/>
+     * Values: showtimes for today at a given theater ({@code ArrayList<Showtime>}).
+     */
+    public Bundle todayShowtimes;
 
     public Movie() {}
 
@@ -64,7 +70,7 @@ public class Movie implements Parcelable {
                 ", trailerUri='" + trailerUri + '\'' +
                 ", webUri='" + webUri + '\'' +
                 ", synopsis='" + synopsis + '\'' +
-                ", todayShowtimes=" + Arrays.toString(todayShowtimes) +
+                ", todayShowtimes=" + todayShowtimes +
                 '}';
     }
 
@@ -105,7 +111,7 @@ public class Movie implements Parcelable {
         dest.writeString(this.trailerUri);
         dest.writeString(this.webUri);
         dest.writeString(this.synopsis);
-        dest.writeTypedArray(this.todayShowtimes, 0);
+        dest.writeBundle(this.todayShowtimes);
     }
 
     protected Movie(Parcel in) {
@@ -122,7 +128,7 @@ public class Movie implements Parcelable {
         this.trailerUri = in.readString();
         this.webUri = in.readString();
         this.synopsis = in.readString();
-        this.todayShowtimes = in.createTypedArray(Showtime.CREATOR);
+        this.todayShowtimes = in.readBundle();
     }
 
     public static final Creator<Movie> CREATOR = new Creator<Movie>() {
