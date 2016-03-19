@@ -50,7 +50,7 @@ public class ShowtimeCodec {
         return INSTANCE;
     }
 
-    public void fill(Movie movie, JSONObject jsonMovieShowtime, String theaterId) throws ParseException {
+    public void fill(Movie movie, JSONObject jsonMovieShowtime, String theaterName, int position) throws ParseException {
         // Example input:
         // Séances du dimanche 1 novembre 2015 : 10:00 (film à 10:15), 14:00 (film à 14:15), 16:00 (film à 16:15), 20:00 (film à 20:15), 21:45 (film à 22:00)
         try {
@@ -106,13 +106,14 @@ public class ShowtimeCodec {
             if (movie.todayShowtimes == null) {
                 movie.todayShowtimes = new Bundle(2);
             }
-            ArrayList<Showtime> showTimesForThisTheater = movie.todayShowtimes.getParcelableArrayList(theaterId);
+            String key = position + "/" + theaterName;
+            ArrayList<Showtime> showTimesForThisTheater = movie.todayShowtimes.getParcelableArrayList(key);
             if (showTimesForThisTheater != null) {
                 // The movie already has showtimes for *this* theater: merge them into the new ones
                 todayShowtimesSet.addAll(showTimesForThisTheater);
             }
             ArrayList<Showtime> todayShowtimesList = new ArrayList<>(todayShowtimesSet);
-            movie.todayShowtimes.putParcelableArrayList(theaterId, todayShowtimesList);
+            movie.todayShowtimes.putParcelableArrayList(key, todayShowtimesList);
 
         } catch (JSONException e) {
             throw new ParseException(e);
