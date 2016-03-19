@@ -9,4 +9,5 @@
     <color name="icons">#212121</color>
     <color name="divider">#B6B6B6</color>
     <color name="placeholderBg">#CCC</color>
+    <color name="pageIndicator_circle">@color/accent</color>
 </resources>
