@@ -26,9 +26,13 @@ package org.jraf.android.cinetoday.mobile.provider;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.text.TextUtils;
 import android.util.Log;
 
 import org.jraf.android.cinetoday.BuildConfig;
+import org.jraf.android.cinetoday.mobile.prefs.MainPrefs;
+import org.jraf.android.cinetoday.mobile.provider.theater.TheaterColumns;
+import org.jraf.android.cinetoday.mobile.provider.theater.TheaterContentValues;
 
 /**
  * Implement your custom database creation or upgrade code here.
@@ -50,7 +54,32 @@ public class CineTodaySQLiteOpenHelperCallbacks {
 
     public void onPostCreate(final Context context, final SQLiteDatabase db) {
         if (BuildConfig.DEBUG) Log.d(TAG, "onPostCreate");
-        // Insert your db creation code here. This is called after your tables are created.
+
+        // The previous version of the app had one theater stored in shared preferences.
+        // Now we have a database with multiple theaters.
+        // We insert the theater from shared preferences into the db.
+        MainPrefs prefs = MainPrefs.get(context);
+        String theaterId = prefs.getTheaterId();
+        if (!TextUtils.isEmpty(theaterId)) {
+            TheaterContentValues contentValues = new TheaterContentValues();
+
+            contentValues.putPublicId(theaterId);
+
+            String theaterName = prefs.getTheaterName();
+            if (!TextUtils.isEmpty(theaterName)) contentValues.putName(theaterName);
+
+            String theaterAddress = prefs.getTheaterAddress();
+            if (!TextUtils.isEmpty(theaterAddress)) contentValues.putAddress(theaterAddress);
+
+            contentValues.putPictureUri(prefs.getTheaterPictureUri());
+
+            db.insert(TheaterColumns.TABLE_NAME, null, contentValues.values());
+
+            prefs.removeTheaterId();
+            prefs.removeTheaterName();
+            prefs.removeTheaterAddress();
+            prefs.removeTheaterPictureUri();
+        }
     }
 
     public void onUpgrade(final Context context, final SQLiteDatabase db, final int oldVersion, final int newVersion) {
