@@ -24,7 +24,9 @@
  */
 package org.jraf.android.cinetoday.wear.app.main;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 
 import android.os.Bundle;
 import android.support.annotation.StringRes;
@@ -45,7 +47,18 @@ public class MovieCardFragment extends CardFragment {
     public enum CardType {
         MAIN,
         SYNOPSIS,
-        SHOWTIMES,
+        SHOWTIMES,;
+
+        public static CardType fromIndex(int columnIndex) {
+            if (columnIndex == MovieFragmentGridPagerAdapter.INDEX_MAIN) {
+                return MovieCardFragment.CardType.MAIN;
+            } else if (columnIndex == MovieFragmentGridPagerAdapter.INDEX_SYNOPSIS) {
+                return MovieCardFragment.CardType.SYNOPSIS;
+            } else if (columnIndex >= MovieFragmentGridPagerAdapter.INDEX_SHOWTIMES) {
+                return MovieCardFragment.CardType.SHOWTIMES;
+            }
+            throw new IllegalArgumentException();
+        }
     }
 
     public View onCreateContentView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -54,6 +67,7 @@ public class MovieCardFragment extends CardFragment {
         assert cardType != null;
         Movie movie = args.getParcelable("movie");
         assert movie != null;
+        int column = args.getInt("column");
 
         View view = null;
         switch (cardType) {
@@ -124,9 +138,12 @@ public class MovieCardFragment extends CardFragment {
                     view = inflater.inflate(R.layout.movie_card_showtimes_square, container, false);
                 }
 
+                // Theater name
+                TextView txtTheaterName = (TextView) view.findViewById(R.id.txtTheaterName);
+
                 // Show times
                 ViewGroup conShowtimes = (ViewGroup) view.findViewById(R.id.conShowtimes);
-                addShowtimes(conShowtimes, movie, inflater);
+                addShowtimes(conShowtimes, movie, column, txtTheaterName, inflater);
                 break;
         }
 
@@ -141,10 +158,24 @@ public class MovieCardFragment extends CardFragment {
         return getString(R.string.durationHoursMinutes, hours, minutes);
     }
 
-    private void addShowtimes(ViewGroup conShowtimes, Movie movie, LayoutInflater inflater) {
+    private void addShowtimes(ViewGroup conShowtimes, Movie movie, int column, TextView txtTheaterName, LayoutInflater inflater) {
+        // Remove previous pages from the row index
+        column = column - MovieFragmentGridPagerAdapter.INDEX_SHOWTIMES;
+
+        // Find the correct key, based on the column
+        ArrayList<String> orderedKeys = new ArrayList<>(movie.todayShowtimes.keySet());
+        Collections.sort(orderedKeys);
+        String key = orderedKeys.get(column);
+
+        // Theater name
+        String theaterName = key.split("/")[1];
+        txtTheaterName.setText(theaterName);
+
+        // Showtimes
         Calendar nowCalendar = Calendar.getInstance();
         Calendar showtimeCalendar = Calendar.getInstance();
-        Showtime[] todayShowtimes = movie.todayShowtimes;
+        ArrayList<Showtime> todayShowtimes = movie.todayShowtimes.getParcelableArrayList(key);
+        assert todayShowtimes != null;
         for (Showtime todayShowtime : todayShowtimes) {
             String[] hourMinutes = todayShowtime.time.split(":");
             showtimeCalendar.set(Calendar.HOUR_OF_DAY, Integer.valueOf(hourMinutes[0]));
@@ -171,11 +202,12 @@ public class MovieCardFragment extends CardFragment {
         return Html.fromHtml(getString(stringResId, args));
     }
 
-    public static MovieCardFragment create(CardType cardType, Movie movie) {
+    public static MovieCardFragment create(CardType cardType, Movie movie, int column) {
         MovieCardFragment res = new MovieCardFragment();
         Bundle args = new Bundle();
         args.putSerializable("cardType", cardType);
         args.putParcelable("movie", movie);
+        args.putInt("column", column);
         res.setArguments(args);
         return res;
     }

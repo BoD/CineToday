@@ -33,13 +33,10 @@ import java.util.Locale;
 import java.util.SortedSet;
 
 import android.content.Context;
-import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
 import android.support.annotation.WorkerThread;
 
-import org.jraf.android.cinetoday.common.async.ResultCallback;
-import org.jraf.android.cinetoday.common.async.ResultOrError;
 import org.jraf.android.cinetoday.common.model.ParseException;
 import org.jraf.android.cinetoday.common.model.movie.Movie;
 import org.jraf.android.cinetoday.common.model.theater.Theater;
@@ -94,7 +91,8 @@ public class Api {
     }
 
     @WorkerThread
-    public void getMovieList(@NonNull SortedSet<Movie> movies, String theaterId, Date date) throws IOException, ParseException {
+    public void getMovieList(@NonNull SortedSet<Movie> movies, String theaterId, String theaterName, int position, Date date)
+            throws IOException, ParseException {
         HttpUrl url = getBaseBuilder(PATH_SHOWTIMELIST)
                 .addQueryParameter(QUERY_THEATERS_KEY, theaterId)
                 .addQueryParameter(QUERY_DATE_KEY, SIMPLE_DATE_FORMAT.format(date))
@@ -133,7 +131,7 @@ public class Api {
                 }
 
                 // Showtimes
-                ShowtimeCodec.get().fill(movie, jsonMovieShowtime, theaterId);
+                ShowtimeCodec.get().fill(movie, jsonMovieShowtime, theaterName, position);
 
                 // If there is no showtimes for today, skip the movie
                 if (movie.todayShowtimes == null || movie.todayShowtimes.size() == 0) {
@@ -145,29 +143,6 @@ public class Api {
         } catch (JSONException e) {
             throw new ParseException(e);
         }
-    }
-
-    public void getMovieList(final @NonNull SortedSet<Movie> movies, final String theaterId, final Date date, final ResultCallback<Void> callResult) {
-        new AsyncTask<Void, Void, ResultOrError<Void>>() {
-            @Override
-            protected ResultOrError<Void> doInBackground(Void... params) {
-                try {
-                    getMovieList(movies, theaterId, date);
-                    return new ResultOrError<>((Void) null);
-                } catch (Throwable t) {
-                    return new ResultOrError<>(t);
-                }
-            }
-
-            @Override
-            protected void onPostExecute(ResultOrError<Void> resultOrError) {
-                if (resultOrError.isError()) {
-                    callResult.onError(resultOrError.error);
-                } else {
-                    callResult.onResult(resultOrError.result);
-                }
-            }
-        }.execute();
     }
 
     @WorkerThread
