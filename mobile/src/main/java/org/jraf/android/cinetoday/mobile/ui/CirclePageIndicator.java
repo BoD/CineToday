@@ -113,7 +113,7 @@ public class CirclePageIndicator extends View implements ViewPager.OnPageChangeL
         if (count == 0) return;
 
         for (int i = 0; i < count; i++) {
-            float x = i * (mCircleRadiusPx * 2 + mCircleMarginPx) + mCircleRadiusPx;
+            float x = i * (mCircleRadiusPx * 2 + mCircleMarginPx) + mCircleRadiusPx + mCircleMarginPx / 2;
             float y = mCircleRadiusPx;
             float radius;
             if (i == mPosition) {

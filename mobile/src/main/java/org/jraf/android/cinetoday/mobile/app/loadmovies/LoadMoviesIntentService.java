@@ -60,7 +60,8 @@ public class LoadMoviesIntentService extends IntentService {
     }
 
     /**
-     * Starts this service to perform action ACTION_LOAD_MOVIES. If the service is already performing a task this action will be queued.
+     * Starts this service to perform action ACTION_LOAD_MOVIES.
+     * If the service is already performing a task this action will be queued.
      *
      * @see IntentService
      */
@@ -89,6 +90,7 @@ public class LoadMoviesIntentService extends IntentService {
      */
     @WorkerThread
     static void handleActionLoadMovies(Context context) throws Exception {
+        LoadMoviesHelper.get().setWantStop(false);
         LoadMoviesListenerHelper loadMoviesListenerHelper = LoadMoviesListenerHelper.get();
         loadMoviesListenerHelper.onLoadMoviesStarted();
 
@@ -105,6 +107,11 @@ public class LoadMoviesIntentService extends IntentService {
                 String theaterId = theaterCursor.getPublicId();
                 String theaterName = theaterCursor.getName();
                 Api.get(context).getMovieList(movies, theaterId, theaterName, theaterCursor.getPosition(), new Date());
+
+                if (LoadMoviesHelper.get().isWantStop()) {
+                    loadMoviesListenerHelper.onLoadMoviesInterrupted();
+                    return;
+                }
             }
         } catch (Exception e) {
             Log.e(e, "Could not load movies");
@@ -114,6 +121,10 @@ public class LoadMoviesIntentService extends IntentService {
             theaterCursor.close();
         }
 
+        if (LoadMoviesHelper.get().isWantStop()) {
+            loadMoviesListenerHelper.onLoadMoviesInterrupted();
+            return;
+        }
 
         try {
             int size = movies.size();
@@ -130,6 +141,11 @@ public class LoadMoviesIntentService extends IntentService {
                     throw e;
                 }
 
+                if (LoadMoviesHelper.get().isWantStop()) {
+                    loadMoviesListenerHelper.onLoadMoviesInterrupted();
+                    return;
+                }
+
                 // Get poster image
                 Bitmap posterBitmap = ImageCache.get(context).getBitmap(movie.posterUri, POSTER_THUMBNAIL_WIDTH, POSTER_THUMBNAIL_HEIGHT);
                 if (posterBitmap != null) {
@@ -139,8 +155,13 @@ public class LoadMoviesIntentService extends IntentService {
                         wearHelper.putMoviePoster(movie, posterBitmap);
                     }
                 }
-                i++;
 
+                if (LoadMoviesHelper.get().isWantStop()) {
+                    loadMoviesListenerHelper.onLoadMoviesInterrupted();
+                    return;
+                }
+
+                i++;
                 loadMoviesListenerHelper.onLoadMoviesProgress(i, size, movie.localTitle);
             }
             List<Movie> previousMovies = wearHelper.getMovies();

@@ -12,6 +12,10 @@
     <string name="main_delete">Delete</string>
     <string name="main_theater_delete_confirm_title">Delete</string>
     <string name="main_theater_delete_confirm_message">Do you want to delete this theater?</string>
+    <string name="main_page_add_btnAdd_empty">Pick a theater</string>
+    <string name="main_page_add_btnAdd_additional">Add a theater</string>
+    <string name="main_page_add_intro_empty">Welcome!\nClick the button to pick a theater</string>
+    <string name="main_page_add_intro_additional">Choose additional theaters!</string>
 
     <!-- Theater search -->
     <string name="theater_search_edtSearch_hint">Theater name</string>
