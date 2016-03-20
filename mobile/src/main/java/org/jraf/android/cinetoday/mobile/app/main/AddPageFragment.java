@@ -30,24 +30,45 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
 
 import org.jraf.android.cinetoday.R;
 import org.jraf.android.util.app.base.BaseFragment;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class AddPageFragment extends BaseFragment<MainCallbacks> {
-    public static Fragment newInstance() {
+    @Bind(R.id.txtIntro)
+    protected TextView mTxtIntro;
+
+    @Bind(R.id.btnAdd)
+    protected Button mBtnAdd;
+
+    public static Fragment newInstance(boolean isEmpty) {
         AddPageFragment res = new AddPageFragment();
+        Bundle args = new Bundle();
+        args.putBoolean("isEmpty", isEmpty);
+        res.setArguments(args);
         return res;
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View res = inflater.inflate(R.layout.page_add, container, false);
+        View res = inflater.inflate(R.layout.main_page_add, container, false);
         ButterKnife.bind(this, res);
+        Bundle args = getArguments();
+        boolean isEmpty = args.getBoolean("isEmpty");
+        if (isEmpty) {
+            mBtnAdd.setText(R.string.main_page_add_btnAdd_empty);
+            mTxtIntro.setText(R.string.main_page_add_intro_empty);
+        } else {
+            mBtnAdd.setText(R.string.main_page_add_btnAdd_additional);
+            mTxtIntro.setText(R.string.main_page_add_intro_additional);
+        }
         return res;
     }
 

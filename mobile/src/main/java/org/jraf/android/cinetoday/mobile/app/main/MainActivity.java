@@ -46,6 +46,7 @@ import android.widget.TextView;
 import org.jraf.android.cinetoday.BuildConfig;
 import org.jraf.android.cinetoday.R;
 import org.jraf.android.cinetoday.common.model.theater.Theater;
+import org.jraf.android.cinetoday.mobile.app.loadmovies.LoadMoviesHelper;
 import org.jraf.android.cinetoday.mobile.app.loadmovies.LoadMoviesIntentService;
 import org.jraf.android.cinetoday.mobile.app.loadmovies.LoadMoviesListener;
 import org.jraf.android.cinetoday.mobile.app.loadmovies.LoadMoviesListenerHelper;
@@ -176,10 +177,6 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks, Lo
         switch (requestCode) {
             case REQUEST_ADD_THEATER:
                 if (resultCode == RESULT_CANCELED) {
-                    if (!MainPrefs.get(this).containsTheaterId()) {
-                        // First use case, no theater was picked: finish now
-                        finish();
-                    }
                     break;
                 }
                 final Theater theater = data.getParcelableExtra(TheaterSearchActivity.EXTRA_RESULT);
@@ -199,14 +196,18 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks, Lo
 
                     @Override
                     protected void onPostExecute(Void result) {
-//                        // Update now
-//                        updateNowAndScheduleTask();
+                        // Update now
+                        updateNowAndScheduleTask();
                     }
                 }.execute();
+                break;
         }
     }
 
     private void updateNowAndScheduleTask() {
+        // Interrupt any ongoing loading
+        LoadMoviesHelper.get().setWantStop(true);
+
         // Update now
         LoadMoviesIntentService.startActionLoadMovies(this);
 
@@ -246,7 +247,7 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks, Lo
         @Override
         public void onLoadMoviesSuccess() {
             updateLastUpdateDateLabel();
-            mPgbLoadingProgress.setVisibility(View.GONE);
+            mPgbLoadingProgress.setVisibility(View.INVISIBLE);
             mSwrRefresh.setRefreshing(false);
             mTxtCurrentMovie.setText(null);
         }
@@ -255,7 +256,15 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks, Lo
         public void onLoadMoviesError(Throwable t) {
             // TODO
             updateLastUpdateDateLabel();
-            mPgbLoadingProgress.setVisibility(View.GONE);
+            mPgbLoadingProgress.setVisibility(View.INVISIBLE);
+            mSwrRefresh.setRefreshing(false);
+            mTxtCurrentMovie.setText(null);
+        }
+
+        @Override
+        public void onLoadMoviesInterrupted() {
+            updateLastUpdateDateLabel();
+            mPgbLoadingProgress.setVisibility(View.INVISIBLE);
             mSwrRefresh.setRefreshing(false);
             mTxtCurrentMovie.setText(null);
         }
@@ -307,6 +316,8 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks, Lo
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        boolean isEmpty = data.getCount() == 0;
+        mCpiTheaters.setVisibility(isEmpty ? View.INVISIBLE : View.VISIBLE);
         if (mAdapter == null) {
             mAdapter = new TheaterFragmentStatePagerAdapter(getSupportFragmentManager(), (TheaterCursor) data);
             mVpgTheaters.setAdapter(mAdapter);
@@ -347,8 +358,8 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks, Lo
 
             @Override
             protected void onPostExecute(Void result) {
-//                        // Update now
-//                        updateNowAndScheduleTask();
+                // Update now
+                updateNowAndScheduleTask();
             }
         }.execute();
     }

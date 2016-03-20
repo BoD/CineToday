@@ -46,7 +46,7 @@ public class TheaterFragmentStatePagerAdapter extends FragmentStatePagerAdapter 
             return TheaterPageFragment.newInstance(mTheaterCursor);
         }
         // Add
-        return AddPageFragment.newInstance();
+        return AddPageFragment.newInstance(position == 0);
     }
 
     @Override
