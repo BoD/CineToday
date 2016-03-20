@@ -78,7 +78,7 @@ public class TheaterPageFragment extends BaseFragment<MainCallbacks> implements 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View res = inflater.inflate(R.layout.page_theater, container, false);
+        View res = inflater.inflate(R.layout.main_page_theater, container, false);
         ButterKnife.bind(this, res);
         Bundle args = getArguments();
         mId = args.getLong("id");

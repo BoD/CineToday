@@ -90,6 +90,19 @@ public class LoadMoviesListenerHelper implements LoadMoviesListener {
     }
 
     @Override
+    public void onLoadMoviesInterrupted() {
+        mStarted = false;
+        mCurrentMovieIndex = mTotalMovie = null;
+        mCurrentMovieName = null;
+        mListeners.dispatch(new Listeners.Dispatcher<LoadMoviesListener>() {
+            @Override
+            public void dispatch(LoadMoviesListener listener) {
+                listener.onLoadMoviesInterrupted();
+            }
+        });
+    }
+
+    @Override
     public void onLoadMoviesSuccess() {
         mStarted = false;
         mCurrentMovieIndex = mTotalMovie = null;

@@ -7,7 +7,7 @@
  *                              /___/
  * repository.
  *
- * Copyright (C) 2015 Benoit 'BoD' Lubek (BoD@JRAF.org)
+ * Copyright (C) 2016 Benoit 'BoD' Lubek (BoD@JRAF.org)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,14 +24,20 @@
  */
 package org.jraf.android.cinetoday.mobile.app.loadmovies;
 
-public interface LoadMoviesListener {
-    void onLoadMoviesStarted();
+public class LoadMoviesHelper {
+    private static final LoadMoviesHelper INSTANCE = new LoadMoviesHelper();
 
-    void onLoadMoviesProgress(int currentMovie, int totalMovies, String movieName);
+    public static LoadMoviesHelper get() {
+        return INSTANCE;
+    }
 
-    void onLoadMoviesInterrupted();
+    private boolean mWantStop;
 
-    void onLoadMoviesSuccess();
+    public boolean isWantStop() {
+        return mWantStop;
+    }
 
-    void onLoadMoviesError(Throwable t);
+    public void setWantStop(boolean wantStop) {
+        mWantStop = wantStop;
+    }
 }
