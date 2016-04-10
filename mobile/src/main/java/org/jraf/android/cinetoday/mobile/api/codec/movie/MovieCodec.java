@@ -50,8 +50,8 @@ public class MovieCodec implements Codec<Movie> {
         try {
             movie.id = jsonMovie.getString("code");
             movie.localTitle = jsonMovie.getString("title");
-            movie.originalTitle = jsonMovie.optString("originalTitle");
-            movie.synopsis = jsonMovie.optString("synopsis");
+            movie.originalTitle = jsonMovie.optString("originalTitle", null);
+            movie.synopsis = jsonMovie.optString("synopsis", null);
             if (movie.synopsis != null) {
                 // Strip html
                 movie.synopsis = Html.fromHtml(movie.synopsis).toString().trim();
@@ -59,8 +59,8 @@ public class MovieCodec implements Codec<Movie> {
 
             JSONObject jsonCastingShort = jsonMovie.optJSONObject("castingShort");
             if (jsonCastingShort != null) {
-                movie.directors = jsonCastingShort.optString("directors");
-                movie.actors = jsonCastingShort.optString("actors");
+                movie.directors = jsonCastingShort.optString("directors", null);
+                movie.actors = jsonCastingShort.optString("actors", null);
             }
 
             JSONObject jsonRelease = jsonMovie.optJSONObject("release");
