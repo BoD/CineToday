@@ -39,18 +39,16 @@ import android.support.wearable.view.FragmentGridPagerAdapter;
 import org.jraf.android.cinetoday.common.model.movie.Movie;
 
 public class MovieFragmentGridPagerAdapter extends FragmentGridPagerAdapter {
-    public static final int INDEX_MAIN = 0;
-    public static final int INDEX_SYNOPSIS = 1;
-    public static final int INDEX_POSTER = 2;
+    public static final int INDEX_POSTER = 0;
+    public static final int INDEX_MAIN = 1;
+    public static final int INDEX_SYNOPSIS = 2;
     public static final int INDEX_SHOWTIMES = 3;
 
-    private final Context mContext;
     private final List<Movie> mMovies;
     private HashMap<Movie, Bitmap> mPosterMap;
 
     public MovieFragmentGridPagerAdapter(Context context, FragmentManager fragmentManager, List<Movie> movies, HashMap<Movie, Bitmap> posterMap) {
         super(fragmentManager);
-        mContext = context;
         mMovies = movies;
         mPosterMap = posterMap;
     }
