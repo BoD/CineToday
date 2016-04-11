@@ -50,7 +50,7 @@ public class ShowtimeCodec {
         return INSTANCE;
     }
 
-    public void fill(Movie movie, JSONObject jsonMovieShowtime, String theaterName, int position) throws ParseException {
+    public void fill(Movie movie, JSONObject jsonMovieShowtime, String theaterName, int position, Date date) throws ParseException {
         // Example input:
         // Séances du dimanche 1 novembre 2015 : 10:00 (film à 10:15), 14:00 (film à 14:15), 16:00 (film à 16:15), 20:00 (film à 20:15), 21:45 (film à 22:00)
         try {
@@ -60,7 +60,7 @@ public class ShowtimeCodec {
             String[] showtimesDays = display.split("\r\n");
 
             // Find today's date in the list
-            String todayFormatted = DAY_DATE_FORMAT.format(new Date());
+            String todayFormatted = DAY_DATE_FORMAT.format(date);
             String todayShowtimesStr = null;
             for (String showtimesDay : showtimesDays) {
                 if (showtimesDay.contains(todayFormatted)) {
