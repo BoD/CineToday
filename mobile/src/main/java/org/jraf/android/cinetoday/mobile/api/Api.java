@@ -98,11 +98,11 @@ public class Api {
                 .addQueryParameter(QUERY_DATE_KEY, SIMPLE_DATE_FORMAT.format(date))
                 .build();
         String jsonStr = call(url, false);
-        return getMovieList(jsonStr);
+        parseMovieList(movies, jsonStr, theaterName, position, date);
     }
 
     @VisibleForTesting
-    static SortedSet<Movie> getMovieList(String jsonStr) throws ParseException {
+    static void parseMovieList(@NonNull SortedSet<Movie> movies, String jsonStr, String theaterName, int position, Date date) throws ParseException {
         try {
             JSONObject jsonRoot = new JSONObject(jsonStr);
             JSONObject jsonFeed = jsonRoot.getJSONObject("feed");
@@ -131,7 +131,7 @@ public class Api {
                 }
 
                 // Showtimes
-                ShowtimeCodec.get().fill(movie, jsonMovieShowtime, theaterName, position);
+                ShowtimeCodec.get().fill(movie, jsonMovieShowtime, theaterName, position, date);
 
                 // If there is no showtimes for today, skip the movie
                 if (movie.todayShowtimes == null || movie.todayShowtimes.size() == 0) {

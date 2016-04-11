@@ -24,6 +24,10 @@
  */
 package org.jraf.android.cinetoday.mobile.api;
 
+import java.io.IOException;
+import java.util.SortedSet;
+import java.util.TreeSet;
+
 import org.fest.assertions.api.Assertions;
 import org.jraf.android.cinetoday.BuildConfig;
 import org.jraf.android.cinetoday.common.model.ParseException;
@@ -36,21 +40,19 @@ import org.junit.runner.RunWith;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
 
-import java.io.IOException;
-import java.util.SortedSet;
-
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class, sdk = 21)
 public class ApiTest {
 
     @Test
-    public void testParseMovieList1() throws IOException, JSONException, ParseException {
+    public void testParseMovieList1() throws IOException, JSONException, ParseException, java.text.ParseException {
         testParseMovieListFile("movie_list1.json", 6);
     }
 
-    private void testParseMovieListFile(String filename, int movieCount) throws IOException, JSONException, ParseException {
+    private void testParseMovieListFile(String filename, int movieCount) throws IOException, JSONException, ParseException, java.text.ParseException {
         String json = TestUtil.readTestResource(filename);
-        SortedSet<Movie> movies = Api.getMovieList(json);
+        SortedSet<Movie> movies = new TreeSet<>(Movie.COMPARATOR);
+        Api.parseMovieList(movies, json, "Test", 0, Api.SIMPLE_DATE_FORMAT.parse("2016-04-10"));
         Assertions.assertThat(movies).hasSize(movieCount);
         for (Movie movie : movies) {
             MovieAssert.assertThat(movie).hasRequiredMovieListFields();
