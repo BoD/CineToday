@@ -146,9 +146,11 @@ public class Movie implements Parcelable {
     public static final Comparator<Movie> COMPARATOR = new Comparator<Movie>() {
         @Override
         public int compare(Movie lhs, Movie rhs) {
-            int res = rhs.releaseDate.compareTo(lhs.releaseDate);
-            if (res == 0) return lhs.id.compareTo(rhs.id);
-            return res;
+            if (rhs.releaseDate != null && lhs.releaseDate != null) {
+                int res = rhs.releaseDate.compareTo(lhs.releaseDate);
+                if (res != 0) return res;
+            }
+            return lhs.id.compareTo(rhs.id);
         }
     };
 }
