@@ -30,18 +30,19 @@ import java.util.Date;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.Nullable;
 
 public class Movie implements Parcelable {
     public String id;
     public String originalTitle;
     public String localTitle;
-    public String directors;
-    public String actors;
-    public Date releaseDate;
+    public @Nullable String directors;
+    public @Nullable String actors;
+    public @Nullable Date releaseDate;
     public int durationSeconds;
     public String[] genres;
     public String posterUri;
-    public String trailerUri;
+    public @Nullable String trailerUri;
     public String webUri;
     public String synopsis;
     public Showtime[] todayShowtimes;

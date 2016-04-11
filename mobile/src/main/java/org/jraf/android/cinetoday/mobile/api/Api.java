@@ -37,6 +37,7 @@ import java.util.TreeSet;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import android.support.annotation.VisibleForTesting;
 import android.support.annotation.WorkerThread;
 
 import org.jraf.android.cinetoday.common.async.ResultCallback;
@@ -101,6 +102,11 @@ public class Api {
                 .addQueryParameter(QUERY_DATE_KEY, SIMPLE_DATE_FORMAT.format(date))
                 .build();
         String jsonStr = call(url, false);
+        return getMovieList(jsonStr);
+    }
+
+    @VisibleForTesting
+    static SortedSet<Movie> getMovieList(String jsonStr) throws ParseException {
         try {
             JSONObject jsonRoot = new JSONObject(jsonStr);
             JSONObject jsonFeed = jsonRoot.getJSONObject("feed");
