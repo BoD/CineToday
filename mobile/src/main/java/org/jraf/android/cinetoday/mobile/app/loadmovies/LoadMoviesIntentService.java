@@ -114,6 +114,7 @@ public class LoadMoviesIntentService extends IntentService {
                     Api.get(context).getMovieInfo(movie);
                     Log.d(movie.toString());
                 } catch (Exception e) {
+                    Log.e(e, "Could not load movie info: movie = %s", movie);
                     loadMoviesListenerHelper.onLoadMoviesError(e);
                     throw e;
                 }

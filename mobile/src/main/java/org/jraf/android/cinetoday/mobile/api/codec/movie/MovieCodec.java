@@ -32,6 +32,7 @@ import org.jraf.android.cinetoday.common.model.ParseException;
 import org.jraf.android.cinetoday.common.model.movie.Movie;
 import org.jraf.android.cinetoday.mobile.api.Api;
 import org.jraf.android.cinetoday.mobile.api.codec.Codec;
+import org.jraf.android.util.log.Log;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -49,8 +50,8 @@ public class MovieCodec implements Codec<Movie> {
         try {
             movie.id = jsonMovie.getString("code");
             movie.localTitle = jsonMovie.getString("title");
-            movie.originalTitle = jsonMovie.optString("originalTitle");
-            movie.synopsis = jsonMovie.optString("synopsis");
+            movie.originalTitle = jsonMovie.optString("originalTitle", null);
+            movie.synopsis = jsonMovie.optString("synopsis", null);
             if (movie.synopsis != null) {
                 // Strip html
                 movie.synopsis = Html.fromHtml(movie.synopsis).toString().trim();
@@ -58,8 +59,8 @@ public class MovieCodec implements Codec<Movie> {
 
             JSONObject jsonCastingShort = jsonMovie.optJSONObject("castingShort");
             if (jsonCastingShort != null) {
-                movie.directors = jsonCastingShort.optString("directors");
-                movie.actors = jsonCastingShort.optString("actors");
+                movie.directors = jsonCastingShort.optString("directors", null);
+                movie.actors = jsonCastingShort.optString("actors", null);
             }
 
             JSONObject jsonRelease = jsonMovie.optJSONObject("release");
@@ -68,7 +69,7 @@ public class MovieCodec implements Codec<Movie> {
                 try {
                     movie.releaseDate = Api.SIMPLE_DATE_FORMAT.parse(releaseDateStr);
                 } catch (java.text.ParseException e) {
-                    throw new ParseException(e);
+                    Log.d(e, "Invalid releaseDate %s in movie %s", movie, releaseDateStr);
                 }
             }
 
