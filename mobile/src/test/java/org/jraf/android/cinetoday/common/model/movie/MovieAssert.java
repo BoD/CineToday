@@ -24,15 +24,15 @@
  */
 package org.jraf.android.cinetoday.common.model.movie;
 
-import org.fest.assertions.api.AbstractAssert;
-import org.fest.assertions.api.Assertions;
-import org.fest.util.Sets;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.Set;
 import java.util.TreeSet;
+
+import org.fest.assertions.api.AbstractAssert;
+import org.fest.assertions.api.Assertions;
+import org.fest.util.Sets;
 
 public class MovieAssert extends AbstractAssert<MovieAssert, Movie> {
 
@@ -49,7 +49,7 @@ public class MovieAssert extends AbstractAssert<MovieAssert, Movie> {
                     "durationSeconds", "genres", "posterUri", "webUri",
                     "synopsis");
     private static final Set<String> REQUIRED_MOVIE_LIST_FIELDS =
-            Sets.newLinkedHashSet("id", "localTitle", "releaseDate", "durationSeconds", "genres", "posterUri", "webUri", "todayShowtimes");
+            Sets.newLinkedHashSet("id", "localTitle", "durationSeconds", "genres", "posterUri", "webUri", "todayShowtimes");
 
     public static MovieAssert assertThat(Movie actual) {
         return new MovieAssert(actual);
