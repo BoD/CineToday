@@ -93,7 +93,7 @@ public class MovieCardFragment extends CardFragment {
 
                 // Actors
                 TextView txtActors = (TextView) view.findViewById(R.id.txtActors);
-                if (movie.actors == null || movie.actors.isEmpty()) {
+                if (TextUtils.isEmpty(movie.actors)) {
                     txtActors.setVisibility(View.GONE);
                 } else {
                     txtActors.setVisibility(View.VISIBLE);
