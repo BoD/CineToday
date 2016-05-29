@@ -46,10 +46,9 @@ public class MovieAssert extends AbstractAssert<MovieAssert, Movie> {
             Sets.newLinkedHashSet("actors", "directors", "releaseDate", "trailerUri");
     private static final Set<String> REQUIRED_MOVIE_DETAIL_FIELDS =
             Sets.newLinkedHashSet("id", "originalTitle", "localTitle",
-                    "durationSeconds", "genres", "posterUri", "webUri",
-                    "synopsis");
+                    "durationSeconds", "genres", "webUri", "synopsis");
     private static final Set<String> REQUIRED_MOVIE_LIST_FIELDS =
-            Sets.newLinkedHashSet("id", "localTitle", "durationSeconds", "genres", "posterUri", "webUri", "todayShowtimes");
+            Sets.newLinkedHashSet("id", "localTitle", "durationSeconds", "genres", "webUri", "todayShowtimes");
 
     public static MovieAssert assertThat(Movie actual) {
         return new MovieAssert(actual);

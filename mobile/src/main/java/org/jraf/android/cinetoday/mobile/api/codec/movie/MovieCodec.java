@@ -83,8 +83,8 @@ public class MovieCodec {
             }
             movie.genres = genres.toArray(new String[len]);
 
-            JSONObject jsonPoster = jsonMovie.getJSONObject("poster");
-            movie.posterUri = jsonPoster.getString("href");
+            JSONObject jsonPoster = jsonMovie.optJSONObject("poster");
+            if (jsonPoster != null) movie.posterUri = jsonPoster.getString("href");
 
             JSONObject jsonTrailer = jsonMovie.optJSONObject("trailer");
             if (jsonTrailer != null) movie.trailerUri = jsonTrailer.getString("href");
