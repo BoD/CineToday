@@ -77,6 +77,13 @@ public class MovieCodecTest {
                 6780);
     }
 
+    @Test
+    public void testParseMovieNoPoster() throws IOException, JSONException, ParseException {
+        testParseMovieFile("movie_detail_no_poster.json",
+                "Donald Pleasence, Françoise Dorléac, Lionel Stander, Jack MacGowran, Iain Quarrier",
+                6780);
+    }
+
     private void testParseMovieFile(String filename, String actors, int duration) throws IOException, JSONException, ParseException {
         String json = TestUtil.readTestResource(filename);
         JSONObject jsonRoot = new JSONObject(json);

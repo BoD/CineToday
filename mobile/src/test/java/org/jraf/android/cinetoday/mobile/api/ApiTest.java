@@ -49,6 +49,11 @@ public class ApiTest {
         testParseMovieListFile("movie_list1.json", 6);
     }
 
+    @Test
+    public void testParseMovieListNoPoster() throws IOException, JSONException, ParseException, java.text.ParseException {
+        testParseMovieListFile("movie_list_no_poster.json", 6);
+    }
+
     private void testParseMovieListFile(String filename, int movieCount) throws IOException, JSONException, ParseException, java.text.ParseException {
         String json = TestUtil.readTestResource(filename);
         SortedSet<Movie> movies = new TreeSet<>(Movie.COMPARATOR);

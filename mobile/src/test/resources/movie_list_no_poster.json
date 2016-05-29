@@ -1,0 +1,595 @@
+{
+  "feed": {
+    "updated": "2016-04-10T16:13:17Z",
+    "page": 1,
+    "count": 10,
+    "totalResults": 1,
+    "theaterShowtimes": [
+      {
+        "place": {
+          "theater": {
+            "code": "C0024",
+            "name": "Les Fauvettes",
+            "address": "58, av. des Gobelins",
+            "postalCode": "75013",
+            "city": "Paris 13e arrondissement",
+            "area": "Île-de-France",
+            "picture": {
+              "path": "\/pictures\/212\/249\/21224905_171155897.jpg",
+              "href": "http:\/\/fr.web.img5.acsta.net\/pictures\/212\/249\/21224905_171155897.jpg"
+            },
+            "cinemaChain": {
+              "code": 81002,
+              "$": "Gaumont"
+            },
+            "hasPRMAccess": 1,
+            "openToExternalSales": 1,
+            "geoloc": {
+              "lat": 48.8336400,
+              "long": 2.3539660
+            },
+            "link": [
+              {
+                "rel": "aco:web",
+                "href": "http:\/\/www.allocine.fr\/seance\/salle_gen_csalle=C0024.html"
+              }
+            ]
+          }
+        },
+        "movieShowtimes": [
+          {
+            "ticketing": "http:\/\/www.cinemasgaumontpathe.com\/index.php?do=landing&id_film=12954&id_cinema=17&numerique=0&id_version=1&i=25148122&partenaire=allocine&e=[email]",
+            "preview": "false",
+            "releaseWeek": "true",
+            "onShow": {
+              "movie": {
+                "code": 236799,
+                "title": "Don Quichotte (Pathé Live)",
+                "release": {
+                  "releaseDate": "2016-04-10"
+                },
+                "runtime": 11400,
+                "genre": [
+                  {
+                    "code": 13048,
+                    "$": "Opera"
+                  }
+                ],
+                "poster": {
+                  "path": "\/pictures\/15\/12\/04\/17\/30\/423872.jpg",
+                  "href": "http:\/\/fr.web.img6.acsta.net\/pictures\/15\/12\/04\/17\/30\/423872.jpg"
+                },
+                "trailer": {
+                  "code": 19554042,
+                  "href": "http:\/\/www.allocine.fr\/blogvision\/19554042"
+                },
+                "trailerEmbed": "<div id='ACEmbed'><iframe src='http:\/\/www.allocine.fr\/_video\/iblogvision.aspx?cmedia=19554042&amp;isApp=true' style='width:480px; height:270px' frameborder='0' allowfullscreen='true'><\/iframe><br \/><a href=\"http:\/\/www.allocine.fr\/film\/fichefilm_gen_cfilm=236799.html\" target=\"_blank\">Don Quichotte (Pathé Live)<\/a><\/div>",
+                "link": [
+                  {
+                    "rel": "aco:web",
+                    "name": "Don Quichotte (Pathé Live)",
+                    "href": "http:\/\/www.allocine.fr\/film\/fichefilm_gen_cfilm=236799.html"
+                  }
+                ],
+                "statistics": {
+                  "pressReviewCount": 0,
+                  "userReviewCount": 0,
+                  "editorialRatingCount": 0
+                }
+              }
+            },
+            "version": {
+              "original": "false",
+              "code": 6001,
+              "lang": 6001,
+              "$": "Français"
+            },
+            "screenFormat": {
+              "code": 110002,
+              "$": "Numérique"
+            },
+            "display": "Séances du dimanche 10 avril 2016 : 17:00",
+            "scr": [
+              {
+                "d": "2016-04-10",
+                "t": [
+                  {
+                    "code": 275684765,
+                    "p": 0,
+                    "tk": "http:\/\/m.cinemasgaumontpathe.com\/index.php?do=landing&id_film=12954&id_cinema=17&numerique=0&id_version=1&progid=25148122&partenaire=allocine&e=[email]",
+                    "$": "17:00"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "ticketing": "http:\/\/www.cinemasgaumontpathe.com\/index.php?do=landing&id_film=14670&id_cinema=17&numerique=1&id_version=1&i=25494394&partenaire=allocine&e=[email]",
+            "preview": "false",
+            "releaseWeek": "true",
+            "onShow": {
+              "movie": {
+                "code": 3415,
+                "title": "La Belle équipe",
+                "castingShort": {
+                  "directors": "Julien Duvivier",
+                  "actors": "Jean Gabin, Charles Vanel, Raymond Aimos, Viviane Romance, Jacques Baumer"
+                },
+                "release": {
+                  "releaseDate": "2016-04-06",
+                  "releaseVersion": {
+                    "code": 143006,
+                    "$": "Version restaurée"
+                  }
+                },
+                "runtime": 5700,
+                "genre": [
+                  {
+                    "code": 13002,
+                    "$": "Comédie dramatique"
+                  }
+                ],
+                "poster": {
+                  "path": "\/pictures\/16\/03\/03\/16\/56\/395966.jpg",
+                  "href": "http:\/\/fr.web.img1.acsta.net\/pictures\/16\/03\/03\/16\/56\/395966.jpg"
+                },
+                "trailer": {
+                  "code": 19561768,
+                  "href": "http:\/\/www.allocine.fr\/blogvision\/19561768"
+                },
+                "trailerEmbed": "<div id='ACEmbed'><iframe src='http:\/\/www.allocine.fr\/_video\/iblogvision.aspx?cmedia=19561768&amp;isApp=true' style='width:480px; height:270px' frameborder='0' allowfullscreen='true'><\/iframe><br \/><a href=\"http:\/\/www.allocine.fr\/film\/fichefilm_gen_cfilm=3415.html\" target=\"_blank\">La Belle équipe<\/a><\/div>",
+                "link": [
+                  {
+                    "rel": "aco:web",
+                    "name": "La Belle équipe",
+                    "href": "http:\/\/www.allocine.fr\/film\/fichefilm_gen_cfilm=3415.html"
+                  }
+                ],
+                "statistics": {
+                  "userRating": 3.95044255,
+                  "userReviewCount": 20,
+                  "userRatingCount": 128,
+                  "editorialRatingCount": 0
+                }
+              }
+            },
+            "version": {
+              "original": "false",
+              "code": 6001,
+              "lang": 6001,
+              "$": "Français"
+            },
+            "screenFormat": {
+              "code": 110002,
+              "$": "Numérique"
+            },
+            "display": "Séances du mercredi 6 avril 2016 : 10:40, 13:00, 15:15, 17:30, 19:45, 22:00\u000d\u000aSéances du jeudi 7 avril 2016 : 10:40, 13:00, 15:15, 17:30, 19:45, 22:00\u000d\u000aSéances du vendredi 8 avril 2016 : 10:40, 13:00, 15:15, 17:30, 19:45, 22:00\u000d\u000aSéances du samedi 9 avril 2016 : 10:40, 13:00, 15:15, 17:30, 19:45, 22:00\u000d\u000aSéances du dimanche 10 avril 2016 : 10:40, 12:50, 15:00, 17:15, 19:30, 21:45\u000d\u000aSéances du lundi 11 avril 2016 : 10:40, 13:00, 15:15, 17:30, 19:45, 22:00\u000d\u000aSéances du mardi 12 avril 2016 : 10:40, 13:00, 15:15, 17:30, 19:45, 22:00",
+            "scr": [
+              {
+                "d": "2016-04-10",
+                "t": [
+                  {
+                    "code": 275684825,
+                    "p": 0,
+                    "tk": "http:\/\/m.cinemasgaumontpathe.com\/index.php?do=landing&id_film=14670&id_cinema=17&numerique=1&id_version=1&progid=25494482&partenaire=allocine&e=[email]",
+                    "$": "10:40"
+                  },
+                  {
+                    "code": 275684826,
+                    "p": 0,
+                    "tk": "http:\/\/m.cinemasgaumontpathe.com\/index.php?do=landing&id_film=14670&id_cinema=17&numerique=1&id_version=1&progid=25494484&partenaire=allocine&e=[email]",
+                    "$": "12:50"
+                  },
+                  {
+                    "code": 275684827,
+                    "p": 0,
+                    "tk": "http:\/\/m.cinemasgaumontpathe.com\/index.php?do=landing&id_film=14670&id_cinema=17&numerique=1&id_version=1&progid=25494486&partenaire=allocine&e=[email]",
+                    "$": "15:00"
+                  },
+                  {
+                    "code": 275684828,
+                    "p": 0,
+                    "tk": "http:\/\/m.cinemasgaumontpathe.com\/index.php?do=landing&id_film=14670&id_cinema=17&numerique=1&id_version=1&progid=25494488&partenaire=allocine&e=[email]",
+                    "$": "17:15"
+                  },
+                  {
+                    "code": 275684829,
+                    "p": 0,
+                    "tk": "http:\/\/m.cinemasgaumontpathe.com\/index.php?do=landing&id_film=14670&id_cinema=17&numerique=1&id_version=1&progid=25494490&partenaire=allocine&e=[email]",
+                    "$": "19:30"
+                  },
+                  {
+                    "code": 275684830,
+                    "p": 0,
+                    "tk": "http:\/\/m.cinemasgaumontpathe.com\/index.php?do=landing&id_film=14670&id_cinema=17&numerique=1&id_version=1&progid=25494492&partenaire=allocine&e=[email]",
+                    "$": "21:45"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "ticketing": "http:\/\/www.cinemasgaumontpathe.com\/index.php?do=landing&id_film=14871&id_cinema=17&numerique=1&id_version=1&i=25494406&partenaire=allocine&e=[email]",
+            "preview": "false",
+            "releaseWeek": "false",
+            "onShow": {
+              "movie": {
+                "code": 3762,
+                "title": "Voici le temps des assassins",
+                "castingShort": {
+                  "directors": "Julien Duvivier",
+                  "actors": "Jean Gabin, Danièle Delorme, Robert Arnoux, Liliane Bert, Gérard Blain"
+                },
+                "release": {
+                  "releaseDate": "2016-04-13",
+                  "releaseVersion": {
+                    "code": 143006,
+                    "$": "Version restaurée"
+                  }
+                },
+                "runtime": 6780,
+                "genre": [
+                  {
+                    "code": 13008,
+                    "$": "Drame"
+                  }
+                ],
+                "poster": {
+                  "path": "\/pictures\/16\/03\/03\/17\/01\/431942.jpg",
+                  "href": "http:\/\/fr.web.img1.acsta.net\/pictures\/16\/03\/03\/17\/01\/431942.jpg"
+                },
+                "trailer": {
+                  "code": 19561769,
+                  "href": "http:\/\/www.allocine.fr\/blogvision\/19561769"
+                },
+                "trailerEmbed": "<div id='ACEmbed'><iframe src='http:\/\/www.allocine.fr\/_video\/iblogvision.aspx?cmedia=19561769&amp;isApp=true' style='width:480px; height:270px' frameborder='0' allowfullscreen='true'><\/iframe><br \/><a href=\"http:\/\/www.allocine.fr\/film\/fichefilm_gen_cfilm=3762.html\" target=\"_blank\">Voici le temps des assassins<\/a><\/div>",
+                "link": [
+                  {
+                    "rel": "aco:web",
+                    "name": "Voici le temps des assassins",
+                    "href": "http:\/\/www.allocine.fr\/film\/fichefilm_gen_cfilm=3762.html"
+                  }
+                ],
+                "statistics": {
+                  "userRating": 3.80764627,
+                  "userReviewCount": 25,
+                  "userRatingCount": 156,
+                  "editorialRatingCount": 0
+                }
+              }
+            },
+            "version": {
+              "original": "false",
+              "code": 6001,
+              "lang": 6001,
+              "$": "Français"
+            },
+            "screenFormat": {
+              "code": 110002,
+              "$": "Numérique"
+            },
+            "display": "Séances du mercredi 6 avril 2016 : 10:40, 13:15, 15:30, 18:00, 20:15\u000d\u000aSéances du jeudi 7 avril 2016 : 10:40, 13:15, 15:30, 18:00, 20:15\u000d\u000aSéances du vendredi 8 avril 2016 : 10:40, 13:15, 15:30, 18:00, 20:15\u000d\u000aSéances du samedi 9 avril 2016 : 10:40, 13:15, 15:30, 18:00, 20:15\u000d\u000aSéances du dimanche 10 avril 2016 : 10:40, 13:15, 15:30, 18:00, 20:15\u000d\u000aSéances du lundi 11 avril 2016 : 10:40, 13:15, 15:30, 18:00, 20:15\u000d\u000aSéances du mardi 12 avril 2016 : 10:40, 13:15, 15:30, 18:00, 20:15",
+            "scr": [
+              {
+                "d": "2016-04-10",
+                "t": [
+                  {
+                    "code": 275684682,
+                    "p": 0,
+                    "tk": "http:\/\/m.cinemasgaumontpathe.com\/index.php?do=landing&id_film=14871&id_cinema=17&numerique=1&id_version=1&progid=25494494&partenaire=allocine&e=[email]",
+                    "$": "10:40"
+                  },
+                  {
+                    "code": 275684683,
+                    "p": 0,
+                    "tk": "http:\/\/m.cinemasgaumontpathe.com\/index.php?do=landing&id_film=14871&id_cinema=17&numerique=1&id_version=1&progid=25494496&partenaire=allocine&e=[email]",
+                    "$": "13:15"
+                  },
+                  {
+                    "code": 275684684,
+                    "p": 0,
+                    "tk": "http:\/\/m.cinemasgaumontpathe.com\/index.php?do=landing&id_film=14871&id_cinema=17&numerique=1&id_version=1&progid=25494498&partenaire=allocine&e=[email]",
+                    "$": "15:30"
+                  },
+                  {
+                    "code": 275684685,
+                    "p": 0,
+                    "tk": "http:\/\/m.cinemasgaumontpathe.com\/index.php?do=landing&id_film=14871&id_cinema=17&numerique=1&id_version=1&progid=25494500&partenaire=allocine&e=[email]",
+                    "$": "18:00"
+                  },
+                  {
+                    "code": 275684686,
+                    "p": 0,
+                    "tk": "http:\/\/m.cinemasgaumontpathe.com\/index.php?do=landing&id_film=14871&id_cinema=17&numerique=1&id_version=1&progid=25494502&partenaire=allocine&e=[email]",
+                    "$": "20:15"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "ticketing": "http:\/\/www.cinemasgaumontpathe.com\/index.php?do=landing&id_film=15078&id_cinema=17&numerique=1&id_version=2&i=25575148&partenaire=allocine&e=[email]",
+            "preview": "false",
+            "releaseWeek": "false",
+            "onShow": {
+              "movie": {
+                "code": 163,
+                "title": "Cul-de-sac",
+                "castingShort": {
+                  "directors": "Roman Polanski",
+                  "actors": "Donald Pleasence, Françoise Dorléac, Lionel Stander, Jack MacGowran, Iain Quarrier"
+                },
+                "release": {
+                  "releaseDate": "garbage_testing"
+                },
+                "runtime": 6780,
+                "genre": [
+                  {
+                    "code": 13008,
+                    "$": "Drame"
+                  }
+                ],
+                "trailer": {
+                  "code": 19499149,
+                  "href": "http:\/\/www.allocine.fr\/blogvision\/19499149"
+                },
+                "trailerEmbed": "<div id='ACEmbed'><iframe src='http:\/\/www.allocine.fr\/_video\/iblogvision.aspx?cmedia=19499149&amp;isApp=true' style='width:480px; height:270px' frameborder='0' allowfullscreen='true'><\/iframe><br \/><a href=\"http:\/\/www.allocine.fr\/film\/fichefilm_gen_cfilm=163.html\" target=\"_blank\">Cul-de-sac<\/a><\/div>",
+                "link": [
+                  {
+                    "rel": "aco:web",
+                    "name": "Cul-de-sac",
+                    "href": "http:\/\/www.allocine.fr\/film\/fichefilm_gen_cfilm=163.html"
+                  }
+                ],
+                "statistics": {
+                  "pressRating": 4,
+                  "pressReviewCount": 2,
+                  "userRating": 3.51116872,
+                  "userReviewCount": 56,
+                  "userRatingCount": 313,
+                  "editorialRatingCount": 0
+                }
+              }
+            },
+            "version": {
+              "original": "true",
+              "code": 6002,
+              "lang": 6002,
+              "$": "Anglais"
+            },
+            "screenFormat": {
+              "code": 110002,
+              "$": "Numérique"
+            },
+            "display": "Séances du mercredi 6 avril 2016 : 11:15, 14:00, 16:30, 19:00, 21:30\u000d\u000aSéances du jeudi 7 avril 2016 : 11:15, 14:00, 16:30, 19:00, 21:30\u000d\u000aSéances du vendredi 8 avril 2016 : 11:15, 14:00, 21:30\u000d\u000aSéances du samedi 9 avril 2016 : 11:15, 14:00, 16:30, 19:00, 21:30\u000d\u000aSéances du dimanche 10 avril 2016 : 11:15, 14:00, 19:00, 21:30\u000d\u000aSéances du lundi 11 avril 2016 : 11:15, 14:00, 16:30, 19:00, 21:30\u000d\u000aSéances du mardi 12 avril 2016 : 11:15, 14:00, 16:30, 19:00, 21:30",
+            "scr": [
+              {
+                "d": "2016-04-10",
+                "t": [
+                  {
+                    "code": 275684718,
+                    "p": 0,
+                    "tk": "http:\/\/m.cinemasgaumontpathe.com\/index.php?do=landing&id_film=15078&id_cinema=17&numerique=1&id_version=2&progid=25575270&partenaire=allocine&e=[email]",
+                    "$": "11:15"
+                  },
+                  {
+                    "code": 275684719,
+                    "p": 0,
+                    "tk": "http:\/\/m.cinemasgaumontpathe.com\/index.php?do=landing&id_film=15078&id_cinema=17&numerique=1&id_version=2&progid=25575272&partenaire=allocine&e=[email]",
+                    "$": "14:00"
+                  },
+                  {
+                    "code": 275684720,
+                    "p": 0,
+                    "tk": "http:\/\/m.cinemasgaumontpathe.com\/index.php?do=landing&id_film=15078&id_cinema=17&numerique=1&id_version=2&progid=25575274&partenaire=allocine&e=[email]",
+                    "$": "19:00"
+                  },
+                  {
+                    "code": 275684721,
+                    "p": 0,
+                    "tk": "http:\/\/m.cinemasgaumontpathe.com\/index.php?do=landing&id_film=15078&id_cinema=17&numerique=1&id_version=2&progid=25575276&partenaire=allocine&e=[email]",
+                    "$": "21:30"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "ticketing": "http:\/\/www.cinemasgaumontpathe.com\/index.php?do=landing&id_film=15094&id_cinema=17&numerique=1&id_version=2&i=25575158&partenaire=allocine&e=[email]",
+            "preview": "false",
+            "releaseWeek": "false",
+            "onShow": {
+              "movie": {
+                "code": 4317,
+                "title": "Huit Heures de sursis",
+                "castingShort": {
+                  "directors": "Carol Reed",
+                  "actors": "James Mason, Robert Newton, Cyril Cusack, Kathleen Ryan, F.-J. McCormick"
+                },
+                "release": {
+                  "releaseDate": "2014-08-20"
+                },
+                "runtime": 6960,
+                "genre": [
+                  {
+                    "code": 13018,
+                    "$": "Policier"
+                  },
+                  {
+                    "code": 13008,
+                    "$": "Drame"
+                  },
+                  {
+                    "code": 13024,
+                    "$": "Romance"
+                  }
+                ],
+                "poster": {
+                  "path": "\/medias\/nmedia\/18\/73\/49\/08\/19704311.jpg",
+                  "href": "http:\/\/fr.web.img2.acsta.net\/medias\/nmedia\/18\/73\/49\/08\/19704311.jpg"
+                },
+                "link": [
+                  {
+                    "rel": "aco:web",
+                    "name": "Huit Heures de sursis",
+                    "href": "http:\/\/www.allocine.fr\/film\/fichefilm_gen_cfilm=4317.html"
+                  }
+                ],
+                "statistics": {
+                  "pressReviewCount": 0,
+                  "userRating": 3.806967,
+                  "userReviewCount": 11,
+                  "userRatingCount": 39,
+                  "editorialRatingCount": 0
+                }
+              }
+            },
+            "version": {
+              "original": "true",
+              "code": 6002,
+              "lang": 6002,
+              "$": "Anglais"
+            },
+            "screenFormat": {
+              "code": 110002,
+              "$": "Numérique"
+            },
+            "display": "Séances du mercredi 6 avril 2016 : 11:00, 13:40, 16:00, 18:30, 20:50\u000d\u000aSéances du jeudi 7 avril 2016 : 11:00, 13:40, 16:00, 18:30, 20:50\u000d\u000aSéances du vendredi 8 avril 2016 : 11:00, 13:40, 16:00, 18:30, 20:50\u000d\u000aSéances du samedi 9 avril 2016 : 11:00, 13:40, 16:00, 18:30\u000d\u000aSéances du dimanche 10 avril 2016 : 11:00, 13:40, 16:00, 18:30, 20:50\u000d\u000aSéances du lundi 11 avril 2016 : 11:00, 13:40, 16:00, 18:30, 20:50\u000d\u000aSéances du mardi 12 avril 2016 : 11:00, 13:40, 16:00, 18:30",
+            "scr": [
+              {
+                "d": "2016-04-10",
+                "t": [
+                  {
+                    "code": 275684787,
+                    "p": 0,
+                    "tk": "http:\/\/m.cinemasgaumontpathe.com\/index.php?do=landing&id_film=15094&id_cinema=17&numerique=1&id_version=2&progid=25575278&partenaire=allocine&e=[email]",
+                    "$": "11:00"
+                  },
+                  {
+                    "code": 275684788,
+                    "p": 0,
+                    "tk": "http:\/\/m.cinemasgaumontpathe.com\/index.php?do=landing&id_film=15094&id_cinema=17&numerique=1&id_version=2&progid=25575280&partenaire=allocine&e=[email]",
+                    "$": "13:40"
+                  },
+                  {
+                    "code": 275684789,
+                    "p": 0,
+                    "tk": "http:\/\/m.cinemasgaumontpathe.com\/index.php?do=landing&id_film=15094&id_cinema=17&numerique=1&id_version=2&progid=25575282&partenaire=allocine&e=[email]",
+                    "$": "16:00"
+                  },
+                  {
+                    "code": 275684790,
+                    "p": 0,
+                    "tk": "http:\/\/m.cinemasgaumontpathe.com\/index.php?do=landing&id_film=15094&id_cinema=17&numerique=1&id_version=2&progid=25575284&partenaire=allocine&e=[email]",
+                    "$": "18:30"
+                  },
+                  {
+                    "code": 275684791,
+                    "p": 0,
+                    "tk": "http:\/\/m.cinemasgaumontpathe.com\/index.php?do=landing&id_film=15094&id_cinema=17&numerique=1&id_version=2&progid=25575286&partenaire=allocine&e=[email]",
+                    "$": "20:50"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "ticketing": "http:\/\/www.cinemasgaumontpathe.com\/index.php?do=landing&id_film=4168&id_cinema=17&numerique=1&id_version=2&i=25575234&partenaire=allocine&e=[email]",
+            "preview": "false",
+            "releaseWeek": "false",
+            "onShow": {
+              "movie": {
+                "code": 127,
+                "title": "Le Bal des vampires",
+                "castingShort": {
+                  "directors": "Roman Polanski",
+                  "actors": "Roman Polanski, Jack MacGowran, Sharon Tate, Ferdy Mayne, Ronald Lacey"
+                },
+                "release": {
+                  "releaseDate": "2010-04-28"
+                },
+                "runtime": 6480,
+                "genre": [
+                  {
+                    "code": 13005,
+                    "$": "Comédie"
+                  },
+                  {
+                    "code": 13009,
+                    "$": "Epouvante-horreur"
+                  }
+                ],
+                "poster": {
+                  "path": "\/medias\/nmedia\/18\/35\/59\/99\/19355043.jpg",
+                  "href": "http:\/\/fr.web.img3.acsta.net\/medias\/nmedia\/18\/35\/59\/99\/19355043.jpg"
+                },
+                "trailer": {
+                  "code": 18637011,
+                  "href": "http:\/\/www.allocine.fr\/blogvision\/18637011"
+                },
+                "trailerEmbed": "<div id='ACEmbed'><iframe src='http:\/\/www.allocine.fr\/_video\/iblogvision.aspx?cmedia=18637011&amp;isApp=true' style='width:480px; height:270px' frameborder='0' allowfullscreen='true'><\/iframe><br \/><a href=\"http:\/\/www.allocine.fr\/film\/fichefilm_gen_cfilm=127.html\" target=\"_blank\">Le Bal des vampires<\/a><\/div>",
+                "link": [
+                  {
+                    "rel": "aco:web",
+                    "name": "Le Bal des vampires",
+                    "href": "http:\/\/www.allocine.fr\/film\/fichefilm_gen_cfilm=127.html"
+                  }
+                ],
+                "statistics": {
+                  "pressRating": 4,
+                  "pressReviewCount": 3,
+                  "userRating": 3.81300974,
+                  "userReviewCount": 267,
+                  "userRatingCount": 4090,
+                  "editorialRatingCount": 0
+                }
+              }
+            },
+            "version": {
+              "original": "true",
+              "code": 6002,
+              "lang": 6002,
+              "$": "Anglais"
+            },
+            "screenFormat": {
+              "code": 110002,
+              "$": "Numérique"
+            },
+            "display": "Séances du mercredi 6 avril 2016 : 10:45, 13:00, 15:20, 17:45, 20:00, 22:10\u000d\u000aSéances du jeudi 7 avril 2016 : 10:45, 13:00, 15:20, 17:45, 20:00, 22:10\u000d\u000aSéances du vendredi 8 avril 2016 : 10:45, 13:00, 17:45, 20:00, 22:10\u000d\u000aSéances du samedi 9 avril 2016 : 10:45, 13:00, 15:20, 17:45, 22:10\u000d\u000aSéances du dimanche 10 avril 2016 : 11:00, 13:15, 16:30, 21:15\u000d\u000aSéances du lundi 11 avril 2016 : 10:45, 13:00, 15:20, 17:45, 20:00, 22:10\u000d\u000aSéances du mardi 12 avril 2016 : 10:45, 13:00, 15:20, 20:50",
+            "scr": [
+              {
+                "d": "2016-04-10",
+                "t": [
+                  {
+                    "code": 275684750,
+                    "p": 0,
+                    "tk": "http:\/\/m.cinemasgaumontpathe.com\/index.php?do=landing&id_film=4168&id_cinema=17&numerique=1&id_version=2&progid=25575288&partenaire=allocine&e=[email]",
+                    "$": "11:00"
+                  },
+                  {
+                    "code": 275684751,
+                    "p": 0,
+                    "tk": "http:\/\/m.cinemasgaumontpathe.com\/index.php?do=landing&id_film=4168&id_cinema=17&numerique=1&id_version=2&progid=25575290&partenaire=allocine&e=[email]",
+                    "$": "13:15"
+                  },
+                  {
+                    "code": 275684700,
+                    "p": 0,
+                    "tk": "http:\/\/m.cinemasgaumontpathe.com\/index.php?do=landing&id_film=4168&id_cinema=17&numerique=1&id_version=2&progid=25575292&partenaire=allocine&e=[email]",
+                    "$": "16:30"
+                  },
+                  {
+                    "code": 275684752,
+                    "p": 0,
+                    "tk": "http:\/\/m.cinemasgaumontpathe.com\/index.php?do=landing&id_film=4168&id_cinema=17&numerique=1&id_version=2&progid=25575294&partenaire=allocine&e=[email]",
+                    "$": "21:15"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
