@@ -61,6 +61,7 @@ public class ImageCache {
     @Nullable
     public Bitmap getBitmap(String uri, int maxWidth, int maxHeight) {
         Log.d("uri=%s", uri);
+        if (uri == null) return null;
         File cachedFile = getCachedFile(uri, maxWidth, maxHeight);
         if (cachedFile.exists()) {
             Log.d("Cache hit for %s", uri);
