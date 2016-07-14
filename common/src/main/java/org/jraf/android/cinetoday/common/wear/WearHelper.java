@@ -120,10 +120,9 @@ public class WearHelper {
         }
     }
 
-    /*
-     * Data.
-     */
-    // region
+    //--------------------------------------------------------------------------
+    // region Data.
+    //--------------------------------------------------------------------------
 
     @WorkerThread
     public void addListener(DataApi.DataListener listener) {
@@ -255,13 +254,12 @@ public class WearHelper {
     // endregion
 
 
-    /*
-     * Messaging.
-     */
-    // region
+    //--------------------------------------------------------------------------
+    // region Messaging.
+    //--------------------------------------------------------------------------
 
     @WorkerThread
-    private void sendMessage(String path, @Nullable final byte[] payload) {
+    private void sendMessage(String path, @Nullable byte[] payload) {
         Log.d("path=%s", path);
         HashSet<String> results = new HashSet<>();
         NodeApi.GetConnectedNodesResult nodesResult = Wearable.NodeApi.getConnectedNodes(mGoogleApiClient).await(AWAIT_TIME_S, TimeUnit.SECONDS);
@@ -278,10 +276,9 @@ public class WearHelper {
     // endregion
 
 
-    /*
-     * Misc.
-     */
-    // region
+    //--------------------------------------------------------------------------
+    // region Misc.
+    //--------------------------------------------------------------------------
 
     private static Uri createUri(String path) {
         return new Uri.Builder().scheme(PutDataRequest.WEAR_URI_SCHEME).path(path).build();

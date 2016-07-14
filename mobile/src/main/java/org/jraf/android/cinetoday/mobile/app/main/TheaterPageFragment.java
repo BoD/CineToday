@@ -125,10 +125,9 @@ public class TheaterPageFragment extends BaseFragment<MainCallbacks> implements 
     }
 
 
-    /*
-     * AlertDialogListener.
-     */
-    //region
+    //--------------------------------------------------------------------------
+    // region AlertDialogListener.
+    //--------------------------------------------------------------------------
 
     @Override
     public void onDialogClickPositive(int tag, Object payload) {
@@ -141,6 +140,6 @@ public class TheaterPageFragment extends BaseFragment<MainCallbacks> implements 
     @Override
     public void onDialogClickListItem(int tag, int index, Object payload) {}
 
-    //endregion
+    // endregion
 }
 

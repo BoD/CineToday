@@ -58,30 +58,31 @@ public class Showtime implements Parcelable, Comparable<Showtime> {
         return result;
     }
 
-    /*
-     * Parcelable implementation.
-     */
-    // region
+    //--------------------------------------------------------------------------
+    // region Parcelable implementation.
+    //--------------------------------------------------------------------------
 
     @Override
     public int describeContents() { return 0; }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(this.time);
+        dest.writeString(time);
         dest.writeByte(is3d ? (byte) 1 : (byte) 0);
     }
 
     public Showtime() {}
 
     protected Showtime(Parcel in) {
-        this.time = in.readString();
-        this.is3d = in.readByte() != 0;
+        time = in.readString();
+        is3d = in.readByte() != 0;
     }
 
     public static final Parcelable.Creator<Showtime> CREATOR = new Parcelable.Creator<Showtime>() {
+        @Override
         public Showtime createFromParcel(Parcel source) {return new Showtime(source);}
 
+        @Override
         public Showtime[] newArray(int size) {return new Showtime[size];}
     };
 
