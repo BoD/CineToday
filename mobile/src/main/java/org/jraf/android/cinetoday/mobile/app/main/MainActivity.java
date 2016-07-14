@@ -299,10 +299,9 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks, Lo
     }
 
 
-    /*
-     * Loader.
-     */
-    //region
+    //--------------------------------------------------------------------------
+    // region Loader.
+    //--------------------------------------------------------------------------
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -330,13 +329,12 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks, Lo
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {}
 
-    //endregion
+    // endregion
 
 
-    /*
-     * MainCallbacks.
-     */
-    //region
+    //--------------------------------------------------------------------------
+    // region MainCallbacks.
+    //--------------------------------------------------------------------------
 
     @Override
     public void onAddTheater() {
@@ -364,5 +362,5 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks, Lo
         }.execute();
     }
 
-    //endregion
+    // endregion
 }

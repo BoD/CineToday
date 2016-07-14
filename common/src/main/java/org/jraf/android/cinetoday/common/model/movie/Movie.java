@@ -89,51 +89,52 @@ public class Movie implements Parcelable {
     }
 
 
-    /*
-     * Parcelable implementation.
-     */
-    // region
+    //--------------------------------------------------------------------------
+    // region Parcelable implementation.
+    //--------------------------------------------------------------------------
 
     @Override
     public int describeContents() { return 0; }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(this.id);
-        dest.writeString(this.originalTitle);
-        dest.writeString(this.localTitle);
-        dest.writeString(this.directors);
-        dest.writeString(this.actors);
+        dest.writeString(id);
+        dest.writeString(originalTitle);
+        dest.writeString(localTitle);
+        dest.writeString(directors);
+        dest.writeString(actors);
         dest.writeLong(releaseDate != null ? releaseDate.getTime() : -1);
-        dest.writeInt(this.durationSeconds);
-        dest.writeStringArray(this.genres);
-        dest.writeString(this.posterUri);
-        dest.writeString(this.trailerUri);
-        dest.writeString(this.webUri);
-        dest.writeString(this.synopsis);
-        dest.writeBundle(this.todayShowtimes);
+        dest.writeInt(durationSeconds);
+        dest.writeStringArray(genres);
+        dest.writeString(posterUri);
+        dest.writeString(trailerUri);
+        dest.writeString(webUri);
+        dest.writeString(synopsis);
+        dest.writeBundle(todayShowtimes);
     }
 
     protected Movie(Parcel in) {
-        this.id = in.readString();
-        this.originalTitle = in.readString();
-        this.localTitle = in.readString();
-        this.directors = in.readString();
-        this.actors = in.readString();
+        id = in.readString();
+        originalTitle = in.readString();
+        localTitle = in.readString();
+        directors = in.readString();
+        actors = in.readString();
         long tmpReleaseDate = in.readLong();
-        this.releaseDate = tmpReleaseDate == -1 ? null : new Date(tmpReleaseDate);
-        this.durationSeconds = in.readInt();
-        this.genres = in.createStringArray();
-        this.posterUri = in.readString();
-        this.trailerUri = in.readString();
-        this.webUri = in.readString();
-        this.synopsis = in.readString();
-        this.todayShowtimes = in.readBundle(getClass().getClassLoader());
+        releaseDate = tmpReleaseDate == -1 ? null : new Date(tmpReleaseDate);
+        durationSeconds = in.readInt();
+        genres = in.createStringArray();
+        posterUri = in.readString();
+        trailerUri = in.readString();
+        webUri = in.readString();
+        synopsis = in.readString();
+        todayShowtimes = in.readBundle(getClass().getClassLoader());
     }
 
     public static final Creator<Movie> CREATOR = new Creator<Movie>() {
+        @Override
         public Movie createFromParcel(Parcel source) {return new Movie(source);}
 
+        @Override
         public Movie[] newArray(int size) {return new Movie[size];}
     };
 

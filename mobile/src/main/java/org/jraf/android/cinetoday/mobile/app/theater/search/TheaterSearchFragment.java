@@ -86,10 +86,9 @@ public class TheaterSearchFragment extends BaseFragment<TheaterCallbacks> implem
     }
 
 
-    /*
-     * LoaderCallbacks implementation.
-     */
-    // region
+    //--------------------------------------------------------------------------
+    // region LoaderCallbacks.
+    //--------------------------------------------------------------------------
 
     @Override
     public Loader<List<Theater>> onCreateLoader(int id, Bundle args) {

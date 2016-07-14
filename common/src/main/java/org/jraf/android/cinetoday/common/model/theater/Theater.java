@@ -59,32 +59,33 @@ public class Theater implements Parcelable {
         return id.hashCode();
     }
 
-    /*
-     * Parcelable implementation.
-     */
-    // region
+    //--------------------------------------------------------------------------
+    // region Parcelable implementation.
+    //--------------------------------------------------------------------------
 
     @Override
     public int describeContents() { return 0; }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(this.id);
-        dest.writeString(this.name);
-        dest.writeString(this.address);
-        dest.writeString(this.pictureUri);
+        dest.writeString(id);
+        dest.writeString(name);
+        dest.writeString(address);
+        dest.writeString(pictureUri);
     }
 
     protected Theater(Parcel in) {
-        this.id = in.readString();
-        this.name = in.readString();
-        this.address = in.readString();
-        this.pictureUri = in.readString();
+        id = in.readString();
+        name = in.readString();
+        address = in.readString();
+        pictureUri = in.readString();
     }
 
     public static final Creator<Theater> CREATOR = new Creator<Theater>() {
+        @Override
         public Theater createFromParcel(Parcel source) {return new Theater(source);}
 
+        @Override
         public Theater[] newArray(int size) {return new Theater[size];}
     };
 
