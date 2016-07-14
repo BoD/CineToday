@@ -26,58 +26,45 @@ package org.jraf.android.cinetoday.mobile.app.theater.search;
 
 import java.util.List;
 
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import org.jraf.android.cinetoday.R;
 import org.jraf.android.cinetoday.common.model.theater.Theater;
+import org.jraf.android.cinetoday.databinding.TheaterSearchListBinding;
 import org.jraf.android.util.app.base.BaseFragment;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
-
 public class TheaterSearchFragment extends BaseFragment<TheaterCallbacks> implements LoaderManager.LoaderCallbacks<List<Theater>> {
-    @Bind(R.id.rclList)
-    protected RecyclerView mRclList;
-
-    @Bind(R.id.pgbLoading)
-    protected ProgressBar mPgbLoading;
-
-    @Bind(R.id.txtEmpty)
-    protected TextView mTxtEmpty;
-
     private TheaterAdapter mAdapter;
+    private TheaterSearchListBinding mBinder;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View res = inflater.inflate(R.layout.theater_search_list, container, false);
-        ButterKnife.bind(this, res);
-        mRclList.setHasFixedSize(true);
-        mRclList.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mBinder = DataBindingUtil.inflate(inflater, R.layout.theater_search_list, container, false);
+        mBinder.rclList.setHasFixedSize(true);
+        mBinder.rclList.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        mTxtEmpty.setVisibility(View.GONE);
-        mPgbLoading.setVisibility(View.GONE);
-        return res;
+        mBinder.txtEmpty.setVisibility(View.GONE);
+        mBinder.pgbLoading.setVisibility(View.GONE);
+        return mBinder.getRoot();
     }
 
     public void search(String query) {
         if (mAdapter != null) mAdapter.clear();
 
         if (query.length() == 0) {
-            mPgbLoading.setVisibility(View.GONE);
-            mTxtEmpty.setVisibility(View.GONE);
+            mBinder.pgbLoading.setVisibility(View.GONE);
+            mBinder.txtEmpty.setVisibility(View.GONE);
         } else {
-            mPgbLoading.setVisibility(View.VISIBLE);
-            mTxtEmpty.setVisibility(View.GONE);
+            mBinder.pgbLoading.setVisibility(View.VISIBLE);
+            mBinder.txtEmpty.setVisibility(View.GONE);
 
             Bundle args = new Bundle();
             args.putString("query", query);
@@ -98,20 +85,20 @@ public class TheaterSearchFragment extends BaseFragment<TheaterCallbacks> implem
 
     @Override
     public void onLoadFinished(Loader<List<Theater>> loader, List<Theater> data) {
-        mPgbLoading.setVisibility(View.GONE);
+        mBinder.pgbLoading.setVisibility(View.GONE);
 
         if (mAdapter == null) {
             mAdapter = new TheaterAdapter(getActivity(), getCallbacks());
-            mRclList.setAdapter(mAdapter);
+            mBinder.rclList.setAdapter(mAdapter);
         } else {
             mAdapter.clear();
         }
 
         boolean empty = data == null || data.isEmpty();
         if (empty) {
-            mTxtEmpty.setVisibility(View.VISIBLE);
+            mBinder.txtEmpty.setVisibility(View.VISIBLE);
         } else {
-            mTxtEmpty.setVisibility(View.GONE);
+            mBinder.txtEmpty.setVisibility(View.GONE);
             mAdapter.addAll(data);
         }
 

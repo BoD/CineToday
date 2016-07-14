@@ -55,6 +55,10 @@ android {
             signingConfig signingConfigs.release
         }
     }
+
+    dataBinding {
+        enabled = true
+    }
 }
 
 def releaseTask = tasks.create('release')

@@ -1,84 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.SwipeRefreshLayout
-    android:id="@+id/swrRefresh"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     tools:context=".mobile.app.main.MainActivity">
 
-
-    <LinearLayout
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swrRefresh"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-
-        <!-- View pager -->
-
-        <android.support.v4.view.ViewPager
-            android:id="@+id/vpgTheaters"
-            android:layout_width="match_parent"
-            android:layout_height="0px"
-            android:layout_weight="1" />
-
-        <!-- Page indicator -->
-        <org.jraf.android.cinetoday.mobile.ui.CirclePageIndicator
-            android:id="@+id/cpiTheaters"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal" />
-
-        <!-- Loading progress -->
-
-        <ProgressBar
-            android:id="@+id/pgbLoadingProgress"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp" />
-
-
-        <!-- Update info -->
+        android:layout_height="match_parent">
 
         <LinearLayout
-            android:id="@+id/conStatus"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginTop="8dp"
-            android:orientation="horizontal">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/txtStatus"
+            <!-- View pager -->
+            <android.support.v4.view.ViewPager
+                android:id="@+id/vpgTheaters"
+                android:layout_width="match_parent"
+                android:layout_height="0px"
+                android:layout_weight="1" />
+
+            <!-- Page indicator -->
+            <org.jraf.android.cinetoday.mobile.ui.CirclePageIndicator
+                android:id="@+id/cpiTheaters"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:orientation="horizontal"
-                android:singleLine="true"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                tools:text="Last update: 2015-11-08" />
+                android:layout_gravity="center_horizontal" />
 
-            <TextView
-                android:id="@+id/txtCurrentMovie"
-                android:layout_width="0px"
+            <!-- Loading progress -->
+            <ProgressBar
+                android:id="@+id/pgbLoadingProgress"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_weight="1"
-                android:ellipsize="end"
-                android:gravity="right"
-                android:maxLines="1"
-                android:orientation="horizontal"
-                android:singleLine="true"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textStyle="italic"
-                tools:text="Star Wars Episode VII" />
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp" />
+
+
+            <!-- Update info -->
+            <LinearLayout
+                android:id="@+id/conStatus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/txtStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:orientation="horizontal"
+                    android:singleLine="true"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    tools:text="Last update: 2015-11-08" />
+
+                <TextView
+                    android:id="@+id/txtCurrentMovie"
+                    android:layout_width="0px"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:gravity="right"
+                    android:maxLines="1"
+                    android:orientation="horizontal"
+                    android:singleLine="true"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textStyle="italic"
+                    tools:text="Star Wars Episode VII" />
+            </LinearLayout>
+
+
         </LinearLayout>
 
-
-    </LinearLayout>
-
-</android.support.v4.widget.SwipeRefreshLayout>
+    </android.support.v4.widget.SwipeRefreshLayout>
+</layout>
