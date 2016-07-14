@@ -30,6 +30,10 @@ import android.os.StrictMode;
 import org.jraf.android.cinetoday.BuildConfig;
 import org.jraf.android.util.log.Log;
 
+import com.crashlytics.android.Crashlytics;
+
+import io.fabric.sdk.android.Fabric;
+
 public class Application extends android.app.Application {
 
     private static final String TAG = "CineToday";
@@ -43,8 +47,8 @@ public class Application extends android.app.Application {
         // Strict mode
         if (BuildConfig.STRICT_MODE) setupStrictMode();
 
-//        // Crashlytics
-//        Fabric.with(this, new Crashlytics());
+        // Crashlytics
+        Fabric.with(this, new Crashlytics());
     }
 
     private void setupStrictMode() {
