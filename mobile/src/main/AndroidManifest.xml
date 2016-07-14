@@ -16,6 +16,11 @@
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup">
 
+        <!-- Crashlytics api key -->
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="${apiKeyFabric}" />
+
         <!-- Content provider -->
         <provider
             android:name="org.jraf.android.cinetoday.mobile.provider.CineTodayProvider"

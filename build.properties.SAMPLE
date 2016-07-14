@@ -4,3 +4,4 @@ signingStorePassword=changeme
 signingKeyAlias=android_release_key
 signingKeyPassword=changeme
 deployFolder=/home/deployed/public
+apiKeyFabric=aaabbbcccddd000111222333444

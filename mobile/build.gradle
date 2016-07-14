@@ -1,15 +1,6 @@
-buildscript {
-    repositories {
-        jcenter()
-    }
-
-    dependencies {
-        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
-    }
-}
-
 apply plugin: 'com.android.application'
 apply plugin: 'com.neenbedankt.android-apt'
+apply plugin: 'io.fabric'
 
 android {
     compileSdkVersion project.compileSdkVersion
@@ -28,6 +19,9 @@ android {
         buildConfigField 'boolean', 'STRICT_MODE', 'true'
 
         resConfigs 'en', 'fr'
+
+        // Useful for api keys in the manifest (Maps, Crashlytics, ...)
+        manifestPlaceholders = buildProperties
 
         vectorDrawables.useSupportLibrary = true
     }
@@ -115,6 +109,7 @@ dependencies {
     compile 'com.squareup.okhttp3:okhttp:3.4.1'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile "com.google.android.gms:play-services-gcm:${playServicesVersion}"
+    compile('com.crashlytics.sdk.android:crashlytics:2.5.7@aar') { transitive = true; }
     apt 'org.jraf:prefs-compiler:1.0.1'
     compile 'org.jraf:prefs:1.0.1'
     testCompile 'junit:junit:4.12'
