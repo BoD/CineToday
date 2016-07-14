@@ -1,14 +1,14 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion '23.0.2'
+    compileSdkVersion project.compileSdkVersion
+    buildToolsVersion project.buildToolsVersion
 
     defaultConfig {
         minSdkVersion 18
-        targetSdkVersion 23
+        targetSdkVersion targetSdkVersion
         versionCode buildNumber
-        versionName buildProperties['versionName']
+        versionName buildProperties.versionName
     }
     buildTypes {
         release {
@@ -20,7 +20,7 @@ android {
 }
 
 dependencies {
-    compile 'com.google.android.gms:play-services-wearable:8.4.0'
+    compile "com.google.android.gms:play-services-wearable:${playServicesVersion}"
     compile 'com.github.BoD:jraf-android-util:-SNAPSHOT'
 //    compile 'org.jraf:jraf-android-util:1.0.0'
     compile 'com.jakewharton:butterknife:7.0.1'
