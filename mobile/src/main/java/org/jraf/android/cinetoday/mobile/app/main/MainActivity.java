@@ -26,6 +26,7 @@ package org.jraf.android.cinetoday.mobile.app.main;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.databinding.DataBindingUtil;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
@@ -40,12 +41,11 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import org.jraf.android.cinetoday.BuildConfig;
 import org.jraf.android.cinetoday.R;
 import org.jraf.android.cinetoday.common.model.theater.Theater;
+import org.jraf.android.cinetoday.databinding.MainBinding;
 import org.jraf.android.cinetoday.mobile.app.loadmovies.LoadMoviesHelper;
 import org.jraf.android.cinetoday.mobile.app.loadmovies.LoadMoviesIntentService;
 import org.jraf.android.cinetoday.mobile.app.loadmovies.LoadMoviesListener;
@@ -58,34 +58,14 @@ import org.jraf.android.cinetoday.mobile.provider.theater.TheaterColumns;
 import org.jraf.android.cinetoday.mobile.provider.theater.TheaterContentValues;
 import org.jraf.android.cinetoday.mobile.provider.theater.TheaterCursor;
 import org.jraf.android.cinetoday.mobile.provider.theater.TheaterSelection;
-import org.jraf.android.cinetoday.mobile.ui.CirclePageIndicator;
 import org.jraf.android.cinetoday.mobile.ui.ZoomOutPageTransformer;
 import org.jraf.android.util.about.AboutActivityIntentBuilder;
 import org.jraf.android.util.log.Log;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
-
 public class MainActivity extends AppCompatActivity implements MainCallbacks, LoaderCallbacks<Cursor> {
     private static final int REQUEST_ADD_THEATER = 0;
 
-    @Bind(R.id.vpgTheaters)
-    protected ViewPager mVpgTheaters;
-
-    @Bind(R.id.txtStatus)
-    protected TextView mTxtStatus;
-
-    @Bind(R.id.txtCurrentMovie)
-    protected TextView mTxtCurrentMovie;
-
-    @Bind((R.id.swrRefresh))
-    protected SwipeRefreshLayout mSwrRefresh;
-
-    @Bind((R.id.pgbLoadingProgress))
-    protected ProgressBar mPgbLoadingProgress;
-
-    @Bind((R.id.cpiTheaters))
-    protected CirclePageIndicator mCpiTheaters;
+    private MainBinding mBinding;
 
     /**
      * If {@code true}, this activity is running.
@@ -99,14 +79,13 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks, Lo
 
         sRunning = true;
 
-        setContentView(R.layout.main);
-        ButterKnife.bind(this);
+        mBinding = DataBindingUtil.setContentView(this, R.layout.main);
 
-        mSwrRefresh.setOnRefreshListener(mOnRefreshListener);
-        mSwrRefresh.setColorSchemeColors(ActivityCompat.getColor(this, R.color.accent), ActivityCompat.getColor(this, R.color.primary));
+        mBinding.swrRefresh.setOnRefreshListener(mOnRefreshListener);
+        mBinding.swrRefresh.setColorSchemeColors(ActivityCompat.getColor(this, R.color.accent), ActivityCompat.getColor(this, R.color.primary));
 
         // Prevent the swipe refresh view to be triggered when swiping the view pager
-        mVpgTheaters.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        mBinding.vpgTheaters.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {}
 
@@ -115,11 +94,11 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks, Lo
 
             @Override
             public void onPageScrollStateChanged(int state) {
-                mSwrRefresh.setEnabled(state == ViewPager.SCROLL_STATE_IDLE);
+                mBinding.swrRefresh.setEnabled(state == ViewPager.SCROLL_STATE_IDLE);
             }
         });
-        mVpgTheaters.setPageTransformer(true, new ZoomOutPageTransformer());
-        mVpgTheaters.setPageMargin(0);
+        mBinding.vpgTheaters.setPageTransformer(true, new ZoomOutPageTransformer());
+        mBinding.vpgTheaters.setPageMargin(0);
 
         getSupportLoaderManager().initLoader(0, null, this);
     }
@@ -164,10 +143,10 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks, Lo
         MainPrefs prefs = MainPrefs.get(this);
         Long lastUpdateDate = prefs.getLastUpdateDate();
         if (lastUpdateDate == null) {
-            mTxtStatus.setText(R.string.main_lastUpdateDate_none);
+            mBinding.txtStatus.setText(R.string.main_lastUpdateDate_none);
         } else {
             String dateStr = DateUtils.formatDateTime(this, lastUpdateDate, DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_TIME);
-            mTxtStatus.setText(getString(R.string.main_lastUpdateDate, dateStr));
+            mBinding.txtStatus.setText(getString(R.string.main_lastUpdateDate, dateStr));
         }
     }
 
@@ -225,48 +204,48 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks, Lo
     private LoadMoviesListener mLoadMoviesListener = new LoadMoviesListener() {
         @Override
         public void onLoadMoviesStarted() {
-            mTxtStatus.setText(R.string.main_lastUpdateDate_ongoing);
-            mPgbLoadingProgress.setVisibility(View.VISIBLE);
+            mBinding.txtStatus.setText(R.string.main_lastUpdateDate_ongoing);
+            mBinding.pgbLoadingProgress.setVisibility(View.VISIBLE);
             // XXX Do this in a post  because it won't work if called before the SwipeRefreshView's onMeasure
             // (see https://code.google.com/p/android/issues/detail?id=77712)
-            mSwrRefresh.post(new Runnable() {
+            mBinding.swrRefresh.post(new Runnable() {
                 @Override
                 public void run() {
-                    mSwrRefresh.setRefreshing(true);
+                    mBinding.swrRefresh.setRefreshing(true);
                 }
             });
         }
 
         @Override
         public void onLoadMoviesProgress(int currentMovie, int totalMovies, String movieName) {
-            mPgbLoadingProgress.setMax(totalMovies);
-            mPgbLoadingProgress.setProgress(currentMovie);
-            mTxtCurrentMovie.setText(movieName);
+            mBinding.pgbLoadingProgress.setMax(totalMovies);
+            mBinding.pgbLoadingProgress.setProgress(currentMovie);
+            mBinding.txtCurrentMovie.setText(movieName);
         }
 
         @Override
         public void onLoadMoviesSuccess() {
             updateLastUpdateDateLabel();
-            mPgbLoadingProgress.setVisibility(View.INVISIBLE);
-            mSwrRefresh.setRefreshing(false);
-            mTxtCurrentMovie.setText(null);
+            mBinding.pgbLoadingProgress.setVisibility(View.INVISIBLE);
+            mBinding.swrRefresh.setRefreshing(false);
+            mBinding.txtCurrentMovie.setText(null);
         }
 
         @Override
         public void onLoadMoviesError(Throwable t) {
             // TODO
             updateLastUpdateDateLabel();
-            mPgbLoadingProgress.setVisibility(View.INVISIBLE);
-            mSwrRefresh.setRefreshing(false);
-            mTxtCurrentMovie.setText(null);
+            mBinding.pgbLoadingProgress.setVisibility(View.INVISIBLE);
+            mBinding.swrRefresh.setRefreshing(false);
+            mBinding.txtCurrentMovie.setText(null);
         }
 
         @Override
         public void onLoadMoviesInterrupted() {
             updateLastUpdateDateLabel();
-            mPgbLoadingProgress.setVisibility(View.INVISIBLE);
-            mSwrRefresh.setRefreshing(false);
-            mTxtCurrentMovie.setText(null);
+            mBinding.pgbLoadingProgress.setVisibility(View.INVISIBLE);
+            mBinding.swrRefresh.setRefreshing(false);
+            mBinding.txtCurrentMovie.setText(null);
         }
     };
 
@@ -316,11 +295,11 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks, Lo
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         boolean isEmpty = data.getCount() == 0;
-        mCpiTheaters.setVisibility(isEmpty ? View.INVISIBLE : View.VISIBLE);
+        mBinding.cpiTheaters.setVisibility(isEmpty ? View.INVISIBLE : View.VISIBLE);
         if (mAdapter == null) {
             mAdapter = new TheaterFragmentStatePagerAdapter(getSupportFragmentManager(), (TheaterCursor) data);
-            mVpgTheaters.setAdapter(mAdapter);
-            mCpiTheaters.setViewPager(mVpgTheaters);
+            mBinding.vpgTheaters.setAdapter(mAdapter);
+            mBinding.cpiTheaters.setViewPager(mBinding.vpgTheaters);
         } else {
             mAdapter.swapTheaterCursor((TheaterCursor) data);
         }

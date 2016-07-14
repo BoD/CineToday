@@ -28,6 +28,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -35,10 +36,9 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import org.jraf.android.cinetoday.R;
+import org.jraf.android.cinetoday.databinding.MainPageTheaterBinding;
 import org.jraf.android.cinetoday.mobile.provider.theater.TheaterCursor;
 import org.jraf.android.util.app.base.BaseFragment;
 import org.jraf.android.util.dialog.AlertDialogFragment;
@@ -46,21 +46,8 @@ import org.jraf.android.util.dialog.AlertDialogListener;
 
 import com.squareup.picasso.Picasso;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-
 public class TheaterPageFragment extends BaseFragment<MainCallbacks> implements AlertDialogListener {
     private static final int DIALOG_DELETE_CONFIRM = 0;
-
-    @Bind(R.id.txtTheaterName)
-    protected TextView mTxtTheaterName;
-
-    @Bind(R.id.txtTheaterAddress)
-    protected TextView mTxtTheaterAddress;
-
-    @Bind(R.id.imgTheaterPicture)
-    protected ImageView mImgTheaterPicture;
 
     private long mId;
 
@@ -78,20 +65,19 @@ public class TheaterPageFragment extends BaseFragment<MainCallbacks> implements 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View res = inflater.inflate(R.layout.main_page_theater, container, false);
-        ButterKnife.bind(this, res);
+        MainPageTheaterBinding binding = DataBindingUtil.inflate(inflater, R.layout.main_page_theater, container, false);
+        binding.setController(this);
         Bundle args = getArguments();
         mId = args.getLong("id");
-        mTxtTheaterName.setText(args.getString("name"));
-        mTxtTheaterAddress.setText(args.getString("address"));
+        binding.txtTheaterName.setText(args.getString("name"));
+        binding.txtTheaterAddress.setText(args.getString("address"));
         String pictureUri = args.getString("pictureUri");
         Picasso.with(getContext()).load(pictureUri).placeholder(R.drawable.theater_list_item_placeholder).error(
-                R.drawable.theater_list_item_placeholder).fit().centerCrop().noFade().into(mImgTheaterPicture);
-        return res;
+                R.drawable.theater_list_item_placeholder).fit().centerCrop().noFade().into(binding.imgTheaterPicture);
+        return binding.getRoot();
     }
 
-    @OnClick(R.id.btnNavigate)
-    protected void onNavigateClick() {
+    public void onNavigateClick(View v) {
         String address = getArguments().getString("address");
         try {
             address = URLEncoder.encode(address, "utf-8");
@@ -101,8 +87,7 @@ public class TheaterPageFragment extends BaseFragment<MainCallbacks> implements 
         startActivity(intent);
     }
 
-    @OnClick(R.id.btnWebSite)
-    protected void onWebSiteClick() {
+    public void onWebSiteClick(View v) {
         String name = getArguments().getString("name");
         // Try to improve "I'm feeling ducky" results
         name = "cinema " + name;
@@ -114,8 +99,7 @@ public class TheaterPageFragment extends BaseFragment<MainCallbacks> implements 
         startActivity(intent);
     }
 
-    @OnClick(R.id.btnDelete)
-    protected void onDeleteClick() {
+    public void onDeleteClick(View v) {
         AlertDialogFragment.newInstance(DIALOG_DELETE_CONFIRM)
                 .title(R.string.main_theater_delete_confirm_title)
                 .message(R.string.main_theater_delete_confirm_message)

@@ -24,29 +24,19 @@
  */
 package org.jraf.android.cinetoday.mobile.app.main;
 
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.TextView;
 
 import org.jraf.android.cinetoday.R;
+import org.jraf.android.cinetoday.databinding.MainPageAddBinding;
 import org.jraf.android.util.app.base.BaseFragment;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-
 public class AddPageFragment extends BaseFragment<MainCallbacks> {
-    @Bind(R.id.txtIntro)
-    protected TextView mTxtIntro;
-
-    @Bind(R.id.btnAdd)
-    protected Button mBtnAdd;
-
     public static Fragment newInstance(boolean isEmpty) {
         AddPageFragment res = new AddPageFragment();
         Bundle args = new Bundle();
@@ -58,22 +48,21 @@ public class AddPageFragment extends BaseFragment<MainCallbacks> {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View res = inflater.inflate(R.layout.main_page_add, container, false);
-        ButterKnife.bind(this, res);
+        MainPageAddBinding binding = DataBindingUtil.inflate(inflater, R.layout.main_page_add, container, false);
+        binding.setController(this);
         Bundle args = getArguments();
         boolean isEmpty = args.getBoolean("isEmpty");
         if (isEmpty) {
-            mBtnAdd.setText(R.string.main_page_add_btnAdd_empty);
-            mTxtIntro.setText(R.string.main_page_add_intro_empty);
+            binding.btnAdd.setText(R.string.main_page_add_btnAdd_empty);
+            binding.txtIntro.setText(R.string.main_page_add_intro_empty);
         } else {
-            mBtnAdd.setText(R.string.main_page_add_btnAdd_additional);
-            mTxtIntro.setText(R.string.main_page_add_intro_additional);
+            binding.btnAdd.setText(R.string.main_page_add_btnAdd_additional);
+            binding.txtIntro.setText(R.string.main_page_add_intro_additional);
         }
-        return res;
+        return binding.getRoot();
     }
 
-    @OnClick(R.id.btnAdd)
-    protected void onAddClicked() {
+    public void onAddClick(View v) {
         getCallbacks().onAddTheater();
     }
 }

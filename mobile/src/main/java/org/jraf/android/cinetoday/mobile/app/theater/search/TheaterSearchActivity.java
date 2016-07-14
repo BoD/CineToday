@@ -25,53 +25,64 @@
 package org.jraf.android.cinetoday.mobile.app.theater.search;
 
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
-import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.TextView;
 
 import org.jraf.android.cinetoday.R;
 import org.jraf.android.cinetoday.common.model.theater.Theater;
+import org.jraf.android.cinetoday.databinding.TheaterSearchBinding;
 import org.jraf.android.util.log.Log;
-
-import butterknife.Bind;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-import butterknife.OnEditorAction;
-import butterknife.OnTextChanged;
 
 public class TheaterSearchActivity extends AppCompatActivity implements TheaterCallbacks {
     private static final String PREFIX = TheaterSearchActivity.class.getName() + ".";
     public static final String EXTRA_FIRST_USE = PREFIX + "EXTRA_FIRST_USE";
     public static final String EXTRA_RESULT = PREFIX + "EXTRA_RESULT";
 
+    private TheaterSearchBinding mBinding;
     private Handler mHandler;
-
-    @Bind(R.id.edtSearch)
-    protected EditText mEdtSearch;
-
-    @Bind(R.id.btnClear)
-    protected ImageButton mBtnClear;
-
     private TheaterSearchFragment mTheaterSearchFragment;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.theater_search);
-        ButterKnife.bind(this);
-        mBtnClear.setVisibility(View.GONE);
+        mBinding = DataBindingUtil.setContentView(this, R.layout.theater_search);
+        mBinding.btnClear.setVisibility(View.GONE);
         if (!getIntent().getBooleanExtra(EXTRA_FIRST_USE, false)) {
             // Do not show the up arrow if in 'first use' mode
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
         mHandler = new Handler();
+        mBinding.edtSearch.addTextChangedListener(
+                new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+
+                    @Override
+                    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                        mHandler.removeCallbacks(mQueryRunnable);
+                        mHandler.postDelayed(mQueryRunnable, 500);
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable editable) {}
+                });
+        mBinding.edtSearch.setOnEditorActionListener(
+                new TextView.OnEditorActionListener() {
+                    @Override
+                    public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
+                        return actionId == EditorInfo.IME_ACTION_SEARCH;
+                    }
+                });
     }
 
     @Override
@@ -82,20 +93,6 @@ public class TheaterSearchActivity extends AppCompatActivity implements TheaterC
                 break;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @OnEditorAction(R.id.edtSearch)
-    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-        if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-            return true;
-        }
-        return false;
-    }
-
-    @OnTextChanged(R.id.edtSearch)
-    public void onSearchTextChanged() {
-        mHandler.removeCallbacks(mQueryRunnable);
-        mHandler.postDelayed(mQueryRunnable, 500);
     }
 
     @Override
@@ -114,20 +111,19 @@ public class TheaterSearchActivity extends AppCompatActivity implements TheaterC
         return mTheaterSearchFragment;
     }
 
-    @OnClick(R.id.btnClear)
-    protected void onClearClicked() {
-        mEdtSearch.getText().clear();
+    public void onClearClicked(View v) {
+        mBinding.edtSearch.getText().clear();
     }
 
-    private final Runnable mQueryRunnable = new Runnable(){
+    private final Runnable mQueryRunnable = new Runnable() {
         @Override
         public void run() {
-            String query = mEdtSearch.getText().toString().trim();
+            String query = mBinding.edtSearch.getText().toString().trim();
             getTheaterSearchFragment().search(query);
             if (query.length() == 0) {
-                mBtnClear.setVisibility(View.GONE);
+                mBinding.btnClear.setVisibility(View.GONE);
             } else {
-                mBtnClear.setVisibility(View.VISIBLE);
+                mBinding.btnClear.setVisibility(View.VISIBLE);
             }
         }
     };

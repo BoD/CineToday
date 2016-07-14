@@ -1,47 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".mobile.app.theater.search.TheaterSearchActivity">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        tools:context=".mobile.app.theater.search.TheaterSearchActivity">
 
-        <EditText
-            android:id="@+id/edtSearch"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="-4.5dp"
-            android:layout_marginRight="-4.5dp"
-            android:drawableLeft="@drawable/selector_search_24"
-            android:drawablePadding="2dp"
-            android:hint="@string/theater_search_edtSearch_hint"
-            android:imeOptions="actionSearch"
-            android:inputType="text|textNoSuggestions" />
+            android:layout_height="wrap_content">
 
-        <ImageButton
-            android:id="@+id/btnClear"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/edtSearch"
-            android:layout_alignParentRight="true"
-            android:layout_marginBottom="@dimen/theater_search_btnClear_margin_bottom"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/selector_clear_24" />
-    </RelativeLayout>
+            <EditText
+                android:id="@+id/edtSearch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="-4.5dp"
+                android:layout_marginRight="-4.5dp"
+                android:drawableLeft="@drawable/selector_search_24"
+                android:drawablePadding="2dp"
+                android:hint="@string/theater_search_edtSearch_hint"
+                android:imeOptions="actionSearch"
+                android:inputType="text|textNoSuggestions" />
 
-    <fragment
-        android:id="@+id/fraTheaterSearch"
-        android:name="org.jraf.android.cinetoday.mobile.app.theater.search.TheaterSearchFragment"
-        android:layout_width="match_parent"
-        android:layout_height="0px"
-        android:layout_marginTop="8dp"
-        android:layout_weight="1" />
+            <ImageButton
+                android:id="@+id/btnClear"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/edtSearch"
+                android:layout_alignParentRight="true"
+                android:layout_marginBottom="@dimen/theater_search_btnClear_margin_bottom"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:onClick="onClearClicked"
+                android:src="@drawable/selector_clear_24" />
+        </RelativeLayout>
 
-</LinearLayout>
+        <fragment
+            android:id="@+id/fraTheaterSearch"
+            android:name="org.jraf.android.cinetoday.mobile.app.theater.search.TheaterSearchFragment"
+            android:layout_width="match_parent"
+            android:layout_height="0px"
+            android:layout_marginTop="8dp"
+            android:layout_weight="1" />
+
+    </LinearLayout>
+</layout>
