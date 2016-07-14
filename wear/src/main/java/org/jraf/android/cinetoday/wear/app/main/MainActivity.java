@@ -28,22 +28,19 @@ import java.util.HashMap;
 import java.util.List;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.wearable.view.GridViewPager;
 import android.view.View;
 import android.view.WindowInsets;
-import android.view.WindowManager;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 
 import org.jraf.android.cinetoday.R;
 import org.jraf.android.cinetoday.common.model.movie.Movie;
 import org.jraf.android.cinetoday.common.wear.WearHelper;
+import org.jraf.android.cinetoday.databinding.MainBinding;
 import org.jraf.android.cinetoday.wear.app.Application;
 import org.jraf.android.cinetoday.wear.app.configure.ConfigureIntentService;
 import org.jraf.android.util.log.Log;
@@ -55,21 +52,9 @@ import com.google.android.gms.wearable.DataItem;
 import com.google.android.gms.wearable.DataMap;
 import com.google.android.gms.wearable.DataMapItem;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-
 public class MainActivity extends Activity {
-    @Bind(R.id.gridViewPager)
-    protected GridViewPager mGridViewPager;
-
-    @Bind(R.id.pgbLoading)
-    protected ProgressBar mPgbLoading;
-
-    @Bind(R.id.conEmpty)
-    protected LinearLayout mConEmpty;
-
-    protected boolean mHasConnected;
+    private MainBinding mBinding;
+    private boolean mHasConnected;
 
     private class LoadMoviesAsyncTask extends AsyncTask<Void, Void, Void> {
         private List<Movie> mMovieList;
@@ -78,8 +63,8 @@ public class MainActivity extends Activity {
 
         @Override
         protected void onPreExecute() {
-            mPgbLoading.setVisibility(View.VISIBLE);
-            mConEmpty.setVisibility(View.GONE);
+            mBinding.pgbLoading.setVisibility(View.VISIBLE);
+            mBinding.conEmpty.setVisibility(View.GONE);
         }
 
         @Override
@@ -112,23 +97,23 @@ public class MainActivity extends Activity {
         protected void onPostExecute(Void result) {
             if (mMovieList == null) {
                 // No movies
-                mGridViewPager.setVisibility(View.GONE);
+                mBinding.gridViewPager.setVisibility(View.GONE);
                 if (mLoading) {
                     // Because currently loading
-                    mConEmpty.setVisibility(View.GONE);
-                    mPgbLoading.setVisibility(View.VISIBLE);
+                    mBinding.conEmpty.setVisibility(View.GONE);
+                    mBinding.pgbLoading.setVisibility(View.VISIBLE);
                 } else {
                     // Because no theater was selected
-                    mConEmpty.setVisibility(View.VISIBLE);
-                    mPgbLoading.setVisibility(View.GONE);
+                    mBinding.conEmpty.setVisibility(View.VISIBLE);
+                    mBinding.pgbLoading.setVisibility(View.GONE);
                 }
             } else {
                 // We have movies
-                mConEmpty.setVisibility(View.GONE);
-                mPgbLoading.setVisibility(View.GONE);
-                mGridViewPager.setVisibility(View.VISIBLE);
+                mBinding.conEmpty.setVisibility(View.GONE);
+                mBinding.pgbLoading.setVisibility(View.GONE);
+                mBinding.gridViewPager.setVisibility(View.VISIBLE);
                 MovieFragmentGridPagerAdapter adapter = new MovieFragmentGridPagerAdapter(MainActivity.this, getFragmentManager(), mMovieList, mPosterMap);
-                mGridViewPager.setAdapter(adapter);
+                mBinding.gridViewPager.setAdapter(adapter);
             }
         }
     }
@@ -137,12 +122,10 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
-        ButterKnife.bind(this);
+        mBinding = DataBindingUtil.setContentView(this, R.layout.main);
 
         // Determine if round or not
         // This is FUCKED UP srsly
-        WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
         View contentView = getWindow().getDecorView().findViewById(android.R.id.content);
         contentView.setOnApplyWindowInsetsListener(new View.OnApplyWindowInsetsListener() {
             @Override
@@ -155,8 +138,7 @@ public class MainActivity extends Activity {
         new LoadMoviesAsyncTask().execute();
     }
 
-    @OnClick(R.id.btnConfigure)
-    protected void onConfigureClicked() {
+    public void onConfigureClick(View v) {
         Intent intent = new Intent(this, ConfigureIntentService.class);
         intent.setAction(ConfigureIntentService.ACTION_CONFIGURE);
         startService(intent);
@@ -188,8 +170,8 @@ public class MainActivity extends Activity {
                         boolean loading = dataMap.getBoolean(WearHelper.KEY_VALUE);
                         Log.d("loading=%s", loading);
                         if (loading) {
-                            mPgbLoading.setVisibility(View.VISIBLE);
-                            mConEmpty.setVisibility(View.GONE);
+                            mBinding.pgbLoading.setVisibility(View.VISIBLE);
+                            mBinding.conEmpty.setVisibility(View.GONE);
                         }
                         break;
                 }
