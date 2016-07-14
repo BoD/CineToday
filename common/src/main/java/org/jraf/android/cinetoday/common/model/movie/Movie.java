@@ -42,7 +42,7 @@ public class Movie implements Parcelable {
     public @Nullable Date releaseDate;
     public int durationSeconds;
     public String[] genres;
-    public String posterUri;
+    public @Nullable String posterUri;
     public @Nullable String trailerUri;
     public String webUri;
     public String synopsis;
