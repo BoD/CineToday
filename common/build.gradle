@@ -23,5 +23,4 @@ dependencies {
     compile "com.google.android.gms:play-services-wearable:${playServicesVersion}"
     compile 'com.github.BoD:jraf-android-util:-SNAPSHOT'
 //    compile 'org.jraf:jraf-android-util:1.0.0'
-    compile 'com.jakewharton:butterknife:7.0.1'
 }

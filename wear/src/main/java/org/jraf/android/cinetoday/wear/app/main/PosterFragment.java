@@ -25,33 +25,27 @@
 package org.jraf.android.cinetoday.wear.app.main;
 
 import android.app.Fragment;
+import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import org.jraf.android.cinetoday.R;
-
-import butterknife.Bind;
-import butterknife.ButterKnife;
+import org.jraf.android.cinetoday.databinding.MoviePosterBinding;
 
 public class PosterFragment extends Fragment {
-    @Bind(R.id.imgPoster)
-    protected ImageView mImgPoster;
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View res = inflater.inflate(R.layout.movie_poster, container, false);
-        ButterKnife.bind(this, res);
+        MoviePosterBinding binding = DataBindingUtil.inflate(inflater, R.layout.movie_poster, container, false);
 
         Bitmap posterBitmap = getArguments().getParcelable("poster");
-        mImgPoster.setImageBitmap(posterBitmap);
+        binding.imgPoster.setImageBitmap(posterBitmap);
 
-        return res;
+        return binding.getRoot();
     }
 
     public static PosterFragment create(Bitmap poster) {
@@ -65,6 +59,5 @@ public class PosterFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        ButterKnife.unbind(this);
     }
 }
