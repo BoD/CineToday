@@ -90,10 +90,10 @@ dependencies {
     compile 'com.squareup.okhttp3:okhttp:3.4.1'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile "com.google.android.gms:play-services-gcm:${playServicesVersion}"
-    compile('com.crashlytics.sdk.android:crashlytics:2.5.7@aar') { transitive = true; }
+    compile('com.crashlytics.sdk.android:crashlytics:2.6.2@aar') { transitive = true; }
     apt 'org.jraf:prefs-compiler:1.0.1'
     compile 'org.jraf:prefs:1.0.1'
     testCompile 'junit:junit:4.12'
-    testCompile "org.robolectric:robolectric:3.1.1"
+    testCompile "org.robolectric:robolectric:3.1.2"
     testCompile "org.easytesting:fest-assert-core:2.0M10"
 }
