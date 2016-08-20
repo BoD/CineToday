@@ -108,7 +108,8 @@ public class Api {
             JSONObject jsonFeed = jsonRoot.getJSONObject("feed");
             JSONArray jsonTheaterShowtimes = jsonFeed.getJSONArray("theaterShowtimes");
             JSONObject jsonTheaterShowtime = jsonTheaterShowtimes.getJSONObject(0);
-            JSONArray jsonMovieShowtimes = jsonTheaterShowtime.getJSONArray("movieShowtimes");
+            JSONArray jsonMovieShowtimes = jsonTheaterShowtime.optJSONArray("movieShowtimes");
+            if (jsonMovieShowtimes == null) return;
             int len = jsonMovieShowtimes.length();
             for (int i = 0; i < len; i++) {
                 JSONObject jsonMovieShowtime = jsonMovieShowtimes.getJSONObject(i);
