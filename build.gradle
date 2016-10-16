@@ -1,18 +1,32 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
+
+import ca.rmen.lfrc.FrenchRevolutionaryCalendar
+
 import java.text.SimpleDateFormat
 
 ext.globalProjectName = 'CineToday'
 
 buildscript {
+    // Versions used across modules
+    ext.versions = [:]
+    ext.versions.with {
+        androidGradlePlugin = '2.2.1'
+        compileSdk = 24
+        targetSdk = 24
+        buildTools = '24.0.2'
+        supportLibrary = '24.2.1'
+        playServices = '9.6.1'
+    }
+
     repositories {
         jcenter()
         maven { url 'https://maven.fabric.io/public' }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.2.0-beta2'
+        classpath "com.android.tools.build:gradle:$versions.androidGradlePlugin"
         classpath 'com.github.ben-manes:gradle-versions-plugin:0.13.0'
-        classpath 'ca.rmen:lib-french-revolutionary-calendar:1.5.0'
-        classpath 'io.fabric.tools:gradle:1.21.7'
+        classpath 'ca.rmen:lib-french-revolutionary-calendar:1.5.1'
+        classpath 'io.fabric.tools:gradle:1.22.0'
         classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
     }
 }
@@ -21,6 +35,7 @@ allprojects {
     repositories {
         mavenLocal()
         jcenter()
+        mavenCentral()
         maven { url "https://jitpack.io" }
         maven { url 'https://maven.fabric.io/public' }
     }
@@ -68,7 +83,7 @@ def buildDate() {
 
 // This only for amusement purposes
 def getFrenchDate() {
-    def frenchDate = new ca.rmen.lfrc.FrenchRevolutionaryCalendar(Locale.FRENCH, ca.rmen.lfrc.FrenchRevolutionaryCalendar.CalculationMethod.ROMME).getDate(GregorianCalendar.getInstance())
+    def frenchDate = new FrenchRevolutionaryCalendar(Locale.FRENCH, FrenchRevolutionaryCalendar.CalculationMethod.ROMME).getDate(GregorianCalendar.getInstance())
     "Le ${frenchDate.weekdayName} ${frenchDate.dayOfMonth} ${frenchDate.monthName} de l'an ${frenchDate.year}. (${frenchDate.objectTypeName} du jour : ${frenchDate.dayOfYear})"
 }
 
@@ -86,13 +101,6 @@ ext.buildNumber = buildNumberProperties.buildNumber.toInteger()
 ext.gitBranch = gitBranch()
 ext.gitSha1 = gitSha1()
 ext.buildDate = buildDate()
-
-// Versions used across modules
-ext.compileSdkVersion = 24
-ext.targetSdkVersion = 24
-ext.buildToolsVersion = '24.0.0'
-ext.supportLibVersion = '24.2.0'
-ext.playServicesVersion = '9.4.0'
 
 // Splash screen
 println """\n

@@ -1,13 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion project.compileSdkVersion
-    buildToolsVersion project.buildToolsVersion
+    compileSdkVersion versions.compileSdk
+    buildToolsVersion versions.buildTools
 
     defaultConfig {
         applicationId 'org.jraf.android.cinetoday'
         minSdkVersion 22
-        targetSdkVersion targetSdkVersion
+        targetSdkVersion versions.targetSdk
         versionCode buildNumber
         versionName buildProperties.versionName
 
@@ -42,5 +42,5 @@ android {
 
 dependencies {
     compile project(':common')
-    compile 'com.google.android.support:wearable:2.0.0-alpha2'
+    compile 'com.google.android.support:wearable:2.0.0-alpha3'
 }

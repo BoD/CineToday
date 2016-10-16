@@ -1,12 +1,12 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion project.compileSdkVersion
-    buildToolsVersion project.buildToolsVersion
+    compileSdkVersion versions.compileSdk
+    buildToolsVersion versions.buildTools
 
     defaultConfig {
         minSdkVersion 18
-        targetSdkVersion targetSdkVersion
+        targetSdkVersion versions.targetSdk
     }
     buildTypes {
         release {
@@ -18,7 +18,6 @@ android {
 }
 
 dependencies {
-    compile "com.google.android.gms:play-services-wearable:${playServicesVersion}"
+    compile "com.google.android.gms:play-services-wearable:$versions.playServices"
     compile 'com.github.BoD:jraf-android-util:-SNAPSHOT'
-//    compile 'org.jraf:jraf-android-util:1.0.0'
 }
