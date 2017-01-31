@@ -2,6 +2,6 @@
 
 node {
     stage('Build') {
-        sh "gradlew lintDebug testDebug"
+        sh '/bin/ls -al'
     }
 }
