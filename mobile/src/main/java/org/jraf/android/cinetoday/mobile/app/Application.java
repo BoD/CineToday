@@ -27,12 +27,12 @@ package org.jraf.android.cinetoday.mobile.app;
 import android.os.Handler;
 import android.os.StrictMode;
 
-import org.jraf.android.cinetoday.BuildConfig;
-import org.jraf.android.util.log.Log;
-
 import com.crashlytics.android.Crashlytics;
 
 import io.fabric.sdk.android.Fabric;
+
+import org.jraf.android.cinetoday.BuildConfig;
+import org.jraf.android.util.log.Log;
 
 public class Application extends android.app.Application {
 
@@ -48,7 +48,7 @@ public class Application extends android.app.Application {
         if (BuildConfig.STRICT_MODE) setupStrictMode();
 
         // Crashlytics
-        Fabric.with(this, new Crashlytics());
+        if (BuildConfig.CRASH_REPORT) Fabric.with(this, new Crashlytics());
     }
 
     private void setupStrictMode() {
