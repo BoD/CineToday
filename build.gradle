@@ -10,12 +10,12 @@ buildscript {
     // Versions used across modules
     ext.versions = [:]
     ext.versions.with {
-        androidGradlePlugin = '2.2.1'
-        compileSdk = 24
-        targetSdk = 24
-        buildTools = '24.0.2'
-        supportLibrary = '24.2.1'
-        playServices = '9.6.1'
+        androidGradlePlugin = '2.3.0-beta3'
+        compileSdk = 25
+        targetSdk = 25
+        buildTools = '25.0.2'
+        supportLibrary = '25.1.1'
+        playServices = '10.0.1'
     }
 
     repositories {
@@ -25,9 +25,8 @@ buildscript {
     dependencies {
         classpath "com.android.tools.build:gradle:$versions.androidGradlePlugin"
         classpath 'com.github.ben-manes:gradle-versions-plugin:0.13.0'
-        classpath 'ca.rmen:lib-french-revolutionary-calendar:1.5.1'
-        classpath 'io.fabric.tools:gradle:1.22.0'
-        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
+        classpath 'ca.rmen:lib-french-revolutionary-calendar:1.5.2'
+        classpath 'io.fabric.tools:gradle:1.22.1'
     }
 }
 
@@ -39,10 +38,28 @@ allprojects {
         maven { url "https://jitpack.io" }
         maven { url 'https://maven.fabric.io/public' }
     }
+
+    // Force using our version of the support libraries, even for those we don't depend on directly (transitive dependencies)
+    configurations.all {
+        resolutionStrategy {
+            force "com.android.support:appcompat-v7:$versions.supportLibrary",
+                    "com.android.support:cardview-v7:$versions.supportLibrary",
+                    "com.android.support:customtabs:$versions.supportLibrary",
+                    "com.android.support:support-v4:$versions.supportLibrary",
+                    "com.android.support:support-annotations:$versions.supportLibrary",
+                    "com.android.support:percent:$versions.supportLibrary",
+                    "com.android.support:recyclerview-v7:$versions.supportLibrary"
+        }
+    }
 }
 
 task clean(type: Delete) {
     delete rootProject.buildDir
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '3.3'
+    distributionType = Wrapper.DistributionType.ALL
 }
 
 // Add a 'release' task that increments the build number
@@ -75,25 +92,40 @@ def gitSha1() {
 }
 
 // Returns the current date/time formatted in UTC
-def buildDate() {
+static def buildDate() {
     def dateFormat = new SimpleDateFormat('yyyy-MM-dd\'T\'HH:mm\'Z\'')
     dateFormat.setTimeZone(TimeZone.getTimeZone('UTC'))
     return dateFormat.format(new Date())
 }
 
 // This only for amusement purposes
-def getFrenchDate() {
+static def getFrenchDate() {
     def frenchDate = new FrenchRevolutionaryCalendar(Locale.FRENCH, FrenchRevolutionaryCalendar.CalculationMethod.ROMME).getDate(GregorianCalendar.getInstance())
     "Le ${frenchDate.weekdayName} ${frenchDate.dayOfMonth} ${frenchDate.monthName} de l'an ${frenchDate.year}. (${frenchDate.objectTypeName} du jour : ${frenchDate.dayOfYear})"
 }
 
+// Returns a file on the project's root - creates it from a sample if it doesn't exist
+def getAndCreateIfNotExists(String fileName) {
+    def res = file(fileName)
+    if (!res.exists()) {
+        logger.warn("$fileName file does not exist: creating it now - please check its values")
+        copy {
+            from "${fileName}.SAMPLE"
+            into project.projectDir
+            rename { fileName }
+        }
+    }
+    return res
+}
+
 // Build properties
 ext.buildProperties = new Properties()
-buildProperties.load(new FileInputStream(file('build.properties')))
+def buildPropertiesFile = getAndCreateIfNotExists('build.properties')
+buildProperties.load(new FileInputStream(buildPropertiesFile))
 
 // Build number
-ext.buildNumberFile = file('build.number')
 ext.buildNumberProperties = new Properties()
+ext.buildNumberFile = getAndCreateIfNotExists('build.number')
 buildNumberProperties.load(new FileInputStream(buildNumberFile))
 ext.buildNumber = buildNumberProperties.buildNumber.toInteger()
 
