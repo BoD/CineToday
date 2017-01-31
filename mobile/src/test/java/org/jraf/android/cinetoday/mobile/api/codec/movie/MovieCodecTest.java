@@ -24,11 +24,8 @@
  */
 package org.jraf.android.cinetoday.mobile.api.codec.movie;
 
-import org.jraf.android.cinetoday.BuildConfig;
-import org.jraf.android.cinetoday.common.model.ParseException;
-import org.jraf.android.cinetoday.common.model.movie.Movie;
-import org.jraf.android.cinetoday.common.model.movie.MovieAssert;
-import org.jraf.android.cinetoday.mobile.TestUtil;
+import java.io.IOException;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Test;
@@ -36,7 +33,11 @@ import org.junit.runner.RunWith;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
 
-import java.io.IOException;
+import org.jraf.android.cinetoday.BuildConfig;
+import org.jraf.android.cinetoday.common.model.ParseException;
+import org.jraf.android.cinetoday.common.model.movie.Movie;
+import org.jraf.android.cinetoday.common.model.movie.MovieAssert;
+import org.jraf.android.cinetoday.mobile.TestUtil;
 
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class, sdk = 21)
@@ -77,7 +78,7 @@ public class MovieCodecTest {
                 6780);
     }
 
-    private void testParseMovieFile(String filename, String actors, int duration) throws IOException, JSONException, ParseException {
+    private void testParseMovieFile(String filename, String actors, Integer duration) throws IOException, JSONException, ParseException {
         String json = TestUtil.readTestResource(filename);
         JSONObject jsonRoot = new JSONObject(json);
         JSONObject jsonMovie = jsonRoot.getJSONObject("movie");

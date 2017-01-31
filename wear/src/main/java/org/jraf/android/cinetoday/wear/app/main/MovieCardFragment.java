@@ -119,8 +119,13 @@ public class MovieCardFragment extends CardFragment {
 
                 // Duration
                 TextView txtDuration = (TextView) view.findViewById(R.id.txtDuration);
-                String durationStr = formatDuration(movie.durationSeconds);
-                txtDuration.setText(getHtml(R.string.movie_card_duration, durationStr));
+                if (movie.durationSeconds == null) {
+                    txtDuration.setVisibility(View.GONE);
+                } else {
+                    txtDuration.setVisibility(View.VISIBLE);
+                    String durationStr = formatDuration(movie.durationSeconds);
+                    txtDuration.setText(getHtml(R.string.movie_card_duration, durationStr));
+                }
 
                 // Original title
                 TextView txtOriginalTitle = (TextView) view.findViewById(R.id.txtOriginalTitle);
@@ -150,7 +155,7 @@ public class MovieCardFragment extends CardFragment {
         return view;
     }
 
-    private String formatDuration(int durationSeconds) {
+    private String formatDuration(Integer durationSeconds) {
         if (durationSeconds < 60 * 60) return getString(R.string.durationMinutes, durationSeconds / 60);
         int hours = durationSeconds / (60 * 60);
         int minutes = (durationSeconds % (60 * 60)) / 60;
