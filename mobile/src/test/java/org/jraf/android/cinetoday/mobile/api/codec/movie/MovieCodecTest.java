@@ -30,7 +30,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
 import org.jraf.android.cinetoday.BuildConfig;
@@ -39,7 +39,7 @@ import org.jraf.android.cinetoday.common.model.movie.Movie;
 import org.jraf.android.cinetoday.common.model.movie.MovieAssert;
 import org.jraf.android.cinetoday.mobile.TestUtil;
 
-@RunWith(RobolectricGradleTestRunner.class)
+@RunWith(RobolectricTestRunner.class)
 @Config(constants = BuildConfig.class, sdk = 21)
 public class MovieCodecTest {
 
