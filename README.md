@@ -6,6 +6,8 @@ An Android Wear app that lists movies showing at your favorite theaters, on your
 Currently this app only works with movie theaters in France.
 If you know of an API that could be used to make this app work in your country, please contact me.
 
+[![Build Status](https://travis-ci.org/BoD/CineToday.svg?branch=master)](https://travis-ci.org/BoD/CineToday)
+
 
 Licence
 -------
