@@ -1,6 +1,5 @@
 apply plugin: 'com.android.application'
-apply plugin: 'com.neenbedankt.android-apt'
-apply plugin: 'io.fabric'
+if (buildProperties.enableFabric.toBoolean()) apply plugin: 'io.fabric'
 
 android {
     compileSdkVersion versions.compileSdk
@@ -57,6 +56,12 @@ android {
     dataBinding {
         enabled = true
     }
+
+    lintOptions {
+        abortOnError true
+        textReport true
+        ignoreWarnings true
+    }
 }
 
 android.applicationVariants.all { variant ->
@@ -88,7 +93,7 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     testCompile 'junit:junit:4.12'
-    testCompile "org.robolectric:robolectric:3.1.2"
+    testCompile "org.robolectric:robolectric:3.2.2"
     testCompile "org.easytesting:fest-assert-core:2.0M10"
 
     compile project(':common')
@@ -98,10 +103,10 @@ dependencies {
     compile "com.android.support:preference-v7:$versions.supportLibrary"
     compile "com.android.support:preference-v14:$versions.supportLibrary"
     compile "com.android.support:design:$versions.supportLibrary"
-    compile 'com.squareup.okhttp3:okhttp:3.4.1'
+    compile 'com.squareup.okhttp3:okhttp:3.6.0'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile "com.google.android.gms:play-services-gcm:$versions.playServices"
-    compile('com.crashlytics.sdk.android:crashlytics:2.6.5@aar') { transitive = true; }
-    apt 'org.jraf:prefs-compiler:1.1.0'
-    compile 'org.jraf:prefs:1.1.0'
+    compile('com.crashlytics.sdk.android:crashlytics:2.6.6@aar') { transitive = true; }
+    annotationProcessor 'org.jraf:prefs-compiler:1.1.1'
+    compile 'org.jraf:prefs:1.1.1'
 }
