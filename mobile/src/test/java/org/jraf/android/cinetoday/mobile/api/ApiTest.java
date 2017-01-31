@@ -29,18 +29,19 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.fest.assertions.api.Assertions;
+import org.json.JSONException;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.Config;
+
 import org.jraf.android.cinetoday.BuildConfig;
 import org.jraf.android.cinetoday.common.model.ParseException;
 import org.jraf.android.cinetoday.common.model.movie.Movie;
 import org.jraf.android.cinetoday.common.model.movie.MovieAssert;
 import org.jraf.android.cinetoday.mobile.TestUtil;
-import org.json.JSONException;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.robolectric.RobolectricGradleTestRunner;
-import org.robolectric.annotation.Config;
 
-@RunWith(RobolectricGradleTestRunner.class)
+@RunWith(RobolectricTestRunner.class)
 @Config(constants = BuildConfig.class, sdk = 21)
 public class ApiTest {
 
