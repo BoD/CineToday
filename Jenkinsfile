@@ -1,5 +1,7 @@
 #!groovy
 
 node {
-    echo 'Hello, World!'
+    stage('Build') {
+        sh "./gradlew lintDebug testDebug"
+    }
 }
