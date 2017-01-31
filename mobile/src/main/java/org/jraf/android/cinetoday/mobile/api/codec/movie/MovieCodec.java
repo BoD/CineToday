@@ -28,13 +28,14 @@ import java.util.ArrayList;
 
 import android.text.Html;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import org.jraf.android.cinetoday.common.model.ParseException;
 import org.jraf.android.cinetoday.common.model.movie.Movie;
 import org.jraf.android.cinetoday.mobile.api.Api;
 import org.jraf.android.util.log.Log;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 public class MovieCodec {
     private static final MovieCodec INSTANCE = new MovieCodec();
@@ -72,7 +73,8 @@ public class MovieCodec {
                 }
             }
 
-            movie.durationSeconds = jsonMovie.getInt("runtime");
+            int durationSeconds = jsonMovie.optInt("runtime", -1);
+            movie.durationSeconds = durationSeconds == -1 ? null : durationSeconds;
 
             JSONArray jsonGenreArray = jsonMovie.getJSONArray("genre");
             int len = jsonGenreArray.length();

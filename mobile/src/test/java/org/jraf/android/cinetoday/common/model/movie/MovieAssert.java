@@ -91,8 +91,7 @@ public class MovieAssert extends AbstractAssert<MovieAssert, Movie> {
         return this;
     }
 
-    public MovieAssert hasDurationSeconds(int durationSeconds) {
-        isNotNull();
+    public MovieAssert hasDurationSeconds(Integer durationSeconds) {
         Assertions.assertThat(actual.durationSeconds).isEqualTo(durationSeconds);
         return this;
     }
