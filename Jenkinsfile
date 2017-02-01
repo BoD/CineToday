@@ -8,7 +8,7 @@ node {
         }
 
         stage('Build') {
-            withEnv(['ANDROID_HOME=/Users/bod/Dev/android-sdk-macosx']) {
+            withEnv(['ANDROID_HOME=/opt/android-sdk-linux']) {
                 sh './gradlew lintDebug testDebug'
             }
         }
