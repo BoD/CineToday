@@ -2,7 +2,7 @@
 
 node {
     def dockerImage = docker.image('jenkins-1')
-    dockerImage.inside('-v /tmp/gradle:/Users/bod/.jenkins/workspace/CineToday/.gradle:rw') {
+    dockerImage.inside {
         stage('Checkout') {
             git url: '/Users/bod/gitrepo/CineToday', branch: 'jenkins'
         }
