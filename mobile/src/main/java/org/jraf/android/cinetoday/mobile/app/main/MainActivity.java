@@ -205,6 +205,7 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks, Lo
         public void onLoadMoviesStarted() {
             mBinding.txtStatus.setText(R.string.main_lastUpdateDate_ongoing);
             mBinding.pgbLoadingProgress.setVisibility(View.VISIBLE);
+            mBinding.pgbLoadingProgress.setProgress(0);
             // XXX Do this in a post  because it won't work if called before the SwipeRefreshView's onMeasure
             // (see https://code.google.com/p/android/issues/detail?id=77712)
             mBinding.swrRefresh.post(new Runnable() {
