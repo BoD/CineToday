@@ -103,7 +103,7 @@ public class CirclePageIndicator extends View implements ViewPager.OnPageChangeL
         }
         mViewPager = viewPager;
         mViewPager.addOnPageChangeListener(this);
-        invalidate();
+        requestLayout();
     }
 
     @Override
