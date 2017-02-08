@@ -31,26 +31,12 @@ import android.util.Log;
 
 import org.jraf.android.cinetoday.BuildConfig;
 import org.jraf.android.cinetoday.mobile.prefs.MainPrefs;
+import org.jraf.android.cinetoday.mobile.provider.base.BaseSQLiteOpenHelperCallbacks;
 import org.jraf.android.cinetoday.mobile.provider.theater.TheaterColumns;
 import org.jraf.android.cinetoday.mobile.provider.theater.TheaterContentValues;
 
-/**
- * Implement your custom database creation or upgrade code here.
- *
- * This file will not be overwritten if you re-run the content provider generator.
- */
-public class CineTodaySQLiteOpenHelperCallbacks {
+public class CineTodaySQLiteOpenHelperCallbacks extends BaseSQLiteOpenHelperCallbacks {
     private static final String TAG = CineTodaySQLiteOpenHelperCallbacks.class.getSimpleName();
-
-    public void onOpen(final Context context, final SQLiteDatabase db) {
-        if (BuildConfig.DEBUG) Log.d(TAG, "onOpen");
-        // Insert your db open code here.
-    }
-
-    public void onPreCreate(final Context context, final SQLiteDatabase db) {
-        if (BuildConfig.DEBUG) Log.d(TAG, "onPreCreate");
-        // Insert your db creation code here. This is called before your tables are created.
-    }
 
     public void onPostCreate(final Context context, final SQLiteDatabase db) {
         if (BuildConfig.DEBUG) Log.d(TAG, "onPostCreate");
@@ -80,10 +66,5 @@ public class CineTodaySQLiteOpenHelperCallbacks {
             prefs.removeTheaterAddress();
             prefs.removeTheaterPictureUri();
         }
-    }
-
-    public void onUpgrade(final Context context, final SQLiteDatabase db, final int oldVersion, final int newVersion) {
-        if (BuildConfig.DEBUG) Log.d(TAG, "Upgrading database from version " + oldVersion + " to " + newVersion);
-        // Insert your upgrading code here.
     }
 }

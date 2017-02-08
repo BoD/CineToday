@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
 if (buildProperties.enableFabric.toBoolean()) apply plugin: 'io.fabric'
+apply plugin: 'org.jraf.acpg.gradleplugin'
 
 android {
     compileSdkVersion versions.compileSdk
@@ -86,6 +87,18 @@ android.applicationVariants.all { variant ->
             variant.assemble.finalizedBy(copyApkToEtc, copyApkToDeploy)
         }
     }
+}
+
+acpg {
+    providerJavaPackage 'org.jraf.android.cinetoday.mobile.provider'
+    authority 'org.jraf.android.cinetoday.mobile.provider'
+    providerClassName 'CineTodayProvider'
+    databaseFileName 'cinetoday.db'
+    databaseVersion 1
+    sqliteOpenHelperCallbacksClassName 'CineTodaySQLiteOpenHelperCallbacks'
+    enableForeignKeys true
+    useAnnotations true
+    useSupportLibrary true
 }
 
 dependencies {

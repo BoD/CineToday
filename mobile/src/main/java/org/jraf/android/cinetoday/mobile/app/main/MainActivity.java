@@ -28,10 +28,10 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.databinding.DataBindingUtil;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
-import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -54,7 +54,6 @@ import org.jraf.android.cinetoday.mobile.app.loadmovies.LoadMoviesTaskService;
 import org.jraf.android.cinetoday.mobile.app.prefs.PreferencesActivity;
 import org.jraf.android.cinetoday.mobile.app.theater.search.TheaterSearchActivity;
 import org.jraf.android.cinetoday.mobile.prefs.MainPrefs;
-import org.jraf.android.cinetoday.mobile.provider.theater.TheaterColumns;
 import org.jraf.android.cinetoday.mobile.provider.theater.TheaterContentValues;
 import org.jraf.android.cinetoday.mobile.provider.theater.TheaterCursor;
 import org.jraf.android.cinetoday.mobile.provider.theater.TheaterSelection;
@@ -219,14 +218,18 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks, Lo
         @Override
         public void onLoadMoviesProgress(int currentMovie, int totalMovies, String movieName) {
             mBinding.pgbLoadingProgress.setMax(totalMovies);
-            mBinding.pgbLoadingProgress.setProgress(currentMovie);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                mBinding.pgbLoadingProgress.setProgress(currentMovie, true);
+            } else {
+                mBinding.pgbLoadingProgress.setProgress(currentMovie);
+            }
             mBinding.txtCurrentMovie.setText(movieName);
         }
 
         @Override
         public void onLoadMoviesSuccess() {
             updateLastUpdateDateLabel();
-            mBinding.pgbLoadingProgress.setVisibility(View.INVISIBLE);
+            mBinding.pgbLoadingProgress.setVisibility(View.GONE);
             mBinding.swrRefresh.setRefreshing(false);
             mBinding.txtCurrentMovie.setText(null);
         }
@@ -235,7 +238,7 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks, Lo
         public void onLoadMoviesError(Throwable t) {
             // TODO
             updateLastUpdateDateLabel();
-            mBinding.pgbLoadingProgress.setVisibility(View.INVISIBLE);
+            mBinding.pgbLoadingProgress.setVisibility(View.GONE);
             mBinding.swrRefresh.setRefreshing(false);
             mBinding.txtCurrentMovie.setText(null);
         }
@@ -243,7 +246,7 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks, Lo
         @Override
         public void onLoadMoviesInterrupted() {
             updateLastUpdateDateLabel();
-            mBinding.pgbLoadingProgress.setVisibility(View.INVISIBLE);
+            mBinding.pgbLoadingProgress.setVisibility(View.GONE);
             mBinding.swrRefresh.setRefreshing(false);
             mBinding.txtCurrentMovie.setText(null);
         }
@@ -284,12 +287,7 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks, Lo
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return new CursorLoader(this, TheaterColumns.CONTENT_URI, null, null, null, null) {
-            @Override
-            public Cursor loadInBackground() {
-                return new TheaterCursor(super.loadInBackground());
-            }
-        };
+        return new TheaterSelection().getCursorLoader(this);
     }
 
     @Override
