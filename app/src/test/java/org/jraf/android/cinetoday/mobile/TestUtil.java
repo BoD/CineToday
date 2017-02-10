@@ -7,7 +7,7 @@
  *                              /___/
  * repository.
  *
- * Copyright (C) 2016-2017 Benoit 'BoD' Lubek (BoD@JRAF.org)
+ * Copyright (C) 2016 Carmen Alvarez (c@rmen.ca)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,3 +22,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+package org.jraf.android.cinetoday.mobile;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+
+import org.jraf.android.util.io.IoUtil;
+
+public class TestUtil {
+
+    private TestUtil() {
+        // prevent instantiation
+    }
+
+    public static String readTestResource(String filename) throws IOException {
+        File resourceDir = new File("src/test/resources");
+        File movieFile = new File(resourceDir, filename);
+        FileInputStream is = new FileInputStream(movieFile);
+        return IoUtil.readFully(is);
+    }
+}

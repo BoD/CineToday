@@ -1,0 +1,37 @@
+{
+  "documentation": "A show time (a movie is playing at a certain time in a certain theater.",
+  "fields": [
+    {
+      "documentation": "Id of the movie",
+      "name": "movie_id",
+      "type": "Long",
+      "nullable": false,
+      "foreignKey": {
+        "table": "movie",
+        "onDelete": "CASCADE"
+      }
+    },
+    {
+      "documentation": "Id of the theater",
+      "name": "theater_id",
+      "type": "Long",
+      "nullable": false,
+      "foreignKey": {
+        "table": "theater",
+        "onDelete": "CASCADE"
+      }
+    },
+    {
+      "documentation": "Time, as a timestamp.",
+      "name": "time",
+      "type": "Date",
+      "nullable": false
+    },
+    {
+      "documentation": "Whether this is in 3D.",
+      "name": "is3d",
+      "type": "Boolean",
+      "nullable": false
+    }
+  ]
+}

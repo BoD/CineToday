@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+        <variable
+            name="searchQuery"
+            type="String" />
+    </data>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="4dp"
+        android:paddingTop="4dp">
+
+        <EditText
+            android:id="@+id/edtSearch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/ic_search_24dp"
+            android:drawablePadding="2dp"
+            android:hint="@string/theater_search_edtSearch_hint"
+            android:imeOptions="actionSearch"
+            android:inputType="textNoSuggestions"
+            android:text="@{searchQuery}" />
+    </FrameLayout>
+</layout>

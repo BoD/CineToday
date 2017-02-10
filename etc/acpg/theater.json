@@ -30,7 +30,7 @@
   "constraints": [
     {
       "name": "unique_public_id",
-      "definition": "UNIQUE (public_id) ON CONFLICT REPLACE"
+      "definition": "UNIQUE (theater__public_id) ON CONFLICT REPLACE"
     }
   ]
 }

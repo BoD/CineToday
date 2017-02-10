@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <android.support.wearable.view.drawer.WearableDrawerLayout
+        android:id="@+id/drawerLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:deviceIds="wear">
+
+        <FrameLayout
+            android:id="@+id/conFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <android.support.wearable.view.drawer.WearableNavigationDrawer
+            android:id="@+id/navigationDrawer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </android.support.wearable.view.drawer.WearableDrawerLayout>
+</layout>

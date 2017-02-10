@@ -1,0 +1,13 @@
+<resources>
+    <string-array name="main_navigationDrawer_text">
+        <item>@string/main_menu_movies</item>
+        <item>@string/main_menu_theaters</item>
+        <item>@string/main_menu_settings</item>
+    </string-array>
+
+    <array name="main_navigationDrawer_drawable">
+        <item>@drawable/ic_movie_48dp</item>
+        <item>@drawable/ic_theater_48dp</item>
+        <item>@drawable/ic_settings_48dp</item>
+    </array>
+</resources>

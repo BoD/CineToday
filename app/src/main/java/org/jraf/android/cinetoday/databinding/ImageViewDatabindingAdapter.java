@@ -7,7 +7,7 @@
  *                              /___/
  * repository.
  *
- * Copyright (C) 2016-2017 Benoit 'BoD' Lubek (BoD@JRAF.org)
+ * Copyright (C) 2016 Benoit 'BoD' Lubek (BoD@JRAF.org)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,3 +22,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+package org.jraf.android.cinetoday.databinding;
+
+import android.databinding.BindingAdapter;
+import android.widget.ImageView;
+
+import com.squareup.picasso.Picasso;
+
+import org.jraf.android.cinetoday.R;
+
+public class ImageViewDatabindingAdapter {
+    @BindingAdapter("uri")
+    public static void loadImage(ImageView view, String uri) {
+        Picasso.with(view.getContext()).load(uri).fit().centerCrop().placeholder(R.drawable.theater_list_item_placeholder).error(
+                R.drawable.theater_list_item_placeholder).noFade().into(view);
+    }
+}
