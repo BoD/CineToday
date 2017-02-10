@@ -30,17 +30,23 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v7.widget.LinearSnapHelper;
+import android.support.v7.widget.SnapHelper;
+import android.support.wearable.view.DefaultOffsettingHelper;
+import android.support.wearable.view.WearableRecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import org.jraf.android.cinetoday.R;
 import org.jraf.android.cinetoday.databinding.TheaterFavoritesBinding;
+import org.jraf.android.cinetoday.provider.theater.TheaterCursor;
 import org.jraf.android.cinetoday.provider.theater.TheaterSelection;
 import org.jraf.android.util.app.base.BaseFragment;
 
 public class TheaterFavoritesFragment extends BaseFragment<TheaterFavoritesCallbacks> implements LoaderManager.LoaderCallbacks<Cursor> {
     private TheaterFavoritesBinding mBinding;
+    private TheaterFavoritesAdapter mAdapter;
 
     public static TheaterFavoritesFragment newInstance() {
         return new TheaterFavoritesFragment();
@@ -51,6 +57,31 @@ public class TheaterFavoritesFragment extends BaseFragment<TheaterFavoritesCallb
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mBinding = DataBindingUtil.inflate(inflater, R.layout.theater_favorites, container, false);
         mBinding.setCallbacks(getCallbacks());
+
+        mBinding.rclList.setHasFixedSize(true);
+        mBinding.rclList.setCenterEdgeItems(true);
+        // Apply an offset + scale on the items depending on their distance from the center (only for Round screens)
+        if (getResources().getConfiguration().isScreenRound()) {
+            mBinding.rclList.setOffsettingHelper(new DefaultOffsettingHelper() {
+                private static final float FACTOR = .75F;
+
+                @Override
+                public void updateChild(View child, WearableRecyclerView parent) {
+                    super.updateChild(child, parent);
+
+                    float childTop = child.getY() + child.getHeight() / 2F;
+                    float childOffsetFromCenter = childTop - parent.getHeight() / 2F;
+                    float childOffsetFromCenterRatio = Math.abs(childOffsetFromCenter / parent.getHeight());
+                    float childOffsetFromCenterRatioNormalized = childOffsetFromCenterRatio * FACTOR;
+
+                    child.setScaleX(1 - childOffsetFromCenterRatioNormalized);
+                    child.setScaleY(1 - childOffsetFromCenterRatioNormalized);
+                }
+            });
+        }
+        SnapHelper snapHelper = new LinearSnapHelper();
+        snapHelper.attachToRecyclerView(mBinding.rclList);
+
         return mBinding.getRoot();
     }
 
@@ -72,10 +103,16 @@ public class TheaterFavoritesFragment extends BaseFragment<TheaterFavoritesCallb
             // No favorite theaters yet
             mBinding.btnEmptyPickTheater.setVisibility(View.VISIBLE);
         } else {
-            // TODO
+            if (mAdapter == null) {
+                mAdapter = new TheaterFavoritesAdapter(getContext(), getCallbacks());
+                mBinding.rclList.setAdapter(mAdapter);
+            }
+            mAdapter.swapCursor((TheaterCursor) data);
         }
     }
 
     @Override
-    public void onLoaderReset(Loader<Cursor> loader) {}
+    public void onLoaderReset(Loader<Cursor> loader) {
+        if (mAdapter != null) mAdapter.swapCursor(null);
+    }
 }

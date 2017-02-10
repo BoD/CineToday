@@ -25,12 +25,24 @@
             android:visibility="gone"
             tools:visibility="visible" />
 
+        <!-- Loading indicator -->
         <ProgressBar
             android:id="@+id/pgbLoading"
             style="?android:attr/progressBarStyleLarge"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center" />
+
+        <!-- List -->
+        <android.support.wearable.view.WearableRecyclerView
+            android:id="@+id/rclList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:paddingBottom="4dp"
+            android:paddingTop="4dp"
+            android:scrollbars="vertical" />
 
     </FrameLayout>
 </layout>

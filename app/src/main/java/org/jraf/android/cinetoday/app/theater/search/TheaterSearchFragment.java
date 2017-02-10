@@ -44,19 +44,19 @@ import org.jraf.android.cinetoday.databinding.TheaterSearchListBinding;
 import org.jraf.android.cinetoday.model.theater.Theater;
 import org.jraf.android.util.app.base.BaseFragment;
 
-public class TheaterSearchFragment extends BaseFragment<TheaterCallbacks> implements LoaderManager.LoaderCallbacks<List<Theater>> {
-    private TheaterAdapter mAdapter;
-    private TheaterSearchListBinding mBinder;
+public class TheaterSearchFragment extends BaseFragment<TheaterSearchCallbacks> implements LoaderManager.LoaderCallbacks<List<Theater>> {
+    private TheaterSearchAdapter mAdapter;
+    private TheaterSearchListBinding mBinding;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        mBinder = DataBindingUtil.inflate(inflater, R.layout.theater_search_list, container, false);
-        mBinder.rclList.setHasFixedSize(true);
-        mBinder.rclList.setCenterEdgeItems(true);
+        mBinding = DataBindingUtil.inflate(inflater, R.layout.theater_search_list, container, false);
+        mBinding.rclList.setHasFixedSize(true);
+        mBinding.rclList.setCenterEdgeItems(true);
 
         // Apply an offset + scale on the items depending on their distance from the center (only for Round screens)
         if (getResources().getConfiguration().isScreenRound()) {
-            mBinder.rclList.setOffsettingHelper(new DefaultOffsettingHelper() {
+            mBinding.rclList.setOffsettingHelper(new DefaultOffsettingHelper() {
                 private static final float FACTOR = .75F;
 
                 @Override
@@ -74,14 +74,14 @@ public class TheaterSearchFragment extends BaseFragment<TheaterCallbacks> implem
             });
         }
         SnapHelper snapHelper = new LinearSnapHelper();
-        snapHelper.attachToRecyclerView(mBinder.rclList);
-        return mBinder.getRoot();
+        snapHelper.attachToRecyclerView(mBinding.rclList);
+        return mBinding.getRoot();
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        mAdapter = new TheaterAdapter(getActivity(), getCallbacks());
-        mBinder.rclList.setAdapter(mAdapter);
+        mAdapter = new TheaterSearchAdapter(getActivity(), getCallbacks());
+        mBinding.rclList.setAdapter(mAdapter);
     }
 
     public void search(String query) {
@@ -99,7 +99,7 @@ public class TheaterSearchFragment extends BaseFragment<TheaterCallbacks> implem
     @Override
     public Loader<List<Theater>> onCreateLoader(int id, Bundle args) {
         String query = args.getString("query");
-        return new TheaterLoader(getActivity(), query);
+        return new TheaterSearchLoader(getActivity(), query);
     }
 
     @Override

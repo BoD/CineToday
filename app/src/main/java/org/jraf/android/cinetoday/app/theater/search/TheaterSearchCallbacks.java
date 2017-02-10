@@ -26,7 +26,7 @@ package org.jraf.android.cinetoday.app.theater.search;
 
 import org.jraf.android.cinetoday.model.theater.Theater;
 
-public interface TheaterCallbacks {
+public interface TheaterSearchCallbacks {
     void onTheaterClicked(Theater theater);
 
     void onSearch(String query);

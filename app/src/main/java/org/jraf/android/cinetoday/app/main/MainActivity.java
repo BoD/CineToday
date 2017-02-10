@@ -28,19 +28,24 @@ import android.content.Intent;
 import android.content.res.TypedArray;
 import android.databinding.DataBindingUtil;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
+import android.support.wearable.view.drawer.WearableActionDrawer;
 import android.support.wearable.view.drawer.WearableNavigationDrawer;
+import android.view.MenuItem;
 
 import org.jraf.android.cinetoday.R;
 import org.jraf.android.cinetoday.app.theater.favorites.TheaterFavoritesCallbacks;
 import org.jraf.android.cinetoday.app.theater.favorites.TheaterFavoritesFragment;
 import org.jraf.android.cinetoday.app.theater.search.TheaterSearchActivity;
 import org.jraf.android.cinetoday.databinding.MainBinding;
+import org.jraf.android.cinetoday.model.theater.Theater;
+import org.jraf.android.cinetoday.provider.theater.TheaterContentValues;
 import org.jraf.android.util.log.Log;
 
-public class MainActivity extends FragmentActivity implements TheaterFavoritesCallbacks {
+public class MainActivity extends FragmentActivity implements TheaterFavoritesCallbacks, WearableActionDrawer.OnMenuItemClickListener {
     private static final int REQUEST_ADD_THEATER = 0;
 
     private MainBinding mBinding;
@@ -51,6 +56,7 @@ public class MainActivity extends FragmentActivity implements TheaterFavoritesCa
         super.onCreate(savedInstanceState);
         mBinding = DataBindingUtil.setContentView(this, R.layout.main);
         mBinding.navigationDrawer.setAdapter(new NavigationDrawerAdapter());
+        mBinding.actionDrawer.setOnMenuItemClickListener(this);
     }
 
     private class NavigationDrawerAdapter extends WearableNavigationDrawer.WearableNavigationDrawerAdapter {
@@ -84,6 +90,22 @@ public class MainActivity extends FragmentActivity implements TheaterFavoritesCa
         }
     }
 
+    //--------------------------------------------------------------------------
+    // region WearableActionDrawer.OnMenuItemClickListener.
+    //--------------------------------------------------------------------------
+
+    @Override
+    public boolean onMenuItemClick(MenuItem menuItem) {
+        switch (menuItem.getItemId()) {
+            case R.id.main_action_add_favorite:
+                Log.d();
+                startTheaterSearchActivity();
+                break;
+        }
+        return false;
+    }
+
+    // endregion
 
     //--------------------------------------------------------------------------
     // region Fragments.
@@ -96,6 +118,7 @@ public class MainActivity extends FragmentActivity implements TheaterFavoritesCa
 
     // endregion
 
+    private void startTheaterSearchActivity() {startActivityForResult(new Intent(this, TheaterSearchActivity.class), REQUEST_ADD_THEATER);}
 
     //--------------------------------------------------------------------------
     // region TheaterFavoritesCallbacks.
@@ -104,8 +127,35 @@ public class MainActivity extends FragmentActivity implements TheaterFavoritesCa
     @Override
     public void onAddTheaterClick() {
         Log.d();
-        startActivityForResult(new Intent(this, TheaterSearchActivity.class), REQUEST_ADD_THEATER);
+        startTheaterSearchActivity();
     }
+
     // endregion
 
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case REQUEST_ADD_THEATER:
+                if (resultCode != RESULT_OK) break;
+                Theater theater = data.getExtras().getParcelable(TheaterSearchActivity.EXTRA_RESULT);
+                addToFavorites(theater);
+                break;
+        }
+    }
+
+    private void addToFavorites(final Theater theater) {
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                new TheaterContentValues()
+                        .putPublicId(theater.id)
+                        .putName(theater.name)
+                        .putAddress(theater.address)
+                        .putPictureUri(theater.pictureUri).insert(MainActivity.this);
+                return null;
+            }
+        }.execute();
+    }
 }
