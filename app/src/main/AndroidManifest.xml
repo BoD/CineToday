@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest
+    package="org.jraf.android.cinetoday"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-feature
+        android:name="android.hardware.type.watch"
+        android:required="true" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
+    <application
+        android:name=".app.Application"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme"
+        tools:ignore="AllowBackup">
+
+        <!-- Wear standalone -->
+        <meta-data
+            android:name="com.google.android.wearable.standalone"
+            android:value="true" />
+
+        <!-- Crashlytics api key -->
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="${apiKeyFabric}" />
+
+        <!-- Content provider -->
+        <provider
+            android:name=".provider.CineTodayProvider"
+            android:authorities="org.jraf.android.cinetoday.provider"
+            android:exported="false" />
+
+        <!-- Main -->
+        <activity
+            android:name=".app.main.MainActivity"
+            android:launchMode="singleTask">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- Theater search -->
+        <activity
+            android:name=".app.theater.search.TheaterSearchActivity"
+            android:label="@string/theater_search_title" />
+
+        <!-- Preferences -->
+        <activity
+            android:name=".app.prefs.PreferencesActivity"
+            android:label="@string/preferences_title" />
+
+        <!-- About -->
+        <activity
+            android:name="org.jraf.android.util.about.AboutActivity"
+            android:label="@string/about_title" />
+
+        <!-- Load movies -->
+        <service
+            android:name=".app.loadmovies.LoadMoviesIntentService"
+            android:exported="false" />
+        <service
+            android:name=".app.loadmovies.LoadMoviesTaskService"
+            android:exported="true"
+            android:permission="com.google.android.gms.permission.BIND_NETWORK_TASK_SERVICE">
+            <intent-filter>
+                <action android:name="com.google.android.gms.gcm.ACTION_TASK_READY" />
+            </intent-filter>
+        </service>
+    </application>
+
+</manifest>
