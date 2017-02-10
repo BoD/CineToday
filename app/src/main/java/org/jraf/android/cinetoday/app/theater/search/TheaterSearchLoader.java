@@ -33,11 +33,11 @@ import org.jraf.android.cinetoday.api.Api;
 import org.jraf.android.cinetoday.model.theater.Theater;
 import org.jraf.android.util.log.Log;
 
-public class TheaterLoader extends AsyncTaskLoader<List<Theater>> {
+public class TheaterSearchLoader extends AsyncTaskLoader<List<Theater>> {
     private final String mQuery;
     private List<Theater> mData;
 
-    public TheaterLoader(Context context, String query) {
+    public TheaterSearchLoader(Context context, String query) {
         super(context);
         mQuery = query;
     }

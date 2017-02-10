@@ -6,21 +6,23 @@
 
         <variable
             name="callbacks"
-            type="org.jraf.android.cinetoday.app.theater.search.TheaterCallbacks" />
+            type="org.jraf.android.cinetoday.app.theater.favorites.TheaterFavoritesCallbacks" />
 
         <variable
             name="theater"
-            type="org.jraf.android.cinetoday.model.theater.Theater" />
+            type="org.jraf.android.cinetoday.provider.theater.TheaterModel" />
     </data>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?android:attr/selectableItemBackground"
-        android:onClick="@{() -> callbacks.onTheaterClicked(theater)}"
         android:orientation="vertical"
         android:padding="4dp">
 
+        <!--
+                android:onClick="@{() -> callbacks.onTheaterClicked(theater)}"
+        -->
         <!-- Name -->
         <TextView
             android:id="@+id/txtName"

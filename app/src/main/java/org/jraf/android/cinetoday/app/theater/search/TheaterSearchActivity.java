@@ -35,7 +35,7 @@ import org.jraf.android.cinetoday.databinding.TheaterSearchBinding;
 import org.jraf.android.cinetoday.model.theater.Theater;
 import org.jraf.android.util.log.Log;
 
-public class TheaterSearchActivity extends FragmentActivity implements TheaterCallbacks {
+public class TheaterSearchActivity extends FragmentActivity implements TheaterSearchCallbacks {
     private static final String PREFIX = TheaterSearchActivity.class.getName() + ".";
     public static final String EXTRA_RESULT = PREFIX + "EXTRA_RESULT";
 

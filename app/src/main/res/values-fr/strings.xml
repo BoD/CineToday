@@ -36,7 +36,7 @@
     <string name="main_theater_delete_confirm_title">Supprimer</string>
     <string name="main_theater_delete_confirm_message">Voulez-vous supprimer ce cinéma ?</string>
     <string name="main_page_add_btnAdd_empty">Choisir un cinéma</string>
-    <string name="main_page_add_btnAdd_additional">Ajouter un cinéma</string>
+    <string name="main_action_addFavorite">Ajouter un cinéma</string>
     <string name="main_page_add_intro_empty">Bienvenue !\nClickez sur le bouton pour choisir un cinéma</string>
     <string name="main_page_add_intro_additional">Choissez plusieurs cinémas !</string>
     <string name="main_menu_movies">Films</string>

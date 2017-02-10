@@ -37,41 +37,41 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import org.jraf.android.cinetoday.R;
-import org.jraf.android.cinetoday.databinding.TheaterListItemBinding;
-import org.jraf.android.cinetoday.databinding.TheaterListItemSearchBinding;
+import org.jraf.android.cinetoday.databinding.TheaterSearchListItemBinding;
+import org.jraf.android.cinetoday.databinding.TheaterSearchListItemSearchBinding;
 import org.jraf.android.cinetoday.model.theater.Theater;
 
-public class TheaterAdapter extends RecyclerView.Adapter<TheaterAdapter.ViewHolder> implements TextWatcher {
+public class TheaterSearchAdapter extends RecyclerView.Adapter<TheaterSearchAdapter.ViewHolder> implements TextWatcher {
     private static final int TYPE_SEARCH = 0;
     private static final int TYPE_LOADING = 1;
     private static final int TYPE_ITEM = 2;
     private static final int TYPE_EMPTY = 3;
 
     private final Context mContext;
-    private TheaterCallbacks mCallbacks;
+    private TheaterSearchCallbacks mCallbacks;
     private final LayoutInflater mLayoutInflater;
     private List<Theater> mTheaters = new ArrayList<>();
     private boolean mLoading;
     private String mSearchQuery;
 
 
-    public TheaterAdapter(Context context, TheaterCallbacks callbacks) {
+    public TheaterSearchAdapter(Context context, TheaterSearchCallbacks callbacks) {
         mContext = context;
         mCallbacks = callbacks;
         mLayoutInflater = LayoutInflater.from(mContext);
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        public final TheaterListItemBinding itemBinding;
-        public final TheaterListItemSearchBinding searchBinding;
+        public final TheaterSearchListItemBinding itemBinding;
+        public final TheaterSearchListItemSearchBinding searchBinding;
 
-        public ViewHolder(TheaterListItemBinding itemBinding) {
+        public ViewHolder(TheaterSearchListItemBinding itemBinding) {
             super(itemBinding.getRoot());
             this.itemBinding = itemBinding;
             searchBinding = null;
         }
 
-        public ViewHolder(TheaterListItemSearchBinding searchBinding) {
+        public ViewHolder(TheaterSearchListItemSearchBinding searchBinding) {
             super(searchBinding.getRoot());
             itemBinding = null;
             this.searchBinding = searchBinding;
@@ -101,26 +101,27 @@ public class TheaterAdapter extends RecyclerView.Adapter<TheaterAdapter.ViewHold
     }
 
     @Override
-    public TheaterAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public TheaterSearchAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         switch (viewType) {
             case TYPE_SEARCH:
                 return new ViewHolder(
-                        (TheaterListItemSearchBinding) DataBindingUtil.inflate(mLayoutInflater, R.layout.theater_list_item_search, parent, false));
+                        (TheaterSearchListItemSearchBinding) DataBindingUtil.inflate(mLayoutInflater, R.layout.theater_search_list_item_search, parent, false));
 
             case TYPE_LOADING:
-                return new ViewHolder(mLayoutInflater.inflate(R.layout.theater_list_item_loading, parent, false));
+                return new ViewHolder(mLayoutInflater.inflate(R.layout.theater_search_list_item_loading, parent, false));
 
             case TYPE_EMPTY:
-                return new ViewHolder(mLayoutInflater.inflate(R.layout.theater_list_item_empty, parent, false));
+                return new ViewHolder(mLayoutInflater.inflate(R.layout.theater_search_list_item_empty, parent, false));
 
             case TYPE_ITEM:
             default:
-                return new ViewHolder((TheaterListItemBinding) DataBindingUtil.inflate(mLayoutInflater, R.layout.theater_list_item, parent, false));
+                return new ViewHolder(
+                        (TheaterSearchListItemBinding) DataBindingUtil.inflate(mLayoutInflater, R.layout.theater_search_list_item, parent, false));
         }
     }
 
     @Override
-    public void onBindViewHolder(TheaterAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(TheaterSearchAdapter.ViewHolder holder, int position) {
         int viewType = getItemViewType(position);
         switch (viewType) {
             case TYPE_SEARCH:
