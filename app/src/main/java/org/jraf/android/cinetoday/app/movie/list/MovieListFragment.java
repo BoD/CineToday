@@ -60,6 +60,12 @@ public class MovieListFragment extends BaseFragment<MovieListCallbacks> implemen
         return new MovieListFragment();
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        getLoaderManager().initLoader(0, null, this);
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -82,12 +88,6 @@ public class MovieListFragment extends BaseFragment<MovieListCallbacks> implemen
         };
         snapHelper.attachToRecyclerView(mBinding.rclList);
         return mBinding.getRoot();
-    }
-
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        getLoaderManager().initLoader(0, null, this);
     }
 
     @Override

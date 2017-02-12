@@ -52,6 +52,12 @@ public class TheaterFavoritesFragment extends BaseFragment<TheaterFavoritesCallb
         return new TheaterFavoritesFragment();
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        getLoaderManager().initLoader(0, null, this);
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -83,12 +89,6 @@ public class TheaterFavoritesFragment extends BaseFragment<TheaterFavoritesCallb
         snapHelper.attachToRecyclerView(mBinding.rclList);
 
         return mBinding.getRoot();
-    }
-
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        getLoaderManager().initLoader(0, null, this);
     }
 
     @Override
