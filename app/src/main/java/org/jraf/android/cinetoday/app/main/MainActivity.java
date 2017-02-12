@@ -61,6 +61,8 @@ public class MainActivity extends FragmentActivity implements MovieListCallbacks
         mBinding = DataBindingUtil.setContentView(this, R.layout.main);
         mBinding.navigationDrawer.setAdapter(new NavigationDrawerAdapter());
         mBinding.actionDrawer.setOnMenuItemClickListener(this);
+
+        showMovieListFragment();
     }
 
     private class NavigationDrawerAdapter extends WearableNavigationDrawer.WearableNavigationDrawerAdapter {
@@ -82,11 +84,11 @@ public class MainActivity extends FragmentActivity implements MovieListCallbacks
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             switch (position) {
                 case 0:
-                    transaction.replace(R.id.conFragment, getMovieListFragment());
+                    showMovieListFragment();
                     break;
 
                 case 1:
-                    transaction.replace(R.id.conFragment, getTheaterFavoritesFragment());
+                    showTheaterFavoritesFragment();
                     break;
             }
             transaction.commit();
@@ -116,18 +118,48 @@ public class MainActivity extends FragmentActivity implements MovieListCallbacks
 
     // endregion
 
+
     //--------------------------------------------------------------------------
     // region Fragments.
     //--------------------------------------------------------------------------
 
+    private MovieListFragment getMovieListFragment() {
+        if (mMovieListFragment == null) {
+            mMovieListFragment =
+                    (MovieListFragment) getSupportFragmentManager().findFragmentByTag(MovieListFragment.class.getName());
+            if (mMovieListFragment == null) {
+                getSupportFragmentManager().beginTransaction()
+                        .add(R.id.conFragment, mMovieListFragment = MovieListFragment.newInstance(), MovieListFragment.class.getName())
+                        .commit();
+            }
+        }
+        return mMovieListFragment;
+    }
+
     private TheaterFavoritesFragment getTheaterFavoritesFragment() {
-        if (mTheaterFavoritesFragment == null) mTheaterFavoritesFragment = TheaterFavoritesFragment.newInstance();
+        if (mTheaterFavoritesFragment == null) {
+            mTheaterFavoritesFragment = (TheaterFavoritesFragment) getSupportFragmentManager().findFragmentByTag(TheaterFavoritesFragment.class.getName());
+            if (mTheaterFavoritesFragment == null) {
+                getSupportFragmentManager().beginTransaction()
+                        .add(R.id.conFragment, mTheaterFavoritesFragment = TheaterFavoritesFragment.newInstance(), TheaterFavoritesFragment.class.getName())
+                        .commit();
+            }
+        }
         return mTheaterFavoritesFragment;
     }
 
-    private MovieListFragment getMovieListFragment() {
-        if (mMovieListFragment == null) mMovieListFragment = MovieListFragment.newInstance();
-        return mMovieListFragment;
+    private void showMovieListFragment() {
+        getSupportFragmentManager().beginTransaction()
+                .hide(getTheaterFavoritesFragment())
+                .show(getMovieListFragment())
+                .commit();
+    }
+
+    private void showTheaterFavoritesFragment() {
+        getSupportFragmentManager().beginTransaction()
+                .hide(getMovieListFragment())
+                .show(getTheaterFavoritesFragment())
+                .commit();
     }
 
     // endregion
@@ -142,8 +174,7 @@ public class MainActivity extends FragmentActivity implements MovieListCallbacks
     @Override
     public void onAddTheaterClick() {
         Log.d();
-//        startTheaterSearchActivity();
-        LoadMoviesHelper.get().startLoadMoviesIntentService(this);
+        startTheaterSearchActivity();
     }
 
     @Override
@@ -176,6 +207,11 @@ public class MainActivity extends FragmentActivity implements MovieListCallbacks
                         .putAddress(theater.address)
                         .putPictureUri(theater.pictureUri).insert(MainActivity.this);
                 return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                LoadMoviesHelper.get().startLoadMoviesIntentService(MainActivity.this);
             }
         }.execute();
     }
