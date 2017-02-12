@@ -37,7 +37,7 @@ public class LoadMoviesTaskService extends GcmTaskService {
     @Override
     public int onRunTask(TaskParams taskParams) {
         try {
-            LoadMoviesIntentService.handleActionLoadMovies(this);
+            LoadMoviesHelper.get().loadMovies(this);
         } catch (Exception e) {
             return GcmNetworkManager.RESULT_RESCHEDULE;
         }

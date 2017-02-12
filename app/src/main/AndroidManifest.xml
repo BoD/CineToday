@@ -30,6 +30,11 @@
             android:name="io.fabric.ApiKey"
             android:value="${apiKeyFabric}" />
 
+        <!-- Glide configuration -->
+        <meta-data
+            android:name="org.jraf.android.cinetoday.glide.CineTodayGlideModule"
+            android:value="GlideModule" />
+
         <!-- Content provider -->
         <provider
             android:name=".provider.CineTodayProvider"

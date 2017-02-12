@@ -24,11 +24,11 @@
  */
 package org.jraf.android.cinetoday.model.movie;
 
-import android.os.Parcel;
-import android.os.Parcelable;
+import java.util.Calendar;
+import java.util.Date;
 
-public class Showtime implements Parcelable, Comparable<Showtime> {
-    public String time;
+public class Showtime implements Comparable<Showtime> {
+    public Date time;
     public boolean is3d;
 
     @Override
@@ -48,7 +48,6 @@ public class Showtime implements Parcelable, Comparable<Showtime> {
 
         if (is3d != showtime.is3d) return false;
         return time != null ? time.equals(showtime.time) : showtime.time == null;
-
     }
 
     @Override
@@ -57,36 +56,6 @@ public class Showtime implements Parcelable, Comparable<Showtime> {
         result = 31 * result + (is3d ? 1 : 0);
         return result;
     }
-
-    //--------------------------------------------------------------------------
-    // region Parcelable implementation.
-    //--------------------------------------------------------------------------
-
-    @Override
-    public int describeContents() { return 0; }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(time);
-        dest.writeByte(is3d ? (byte) 1 : (byte) 0);
-    }
-
-    public Showtime() {}
-
-    protected Showtime(Parcel in) {
-        time = in.readString();
-        is3d = in.readByte() != 0;
-    }
-
-    public static final Parcelable.Creator<Showtime> CREATOR = new Parcelable.Creator<Showtime>() {
-        @Override
-        public Showtime createFromParcel(Parcel source) {return new Showtime(source);}
-
-        @Override
-        public Showtime[] newArray(int size) {return new Showtime[size];}
-    };
-
-    // endregion
 
     @Override
     public int compareTo(Showtime another) {
@@ -99,5 +68,15 @@ public class Showtime implements Parcelable, Comparable<Showtime> {
             if (!another.is3d) return 0;
             return -1;
         }
+    }
+
+    public Calendar getTimeAsCalendar() {
+        Calendar res = Calendar.getInstance();
+        res.set(Calendar.HOUR_OF_DAY, 0);
+        res.set(Calendar.MINUTE, 0);
+        res.set(Calendar.SECOND, 0);
+        res.set(Calendar.MILLISECOND, 0);
+        res.add(Calendar.MILLISECOND, (int) time.getTime());
+        return res;
     }
 }

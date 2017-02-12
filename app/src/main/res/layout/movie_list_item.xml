@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="callbacks"
+            type="org.jraf.android.cinetoday.app.movie.list.MovieListCallbacks" />
+
+        <variable
+            name="movie"
+            type="org.jraf.android.cinetoday.provider.movie.MovieModel" />
+    </data>
+
+    <android.support.percent.PercentFrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <FrameLayout
+            android:layout_gravity="center_horizontal"
+            android:background="@android:color/white"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:onClick="@{() -> callbacks.onMovieClick(movie.id)}"
+            android:padding="2dp"
+            app:layout_aspectRatio="70%"
+            app:layout_heightPercent="100%">
+
+            <!-- Placeholder -->
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/movie_place_holder_bg"
+                android:scaleType="center"
+                android:src="@drawable/movie_place_holder" />
+
+            <!-- Poster -->
+            <ImageView
+                android:id="@+id/imgPoster"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:uri="@{movie.posterUri}" />
+
+        </FrameLayout>
+
+    </android.support.percent.PercentFrameLayout>
+</layout>

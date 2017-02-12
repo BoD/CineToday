@@ -27,10 +27,11 @@ package org.jraf.android.cinetoday.api.codec.showtime;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
+import java.util.TreeMap;
 import java.util.TreeSet;
-
-import android.os.Bundle;
+import java.util.concurrent.TimeUnit;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -51,7 +52,7 @@ public class ShowtimeCodec {
         return INSTANCE;
     }
 
-    public void fill(Movie movie, JSONObject jsonMovieShowtime, String theaterName, int position, Date date) throws ParseException {
+    public void fill(Movie movie, JSONObject jsonMovieShowtime, String theaterId, Date date) throws ParseException {
         // Example input:
         // Séances du dimanche 1 novembre 2015 : 10:00 (film à 10:15), 14:00 (film à 14:15), 16:00 (film à 16:15), 20:00 (film à 20:15), 21:45 (film à 22:00)
         try {
@@ -98,26 +99,34 @@ public class ShowtimeCodec {
 
             // Make a set and merge it with the previous one if any
             TreeSet<Showtime> todayShowtimesSet = new TreeSet<>();
-            for (String time : todayShowtimesStrElem) {
+            for (String timeStr : todayShowtimesStrElem) {
                 Showtime showtime = new Showtime();
                 showtime.is3d = is3d;
-                showtime.time = time;
+                showtime.time = stringTimeToDate(timeStr);
                 todayShowtimesSet.add(showtime);
             }
             if (movie.todayShowtimes == null) {
-                movie.todayShowtimes = new Bundle(2);
+                movie.todayShowtimes = new TreeMap<>();
             }
-            String key = position + "/" + theaterName;
-            ArrayList<Showtime> showTimesForThisTheater = movie.todayShowtimes.getParcelableArrayList(key);
+            List<Showtime> showTimesForThisTheater = movie.todayShowtimes.get(theaterId);
             if (showTimesForThisTheater != null) {
                 // The movie already has showtimes for *this* theater: merge them into the new ones
                 todayShowtimesSet.addAll(showTimesForThisTheater);
             }
             ArrayList<Showtime> todayShowtimesList = new ArrayList<>(todayShowtimesSet);
-            movie.todayShowtimes.putParcelableArrayList(key, todayShowtimesList);
+            movie.todayShowtimes.put(theaterId, todayShowtimesList);
 
         } catch (JSONException e) {
             throw new ParseException(e);
         }
+    }
+
+    private static Date stringTimeToDate(String time) {
+        String[] split = time.split(":");
+        String hourStr = split[0];
+        String minuteStr = split[1];
+        int hour = Integer.valueOf(hourStr);
+        int minute = Integer.valueOf(minuteStr);
+        return new Date(TimeUnit.HOURS.toMillis(hour) + TimeUnit.MINUTES.toMillis(minute));
     }
 }

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="callbacks"
+            type="org.jraf.android.cinetoday.app.movie.list.MovieListCallbacks" />
+    </data>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:animateLayoutChanges="true">
+
+        <!-- Empty / pick theater -->
+        <Button
+            android:id="@+id/btnEmptyPickTheater"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:onClick="@{() -> callbacks.onAddTheaterClick()}"
+            android:text="@string/theater_favorites_empty_pickTheater"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+        <!-- Loading indicator -->
+        <ProgressBar
+            android:id="@+id/pgbLoading"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
+
+        <!-- List -->
+        <android.support.wearable.view.WearableRecyclerView
+            android:id="@+id/rclList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="vertical" />
+
+    </FrameLayout>
+</layout>

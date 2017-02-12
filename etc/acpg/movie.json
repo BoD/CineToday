@@ -21,13 +21,13 @@
       "nullable": false
     },
     {
-      "documentation": "List of directors.",
+      "documentation": "Director(s).",
       "name": "directors",
       "type": "String",
       "nullable": true
     },
     {
-      "documentation": "List of actors.",
+      "documentation": "Actors.",
       "name": "actors",
       "type": "String",
       "nullable": true
@@ -45,7 +45,7 @@
       "nullable": true
     },
     {
-      "documentation": "List of genres.",
+      "documentation": "List of genres, separated by '|'.",
       "name": "genres",
       "type": "String",
       "nullable": true
