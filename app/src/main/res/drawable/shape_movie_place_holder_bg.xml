@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:dither="true">
+    <gradient
+        android:angle="45"
+        android:centerColor="@color/movie_placeHolder_gradient_center"
+        android:endColor="@color/movie_placeHolder_gradient_end"
+        android:startColor="@color/movie_placeHolder_gradient_start" />
+</shape>

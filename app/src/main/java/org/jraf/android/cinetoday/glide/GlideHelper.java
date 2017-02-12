@@ -37,7 +37,7 @@ public class GlideHelper {
     private static RequestListener<? super String, GlideDrawable> sRequestListener = new RequestListener<String, GlideDrawable>() {
         @Override
         public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
-            Log.w(e, "Could not load image " + model);
+            GlideHelper.onException(e, model);
             return false;
         }
 
@@ -47,9 +47,30 @@ public class GlideHelper {
         }
     };
 
+    private static void onException(Exception e, String model) {Log.w(e, "Could not load image " + model);}
+
     public static void load(String path, ImageView imageView) {
         Glide.with(imageView.getContext()).load(path)
                 .listener(sRequestListener)
+                .centerCrop()
+                .into(imageView);
+    }
+
+    public static void load(String path, ImageView imageView, final RequestListener<? super String, GlideDrawable> listener) {
+        Glide.with(imageView.getContext()).load(path)
+                .listener(new RequestListener<String, GlideDrawable>() {
+                    @Override
+                    public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+                        GlideHelper.onException(e, model);
+                        return listener.onException(e, model, target, isFirstResource);
+                    }
+
+                    @Override
+                    public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache,
+                                                   boolean isFirstResource) {
+                        return listener.onResourceReady(resource, model, target, isFromMemoryCache, isFirstResource);
+                    }
+                })
                 .centerCrop()
                 .into(imageView);
     }
