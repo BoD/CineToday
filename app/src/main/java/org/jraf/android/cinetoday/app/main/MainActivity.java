@@ -37,6 +37,9 @@ import android.support.wearable.view.drawer.WearableNavigationDrawer;
 import android.view.MenuItem;
 
 import org.jraf.android.cinetoday.R;
+import org.jraf.android.cinetoday.app.loadmovies.LoadMoviesHelper;
+import org.jraf.android.cinetoday.app.movie.list.MovieListCallbacks;
+import org.jraf.android.cinetoday.app.movie.list.MovieListFragment;
 import org.jraf.android.cinetoday.app.theater.favorites.TheaterFavoritesCallbacks;
 import org.jraf.android.cinetoday.app.theater.favorites.TheaterFavoritesFragment;
 import org.jraf.android.cinetoday.app.theater.search.TheaterSearchActivity;
@@ -45,11 +48,12 @@ import org.jraf.android.cinetoday.model.theater.Theater;
 import org.jraf.android.cinetoday.provider.theater.TheaterContentValues;
 import org.jraf.android.util.log.Log;
 
-public class MainActivity extends FragmentActivity implements TheaterFavoritesCallbacks, WearableActionDrawer.OnMenuItemClickListener {
+public class MainActivity extends FragmentActivity implements MovieListCallbacks, TheaterFavoritesCallbacks, WearableActionDrawer.OnMenuItemClickListener {
     private static final int REQUEST_ADD_THEATER = 0;
 
     private MainBinding mBinding;
     private TheaterFavoritesFragment mTheaterFavoritesFragment;
+    private MovieListFragment mMovieListFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +81,10 @@ public class MainActivity extends FragmentActivity implements TheaterFavoritesCa
         public void onItemSelected(int position) {
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             switch (position) {
+                case 0:
+                    transaction.replace(R.id.conFragment, getMovieListFragment());
+                    break;
+
                 case 1:
                     transaction.replace(R.id.conFragment, getTheaterFavoritesFragment());
                     break;
@@ -89,6 +97,7 @@ public class MainActivity extends FragmentActivity implements TheaterFavoritesCa
             return mTexts.length;
         }
     }
+
 
     //--------------------------------------------------------------------------
     // region WearableActionDrawer.OnMenuItemClickListener.
@@ -116,18 +125,30 @@ public class MainActivity extends FragmentActivity implements TheaterFavoritesCa
         return mTheaterFavoritesFragment;
     }
 
+    private MovieListFragment getMovieListFragment() {
+        if (mMovieListFragment == null) mMovieListFragment = MovieListFragment.newInstance();
+        return mMovieListFragment;
+    }
+
     // endregion
 
     private void startTheaterSearchActivity() {startActivityForResult(new Intent(this, TheaterSearchActivity.class), REQUEST_ADD_THEATER);}
 
+
     //--------------------------------------------------------------------------
-    // region TheaterFavoritesCallbacks.
+    // region Callbacks.
     //--------------------------------------------------------------------------
 
     @Override
     public void onAddTheaterClick() {
         Log.d();
-        startTheaterSearchActivity();
+//        startTheaterSearchActivity();
+        LoadMoviesHelper.get().startLoadMoviesIntentService(this);
+    }
+
+    @Override
+    public void onMovieClick(long movieId) {
+        Log.d();
     }
 
     // endregion

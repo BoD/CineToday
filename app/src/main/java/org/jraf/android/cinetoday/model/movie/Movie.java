@@ -27,13 +27,12 @@ package org.jraf.android.cinetoday.model.movie;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
+import java.util.SortedMap;
 
-import android.os.Bundle;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.support.annotation.Nullable;
 
-public class Movie implements Parcelable {
+public class Movie {
     public String id;
     public String originalTitle;
     public String localTitle;
@@ -48,12 +47,10 @@ public class Movie implements Parcelable {
     public String synopsis;
 
     /**
-     * Keys: name of the theater, prefixed by its index, e.g. "0/MK2 Bibliothèque" ({@code String}).<br/>
-     * Values: showtimes for today at a given theater ({@code ArrayList<Showtime>}).
+     * Keys: id of the theater<br/>
+     * Values: showtimes for today at a given theater.
      */
-    public Bundle todayShowtimes;
-
-    public Movie() {}
+    public SortedMap<String, List<Showtime>> todayShowtimes;
 
     @Override
     public String toString() {
@@ -87,60 +84,6 @@ public class Movie implements Parcelable {
     public int hashCode() {
         return id.hashCode();
     }
-
-
-    //--------------------------------------------------------------------------
-    // region Parcelable implementation.
-    //--------------------------------------------------------------------------
-
-    @Override
-    public int describeContents() { return 0; }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(id);
-        dest.writeString(originalTitle);
-        dest.writeString(localTitle);
-        dest.writeString(directors);
-        dest.writeString(actors);
-        dest.writeLong(releaseDate != null ? releaseDate.getTime() : -1);
-        dest.writeInt(durationSeconds != null ? durationSeconds : -1);
-        dest.writeStringArray(genres);
-        dest.writeString(posterUri);
-        dest.writeString(trailerUri);
-        dest.writeString(webUri);
-        dest.writeString(synopsis);
-        dest.writeBundle(todayShowtimes);
-    }
-
-    protected Movie(Parcel in) {
-        id = in.readString();
-        originalTitle = in.readString();
-        localTitle = in.readString();
-        directors = in.readString();
-        actors = in.readString();
-        long tmpReleaseDate = in.readLong();
-        releaseDate = tmpReleaseDate == -1 ? null : new Date(tmpReleaseDate);
-        int tmpDurationSeconds = in.readInt();
-        durationSeconds = tmpDurationSeconds == -1 ? null : tmpDurationSeconds;
-        genres = in.createStringArray();
-        posterUri = in.readString();
-        trailerUri = in.readString();
-        webUri = in.readString();
-        synopsis = in.readString();
-        todayShowtimes = in.readBundle(getClass().getClassLoader());
-    }
-
-    public static final Creator<Movie> CREATOR = new Creator<Movie>() {
-        @Override
-        public Movie createFromParcel(Parcel source) {return new Movie(source);}
-
-        @Override
-        public Movie[] newArray(int size) {return new Movie[size];}
-    };
-
-    // endregion
-
 
     /**
      * Compares in reverse release date order.

@@ -46,13 +46,15 @@ import okhttp3.HttpUrl;
 import okhttp3.Request;
 import okhttp3.Response;
 
+import static android.support.annotation.VisibleForTesting.PRIVATE;
+
 import org.jraf.android.cinetoday.api.codec.movie.MovieCodec;
 import org.jraf.android.cinetoday.api.codec.showtime.ShowtimeCodec;
 import org.jraf.android.cinetoday.api.codec.theater.TheaterCodec;
-import org.jraf.android.cinetoday.api.http.HttpUtil;
 import org.jraf.android.cinetoday.model.ParseException;
 import org.jraf.android.cinetoday.model.movie.Movie;
 import org.jraf.android.cinetoday.model.theater.Theater;
+import org.jraf.android.cinetoday.util.http.HttpUtil;
 import org.jraf.android.util.log.Log;
 
 public class Api {
@@ -92,18 +94,18 @@ public class Api {
     }
 
     @WorkerThread
-    public void getMovieList(@NonNull SortedSet<Movie> movies, String theaterId, String theaterName, int position, Date date)
+    public void getMovieList(@NonNull SortedSet<Movie> movies, String theaterId, Date date)
             throws IOException, ParseException {
         HttpUrl url = getBaseBuilder(PATH_SHOWTIMELIST)
                 .addQueryParameter(QUERY_THEATERS_KEY, theaterId)
                 .addQueryParameter(QUERY_DATE_KEY, SIMPLE_DATE_FORMAT.format(date))
                 .build();
         String jsonStr = call(url, false);
-        parseMovieList(movies, jsonStr, theaterName, position, date);
+        parseMovieList(movies, jsonStr, theaterId, date);
     }
 
-    @VisibleForTesting
-    static void parseMovieList(@NonNull SortedSet<Movie> movies, String jsonStr, String theaterName, int position, Date date) throws ParseException {
+    @VisibleForTesting(otherwise = PRIVATE)
+    static void parseMovieList(@NonNull SortedSet<Movie> movies, String jsonStr, String theaterId, Date date) throws ParseException {
         try {
             JSONObject jsonRoot = new JSONObject(jsonStr);
             JSONObject jsonFeed = jsonRoot.getJSONObject("feed");
@@ -133,7 +135,7 @@ public class Api {
                 }
 
                 // Showtimes
-                ShowtimeCodec.get().fill(movie, jsonMovieShowtime, theaterName, position, date);
+                ShowtimeCodec.get().fill(movie, jsonMovieShowtime, theaterId, date);
 
                 // If there is no showtimes for today, skip the movie
                 if (movie.todayShowtimes == null || movie.todayShowtimes.size() == 0) {
@@ -203,7 +205,7 @@ public class Api {
         Request.Builder urlBuilder = new Request.Builder().url(url);
         if (!useCache) urlBuilder.cacheControl(CacheControl.FORCE_NETWORK);
         Request request = urlBuilder.build();
-        Response response = HttpUtil.getOkHttpClient(mContext).newCall(request).execute();
+        Response response = HttpUtil.getCachingOkHttpClient(mContext).newCall(request).execute();
         return response.body().string();
     }
 

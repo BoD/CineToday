@@ -24,10 +24,12 @@
  */
 package org.jraf.android.cinetoday.app.main;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
+import java.util.List;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.StringRes;
 import android.support.wearable.view.CardFragment;
@@ -59,6 +61,9 @@ public class MovieCardFragment extends CardFragment {
             throw new IllegalArgumentException();
         }
     }
+
+    private static DateFormat sTimeFormat;
+
 
     public View onCreateContentView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Bundle args = getArguments();
@@ -169,7 +174,6 @@ public class MovieCardFragment extends CardFragment {
 
         // Find the correct key, based on the column
         ArrayList<String> orderedKeys = new ArrayList<>(movie.todayShowtimes.keySet());
-        Collections.sort(orderedKeys);
         String key = orderedKeys.get(column);
 
         // Theater name
@@ -178,18 +182,14 @@ public class MovieCardFragment extends CardFragment {
 
         // Showtimes
         Calendar nowCalendar = Calendar.getInstance();
-        Calendar showtimeCalendar = Calendar.getInstance();
-        ArrayList<Showtime> todayShowtimes = movie.todayShowtimes.getParcelableArrayList(key);
+        List<Showtime> todayShowtimes = movie.todayShowtimes.get(key);
         assert todayShowtimes != null;
         for (Showtime todayShowtime : todayShowtimes) {
-            String[] hourMinutes = todayShowtime.time.split(":");
-            showtimeCalendar.set(Calendar.HOUR_OF_DAY, Integer.valueOf(hourMinutes[0]));
-            showtimeCalendar.set(Calendar.MINUTE, Integer.valueOf(hourMinutes[1]));
-            boolean isTooLate = showtimeCalendar.before(nowCalendar);
+            boolean isTooLate = todayShowtime.getTimeAsCalendar().before(nowCalendar);
 
             View conShowtimeItem = inflater.inflate(R.layout.movie_card_showtime_item, conShowtimes, false);
             TextView txtShowtime = (TextView) conShowtimeItem.findViewById(R.id.txtShowtime);
-            txtShowtime.setText(todayShowtime.time);
+            txtShowtime.setText(getTimeFormat(getContext()).format(todayShowtime.time));
             TextView txtIs3d = (TextView) conShowtimeItem.findViewById(R.id.txtIs3d);
             if (todayShowtime.is3d) {
                 txtIs3d.setVisibility(View.VISIBLE);
@@ -203,17 +203,24 @@ public class MovieCardFragment extends CardFragment {
         }
     }
 
+    private static DateFormat getTimeFormat(Context context) {
+        if (sTimeFormat == null) {
+            sTimeFormat = android.text.format.DateFormat.getTimeFormat(context);
+        }
+        return sTimeFormat;
+    }
+
     private CharSequence getHtml(@StringRes int stringResId, Object... args) {
         return Html.fromHtml(getString(stringResId, args));
     }
 
     public static MovieCardFragment create(CardType cardType, Movie movie, int column) {
         MovieCardFragment res = new MovieCardFragment();
-        Bundle args = new Bundle();
-        args.putSerializable("cardType", cardType);
-        args.putParcelable("movie", movie);
-        args.putInt("column", column);
-        res.setArguments(args);
+//        Bundle args = new Bundle();
+//        args.putSerializable("cardType", cardType);
+//        args.putParcelable("movie", movie);
+//        args.putInt("column", column);
+//        res.setArguments(args);
         return res;
     }
 }
