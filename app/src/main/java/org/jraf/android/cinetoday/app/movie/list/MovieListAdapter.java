@@ -26,23 +26,32 @@ package org.jraf.android.cinetoday.app.movie.list;
 
 import android.content.Context;
 import android.databinding.DataBindingUtil;
+import android.support.v7.graphics.Palette;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
+import com.bumptech.glide.load.resource.bitmap.GlideBitmapDrawable;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
+
 import org.jraf.android.cinetoday.R;
 import org.jraf.android.cinetoday.databinding.MovieListItemBinding;
+import org.jraf.android.cinetoday.glide.GlideHelper;
 import org.jraf.android.cinetoday.provider.movie.MovieCursor;
 
 public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.ViewHolder> {
     private final Context mContext;
-    private MovieListCallbacks mCallbacks;
+    private MovieListCallbacks mMovieListCallbacks;
+    private PaletteListener mPaletteListener;
     private final LayoutInflater mLayoutInflater;
     private MovieCursor mCursor;
 
-    public MovieListAdapter(Context context, MovieListCallbacks callbacks) {
+    public MovieListAdapter(Context context, MovieListCallbacks movieListCallbacks, PaletteListener paletteListener) {
         mContext = context;
-        mCallbacks = callbacks;
+        mMovieListCallbacks = movieListCallbacks;
+        mPaletteListener = paletteListener;
         mLayoutInflater = LayoutInflater.from(mContext);
     }
 
@@ -62,10 +71,31 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.View
     }
 
     @Override
-    public void onBindViewHolder(MovieListAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(MovieListAdapter.ViewHolder holder, final int position) {
         mCursor.moveToPosition(position);
         holder.itemBinding.setMovie(mCursor);
-        holder.itemBinding.setCallbacks(mCallbacks);
+        holder.itemBinding.setCallbacks(mMovieListCallbacks);
+        GlideHelper.load(mCursor.getPosterUri(), holder.itemBinding.imgPoster, new RequestListener<String, GlideDrawable>() {
+            @Override
+            public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+                return false;
+            }
+
+            @Override
+            public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache,
+                                           boolean isFirstResource) {
+                if (!(resource instanceof GlideBitmapDrawable)) return false;
+                GlideBitmapDrawable glideBitmapDrawable = (GlideBitmapDrawable) resource;
+                Palette.from(glideBitmapDrawable.getBitmap()).generate(new Palette.PaletteAsyncListener() {
+                    @Override
+                    public void onGenerated(Palette p) {
+                        int color = p.getDarkVibrantColor(mContext.getColor(R.color.movie_list_bg));
+                        mPaletteListener.onPaletteAvailable(position, color);
+                    }
+                });
+                return false;
+            }
+        });
         holder.itemBinding.executePendingBindings();
     }
 
