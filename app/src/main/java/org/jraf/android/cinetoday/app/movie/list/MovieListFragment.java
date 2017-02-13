@@ -99,10 +99,9 @@ public class MovieListFragment extends BaseFragment<MovieListCallbacks> implemen
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         mBinding.pgbLoading.setVisibility(View.GONE);
         if (data.getCount() == 0) {
-            // No favorite theaters yet
-            mBinding.btnEmptyPickTheater.setVisibility(View.VISIBLE);
+            mBinding.txtEmpty.setVisibility(View.VISIBLE);
         } else {
-            mBinding.btnEmptyPickTheater.setVisibility(View.GONE);
+            mBinding.txtEmpty.setVisibility(View.GONE);
             if (mAdapter == null) {
                 mAdapter = new MovieListAdapter(getContext(), getCallbacks(), this);
                 mBinding.rclList.setAdapter(mAdapter);

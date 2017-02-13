@@ -44,6 +44,9 @@
     <string name="main_menu_movies">Movies</string>
     <string name="main_menu_theaters">Theaters</string>
 
+    <!-- Movie list -->
+    <string name="movie_list_empty">No movies</string>
+
     <!-- Theater search -->
     <string name="theater_search_edtSearch_hint">Theater</string>
     <string name="theater_search_noResults">No results</string>
