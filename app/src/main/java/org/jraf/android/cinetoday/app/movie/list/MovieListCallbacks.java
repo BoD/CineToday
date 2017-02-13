@@ -25,7 +25,5 @@
 package org.jraf.android.cinetoday.app.movie.list;
 
 public interface MovieListCallbacks {
-    void onAddTheaterClick();
-
     void onMovieClick(long movieId);
 }

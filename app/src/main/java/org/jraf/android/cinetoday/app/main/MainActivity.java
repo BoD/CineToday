@@ -46,6 +46,7 @@ import org.jraf.android.cinetoday.app.theater.search.TheaterSearchActivity;
 import org.jraf.android.cinetoday.databinding.MainBinding;
 import org.jraf.android.cinetoday.model.theater.Theater;
 import org.jraf.android.cinetoday.provider.theater.TheaterContentValues;
+import org.jraf.android.cinetoday.provider.theater.TheaterSelection;
 import org.jraf.android.util.log.Log;
 
 public class MainActivity extends FragmentActivity implements MovieListCallbacks, TheaterFavoritesCallbacks, WearableActionDrawer.OnMenuItemClickListener {
@@ -54,6 +55,7 @@ public class MainActivity extends FragmentActivity implements MovieListCallbacks
     private MainBinding mBinding;
     private TheaterFavoritesFragment mTheaterFavoritesFragment;
     private MovieListFragment mMovieListFragment;
+    private boolean mAtLeastOneFavorite;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +65,8 @@ public class MainActivity extends FragmentActivity implements MovieListCallbacks
         mBinding.actionDrawer.setOnMenuItemClickListener(this);
 
         showMovieListFragment();
+
+        ensureFavoriteTheaters();
     }
 
     private class NavigationDrawerAdapter extends WearableNavigationDrawer.WearableNavigationDrawerAdapter {
@@ -190,7 +194,13 @@ public class MainActivity extends FragmentActivity implements MovieListCallbacks
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case REQUEST_ADD_THEATER:
-                if (resultCode != RESULT_OK) break;
+                if (resultCode != RESULT_OK) {
+                    if (!mAtLeastOneFavorite) {
+                        // There are no favorites and the user canceled? Exit the app!
+                        finish();
+                    }
+                    break;
+                }
                 Theater theater = data.getExtras().getParcelable(TheaterSearchActivity.EXTRA_RESULT);
                 addToFavorites(theater);
                 break;
@@ -211,7 +221,23 @@ public class MainActivity extends FragmentActivity implements MovieListCallbacks
 
             @Override
             protected void onPostExecute(Void aVoid) {
+                mAtLeastOneFavorite = true;
                 LoadMoviesHelper.get().startLoadMoviesIntentService(MainActivity.this);
+            }
+        }.execute();
+    }
+
+    private void ensureFavoriteTheaters() {
+        new AsyncTask<Void, Void, Boolean>() {
+            @Override
+            protected Boolean doInBackground(Void... params) {
+                return new TheaterSelection().count(MainActivity.this) > 0;
+            }
+
+            @Override
+            protected void onPostExecute(Boolean result) {
+                mAtLeastOneFavorite = result;
+                if (!mAtLeastOneFavorite) startTheaterSearchActivity();
             }
         }.execute();
     }
