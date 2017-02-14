@@ -73,9 +73,11 @@ public class TheaterSearchFragment extends BaseFragment<TheaterSearchCallbacks> 
                     child.setScaleY(1 - childOffsetFromCenterRatioNormalized);
                 }
             });
+
+            // Also snaps
+            SnapHelper snapHelper = new LinearSnapHelper();
+            snapHelper.attachToRecyclerView(mBinding.rclList);
         }
-        SnapHelper snapHelper = new LinearSnapHelper();
-        snapHelper.attachToRecyclerView(mBinding.rclList);
         return mBinding.getRoot();
     }
 

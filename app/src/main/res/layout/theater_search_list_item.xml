@@ -19,17 +19,18 @@
         android:background="?android:attr/selectableItemBackground"
         android:onClick="@{() -> callbacks.onTheaterClicked(theater)}"
         android:orientation="vertical"
-        android:padding="4dp">
+        android:paddingBottom="4dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:paddingTop="4dp">
 
         <!-- Name -->
         <TextView
             android:id="@+id/txtName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="sans-serif"
             android:text="@{theater.name}"
-            android:textSize="16sp"
-            android:textStyle="bold"
+            android:textAppearance="@android:style/TextAppearance.Material.Title"
             tools:text="MK2 Bibliothèque" />
 
         <!-- Address -->
@@ -38,7 +39,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@{theater.address}"
-            android:textSize="14sp"
+            android:textAppearance="@android:style/TextAppearance.Material.Body1"
             tools:text="23 rue Nationale\n75013 PARIS" />
 
     </LinearLayout>

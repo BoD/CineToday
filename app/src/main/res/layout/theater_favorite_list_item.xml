@@ -81,7 +81,6 @@
                             android:id="@+id/txtAddress"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
                             android:gravity="center_horizontal"
                             android:maxLines="4"
                             android:shadowColor="@android:color/black"
