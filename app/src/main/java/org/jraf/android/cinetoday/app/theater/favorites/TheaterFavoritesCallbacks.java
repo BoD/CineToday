@@ -26,4 +26,12 @@ package org.jraf.android.cinetoday.app.theater.favorites;
 
 public interface TheaterFavoritesCallbacks {
     void onAddTheaterClick();
+
+    void onTheaterClick(long theaterId);
+
+    void onNavigateClick();
+
+    void onWebSiteClick();
+
+    void onDeleteClick();
 }
