@@ -29,35 +29,47 @@ import android.support.annotation.Nullable;
 import android.view.View;
 import android.view.WindowInsets;
 
-public class ChinHelper {
-    private static ChinHelper INSTANCE = new ChinHelper();
-    private int mChinHeight;
-    private boolean mInitialized;
+public class ScreenShapeHelper {
+    public interface Callbacks {
+        void onChinAvailable(boolean isRound, int chinHeight);
+    }
 
-    private ChinHelper() {}
+    private static ScreenShapeHelper INSTANCE = new ScreenShapeHelper();
+    private Integer mChinHeight;
+    private Boolean mIsRound;
 
-    public static ChinHelper get() {
+    private ScreenShapeHelper() {}
+
+    public static ScreenShapeHelper get() {
         return INSTANCE;
     }
 
-    public void init(Activity activity, @Nullable final Runnable onAfterInit) {
-        if (mInitialized) return;
-        View contentView = activity.getWindow().getDecorView().findViewById(android.R.id.content);
+    public void init(Activity activity, @Nullable final Callbacks callbacks) {
+        if (mChinHeight != null && mIsRound != null) {
+            if (callbacks != null) callbacks.onChinAvailable(mIsRound, mChinHeight);
+            return;
+        }
+        mIsRound = activity.getResources().getConfiguration().isScreenRound();
+        final View contentView = activity.getWindow().getDecorView().findViewById(android.R.id.content);
         contentView.setOnApplyWindowInsetsListener(new View.OnApplyWindowInsetsListener() {
             @Override
             public WindowInsets onApplyWindowInsets(View v, WindowInsets insets) {
                 mChinHeight = insets.getSystemWindowInsetBottom();
                 v.onApplyWindowInsets(insets);
-
-                if (onAfterInit != null) onAfterInit.run();
-
+                if (callbacks != null) callbacks.onChinAvailable(mIsRound, mChinHeight);
+                contentView.setOnApplyWindowInsetsListener(null);
                 return insets;
             }
         });
-        mInitialized = true;
     }
 
     public int getChinHeight() {
+        if (mChinHeight == null) throw new IllegalStateException("init must be called prior to calling getChinHeight");
         return mChinHeight;
+    }
+
+    public boolean getIsRound() {
+        if (mIsRound == null) throw new IllegalStateException("init must be called prior to calling getIsRound");
+        return mIsRound;
     }
 }

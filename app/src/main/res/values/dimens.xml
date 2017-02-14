@@ -1,3 +1,5 @@
 <resources>
     <dimen name="shadow_radius">4dp</dimen>
+    <dimen name="theater_favorite_list_item_buttons_paddingBottom">8dp</dimen>
+    <dimen name="theater_favorite_list_item_buttons_bg_height">40dp</dimen>
 </resources>

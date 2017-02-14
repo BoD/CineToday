@@ -42,6 +42,7 @@ import android.view.ViewGroup;
 import org.jraf.android.cinetoday.R;
 import org.jraf.android.cinetoday.databinding.TheaterSearchListBinding;
 import org.jraf.android.cinetoday.model.theater.Theater;
+import org.jraf.android.cinetoday.util.ui.ScreenShapeHelper;
 import org.jraf.android.util.app.base.BaseFragment;
 
 public class TheaterSearchFragment extends BaseFragment<TheaterSearchCallbacks> implements LoaderManager.LoaderCallbacks<List<Theater>> {
@@ -55,7 +56,7 @@ public class TheaterSearchFragment extends BaseFragment<TheaterSearchCallbacks> 
         mBinding.rclList.setCenterEdgeItems(true);
 
         // Apply an offset + scale on the items depending on their distance from the center (only for Round screens)
-        if (getResources().getConfiguration().isScreenRound()) {
+        if (ScreenShapeHelper.get().getIsRound()) {
             mBinding.rclList.setOffsettingHelper(new DefaultOffsettingHelper() {
                 private static final float FACTOR = .75F;
 
