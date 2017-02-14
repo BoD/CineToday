@@ -48,7 +48,7 @@ import org.jraf.android.cinetoday.databinding.MainBinding;
 import org.jraf.android.cinetoday.model.theater.Theater;
 import org.jraf.android.cinetoday.provider.theater.TheaterContentValues;
 import org.jraf.android.cinetoday.provider.theater.TheaterSelection;
-import org.jraf.android.cinetoday.util.ui.ChinHelper;
+import org.jraf.android.cinetoday.util.ui.ScreenShapeHelper;
 import org.jraf.android.util.log.Log;
 
 public class MainActivity extends FragmentActivity implements MovieListCallbacks, TheaterFavoritesCallbacks, WearableActionDrawer.OnMenuItemClickListener {
@@ -66,16 +66,14 @@ public class MainActivity extends FragmentActivity implements MovieListCallbacks
         mBinding.navigationDrawer.setAdapter(new NavigationDrawerAdapter());
         mBinding.actionDrawer.setOnMenuItemClickListener(this);
 
-        if (getResources().getConfiguration().isScreenRound()) {
-            // XXX If the screen is round, we consider the height *must* be the same as the width
-            // This is a workaround for http://stackoverflow.com/questions/42141631
-            DisplayMetrics metrics = getResources().getDisplayMetrics();
-            mBinding.conFragment.getLayoutParams().height = metrics.widthPixels;
-        }
-
-        ChinHelper.get().init(this, new Runnable() {
+        ScreenShapeHelper.get().init(this, new ScreenShapeHelper.Callbacks() {
             @Override
-            public void run() {
+            public void onChinAvailable(boolean isRound, int chinHeight) {
+                // XXX If the screen is round, we consider the height *must* be the same as the width
+                // This is a workaround for http://stackoverflow.com/questions/42141631
+                DisplayMetrics metrics = getResources().getDisplayMetrics();
+                mBinding.conFragment.getLayoutParams().height = metrics.widthPixels;
+
                 showMovieListFragment();
                 ensureFavoriteTheaters();
             }

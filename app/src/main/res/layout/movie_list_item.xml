@@ -4,7 +4,7 @@
 
     <data>
 
-        <import type="org.jraf.android.cinetoday.util.ui.ChinHelper" />
+        <import type="org.jraf.android.cinetoday.util.ui.ScreenShapeHelper" />
 
         <variable
             name="callbacks"
@@ -20,7 +20,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
-        android:paddingBottom="@{ChinHelper.get().chinHeight}">
+        android:paddingBottom="@{ScreenShapeHelper.get().chinHeight}">
 
         <FrameLayout
             android:layout_gravity="center_horizontal"

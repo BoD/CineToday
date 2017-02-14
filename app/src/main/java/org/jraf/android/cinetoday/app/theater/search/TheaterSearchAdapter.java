@@ -50,7 +50,7 @@ public class TheaterSearchAdapter extends RecyclerView.Adapter<TheaterSearchAdap
     private final Context mContext;
     private TheaterSearchCallbacks mCallbacks;
     private final LayoutInflater mLayoutInflater;
-    private List<Theater> mTheaters = new ArrayList<>();
+    private List<Theater> mTheaters;
     private boolean mLoading;
     private String mSearchQuery;
 
@@ -154,22 +154,34 @@ public class TheaterSearchAdapter extends RecyclerView.Adapter<TheaterSearchAdap
 
     @Override
     public int getItemCount() {
-        if (mLoading || mTheaters.isEmpty()) {
+        if (mLoading) {
+            // Search + loading
+            return 2;
+        } else if (mTheaters == null) {
+            // Search
+            return 1;
+        } else if (mTheaters.isEmpty()) {
+            // Search + empty
             return 2;
         } else {
+            // Search + items
             return mTheaters.size() + 1;
         }
     }
 
     public void setResults(List<Theater> theaters) {
-        mTheaters.clear();
+        if (mTheaters == null) {
+            mTheaters = new ArrayList<>();
+        } else {
+            mTheaters.clear();
+        }
         if (theaters != null) mTheaters.addAll(theaters);
         notifyDataSetChanged();
     }
 
     public void setLoading(boolean loading) {
         mLoading = loading;
-        if (mLoading) mTheaters.clear();
+//        if (loading && mTheaters != null) mTheaters.clear();
         notifyDataSetChanged();
     }
 }

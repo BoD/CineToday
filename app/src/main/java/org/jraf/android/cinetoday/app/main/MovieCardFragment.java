@@ -72,7 +72,7 @@ public class MovieCardFragment extends CardFragment {
         Movie movie = args.getParcelable("movie");
         assert movie != null;
         int column = args.getInt("column");
-        boolean round = getResources().getConfiguration().isScreenRound();
+        boolean round = false;
 
         View view = null;
         switch (cardType) {

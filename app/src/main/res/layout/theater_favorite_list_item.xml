@@ -7,6 +7,8 @@
 
         <import type="org.jraf.android.cinetoday.R" />
 
+        <import type="org.jraf.android.cinetoday.util.ui.ScreenShapeHelper" />
+
         <variable
             name="callbacks"
             type="org.jraf.android.cinetoday.app.theater.favorites.TheaterFavoritesCallbacks" />
@@ -19,25 +21,34 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/cineToday_black"
         android:foreground="?android:attr/selectableItemBackground"
         android:onClick="@{() -> callbacks.onTheaterClick(theater.id)}"
         android:orientation="vertical">
 
-        <!-- Picture -->
-        <ImageView
+        <android.support.wearable.view.BoxInsetLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:uri="@{theater.pictureUri}" />
+            android:layout_height="match_parent">
+
+            <!-- Picture -->
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:foreground="@drawable/shape_theater_favorite_bg"
+                app:layout_box="bottom"
+                app:uri="@{theater.pictureUri}"
+                tools:src="#00F" />
+        </android.support.wearable.view.BoxInsetLayout>
 
         <!-- Overlay -->
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/cineToday_black_a66">
+            android:layout_height="match_parent">
 
             <android.support.wearable.view.BoxInsetLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -87,8 +98,10 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentBottom="true"
                         android:gravity="center_horizontal"
-                        android:orientation="horizontal">
+                        android:orientation="horizontal"
+                        android:paddingBottom="@dimen/theater_favorite_list_item_buttons_paddingBottom">
 
+                        <!-- Navigate -->
                         <ImageButton
                             android:id="@+id/btnNavigate"
                             android:layout_width="0px"
@@ -98,6 +111,7 @@
                             android:onClick="@{() -> callbacks.onNavigateClick()}"
                             android:src="@drawable/ic_directions_24dp" />
 
+                        <!-- Web site -->
                         <ImageButton
                             android:id="@+id/btnWebSite"
                             android:layout_width="0px"
@@ -107,6 +121,7 @@
                             android:onClick="@{() -> callbacks.onWebSiteClick()}"
                             android:src="@drawable/ic_web_24dp" />
 
+                        <!-- Delete -->
                         <ImageButton
                             android:id="@+id/btnDelete"
                             android:layout_width="0px"

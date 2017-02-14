@@ -43,8 +43,7 @@
 
         <!-- Main -->
         <activity
-            android:name=".app.main.MainActivity"
-            android:launchMode="singleTask">
+            android:name=".app.main.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
