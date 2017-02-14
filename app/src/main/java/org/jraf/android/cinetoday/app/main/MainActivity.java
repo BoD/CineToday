@@ -34,6 +34,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.wearable.view.drawer.WearableActionDrawer;
 import android.support.wearable.view.drawer.WearableNavigationDrawer;
+import android.util.DisplayMetrics;
 import android.view.MenuItem;
 
 import org.jraf.android.cinetoday.R;
@@ -47,6 +48,7 @@ import org.jraf.android.cinetoday.databinding.MainBinding;
 import org.jraf.android.cinetoday.model.theater.Theater;
 import org.jraf.android.cinetoday.provider.theater.TheaterContentValues;
 import org.jraf.android.cinetoday.provider.theater.TheaterSelection;
+import org.jraf.android.cinetoday.util.ui.ChinHelper;
 import org.jraf.android.util.log.Log;
 
 public class MainActivity extends FragmentActivity implements MovieListCallbacks, TheaterFavoritesCallbacks, WearableActionDrawer.OnMenuItemClickListener {
@@ -64,9 +66,20 @@ public class MainActivity extends FragmentActivity implements MovieListCallbacks
         mBinding.navigationDrawer.setAdapter(new NavigationDrawerAdapter());
         mBinding.actionDrawer.setOnMenuItemClickListener(this);
 
-        showMovieListFragment();
+        if (getResources().getConfiguration().isScreenRound()) {
+            // XXX If the screen is round, we consider the height *must* be the same as the width
+            // This is a workaround for http://stackoverflow.com/questions/42141631
+            DisplayMetrics metrics = getResources().getDisplayMetrics();
+            mBinding.conFragment.getLayoutParams().height = metrics.widthPixels;
+        }
 
-        ensureFavoriteTheaters();
+        ChinHelper.get().init(this, new Runnable() {
+            @Override
+            public void run() {
+                showMovieListFragment();
+                ensureFavoriteTheaters();
+            }
+        });
     }
 
     private class NavigationDrawerAdapter extends WearableNavigationDrawer.WearableNavigationDrawerAdapter {
@@ -179,6 +192,26 @@ public class MainActivity extends FragmentActivity implements MovieListCallbacks
     public void onAddTheaterClick() {
         Log.d();
         startTheaterSearchActivity();
+    }
+
+    @Override
+    public void onTheaterClick(long theaterId) {
+        Log.d();
+    }
+
+    @Override
+    public void onNavigateClick() {
+        Log.d();
+    }
+
+    @Override
+    public void onWebSiteClick() {
+        Log.d();
+    }
+
+    @Override
+    public void onDeleteClick() {
+        Log.d();
     }
 
     @Override

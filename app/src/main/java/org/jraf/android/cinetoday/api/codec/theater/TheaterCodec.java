@@ -43,7 +43,8 @@ public class TheaterCodec {
         try {
             theater.id = jsonTheater.getString("code");
             theater.name = jsonTheater.getString("name");
-            theater.address = jsonTheater.getString("address") + "\n" + jsonTheater.getString("postalCode") + " " + jsonTheater.getString("city");
+            theater.address =
+                    jsonTheater.getString("address").trim() + "\n" + jsonTheater.getString("postalCode").trim() + " " + jsonTheater.getString("city").trim();
 
             JSONObject jsonPoster = jsonTheater.optJSONObject("poster");
             if (jsonPoster != null) {

@@ -105,7 +105,6 @@ public class TheaterSearchFragment extends BaseFragment<TheaterSearchCallbacks> 
     @Override
     public void onLoadFinished(Loader<List<Theater>> loader, List<Theater> data) {
         mAdapter.setLoading(false);
-        boolean empty = data == null || data.isEmpty();
         mAdapter.setResults(data);
     }
 

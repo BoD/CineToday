@@ -30,10 +30,8 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
-import android.support.v7.widget.LinearSnapHelper;
+import android.support.v7.widget.PagerSnapHelper;
 import android.support.v7.widget.SnapHelper;
-import android.support.wearable.view.DefaultOffsettingHelper;
-import android.support.wearable.view.WearableRecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -65,27 +63,7 @@ public class TheaterFavoritesFragment extends BaseFragment<TheaterFavoritesCallb
         mBinding.setCallbacks(getCallbacks());
 
         mBinding.rclList.setHasFixedSize(true);
-        mBinding.rclList.setCenterEdgeItems(true);
-        // Apply an offset + scale on the items depending on their distance from the center (only for Round screens)
-        if (getResources().getConfiguration().isScreenRound()) {
-            mBinding.rclList.setOffsettingHelper(new DefaultOffsettingHelper() {
-                private static final float FACTOR = .75F;
-
-                @Override
-                public void updateChild(View child, WearableRecyclerView parent) {
-                    super.updateChild(child, parent);
-
-                    float childTop = child.getY() + child.getHeight() / 2F;
-                    float childOffsetFromCenter = childTop - parent.getHeight() / 2F;
-                    float childOffsetFromCenterRatio = Math.abs(childOffsetFromCenter / parent.getHeight());
-                    float childOffsetFromCenterRatioNormalized = childOffsetFromCenterRatio * FACTOR;
-
-                    child.setScaleX(1 - childOffsetFromCenterRatioNormalized);
-                    child.setScaleY(1 - childOffsetFromCenterRatioNormalized);
-                }
-            });
-        }
-        SnapHelper snapHelper = new LinearSnapHelper();
+        SnapHelper snapHelper = new PagerSnapHelper();
         snapHelper.attachToRecyclerView(mBinding.rclList);
 
         return mBinding.getRoot();

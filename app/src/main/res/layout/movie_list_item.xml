@@ -4,6 +4,8 @@
 
     <data>
 
+        <import type="org.jraf.android.cinetoday.util.ui.ChinHelper" />
+
         <variable
             name="callbacks"
             type="org.jraf.android.cinetoday.app.movie.list.MovieListCallbacks" />
@@ -16,11 +18,14 @@
     <android.support.percent.PercentFrameLayout
         android:id="@+id/conPoster"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:paddingBottom="@{ChinHelper.get().chinHeight}">
 
         <FrameLayout
             android:layout_gravity="center_horizontal"
             android:background="@android:color/white"
+            android:elevation="8dp"
             android:foreground="?android:attr/selectableItemBackground"
             android:onClick="@{() -> callbacks.onMovieClick(movie.id)}"
             android:padding="2dp"
