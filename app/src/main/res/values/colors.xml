@@ -27,5 +27,6 @@
     <color name="movie_placeHolder_gradient_end">@color/cineToday_gray_15</color>
     <color name="theater_favorite_list_item_overlay_start">@color/cineToday_black_a33</color>
     <color name="theater_favorite_list_item_overlay_end">@color/cineToday_black_a66</color>
+    <color name="cineToday_white">#FFF</color>
 
 </resources>
