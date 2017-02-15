@@ -24,6 +24,7 @@
  */
 package org.jraf.android.cinetoday.app.movie.list;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.support.v7.graphics.Palette;
@@ -71,7 +72,7 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.View
     }
 
     @Override
-    public void onBindViewHolder(MovieListAdapter.ViewHolder holder, final int position) {
+    public void onBindViewHolder(MovieListAdapter.ViewHolder holder, @SuppressLint("RecyclerView") final int position) {
         mCursor.moveToPosition(position);
         holder.itemBinding.setMovie(mCursor);
         holder.itemBinding.setCallbacks(mMovieListCallbacks);
