@@ -7,8 +7,6 @@
 
         <import type="org.jraf.android.cinetoday.R" />
 
-        <import type="org.jraf.android.cinetoday.util.ui.ScreenShapeHelper" />
-
         <variable
             name="callbacks"
             type="org.jraf.android.cinetoday.app.theater.favorites.TheaterFavoritesCallbacks" />

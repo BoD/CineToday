@@ -53,18 +53,14 @@
 
         <!-- Theater search -->
         <activity
-            android:name=".app.theater.search.TheaterSearchActivity"
-            android:label="@string/theater_search_title" />
+            android:name=".app.theater.search.TheaterSearchActivity" />
 
-        <!-- Preferences -->
-        <activity
-            android:name=".app.prefs.PreferencesActivity"
-            android:label="@string/preferences_title" />
+        <!-- Movie details -->
+        <activity android:name=".app.movie.details.MovieDetailsActivity" />
 
         <!-- About -->
         <activity
-            android:name="org.jraf.android.util.about.AboutActivity"
-            android:label="@string/about_title" />
+            android:name="org.jraf.android.util.about.AboutActivity" />
 
         <!-- Load movies -->
         <service

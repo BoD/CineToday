@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="org.jraf.android.cinetoday.util.ui.ScreenShapeHelper" />
+
+        <variable
+            name="movie"
+            type="org.jraf.android.cinetoday.app.movie.details.MovieViewModel" />
+
+    </data>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:animateLayoutChanges="true">
+
+        <!-- Loading indicator -->
+        <ProgressBar
+            android:id="@+id/pgbLoading"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
+
+        <!-- Movie details -->
+        <ScrollView
+            android:id="@+id/conMovieDetails"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fillViewport="true"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingBottom="@{ScreenShapeHelper.get().safeMargin * 1.5F + @dimen/movie_details_padding_vertical}"
+                android:paddingLeft="@{ScreenShapeHelper.get().safeMargin / 2F + @dimen/movie_details_padding_horizontal}"
+                android:paddingRight="@{ScreenShapeHelper.get().safeMargin / 2F + @dimen/movie_details_padding_horizontal}"
+                android:paddingTop="@{ScreenShapeHelper.get().safeMargin * 1.5F + @dimen/movie_details_padding_vertical}"
+                tools:paddingBottom="40dp"
+                tools:paddingTop="40dp">
+
+                <!-- Title -->
+                <TextView
+                    android:id="@+id/txtTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{movie.titleLocal}"
+                    android:textAppearance="@android:style/TextAppearance.Material.Title"
+                    tools:text="Star Wars Episode VII: The Force Awakens" />
+
+                <!-- Directors -->
+                <TextView
+                    android:id="@+id/txtDirectors"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:textAppearance="@android:style/TextAppearance.Material.Body1"
+                    app:textHtml="@{@string/movie_card_directors(movie.directors)}"
+                    app:visible="@{movie.directors}"
+                    tools:text="By JJ Abrahms" />
+
+                <!-- Genres -->
+                <TextView
+                    android:id="@+id/txtGenres"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="@{movie.genresFormatted}"
+                    android:textAppearance="@android:style/TextAppearance.Material.Body1"
+                    android:textStyle="italic"
+                    app:visible="@{movie.genres}"
+                    tools:text="Thriller" />
+
+                <!-- Actors -->
+                <TextView
+                    android:id="@+id/txtActors"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:textAppearance="@android:style/TextAppearance.Material.Body1"
+                    app:textHtml="@{@string/movie_card_actors(movie.actors)}"
+                    app:visible="@{movie.actors}"
+                    tools:text="With Daisy Railey, John Boyega, Mark Hamill" />
+
+                <!-- Synopsis -->
+                <TextView
+                    android:id="@+id/txtSynopsis"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:breakStrategy="balanced"
+                    android:hyphenationFrequency="full"
+                    android:text="@{movie.synopsis}"
+                    android:textAppearance="@android:style/TextAppearance.Material.Body1"
+                    tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean in augue eu sem feugiat rutrum. Nam volutpat dolor arcu, sit amet ornare augue rutrum sit amet. Vestibulum congue, nisi non placerat dictum, justo neque fringilla nibh, eu sagittis lacus sapien sit amet lectus. Morbi sed ullamcorper est. Aliquam tempus, sem at cursus molestie, turpis lectus ultricies felis, non condimentum urna quam ac lectus. Vestibulum turpis tellus, commodo cursus tempor a, venenatis at ligula" />
+
+                <!-- Duration -->
+                <TextView
+                    android:id="@+id/txtDuration"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:textAppearance="@android:style/TextAppearance.Material.Body1"
+                    app:textHtml="@{@string/movie_card_duration(movie.durationFormatted)}"
+                    tools:text="Duration: 1h43" />
+
+                <!-- Original title -->
+                <TextView
+                    android:id="@+id/txtOriginalTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:textAppearance="@android:style/TextAppearance.Material.Body1"
+                    android:textColor="?android:textColorSecondary"
+                    app:textHtml="@{@string/movie_card_originalTitle(movie.titleOriginal)}"
+                    app:visible="@{!movie.titleLocal.equals(movie.titleOriginal)}"
+                    tools:text="Original title: Star Wars Episode VII: The Force Awakens" />
+
+            </LinearLayout>
+
+        </ScrollView>
+
+        <!--<android.support.wearable.view.BoxInsetLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent">-->
+
+        <!--<View-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:background="#8F00"-->
+        <!--app:layout_box="all" />-->
+        <!--</android.support.wearable.view.BoxInsetLayout>-->
+    </FrameLayout>
+</layout>
