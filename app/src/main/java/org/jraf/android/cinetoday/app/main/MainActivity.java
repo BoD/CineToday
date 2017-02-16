@@ -28,6 +28,7 @@ import android.content.Intent;
 import android.content.res.TypedArray;
 import android.databinding.DataBindingUtil;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -39,6 +40,7 @@ import android.view.MenuItem;
 
 import org.jraf.android.cinetoday.R;
 import org.jraf.android.cinetoday.app.loadmovies.LoadMoviesHelper;
+import org.jraf.android.cinetoday.app.movie.details.MovieDetailsActivity;
 import org.jraf.android.cinetoday.app.movie.list.MovieListCallbacks;
 import org.jraf.android.cinetoday.app.movie.list.MovieListFragment;
 import org.jraf.android.cinetoday.app.theater.favorites.TheaterFavoritesCallbacks;
@@ -46,6 +48,7 @@ import org.jraf.android.cinetoday.app.theater.favorites.TheaterFavoritesFragment
 import org.jraf.android.cinetoday.app.theater.search.TheaterSearchActivity;
 import org.jraf.android.cinetoday.databinding.MainBinding;
 import org.jraf.android.cinetoday.model.theater.Theater;
+import org.jraf.android.cinetoday.provider.movie.MovieColumns;
 import org.jraf.android.cinetoday.provider.theater.TheaterContentValues;
 import org.jraf.android.cinetoday.provider.theater.TheaterSelection;
 import org.jraf.android.cinetoday.util.ui.ScreenShapeHelper;
@@ -215,6 +218,9 @@ public class MainActivity extends FragmentActivity implements MovieListCallbacks
     @Override
     public void onMovieClick(long movieId) {
         Log.d();
+        Intent intent = new Intent(this, MovieDetailsActivity.class)
+                .setData(Uri.withAppendedPath(MovieColumns.CONTENT_URI, String.valueOf(movieId)));
+        startActivity(intent);
     }
 
     // endregion

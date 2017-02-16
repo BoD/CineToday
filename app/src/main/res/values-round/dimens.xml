@@ -1,4 +1,5 @@
 <resources>
     <dimen name="theater_favorite_list_item_buttons_paddingBottom">0px</dimen>
     <dimen name="theater_favorite_list_item_buttons_bg_height">32dp</dimen>
+    <dimen name="movie_details_padding_horizontal">0dp</dimen>
 </resources>

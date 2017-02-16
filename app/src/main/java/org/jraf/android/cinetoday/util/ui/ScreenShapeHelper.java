@@ -26,6 +26,7 @@ package org.jraf.android.cinetoday.util.ui;
 
 import android.app.Activity;
 import android.support.annotation.Nullable;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.WindowInsets;
 
@@ -37,6 +38,7 @@ public class ScreenShapeHelper {
     private static ScreenShapeHelper INSTANCE = new ScreenShapeHelper();
     private Integer mChinHeight;
     private Boolean mIsRound;
+    private Float mSafeMargin;
 
     private ScreenShapeHelper() {}
 
@@ -50,6 +52,15 @@ public class ScreenShapeHelper {
             return;
         }
         mIsRound = activity.getResources().getConfiguration().isScreenRound();
+        if (mIsRound) {
+            // Assume width=height for round screens (I guess oval is not supported)
+            DisplayMetrics metrics = activity.getResources().getDisplayMetrics();
+            // Pythagorean Theorem
+            double edge = metrics.widthPixels / Math.sqrt(2);
+            mSafeMargin = (float) ((metrics.widthPixels - edge) / 2.0);
+        } else {
+            mSafeMargin = 0F;
+        }
         final View contentView = activity.getWindow().getDecorView().findViewById(android.R.id.content);
         contentView.setOnApplyWindowInsetsListener(new View.OnApplyWindowInsetsListener() {
             @Override
@@ -71,5 +82,10 @@ public class ScreenShapeHelper {
     public boolean getIsRound() {
         if (mIsRound == null) throw new IllegalStateException("init must be called prior to calling getIsRound");
         return mIsRound;
+    }
+
+    public float getSafeMargin() {
+        if (mSafeMargin == null) throw new IllegalStateException("init must be called prior to calling getSafeMargin");
+        return mSafeMargin;
     }
 }
