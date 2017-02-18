@@ -71,7 +71,7 @@ public class MainActivity extends FragmentActivity implements MovieListCallbacks
 
         ScreenShapeHelper.get().init(this, new ScreenShapeHelper.Callbacks() {
             @Override
-            public void onChinAvailable(boolean isRound, int chinHeight) {
+            public void onScreenShapeAvailable(boolean isRound, int chinHeight, float safeMargin) {
                 // XXX If the screen is round, we consider the height *must* be the same as the width
                 // This is a workaround for http://stackoverflow.com/questions/42141631
                 DisplayMetrics metrics = getResources().getDisplayMetrics();

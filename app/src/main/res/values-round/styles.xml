@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="movieDetails">
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="Movie.Details.Title" parent="@android:style/Widget.DeviceDefault.TextView">
+        <item name="android:textAppearance">@android:style/TextAppearance.Material.Title</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="Movie.Details.Field" parent="@android:style/Widget.DeviceDefault.TextView">
+        <item name="android:textAppearance">@android:style/TextAppearance.Material.Body1</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="Movie.Details.Field.Synopsis">
+        <item name="android:gravity">start</item>
+    </style>
+
+
+</resources>

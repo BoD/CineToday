@@ -11,8 +11,14 @@
             type="org.jraf.android.cinetoday.app.movie.list.MovieListCallbacks" />
 
         <variable
+            name="movieId"
+            type="long" />
+
+        <variable
             name="movie"
             type="org.jraf.android.cinetoday.provider.movie.MovieModel" />
+
+
     </data>
 
     <android.support.percent.PercentFrameLayout
@@ -27,7 +33,7 @@
             android:background="@android:color/white"
             android:elevation="8dp"
             android:foreground="?android:attr/selectableItemBackground"
-            android:onClick="@{() -> callbacks.onMovieClick(movie.id)}"
+            android:onClick="@{() -> callbacks.onMovieClick(movieId)}"
             android:padding="2dp"
             app:layout_aspectRatio="70%"
             app:layout_heightPercent="100%">

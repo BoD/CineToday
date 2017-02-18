@@ -75,6 +75,7 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.View
     public void onBindViewHolder(MovieListAdapter.ViewHolder holder, @SuppressLint("RecyclerView") final int position) {
         mCursor.moveToPosition(position);
         holder.itemBinding.setMovie(mCursor);
+        holder.itemBinding.setMovieId(mCursor.getId());
         holder.itemBinding.setCallbacks(mMovieListCallbacks);
         GlideHelper.load(mCursor.getPosterUri(), holder.itemBinding.imgPoster, new RequestListener<String, GlideDrawable>() {
             @Override

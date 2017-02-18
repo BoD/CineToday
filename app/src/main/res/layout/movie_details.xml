@@ -28,7 +28,7 @@
 
         <!-- Movie details -->
         <ScrollView
-            android:id="@+id/conMovieDetails"
+            android:id="@+id/conMovie"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fillViewport="true"
@@ -36,6 +36,8 @@
             tools:visibility="visible">
 
             <LinearLayout
+                android:id="@+id/conMovieDetails"
+                style="@style/movieDetails"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
@@ -48,76 +50,69 @@
 
                 <!-- Title -->
                 <TextView
-                    android:id="@+id/txtTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@{movie.titleLocal}"
-                    android:textAppearance="@android:style/TextAppearance.Material.Title"
+                    style="@style/Movie.Details.Title"
                     tools:text="Star Wars Episode VII: The Force Awakens" />
 
                 <!-- Directors -->
                 <TextView
-                    android:id="@+id/txtDirectors"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:textAppearance="@android:style/TextAppearance.Material.Body1"
+                    style="@style/Movie.Details.Field"
                     app:textHtml="@{@string/movie_card_directors(movie.directors)}"
                     app:visible="@{movie.directors}"
                     tools:text="By JJ Abrahms" />
 
                 <!-- Genres -->
                 <TextView
-                    android:id="@+id/txtGenres"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
                     android:text="@{movie.genresFormatted}"
-                    android:textAppearance="@android:style/TextAppearance.Material.Body1"
+                    style="@style/Movie.Details.Field"
                     android:textStyle="italic"
                     app:visible="@{movie.genres}"
                     tools:text="Thriller" />
 
                 <!-- Actors -->
                 <TextView
-                    android:id="@+id/txtActors"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
-                    android:textAppearance="@android:style/TextAppearance.Material.Body1"
+                    style="@style/Movie.Details.Field"
                     app:textHtml="@{@string/movie_card_actors(movie.actors)}"
                     app:visible="@{movie.actors}"
                     tools:text="With Daisy Railey, John Boyega, Mark Hamill" />
 
                 <!-- Synopsis -->
                 <TextView
-                    android:id="@+id/txtSynopsis"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:breakStrategy="balanced"
+                    android:breakStrategy="high_quality"
                     android:hyphenationFrequency="full"
                     android:text="@{movie.synopsis}"
-                    android:textAppearance="@android:style/TextAppearance.Material.Body1"
+                    style="@style/Movie.Details.Field.Synopsis"
                     tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean in augue eu sem feugiat rutrum. Nam volutpat dolor arcu, sit amet ornare augue rutrum sit amet. Vestibulum congue, nisi non placerat dictum, justo neque fringilla nibh, eu sagittis lacus sapien sit amet lectus. Morbi sed ullamcorper est. Aliquam tempus, sem at cursus molestie, turpis lectus ultricies felis, non condimentum urna quam ac lectus. Vestibulum turpis tellus, commodo cursus tempor a, venenatis at ligula" />
 
                 <!-- Duration -->
                 <TextView
-                    android:id="@+id/txtDuration"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:textAppearance="@android:style/TextAppearance.Material.Body1"
+                    style="@style/Movie.Details.Field"
                     app:textHtml="@{@string/movie_card_duration(movie.durationFormatted)}"
                     tools:text="Duration: 1h43" />
 
                 <!-- Original title -->
                 <TextView
-                    android:id="@+id/txtOriginalTitle"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
-                    android:textAppearance="@android:style/TextAppearance.Material.Body1"
+                    style="@style/Movie.Details.Field"
                     android:textColor="?android:textColorSecondary"
                     app:textHtml="@{@string/movie_card_originalTitle(movie.titleOriginal)}"
                     app:visible="@{!movie.titleLocal.equals(movie.titleOriginal)}"
@@ -126,16 +121,5 @@
             </LinearLayout>
 
         </ScrollView>
-
-        <!--<android.support.wearable.view.BoxInsetLayout-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent">-->
-
-        <!--<View-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:background="#8F00"-->
-        <!--app:layout_box="all" />-->
-        <!--</android.support.wearable.view.BoxInsetLayout>-->
     </FrameLayout>
 </layout>

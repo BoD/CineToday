@@ -185,7 +185,7 @@ public class MovieCardFragment extends CardFragment {
         List<Showtime> todayShowtimes = movie.todayShowtimes.get(key);
         assert todayShowtimes != null;
         for (Showtime todayShowtime : todayShowtimes) {
-            boolean isTooLate = todayShowtime.getTimeAsCalendar().before(nowCalendar);
+            boolean isTooLate = false;
 
             View conShowtimeItem = inflater.inflate(R.layout.movie_card_showtime_item, conShowtimes, false);
             TextView txtShowtime = (TextView) conShowtimeItem.findViewById(R.id.txtShowtime);
