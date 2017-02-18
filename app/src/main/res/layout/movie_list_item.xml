@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -28,7 +29,7 @@
         android:clipToPadding="false"
         android:paddingBottom="@{ScreenShapeHelper.get().chinHeight}">
 
-        <FrameLayout
+        <android.support.percent.PercentFrameLayout
             android:layout_gravity="center_horizontal"
             android:background="@android:color/white"
             android:elevation="8dp"
@@ -46,13 +47,23 @@
                 android:scaleType="center"
                 android:src="@drawable/movie_place_holder" />
 
+            <!-- Title -->
+            <TextView
+                style="@style/Movie.Details.Title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="@{movie.titleLocal}"
+                app:layout_marginTopPercent="20%"
+                tools:text="The Revenant" />
+
             <!-- Poster -->
             <ImageView
                 android:id="@+id/imgPoster"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
 
-        </FrameLayout>
+        </android.support.percent.PercentFrameLayout>
 
     </android.support.percent.PercentFrameLayout>
 </layout>
