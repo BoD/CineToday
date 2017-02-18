@@ -24,7 +24,6 @@
  */
 package org.jraf.android.cinetoday.model.movie;
 
-import java.util.Calendar;
 import java.util.Date;
 
 public class Showtime implements Comparable<Showtime> {
@@ -68,15 +67,5 @@ public class Showtime implements Comparable<Showtime> {
             if (!another.is3d) return 0;
             return -1;
         }
-    }
-
-    public Calendar getTimeAsCalendar() {
-        Calendar res = Calendar.getInstance();
-        res.set(Calendar.HOUR_OF_DAY, 0);
-        res.set(Calendar.MINUTE, 0);
-        res.set(Calendar.SECOND, 0);
-        res.set(Calendar.MILLISECOND, 0);
-        res.add(Calendar.MILLISECOND, (int) time.getTime());
-        return res;
     }
 }

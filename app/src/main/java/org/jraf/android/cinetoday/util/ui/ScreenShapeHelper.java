@@ -32,7 +32,7 @@ import android.view.WindowInsets;
 
 public class ScreenShapeHelper {
     public interface Callbacks {
-        void onChinAvailable(boolean isRound, int chinHeight);
+        void onScreenShapeAvailable(boolean isRound, int chinHeight, float safeMargin);
     }
 
     private static ScreenShapeHelper INSTANCE = new ScreenShapeHelper();
@@ -47,8 +47,8 @@ public class ScreenShapeHelper {
     }
 
     public void init(Activity activity, @Nullable final Callbacks callbacks) {
-        if (mChinHeight != null && mIsRound != null) {
-            if (callbacks != null) callbacks.onChinAvailable(mIsRound, mChinHeight);
+        if (mChinHeight != null && mIsRound != null && mSafeMargin != null) {
+            if (callbacks != null) callbacks.onScreenShapeAvailable(mIsRound, mChinHeight, mSafeMargin);
             return;
         }
         mIsRound = activity.getResources().getConfiguration().isScreenRound();
@@ -67,7 +67,7 @@ public class ScreenShapeHelper {
             public WindowInsets onApplyWindowInsets(View v, WindowInsets insets) {
                 mChinHeight = insets.getSystemWindowInsetBottom();
                 v.onApplyWindowInsets(insets);
-                if (callbacks != null) callbacks.onChinAvailable(mIsRound, mChinHeight);
+                if (callbacks != null) callbacks.onScreenShapeAvailable(mIsRound, mChinHeight, mSafeMargin);
                 contentView.setOnApplyWindowInsetsListener(null);
                 return insets;
             }

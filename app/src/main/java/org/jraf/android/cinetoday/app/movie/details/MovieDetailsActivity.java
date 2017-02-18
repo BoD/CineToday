@@ -24,44 +24,124 @@
  */
 package org.jraf.android.cinetoday.app.movie.details;
 
+import java.text.DateFormat;
+import java.util.Calendar;
+
+import android.content.ContentUris;
+import android.content.Context;
 import android.database.Cursor;
 import android.databinding.DataBindingUtil;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.TextView;
 
 import org.jraf.android.cinetoday.R;
 import org.jraf.android.cinetoday.databinding.MovieDetailsBinding;
+import org.jraf.android.cinetoday.provider.showtime.ShowtimeCursor;
+import org.jraf.android.cinetoday.provider.showtime.ShowtimeSelection;
 
 public class MovieDetailsActivity extends FragmentActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+    private static final int LOADER_MOVIE = 0;
+    private static final int LOADER_SHOWTIMES = 1;
+
+    private static DateFormat sTimeFormat;
+
     private MovieDetailsBinding mBinding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mBinding = DataBindingUtil.setContentView(this, R.layout.movie_details);
-        getSupportLoaderManager().initLoader(0, null, this);
+        getSupportLoaderManager().initLoader(LOADER_MOVIE, null, this);
+        getSupportLoaderManager().initLoader(LOADER_SHOWTIMES, null, this);
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return new CursorLoader(this, getIntent().getData(), null, null, null, null);
+        Uri movieUri = getIntent().getData();
+        switch (id) {
+            case LOADER_MOVIE:
+                return new CursorLoader(this, movieUri, null, null, null, null);
+
+            case LOADER_SHOWTIMES:
+                return new ShowtimeSelection()
+                        .movieId(ContentUris.parseId(movieUri))
+                        .orderByTheaterId()
+                        .getCursorLoader(this);
+        }
+        return null;
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        mBinding.pgbLoading.setVisibility(View.GONE);
-        mBinding.conMovieDetails.setVisibility(View.VISIBLE);
-        MovieViewModel movieCursor = new MovieViewModel(this, data);
-        movieCursor.moveToFirst();
-        mBinding.setMovie(movieCursor);
+        switch (loader.getId()) {
+            case LOADER_MOVIE:
+                mBinding.pgbLoading.setVisibility(View.GONE);
+                mBinding.conMovie.setVisibility(View.VISIBLE);
+                MovieViewModel movieCursor = new MovieViewModel(this, data);
+                movieCursor.moveToFirst();
+                mBinding.setMovie(movieCursor);
+                break;
+
+            case LOADER_SHOWTIMES:
+                ShowtimeCursor showtimeCursor = (ShowtimeCursor) data;
+                showtimeCursor.moveToPosition(-1);
+                long theaterId = -1;
+                Calendar now = Calendar.getInstance();
+                LayoutInflater inflater = LayoutInflater.from(this);
+                while (showtimeCursor.moveToNext()) {
+                    // Theater name
+                    if (showtimeCursor.getTheaterId() != theaterId) {
+                        theaterId = showtimeCursor.getTheaterId();
+                        TextView txtTheaterName =
+                                (TextView) inflater.inflate(R.layout.movie_details_theater_name, mBinding.conMovieDetails, false);
+                        txtTheaterName.setText(showtimeCursor.getTheaterName());
+                        mBinding.conMovieDetails.addView(txtTheaterName);
+                    }
+
+                    // Time
+                    boolean isTooLate = getTimeAsCalendar(showtimeCursor.getTime().getTime()).before(now);
+                    View conShowtimeItem = inflater.inflate(R.layout.movie_card_showtime_item, mBinding.conMovieDetails, false);
+                    TextView txtShowtime = (TextView) conShowtimeItem.findViewById(R.id.txtShowtime);
+                    txtShowtime.setText(getTimeFormat(this).format(showtimeCursor.getTime()));
+                    TextView txtIs3d = (TextView) conShowtimeItem.findViewById(R.id.txtIs3d);
+                    if (showtimeCursor.getIs3d()) {
+                        txtIs3d.setVisibility(View.VISIBLE);
+                    } else {
+                        txtIs3d.setVisibility(View.GONE);
+                    }
+                    if (isTooLate) {
+                        conShowtimeItem.setAlpha(.33F);
+                    }
+                    mBinding.conMovieDetails.addView(conShowtimeItem);
+                }
+                break;
+        }
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {}
 
+    private static Calendar getTimeAsCalendar(long time) {
+        Calendar res = Calendar.getInstance();
+        res.set(Calendar.HOUR_OF_DAY, 0);
+        res.set(Calendar.MINUTE, 0);
+        res.set(Calendar.SECOND, 0);
+        res.set(Calendar.MILLISECOND, 0);
+        res.add(Calendar.MILLISECOND, (int) time);
+        return res;
+    }
 
+    private static DateFormat getTimeFormat(Context context) {
+        if (sTimeFormat == null) {
+            sTimeFormat = android.text.format.DateFormat.getTimeFormat(context);
+        }
+        return sTimeFormat;
+    }
 }
