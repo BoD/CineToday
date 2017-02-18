@@ -34,6 +34,7 @@ import android.support.annotation.ColorInt;
 import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PagerSnapHelper;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SnapHelper;
@@ -47,14 +48,13 @@ import org.jraf.android.cinetoday.databinding.MovieListBinding;
 import org.jraf.android.cinetoday.provider.movie.MovieCursor;
 import org.jraf.android.cinetoday.provider.movie.MovieSelection;
 import org.jraf.android.util.app.base.BaseFragment;
-import org.jraf.android.util.log.Log;
 
 public class MovieListFragment extends BaseFragment<MovieListCallbacks> implements LoaderManager.LoaderCallbacks<Cursor>, PaletteListener {
     private MovieListBinding mBinding;
     private MovieListAdapter mAdapter;
     private SparseIntArray mPalette = new SparseIntArray();
-    private int mCurrentPosition;
     private ValueAnimator mColorAnimation;
+    private boolean mScrolling;
 
     public static MovieListFragment newInstance() {
         return new MovieListFragment();
@@ -72,21 +72,9 @@ public class MovieListFragment extends BaseFragment<MovieListCallbacks> implemen
         mBinding = DataBindingUtil.inflate(inflater, R.layout.movie_list, container, false);
         mBinding.setCallbacks(getCallbacks());
         mBinding.rclList.setHasFixedSize(true);
-        SnapHelper snapHelper = new PagerSnapHelper() {
-            @Nullable
-            @Override
-            public View findSnapView(RecyclerView.LayoutManager layoutManager) {
-                View res = super.findSnapView(layoutManager);
-                int position = mBinding.rclList.getChildAdapterPosition(res);
-                Log.d("position=" + position);
-                if (mCurrentPosition != position) {
-                    mCurrentPosition = position;
-                    updateBackgroundColor();
-                }
-                return res;
-            }
-        };
+        SnapHelper snapHelper = new PagerSnapHelper();
         snapHelper.attachToRecyclerView(mBinding.rclList);
+        mBinding.rclList.addOnScrollListener(mOnScrollListener);
         return mBinding.getRoot();
     }
 
@@ -119,17 +107,18 @@ public class MovieListFragment extends BaseFragment<MovieListCallbacks> implemen
     @Override
     public void onPaletteAvailable(int position, @ColorInt int color) {
         mPalette.put(position, color);
-        if (mCurrentPosition == position) {
-            updateBackgroundColor();
+        int firstItemPosition = ((LinearLayoutManager) mBinding.rclList.getLayoutManager()).findFirstVisibleItemPosition();
+        if (firstItemPosition == position && !mScrolling) {
+            updateBackgroundColor(position);
         }
     }
 
-    private void updateBackgroundColor() {
-        if (mPalette.indexOfKey(mCurrentPosition) > -1) {
+    private void updateBackgroundColor(int position) {
+        if (mPalette.indexOfKey(position) > -1) {
             if (mColorAnimation != null) mColorAnimation.cancel();
 
             int colorFrom = ((ColorDrawable) mBinding.conRoot.getBackground()).getColor();
-            int colorTo = mPalette.get(mCurrentPosition);
+            int colorTo = mPalette.get(position);
             mColorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
             mColorAnimation.setDuration(200);
             mColorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
@@ -141,4 +130,34 @@ public class MovieListFragment extends BaseFragment<MovieListCallbacks> implemen
             mColorAnimation.start();
         }
     }
+
+    private RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
+        ArgbEvaluator mArgbEvaluator = new ArgbEvaluator();
+
+        @Override
+        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+            mScrolling = newState != RecyclerView.SCROLL_STATE_IDLE;
+        }
+
+        @Override
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            int firstItemPosition = ((LinearLayoutManager) recyclerView.getLayoutManager()).findFirstVisibleItemPosition();
+            View firstItem = recyclerView.getLayoutManager().findViewByPosition(firstItemPosition);
+            float firstItemTop = firstItem.getY();
+            float firstItemRatio = Math.abs(firstItemTop / recyclerView.getHeight());
+
+            int nextItemPosition = firstItemPosition + 1;
+            if (nextItemPosition >= mAdapter.getItemCount()) return;
+
+            int firstItemColor = mPalette.get(firstItemPosition, -1);
+            if (firstItemColor == -1) return;
+
+            int nextItemColor = mPalette.get(nextItemPosition, -1);
+            if (nextItemColor == -1) return;
+
+            int resultColor = (int) mArgbEvaluator.evaluate(firstItemRatio, firstItemColor, nextItemColor);
+            mBinding.conRoot.setBackgroundColor(resultColor);
+        }
+    };
+
 }
