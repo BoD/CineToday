@@ -27,5 +27,5 @@ package org.jraf.android.cinetoday.app.movie.list;
 import android.support.annotation.ColorInt;
 
 interface PaletteListener {
-    void onPaletteAvailable(int position, @ColorInt int color);
+    void onPaletteAvailable(int position, @ColorInt int color, boolean cached, long id);
 }

@@ -15,8 +15,7 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:animateLayoutChanges="true">
+        android:layout_height="match_parent">
 
         <!-- Loading indicator -->
         <ProgressBar
@@ -50,69 +49,69 @@
 
                 <!-- Title -->
                 <TextView
+                    style="@style/Movie.Details.Title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@{movie.titleLocal}"
-                    style="@style/Movie.Details.Title"
                     tools:text="Star Wars Episode VII: The Force Awakens" />
 
                 <!-- Directors -->
                 <TextView
+                    style="@style/Movie.Details.Field"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    style="@style/Movie.Details.Field"
                     app:textHtml="@{@string/movie_card_directors(movie.directors)}"
                     app:visible="@{movie.directors}"
                     tools:text="By JJ Abrahms" />
 
                 <!-- Genres -->
                 <TextView
+                    style="@style/Movie.Details.Field"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
                     android:text="@{movie.genresFormatted}"
-                    style="@style/Movie.Details.Field"
                     android:textStyle="italic"
                     app:visible="@{movie.genres}"
                     tools:text="Thriller" />
 
                 <!-- Actors -->
                 <TextView
+                    style="@style/Movie.Details.Field"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
-                    style="@style/Movie.Details.Field"
                     app:textHtml="@{@string/movie_card_actors(movie.actors)}"
                     app:visible="@{movie.actors}"
                     tools:text="With Daisy Railey, John Boyega, Mark Hamill" />
 
                 <!-- Synopsis -->
                 <TextView
+                    style="@style/Movie.Details.Field.Synopsis"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:breakStrategy="high_quality"
                     android:hyphenationFrequency="full"
                     android:text="@{movie.synopsis}"
-                    style="@style/Movie.Details.Field.Synopsis"
                     tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean in augue eu sem feugiat rutrum. Nam volutpat dolor arcu, sit amet ornare augue rutrum sit amet. Vestibulum congue, nisi non placerat dictum, justo neque fringilla nibh, eu sagittis lacus sapien sit amet lectus. Morbi sed ullamcorper est. Aliquam tempus, sem at cursus molestie, turpis lectus ultricies felis, non condimentum urna quam ac lectus. Vestibulum turpis tellus, commodo cursus tempor a, venenatis at ligula" />
 
                 <!-- Duration -->
                 <TextView
+                    style="@style/Movie.Details.Field"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    style="@style/Movie.Details.Field"
                     app:textHtml="@{@string/movie_card_duration(movie.durationFormatted)}"
                     tools:text="Duration: 1h43" />
 
                 <!-- Original title -->
                 <TextView
+                    style="@style/Movie.Details.Field"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
-                    style="@style/Movie.Details.Field"
                     android:textColor="?android:textColorSecondary"
                     app:textHtml="@{@string/movie_card_originalTitle(movie.titleOriginal)}"
                     app:visible="@{!movie.titleLocal.equals(movie.titleOriginal)}"

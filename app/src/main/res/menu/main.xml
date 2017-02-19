@@ -5,9 +5,4 @@
         android:icon="@drawable/ic_add_18dp"
         android:title="@string/main_action_addFavorite" />
 
-    <item
-        android:id="@+id/main_action_add_favorite2"
-        android:icon="@drawable/ic_add_18dp"
-        android:title="@string/main_action_addFavorite" />
-
 </menu>

@@ -3,8 +3,10 @@
 
     <style name="Theme.CineToday" parent="@android:style/Theme.DeviceDefault">
         <item name="android:colorPrimary">@color/primary</item>
-        <item name="android:colorPrimaryDark">@color/primary_dark</item>
         <item name="android:colorAccent">@color/accent</item>
+        <item name="android:colorPrimaryDark">@color/primary_dark</item>
+        <item name="android:colorBackground">@color/background</item>
+        <item name="android:colorBackgroundFloating">@color/primary_dark</item>
         <item name="android:textColorLink">@color/accent</item>
         <item name="android:buttonStyle">@style/Widget.AppTheme.Button.Colored</item>
     </style>

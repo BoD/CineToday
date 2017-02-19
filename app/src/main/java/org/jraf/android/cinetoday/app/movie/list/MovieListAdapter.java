@@ -77,27 +77,33 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.View
         holder.itemBinding.setMovie(mCursor);
         holder.itemBinding.setMovieId(mCursor.getId());
         holder.itemBinding.setCallbacks(mMovieListCallbacks);
-        GlideHelper.load(mCursor.getPosterUri(), holder.itemBinding.imgPoster, new RequestListener<String, GlideDrawable>() {
-            @Override
-            public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
-                return false;
-            }
+        final long id = mCursor.getId();
+        if (mCursor.getColor() != null) {
+            mPaletteListener.onPaletteAvailable(position, mCursor.getColor(), true, id);
+            GlideHelper.load(mCursor.getPosterUri(), holder.itemBinding.imgPoster);
+        } else {
+            GlideHelper.load(mCursor.getPosterUri(), holder.itemBinding.imgPoster, new RequestListener<String, GlideDrawable>() {
+                @Override
+                public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+                    return false;
+                }
 
-            @Override
-            public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache,
-                                           boolean isFirstResource) {
-                if (!(resource instanceof GlideBitmapDrawable)) return false;
-                GlideBitmapDrawable glideBitmapDrawable = (GlideBitmapDrawable) resource;
-                Palette.from(glideBitmapDrawable.getBitmap()).generate(new Palette.PaletteAsyncListener() {
-                    @Override
-                    public void onGenerated(Palette p) {
-                        int color = p.getDarkVibrantColor(mContext.getColor(R.color.movie_list_bg));
-                        mPaletteListener.onPaletteAvailable(position, color);
-                    }
-                });
-                return false;
-            }
-        });
+                @Override
+                public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache,
+                                               boolean isFirstResource) {
+                    if (!(resource instanceof GlideBitmapDrawable)) return false;
+                    GlideBitmapDrawable glideBitmapDrawable = (GlideBitmapDrawable) resource;
+                    Palette.from(glideBitmapDrawable.getBitmap()).generate(new Palette.PaletteAsyncListener() {
+                        @Override
+                        public void onGenerated(Palette p) {
+                            int color = p.getDarkVibrantColor(mContext.getColor(R.color.movie_list_bg));
+                            mPaletteListener.onPaletteAvailable(position, color, false, id);
+                        }
+                    });
+                    return false;
+                }
+            });
+        }
         holder.itemBinding.executePendingBindings();
     }
 
