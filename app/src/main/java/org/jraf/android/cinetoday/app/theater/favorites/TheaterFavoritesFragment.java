@@ -77,17 +77,11 @@ public class TheaterFavoritesFragment extends BaseFragment<TheaterFavoritesCallb
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         mBinding.pgbLoading.setVisibility(View.GONE);
-        if (data.getCount() == 0) {
-            // No favorite theaters yet
-            mBinding.btnEmptyPickTheater.setVisibility(View.VISIBLE);
-        } else {
-            mBinding.btnEmptyPickTheater.setVisibility(View.GONE);
-            if (mAdapter == null) {
-                mAdapter = new TheaterFavoritesAdapter(getContext(), getCallbacks());
-                mBinding.rclList.setAdapter(mAdapter);
-            }
-            mAdapter.swapCursor((TheaterCursor) data);
+        if (mAdapter == null) {
+            mAdapter = new TheaterFavoritesAdapter(getContext(), getCallbacks());
+            mBinding.rclList.setAdapter(mAdapter);
         }
+        mAdapter.swapCursor((TheaterCursor) data);
     }
 
     @Override

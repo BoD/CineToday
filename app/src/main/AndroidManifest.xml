@@ -35,32 +35,13 @@
             android:name="org.jraf.android.cinetoday.glide.CineTodayGlideModule"
             android:value="GlideModule" />
 
+
         <!-- Content provider -->
         <provider
             android:name=".provider.CineTodayProvider"
             android:authorities="org.jraf.android.cinetoday.provider"
             android:exported="false" />
 
-        <!-- Main -->
-        <activity
-            android:name=".app.main.MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-
-        <!-- Theater search -->
-        <activity
-            android:name=".app.theater.search.TheaterSearchActivity" />
-
-        <!-- Movie details -->
-        <activity android:name=".app.movie.details.MovieDetailsActivity" />
-
-        <!-- About -->
-        <activity
-            android:name="org.jraf.android.util.about.AboutActivity" />
 
         <!-- Load movies -->
         <service
@@ -74,6 +55,32 @@
                 <action android:name="com.google.android.gms.gcm.ACTION_TASK_READY" />
             </intent-filter>
         </service>
+
+
+        <!-- Main -->
+        <activity
+            android:name=".app.main.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- Theater search -->
+        <activity android:name=".app.theater.search.TheaterSearchActivity" />
+
+        <!-- Movie details -->
+        <activity android:name=".app.movie.details.MovieDetailsActivity" />
+
+        <!-- About -->
+        <activity android:name="org.jraf.android.util.about.AboutActivity" />
+
+        <!-- Confirmation -->
+        <activity
+            android:name="android.support.wearable.activity.ConfirmationActivity"
+            android:theme="@style/ConfirmationActivity" />
+
     </application>
 
 </manifest>
