@@ -13,7 +13,6 @@
         android:id="@+id/conRoot"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:animateLayoutChanges="true"
         android:background="@color/movie_list_bg">
 
         <!-- Empty / pick theater -->

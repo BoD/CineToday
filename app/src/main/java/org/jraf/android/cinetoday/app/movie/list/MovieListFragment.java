@@ -90,8 +90,10 @@ public class MovieListFragment extends BaseFragment<MovieListCallbacks> implemen
         mBinding.pgbLoading.setVisibility(View.GONE);
         if (data.getCount() == 0) {
             mBinding.txtEmpty.setVisibility(View.VISIBLE);
+            mBinding.rclList.setVisibility(View.GONE);
         } else {
             mBinding.txtEmpty.setVisibility(View.GONE);
+            mBinding.rclList.setVisibility(View.VISIBLE);
             if (mAdapter == null) {
                 mAdapter = new MovieListAdapter(getContext(), getCallbacks(), this);
                 mBinding.rclList.setAdapter(mAdapter);
