@@ -84,9 +84,10 @@ public class MovieDetailsActivity extends FragmentActivity implements LoaderMana
             case LOADER_MOVIE:
                 mBinding.pgbLoading.setVisibility(View.GONE);
                 mBinding.conMovie.setVisibility(View.VISIBLE);
-                MovieViewModel movieCursor = new MovieViewModel(this, data);
-                movieCursor.moveToFirst();
-                mBinding.setMovie(movieCursor);
+                MovieViewModel movieViewModel = new MovieViewModel(this, data);
+                movieViewModel.moveToFirst();
+                mBinding.setMovie(movieViewModel);
+                mBinding.getRoot().setBackgroundColor(movieViewModel.getColor());
                 break;
 
             case LOADER_SHOWTIMES:

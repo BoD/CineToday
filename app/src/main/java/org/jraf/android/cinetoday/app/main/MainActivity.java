@@ -36,7 +36,10 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.wearable.view.drawer.WearableActionDrawer;
 import android.support.wearable.view.drawer.WearableNavigationDrawer;
 import android.util.DisplayMetrics;
+import android.view.Gravity;
+import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.ViewTreeObserver;
 
 import org.jraf.android.cinetoday.R;
 import org.jraf.android.cinetoday.app.loadmovies.LoadMoviesHelper;
@@ -79,6 +82,16 @@ public class MainActivity extends FragmentActivity implements MovieListCallbacks
 
                 showMovieListFragment();
                 ensureFavoriteTheaters();
+            }
+        });
+
+        new MenuInflater(this).inflate(R.menu.main, mBinding.actionDrawer.getMenu());
+
+        mBinding.drawerLayout.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                mBinding.drawerLayout.peekDrawer(Gravity.TOP);
+                mBinding.drawerLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
             }
         });
     }
@@ -128,6 +141,7 @@ public class MainActivity extends FragmentActivity implements MovieListCallbacks
         switch (menuItem.getItemId()) {
             case R.id.main_action_add_favorite:
                 Log.d();
+                mBinding.actionDrawer.closeDrawer();
                 startTheaterSearchActivity();
                 break;
         }
@@ -171,6 +185,8 @@ public class MainActivity extends FragmentActivity implements MovieListCallbacks
                 .hide(getTheaterFavoritesFragment())
                 .show(getMovieListFragment())
                 .commit();
+
+        mBinding.actionDrawer.lockDrawerClosed();
     }
 
     private void showTheaterFavoritesFragment() {
@@ -178,6 +194,9 @@ public class MainActivity extends FragmentActivity implements MovieListCallbacks
                 .hide(getMovieListFragment())
                 .show(getTheaterFavoritesFragment())
                 .commit();
+
+        mBinding.actionDrawer.unlockDrawer();
+        mBinding.drawerLayout.peekDrawer(Gravity.BOTTOM);
     }
 
     // endregion

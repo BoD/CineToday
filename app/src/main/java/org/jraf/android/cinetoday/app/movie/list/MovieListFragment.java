@@ -29,6 +29,7 @@ import android.animation.ValueAnimator;
 import android.database.Cursor;
 import android.databinding.DataBindingUtil;
 import android.graphics.drawable.ColorDrawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.ColorInt;
 import android.support.annotation.Nullable;
@@ -45,6 +46,7 @@ import android.view.ViewGroup;
 
 import org.jraf.android.cinetoday.R;
 import org.jraf.android.cinetoday.databinding.MovieListBinding;
+import org.jraf.android.cinetoday.provider.movie.MovieContentValues;
 import org.jraf.android.cinetoday.provider.movie.MovieCursor;
 import org.jraf.android.cinetoday.provider.movie.MovieSelection;
 import org.jraf.android.util.app.base.BaseFragment;
@@ -105,16 +107,31 @@ public class MovieListFragment extends BaseFragment<MovieListCallbacks> implemen
 
 
     @Override
-    public void onPaletteAvailable(int position, @ColorInt int color) {
+    public void onPaletteAvailable(int position, @ColorInt final int color, boolean cached, final long id) {
+        if (mPalette.indexOfKey(position) >= 0 && position > 0) return;
         mPalette.put(position, color);
         int firstItemPosition = ((LinearLayoutManager) mBinding.rclList.getLayoutManager()).findFirstVisibleItemPosition();
+        if (firstItemPosition == RecyclerView.NO_POSITION) firstItemPosition = 0;
         if (firstItemPosition == position && !mScrolling) {
             updateBackgroundColor(position);
+        }
+        if (!cached) {
+            // Save the value
+            new AsyncTask<Void, Void, Void>() {
+                @Override
+                protected Void doInBackground(Void... params) {
+                    new MovieContentValues()
+                            .putColor(color)
+                            .notify(false)
+                            .update(getContext(), new MovieSelection().id(id));
+                    return null;
+                }
+            }.execute();
         }
     }
 
     private void updateBackgroundColor(int position) {
-        if (mPalette.indexOfKey(position) > -1) {
+        if (mPalette.indexOfKey(position) >= 0) {
             if (mColorAnimation != null) mColorAnimation.cancel();
 
             int colorFrom = ((ColorDrawable) mBinding.conRoot.getBackground()).getColor();

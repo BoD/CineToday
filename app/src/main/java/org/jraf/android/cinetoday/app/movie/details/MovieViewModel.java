@@ -55,5 +55,4 @@ public class MovieViewModel extends MovieCursor {
         if (minutes == 0) return mContext.getResources().getQuantityString(R.plurals.durationHours, hours, hours);
         return mContext.getString(R.string.durationHoursMinutes, hours, minutes);
     }
-
 }

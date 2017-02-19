@@ -73,6 +73,12 @@
       "name": "synopsis",
       "type": "String",
       "nullable": false
+    },
+    {
+      "documentation": "Color (based on the poster).",
+      "name": "color",
+      "type": "Integer",
+      "nullable": true
     }
   ],
   "constraints": [
