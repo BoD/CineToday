@@ -41,6 +41,7 @@
     <string name="main_page_add_intro_additional">Choissez plusieurs cinémas !</string>
     <string name="main_menu_movies">Films</string>
     <string name="main_menu_theaters">Cinémas</string>
+    <string name="main_confirmation_openedOnPhone">Ouvert sur téléphone</string>
 
     <!-- Movie list -->
     <string name="movie_list_empty">Aucun film</string>
