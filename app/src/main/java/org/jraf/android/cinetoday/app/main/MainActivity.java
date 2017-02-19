@@ -36,12 +36,11 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
-import android.support.wearable.activity.ConfirmationActivity;
+import android.support.wearable.view.ConfirmationOverlay;
 import android.support.wearable.view.drawer.WearableActionDrawer;
 import android.support.wearable.view.drawer.WearableNavigationDrawer;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.ViewTreeObserver;
 
@@ -58,13 +57,19 @@ import org.jraf.android.cinetoday.app.theater.search.TheaterSearchActivity;
 import org.jraf.android.cinetoday.databinding.MainBinding;
 import org.jraf.android.cinetoday.model.theater.Theater;
 import org.jraf.android.cinetoday.provider.movie.MovieColumns;
+import org.jraf.android.cinetoday.provider.movie.MovieSelection;
+import org.jraf.android.cinetoday.provider.showtime.ShowtimeColumns;
 import org.jraf.android.cinetoday.provider.theater.TheaterContentValues;
 import org.jraf.android.cinetoday.provider.theater.TheaterSelection;
 import org.jraf.android.cinetoday.util.ui.ScreenShapeHelper;
+import org.jraf.android.util.dialog.AlertDialogListener;
+import org.jraf.android.util.dialog.FrameworkAlertDialogFragment;
 import org.jraf.android.util.log.Log;
 
-public class MainActivity extends FragmentActivity implements MovieListCallbacks, TheaterFavoritesCallbacks, WearableActionDrawer.OnMenuItemClickListener {
+public class MainActivity extends FragmentActivity implements MovieListCallbacks, TheaterFavoritesCallbacks, WearableActionDrawer.OnMenuItemClickListener,
+        AlertDialogListener {
     private static final int REQUEST_ADD_THEATER = 0;
+    private static final int DIALOG_THEATER_DELETE_CONFIRM = 0;
 
     private MainBinding mBinding;
     private TheaterFavoritesFragment mTheaterFavoritesFragment;
@@ -77,6 +82,7 @@ public class MainActivity extends FragmentActivity implements MovieListCallbacks
         mBinding = DataBindingUtil.setContentView(this, R.layout.main);
         mBinding.navigationDrawer.setAdapter(new NavigationDrawerAdapter());
         mBinding.actionDrawer.setOnMenuItemClickListener(this);
+        mBinding.actionDrawer.setShouldOnlyOpenWhenAtTop(true);
 
         ScreenShapeHelper.get().init(this, new ScreenShapeHelper.Callbacks() {
             @Override
@@ -91,7 +97,7 @@ public class MainActivity extends FragmentActivity implements MovieListCallbacks
             }
         });
 
-        new MenuInflater(this).inflate(R.menu.main, mBinding.actionDrawer.getMenu());
+        getMenuInflater().inflate(R.menu.main, mBinding.actionDrawer.getMenu());
 
         mBinding.drawerLayout.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
@@ -238,6 +244,12 @@ public class MainActivity extends FragmentActivity implements MovieListCallbacks
     @Override
     public void onTheaterDeleteClick(long theaterId) {
         Log.d();
+        FrameworkAlertDialogFragment.newInstance(DIALOG_THEATER_DELETE_CONFIRM)
+                .message(R.string.main_theater_delete_confirm_message)
+                .positiveButton(R.string.main_delete)
+                .negativeButton(android.R.string.cancel)
+                .payload(theaterId)
+                .show(this);
     }
 
     @Override
@@ -254,14 +266,12 @@ public class MainActivity extends FragmentActivity implements MovieListCallbacks
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
         intent.addCategory(Intent.CATEGORY_BROWSABLE);
         RemoteIntent.startRemoteActivity(this, intent, null);
-        startConfirmationActivity();
-    }
 
-    private void startConfirmationActivity() {
-        Intent intent = new Intent(this, ConfirmationActivity.class);
-        intent.putExtra(ConfirmationActivity.EXTRA_ANIMATION_TYPE, ConfirmationActivity.OPEN_ON_PHONE_ANIMATION);
-        intent.putExtra(ConfirmationActivity.EXTRA_MESSAGE, getString(R.string.main_confirmation_openedOnPhone));
-        startActivity(intent);
+        // 'Open on phone' confirmation overlay
+        new ConfirmationOverlay()
+                .setType(ConfirmationOverlay.OPEN_ON_PHONE_ANIMATION)
+                .setMessage(getString(R.string.main_confirmation_openedOnPhone))
+                .showOn(this);
     }
 
 
@@ -317,4 +327,44 @@ public class MainActivity extends FragmentActivity implements MovieListCallbacks
             }
         }.execute();
     }
+
+
+    //--------------------------------------------------------------------------
+    // region AlertDialogListener.
+    //--------------------------------------------------------------------------
+
+    @Override
+    public void onDialogClickPositive(int dialogId, Object payload) {
+        switch (dialogId) {
+            case DIALOG_THEATER_DELETE_CONFIRM:
+                final long theaterId = (long) payload;
+                new AsyncTask<Void, Void, Void>() {
+                    @Override
+                    protected Void doInBackground(Void... params) {
+                        new TheaterSelection().id(theaterId).delete(MainActivity.this);
+
+                        // Delete movies that have no show times
+                        MovieSelection movieSelection = new MovieSelection();
+                        movieSelection.addRaw("(select "
+                                + " count(" + ShowtimeColumns.TABLE_NAME + "." + ShowtimeColumns._ID + ")"
+                                + " from " + ShowtimeColumns.TABLE_NAME
+                                + " where " + ShowtimeColumns.TABLE_NAME + "." + ShowtimeColumns.MOVIE_ID
+                                + " = " + MovieColumns.TABLE_NAME + "." + MovieColumns._ID
+                                + " ) = 0");
+                        movieSelection.delete(MainActivity.this);
+                        return null;
+                    }
+                }.execute();
+                break;
+        }
+    }
+
+    @Override
+    public void onDialogClickNegative(int dialogId, Object payload) {}
+
+    @Override
+    public void onDialogClickListItem(int dialogId, int index, Object payload) {}
+
+
+    // endregion
 }
