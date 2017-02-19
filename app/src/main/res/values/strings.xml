@@ -43,6 +43,7 @@
     <string name="main_page_add_intro_additional">Choose additional theaters!</string>
     <string name="main_menu_movies">Movies</string>
     <string name="main_menu_theaters">Theaters</string>
+    <string name="main_confirmation_openedOnPhone">Opened on phone</string>
 
     <!-- Movie list -->
     <string name="movie_list_empty">No movies</string>

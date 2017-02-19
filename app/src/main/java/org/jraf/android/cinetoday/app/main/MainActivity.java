@@ -24,6 +24,9 @@
  */
 package org.jraf.android.cinetoday.app.main;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 import android.content.Intent;
 import android.content.res.TypedArray;
 import android.databinding.DataBindingUtil;
@@ -33,6 +36,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
+import android.support.wearable.activity.ConfirmationActivity;
 import android.support.wearable.view.drawer.WearableActionDrawer;
 import android.support.wearable.view.drawer.WearableNavigationDrawer;
 import android.util.DisplayMetrics;
@@ -40,6 +44,8 @@ import android.view.Gravity;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.ViewTreeObserver;
+
+import com.google.android.wearable.intent.RemoteIntent;
 
 import org.jraf.android.cinetoday.R;
 import org.jraf.android.cinetoday.app.loadmovies.LoadMoviesHelper;
@@ -209,28 +215,28 @@ public class MainActivity extends FragmentActivity implements MovieListCallbacks
     //--------------------------------------------------------------------------
 
     @Override
-    public void onAddTheaterClick() {
+    public void onTheaterNavigateClick(String theaterAddress) {
         Log.d();
-        startTheaterSearchActivity();
+        try {
+            theaterAddress = URLEncoder.encode(theaterAddress, "utf-8");
+        } catch (UnsupportedEncodingException ignored) {}
+        Uri uri = Uri.parse("http://maps.google.com/maps?f=d&daddr=" + theaterAddress);
+        openOnPhone(uri);
     }
 
     @Override
-    public void onTheaterClick(long theaterId) {
+    public void onTheaterWebSiteClick(String theaterName) {
         Log.d();
+        theaterName = "cinema " + theaterName;
+        try {
+            theaterName = URLEncoder.encode(theaterName, "utf-8");
+        } catch (UnsupportedEncodingException ignored) {}
+        Uri uri = Uri.parse("https://www.google.com/search?sourceid=navclient&btnI=I&q=" + theaterName);
+        openOnPhone(uri);
     }
 
     @Override
-    public void onNavigateClick() {
-        Log.d();
-    }
-
-    @Override
-    public void onWebSiteClick() {
-        Log.d();
-    }
-
-    @Override
-    public void onDeleteClick() {
+    public void onTheaterDeleteClick(long theaterId) {
         Log.d();
     }
 
@@ -243,6 +249,20 @@ public class MainActivity extends FragmentActivity implements MovieListCallbacks
     }
 
     // endregion
+
+    private void openOnPhone(Uri uri) {
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        intent.addCategory(Intent.CATEGORY_BROWSABLE);
+        RemoteIntent.startRemoteActivity(this, intent, null);
+        startConfirmationActivity();
+    }
+
+    private void startConfirmationActivity() {
+        Intent intent = new Intent(this, ConfirmationActivity.class);
+        intent.putExtra(ConfirmationActivity.EXTRA_ANIMATION_TYPE, ConfirmationActivity.OPEN_ON_PHONE_ANIMATION);
+        intent.putExtra(ConfirmationActivity.EXTRA_MESSAGE, getString(R.string.main_confirmation_openedOnPhone));
+        startActivity(intent);
+    }
 
 
     @Override

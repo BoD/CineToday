@@ -12,6 +12,18 @@
             type="org.jraf.android.cinetoday.app.theater.favorites.TheaterFavoritesCallbacks" />
 
         <variable
+            name="theaterId"
+            type="long" />
+
+        <variable
+            name="theaterAddress"
+            type="String" />
+
+        <variable
+            name="theaterName"
+            type="String" />
+
+        <variable
             name="theater"
             type="org.jraf.android.cinetoday.provider.theater.TheaterModel" />
     </data>
@@ -21,7 +33,6 @@
         android:layout_height="match_parent"
         android:background="@color/cineToday_black"
         android:foreground="?android:attr/selectableItemBackground"
-        android:onClick="@{() -> callbacks.onTheaterClick(theater.id)}"
         android:orientation="vertical">
 
         <android.support.wearable.view.BoxInsetLayout
@@ -105,7 +116,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:background="?android:selectableItemBackgroundBorderless"
-                            android:onClick="@{() -> callbacks.onNavigateClick()}"
+                            android:onClick="@{() -> callbacks.onTheaterNavigateClick(theaterAddress)}"
                             android:src="@drawable/ic_directions_24dp" />
 
                         <!-- Web site -->
@@ -115,7 +126,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:background="?android:selectableItemBackgroundBorderless"
-                            android:onClick="@{() -> callbacks.onWebSiteClick()}"
+                            android:onClick="@{() -> callbacks.onTheaterWebSiteClick(theaterName)}"
                             android:src="@drawable/ic_web_24dp" />
 
                         <!-- Delete -->
@@ -125,7 +136,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:background="?android:selectableItemBackgroundBorderless"
-                            android:onClick="@{() -> callbacks.onDeleteClick()}"
+                            android:onClick="@{() -> callbacks.onTheaterDeleteClick(theaterId)}"
                             android:src="@drawable/ic_delete_24dp" />
                     </LinearLayout>
 

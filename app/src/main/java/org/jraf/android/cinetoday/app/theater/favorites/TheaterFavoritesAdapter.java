@@ -64,6 +64,9 @@ public class TheaterFavoritesAdapter extends RecyclerView.Adapter<TheaterFavorit
     @Override
     public void onBindViewHolder(TheaterFavoritesAdapter.ViewHolder holder, int position) {
         mCursor.moveToPosition(position);
+        holder.itemBinding.setTheaterAddress(mCursor.getAddress());
+        holder.itemBinding.setTheaterName(mCursor.getName());
+        holder.itemBinding.setTheaterId(mCursor.getId());
         holder.itemBinding.setTheater(mCursor);
         holder.itemBinding.setCallbacks(mCallbacks);
         holder.itemBinding.executePendingBindings();
