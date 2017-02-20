@@ -25,12 +25,14 @@
 package org.jraf.android.cinetoday.app.movie.details;
 
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
 import android.databinding.DataBindingUtil;
+import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -45,6 +47,7 @@ import org.jraf.android.cinetoday.R;
 import org.jraf.android.cinetoday.databinding.MovieDetailsBinding;
 import org.jraf.android.cinetoday.provider.showtime.ShowtimeCursor;
 import org.jraf.android.cinetoday.provider.showtime.ShowtimeSelection;
+import org.jraf.android.util.ui.animation.AnimationUtil;
 
 public class MovieDetailsActivity extends FragmentActivity implements LoaderManager.LoaderCallbacks<Cursor> {
     private static final int LOADER_MOVIE = 0;
@@ -53,6 +56,7 @@ public class MovieDetailsActivity extends FragmentActivity implements LoaderMana
     private static DateFormat sTimeFormat;
 
     private MovieDetailsBinding mBinding;
+    private ArrayList<TextView> mTxtTheaterNameList = new ArrayList<>(3);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +64,8 @@ public class MovieDetailsActivity extends FragmentActivity implements LoaderMana
         mBinding = DataBindingUtil.setContentView(this, R.layout.movie_details);
         getSupportLoaderManager().initLoader(LOADER_MOVIE, null, this);
         getSupportLoaderManager().initLoader(LOADER_SHOWTIMES, null, this);
+
+        mBinding.conMovie.setOnScrollChangeListener(mOnScrollChangeListener);
     }
 
     @Override
@@ -87,7 +93,15 @@ public class MovieDetailsActivity extends FragmentActivity implements LoaderMana
                 MovieViewModel movieViewModel = new MovieViewModel(this, data);
                 movieViewModel.moveToFirst();
                 mBinding.setMovie(movieViewModel);
-                mBinding.getRoot().setBackgroundColor(movieViewModel.getColor());
+
+                // Use the movie color in certain elements
+                Integer color = movieViewModel.getColor();
+                if (color == null) color = getColor(R.color.background);
+                mBinding.getRoot().setBackgroundColor(color);
+                mBinding.txtTheaterNameInvisible.setBackgroundColor(color);
+                int gradientColors[] = {color, 0};
+                GradientDrawable gradientDrawable = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, gradientColors);
+                mBinding.vieTheaterNameGradient.setBackgroundDrawable(gradientDrawable);
                 break;
 
             case LOADER_SHOWTIMES:
@@ -104,6 +118,8 @@ public class MovieDetailsActivity extends FragmentActivity implements LoaderMana
                                 (TextView) inflater.inflate(R.layout.movie_details_theater_name, mBinding.conMovieDetails, false);
                         txtTheaterName.setText(showtimeCursor.getTheaterName());
                         mBinding.conMovieDetails.addView(txtTheaterName);
+
+                        mTxtTheaterNameList.add(txtTheaterName);
                     }
 
                     // Time
@@ -145,4 +161,26 @@ public class MovieDetailsActivity extends FragmentActivity implements LoaderMana
         }
         return sTimeFormat;
     }
+
+    private View.OnScrollChangeListener mOnScrollChangeListener = new View.OnScrollChangeListener() {
+        @Override
+        public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+            if (scrollY < mTxtTheaterNameList.get(0).getY() - mBinding.txtTheaterName.getPaddingTop()) {
+                mBinding.txtTheaterName.setVisibility(View.GONE);
+                AnimationUtil.animateGone(mBinding.conTheaterName);
+                mTxtTheaterNameList.get(0).setVisibility(View.VISIBLE);
+            } else {
+                mBinding.txtTheaterName.setVisibility(View.VISIBLE);
+                AnimationUtil.animateVisible(mBinding.conTheaterName);
+                for (TextView textView : mTxtTheaterNameList) {
+                    if (scrollY > textView.getY() - mBinding.txtTheaterName.getPaddingTop()) {
+                        mBinding.txtTheaterName.setText(textView.getText());
+                        textView.setVisibility(View.INVISIBLE);
+                    } else {
+                        textView.setVisibility(View.VISIBLE);
+                    }
+                }
+            }
+        }
+    };
 }

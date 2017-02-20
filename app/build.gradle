@@ -123,7 +123,9 @@ dependencies {
 
     annotationProcessor 'org.jraf:prefs-compiler:1.1.1'
     compile 'org.jraf:prefs:1.1.1'
-    compile 'com.github.BoD:jraf-android-util:-SNAPSHOT'
+//    compile 'com.github.BoD:jraf-android-util:-SNAPSHOT'
+
+    compile 'org.jraf:jraf-android-util:1.0.0'
 
     compile 'com.squareup.okhttp3:okhttp:3.6.0'
 
