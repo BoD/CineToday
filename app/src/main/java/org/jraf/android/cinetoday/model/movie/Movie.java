@@ -46,6 +46,8 @@ public class Movie {
     public String webUri;
     public String synopsis;
 
+    public boolean isNew;
+
     /**
      * Keys: id of the theater<br/>
      * Values: showtimes for today at a given theater.

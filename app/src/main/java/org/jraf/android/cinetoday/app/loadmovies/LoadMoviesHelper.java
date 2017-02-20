@@ -45,6 +45,8 @@ import org.jraf.android.cinetoday.prefs.MainPrefs;
 import org.jraf.android.cinetoday.provider.CineTodayProvider;
 import org.jraf.android.cinetoday.provider.movie.MovieColumns;
 import org.jraf.android.cinetoday.provider.movie.MovieContentValues;
+import org.jraf.android.cinetoday.provider.movie.MovieCursor;
+import org.jraf.android.cinetoday.provider.movie.MovieSelection;
 import org.jraf.android.cinetoday.provider.showtime.ShowtimeColumns;
 import org.jraf.android.cinetoday.provider.showtime.ShowtimeContentValues;
 import org.jraf.android.cinetoday.provider.theater.TheaterCursor;
@@ -98,14 +100,19 @@ public class LoadMoviesHelper {
         for (Movie movie : movies) {
             loadMoviesListenerHelper.onLoadMoviesProgress(i, size, movie.localTitle);
 
-            // Get movie info
-            try {
-                Api.get(context).getMovieInfo(movie);
-                Log.d(movie.toString());
-            } catch (Exception e) {
-                Log.e(e, "Could not load movie info: movie = %s", movie);
-                loadMoviesListenerHelper.onLoadMoviesError(e);
-                throw e;
+            // Check if we already have info for this movie
+            if (new MovieSelection().publicId(movie.id).count(context) == 0) {
+                movie.isNew = true;
+
+                // Get movie info
+                try {
+                    Api.get(context).getMovieInfo(movie);
+                    Log.d(movie.toString());
+                } catch (Exception e) {
+                    Log.e(e, "Could not load movie info: movie = %s", movie);
+                    loadMoviesListenerHelper.onLoadMoviesError(e);
+                    throw e;
+                }
             }
 
             if (mWantStop) {
@@ -130,10 +137,10 @@ public class LoadMoviesHelper {
     private void persist(Context context, SortedSet<Movie> movies) {
         ArrayList<ContentProviderOperation> operations = new ArrayList<>();
 
-        // First, delete all the movies (and showtimes)
-        operations.add(ContentProviderOperation.newDelete(MovieColumns.CONTENT_URI).build());
+        // First, delete all the showtimes
+        operations.add(ContentProviderOperation.newDelete(ShowtimeColumns.CONTENT_URI).build());
 
-        // Get a map of theater internal ids to public ids
+        // Get a map of theater public ids to internal ids
         HashMap<String, Long> theaterIds = new HashMap<>();
         try (TheaterCursor cursor = new TheaterSelection().query(context)) {
             while (cursor.moveToNext()) {
@@ -141,22 +148,32 @@ public class LoadMoviesHelper {
             }
         }
 
+        // Get a map of movie public ids to internal ids
+        HashMap<String, Long> movieIds = new HashMap<>();
+        try (MovieCursor cursor = new MovieSelection().query(context)) {
+            while (cursor.moveToNext()) {
+                movieIds.put(cursor.getPublicId(), cursor.getId());
+            }
+        }
+
         for (Movie movie : movies) {
             // Movie
-            MovieContentValues movieValues = new MovieContentValues()
-                    .putPublicId(movie.id)
-                    .putTitleOriginal(movie.originalTitle)
-                    .putTitleLocal(movie.localTitle)
-                    .putDirectors(movie.directors)
-                    .putActors(movie.actors)
-                    .putReleaseDate(movie.releaseDate)
-                    .putDuration(movie.durationSeconds)
-                    .putGenres(TextUtils.join("|", movie.genres))
-                    .putPosterUri(movie.posterUri)
-                    .putTrailerUri(movie.trailerUri)
-                    .putWebUri(movie.webUri)
-                    .putSynopsis(movie.synopsis);
-            operations.add(ContentProviderOperation.newInsert(MovieColumns.CONTENT_URI).withValues(movieValues.values()).build());
+            if (movie.isNew) {
+                MovieContentValues movieValues = new MovieContentValues()
+                        .putPublicId(movie.id)
+                        .putTitleOriginal(movie.originalTitle)
+                        .putTitleLocal(movie.localTitle)
+                        .putDirectors(movie.directors)
+                        .putActors(movie.actors)
+                        .putReleaseDate(movie.releaseDate)
+                        .putDuration(movie.durationSeconds)
+                        .putGenres(TextUtils.join("|", movie.genres))
+                        .putPosterUri(movie.posterUri)
+                        .putTrailerUri(movie.trailerUri)
+                        .putWebUri(movie.webUri)
+                        .putSynopsis(movie.synopsis);
+                operations.add(ContentProviderOperation.newInsert(MovieColumns.CONTENT_URI).withValues(movieValues.values()).build());
+            }
 
             // Showtimes
             int movieIdResultIndex = operations.size() - 1;
@@ -169,15 +186,32 @@ public class LoadMoviesHelper {
                             .putTheaterId(theaterId)
                             .putTime(showtime.time)
                             .putIs3d(showtime.is3d);
-                    ContentProviderOperation operation =
-                            ContentProviderOperation.newInsert(ShowtimeColumns.CONTENT_URI)
-                                    .withValues(showtimeValues.values())
-                                    .withValueBackReference(ShowtimeColumns.MOVIE_ID, movieIdResultIndex)
-                                    .build();
+                    if (!movie.isNew) {
+                        showtimeValues.putMovieId(movieIds.get(movie.id));
+                    }
+
+                    ContentProviderOperation.Builder operationBuilder = ContentProviderOperation.newInsert(ShowtimeColumns.CONTENT_URI)
+                            .withValues(showtimeValues.values());
+                    if (movie.isNew) {
+                        operationBuilder.withValueBackReference(ShowtimeColumns.MOVIE_ID, movieIdResultIndex);
+                    }
+
+                    ContentProviderOperation operation = operationBuilder.build();
                     operations.add(operation);
                 }
             }
         }
+
+        // Delete movies that have no show times
+        MovieSelection movieSelection = new MovieSelection();
+        movieSelection.addRaw("(select "
+                + " count(" + ShowtimeColumns.TABLE_NAME + "." + ShowtimeColumns._ID + ")"
+                + " from " + ShowtimeColumns.TABLE_NAME
+                + " where " + ShowtimeColumns.TABLE_NAME + "." + ShowtimeColumns.MOVIE_ID
+                + " = " + MovieColumns.TABLE_NAME + "." + MovieColumns._ID
+                + " ) = 0");
+        operations.add(ContentProviderOperation.newDelete(MovieColumns.CONTENT_URI)
+                .withSelection(movieSelection.sel(), movieSelection.args()).build());
 
         // Apply the batch of operations
         try {

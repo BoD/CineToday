@@ -27,6 +27,8 @@ package org.jraf.android.cinetoday.app.loadmovies;
 import android.app.IntentService;
 import android.content.Intent;
 
+import org.jraf.android.util.log.Log;
+
 public class LoadMoviesIntentService extends IntentService {
     private static final String PREFIX = LoadMoviesIntentService.class.getName() + ".";
     public static final String ACTION_LOAD_MOVIES = PREFIX + "LOAD_MOVIES";
@@ -42,8 +44,8 @@ public class LoadMoviesIntentService extends IntentService {
             if (ACTION_LOAD_MOVIES.equals(action)) {
                 try {
                     LoadMoviesHelper.get().loadMovies(this);
-                } catch (Exception ignore) {
-                    // Do nothing, it was already handled inside loadMovies
+                } catch (Exception e) {
+                    Log.e(e, "Could not load movies");
                 }
             }
         }
