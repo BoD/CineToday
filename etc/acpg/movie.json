@@ -84,7 +84,7 @@
   "constraints": [
     {
       "name": "unique_public_id",
-      "definition": "UNIQUE (movie__public_id) ON CONFLICT REPLACE"
+      "definition": "UNIQUE (movie__public_id) ON CONFLICT IGNORE"
     }
   ]
 }
