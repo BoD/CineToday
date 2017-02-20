@@ -120,5 +120,41 @@
             </LinearLayout>
 
         </ScrollView>
+
+        <!-- Theater name container -->
+        <LinearLayout
+            android:id="@+id/conTheaterName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <!-- Theater name (invisible) -->
+            <TextView
+                android:id="@+id/txtTheaterNameInvisible"
+                style="@style/Movie.Details.Theater.Name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="@{ScreenShapeHelper.get().safeMargin + @dimen/movie_details_padding_vertical}"
+                android:textColor="@android:color/transparent"
+                tools:text="MK2 Bibliothèque" />
+
+            <!-- Gradient -->
+            <View
+                android:id="@+id/vieTheaterNameGradient"
+                android:layout_width="match_parent"
+                android:layout_height="4dp" />
+        </LinearLayout>
+
+        <!-- Theater name -->
+        <TextView
+            android:id="@+id/txtTheaterName"
+            style="@style/Movie.Details.Theater.Name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="@{ScreenShapeHelper.get().safeMargin + @dimen/movie_details_padding_vertical}"
+            android:visibility="invisible"
+            tools:text="MK2 Bibliothèque" />
+
     </FrameLayout>
 </layout>
