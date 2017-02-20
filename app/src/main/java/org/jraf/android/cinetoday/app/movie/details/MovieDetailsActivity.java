@@ -167,13 +167,13 @@ public class MovieDetailsActivity extends FragmentActivity implements LoaderMana
         public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
             if (scrollY < mTxtTheaterNameList.get(0).getY() - mBinding.txtTheaterName.getPaddingTop()) {
                 mBinding.txtTheaterName.setVisibility(View.GONE);
-                AnimationUtil.animateGone(mBinding.conTheaterName);
+                mBinding.conTheaterName.setVisibility(View.GONE);
                 mTxtTheaterNameList.get(0).setVisibility(View.VISIBLE);
             } else {
                 mBinding.txtTheaterName.setVisibility(View.VISIBLE);
                 AnimationUtil.animateVisible(mBinding.conTheaterName);
                 for (TextView textView : mTxtTheaterNameList) {
-                    if (scrollY > textView.getY() - mBinding.txtTheaterName.getPaddingTop()) {
+                    if (scrollY >= textView.getY() - mBinding.txtTheaterName.getPaddingTop()) {
                         mBinding.txtTheaterName.setText(textView.getText());
                         textView.setVisibility(View.INVISIBLE);
                     } else {
