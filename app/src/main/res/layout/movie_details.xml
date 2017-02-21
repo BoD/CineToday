@@ -126,6 +126,7 @@
             android:id="@+id/conTheaterName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginRight="48dp"
             android:orientation="vertical"
             android:visibility="gone">
 
@@ -135,6 +136,8 @@
                 style="@style/Movie.Details.Theater.Name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:paddingLeft="@{ScreenShapeHelper.get().safeMargin / 2F + @dimen/movie_details_padding_horizontal}"
+                android:paddingRight="@{ScreenShapeHelper.get().safeMargin / 2F + @dimen/movie_details_padding_horizontal}"
                 android:paddingTop="@{ScreenShapeHelper.get().safeMargin + @dimen/movie_details_padding_vertical}"
                 android:textColor="@android:color/transparent"
                 tools:text="MK2 Bibliothèque" />
@@ -152,6 +155,8 @@
             style="@style/Movie.Details.Theater.Name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingLeft="@{ScreenShapeHelper.get().safeMargin / 2F + @dimen/movie_details_padding_horizontal}"
+            android:paddingRight="@{ScreenShapeHelper.get().safeMargin / 2F + @dimen/movie_details_padding_horizontal}"
             android:paddingTop="@{ScreenShapeHelper.get().safeMargin + @dimen/movie_details_padding_vertical}"
             android:visibility="invisible"
             tools:text="MK2 Bibliothèque" />
