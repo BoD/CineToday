@@ -54,8 +54,7 @@ public class HttpUtil {
             builder.cache(new Cache(httpCacheDir, CACHE_SIZE_B));
 
             if (BuildConfig.DEBUG) {
-//                builder.proxy(new Proxy(Proxy.Type.HTTP, new InetSocketAddress("192.168.1.2", 8888)));
-                builder.proxy(new Proxy(Proxy.Type.HTTP, new InetSocketAddress("192.168.0.17", 8888)));
+                builder.proxy(new Proxy(Proxy.Type.HTTP, new InetSocketAddress("192.168.1.2", 8888)));
             }
 
             sCachingOkHttpClient = builder.build();
@@ -63,7 +62,7 @@ public class HttpUtil {
         return sCachingOkHttpClient;
     }
 
-    public static OkHttpClient getNotCachingOkHttpClient(Context context) {
+    public static OkHttpClient getNotCachingOkHttpClient() {
         if (sNotCachingOkHttpClient == null) {
             OkHttpClient.Builder builder = new OkHttpClient.Builder();
             builder.connectTimeout(TIMEOUT_S, TimeUnit.SECONDS);
@@ -71,8 +70,7 @@ public class HttpUtil {
             builder.writeTimeout(TIMEOUT_S, TimeUnit.SECONDS);
 
             if (BuildConfig.DEBUG) {
-//                builder.proxy(new Proxy(Proxy.Type.HTTP, new InetSocketAddress("192.168.1.2", 8888)));
-                builder.proxy(new Proxy(Proxy.Type.HTTP, new InetSocketAddress("192.168.0.17", 8888)));
+                builder.proxy(new Proxy(Proxy.Type.HTTP, new InetSocketAddress("192.168.1.2", 8888)));
             }
 
             sNotCachingOkHttpClient = builder.build();

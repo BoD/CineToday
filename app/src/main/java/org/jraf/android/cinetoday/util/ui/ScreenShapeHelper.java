@@ -32,10 +32,30 @@ public class ScreenShapeHelper {
     private static ScreenShapeHelper INSTANCE = new ScreenShapeHelper();
     private boolean isInitialized;
 
+
+    /**
+     * Width of the display in pixels.
+     */
     public int width;
+
+    /**
+     * Height of the display in pixels. This <strong>doesn't</strong> include the chin, if any.
+     */
     public int height;
+
+    /**
+     * Height of the chin, if any.
+     */
     public int chinHeight;
+
+    /**
+     * Whether the display is round.
+     */
     public boolean isRound;
+
+    /**
+     * A margin in pixels that allows content to be safely displayed on round displays.
+     */
     public float safeMargin;
 
     private ScreenShapeHelper() {}
