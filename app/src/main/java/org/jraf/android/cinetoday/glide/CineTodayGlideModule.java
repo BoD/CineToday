@@ -68,7 +68,7 @@ public class CineTodayGlideModule implements GlideModule {
 
     @Override
     public void registerComponents(Context context, Glide glide) {
-        glide.register(GlideUrl.class, InputStream.class, new OkHttpUrlResizeModelLoaderFactory(HttpUtil.getNotCachingOkHttpClient(context)));
+        glide.register(GlideUrl.class, InputStream.class, new OkHttpUrlResizeModelLoaderFactory(HttpUtil.getNotCachingOkHttpClient()));
     }
 
 

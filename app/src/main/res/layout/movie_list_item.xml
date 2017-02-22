@@ -35,8 +35,8 @@
             android:elevation="8dp"
             android:foreground="?android:attr/selectableItemBackground"
             android:onClick="@{() -> callbacks.onMovieClick(movieId)}"
-            android:padding="2dp"
-            app:layout_aspectRatio="70%"
+            android:padding="@dimen/movie_list_item_posterBorder"
+            app:layout_aspectRatio="@fraction/movie_list_item_poster"
             app:layout_heightPercent="100%">
 
             <!-- Placeholder -->

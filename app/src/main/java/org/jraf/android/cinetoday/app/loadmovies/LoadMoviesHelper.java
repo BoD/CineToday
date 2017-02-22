@@ -38,6 +38,10 @@ import android.content.Intent;
 import android.support.annotation.WorkerThread;
 import android.text.TextUtils;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+
+import org.jraf.android.cinetoday.R;
 import org.jraf.android.cinetoday.api.Api;
 import org.jraf.android.cinetoday.model.movie.Movie;
 import org.jraf.android.cinetoday.model.movie.Showtime;
@@ -51,6 +55,8 @@ import org.jraf.android.cinetoday.provider.showtime.ShowtimeColumns;
 import org.jraf.android.cinetoday.provider.showtime.ShowtimeContentValues;
 import org.jraf.android.cinetoday.provider.theater.TheaterCursor;
 import org.jraf.android.cinetoday.provider.theater.TheaterSelection;
+import org.jraf.android.cinetoday.util.ui.ScreenShapeHelper;
+import org.jraf.android.util.handler.HandlerUtil;
 import org.jraf.android.util.log.Log;
 
 public class LoadMoviesHelper {
@@ -67,7 +73,7 @@ public class LoadMoviesHelper {
     }
 
     @WorkerThread
-    public void loadMovies(Context context) throws Exception {
+    public void loadMovies(final Context context) throws Exception {
         mWantStop = false;
         LoadMoviesListenerHelper loadMoviesListenerHelper = LoadMoviesListenerHelper.get();
         loadMoviesListenerHelper.onLoadMoviesStarted();
@@ -97,7 +103,7 @@ public class LoadMoviesHelper {
         // 2/ Retrieve more details about each movie
         int size = movies.size();
         int i = 0;
-        for (Movie movie : movies) {
+        for (final Movie movie : movies) {
             loadMoviesListenerHelper.onLoadMoviesProgress(i, size, movie.localTitle);
 
             // Check if we already have info for this movie
@@ -119,6 +125,26 @@ public class LoadMoviesHelper {
                 loadMoviesListenerHelper.onLoadMoviesInterrupted();
                 return;
             }
+
+            // Download the poster now
+            int height = ScreenShapeHelper.get(context).height;
+            int width = (int) (context.getResources().getFraction(R.fraction.movie_list_item_poster, height, 1) + .5F);
+            int border = context.getResources().getDimensionPixelSize(R.dimen.movie_list_item_posterBorder);
+            height -= border * 2;
+            width -= border * 2;
+            // Glide insists this is done on the main thread
+            final int finalWidth = width;
+            final int finalHeight = height;
+            HandlerUtil.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Glide.with(context)
+                            .load(movie.posterUri)
+                            .centerCrop()
+                            .diskCacheStrategy(DiskCacheStrategy.RESULT)
+                            .preload(finalWidth, finalHeight);
+                }
+            });
 
             i++;
             loadMoviesListenerHelper.onLoadMoviesProgress(i, size, movie.localTitle);
