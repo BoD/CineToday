@@ -40,10 +40,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:paddingBottom="@{ScreenShapeHelper.get().safeMargin * 1.5F + @dimen/movie_details_padding_vertical}"
-                android:paddingLeft="@{ScreenShapeHelper.get().safeMargin / 2F + @dimen/movie_details_padding_horizontal}"
-                android:paddingRight="@{ScreenShapeHelper.get().safeMargin / 2F + @dimen/movie_details_padding_horizontal}"
-                android:paddingTop="@{ScreenShapeHelper.get().safeMargin * 1.5F + @dimen/movie_details_padding_vertical}"
+                android:paddingBottom="@{ScreenShapeHelper.get(context).safeMargin * 1.5F + @dimen/movie_details_padding_vertical}"
+                android:paddingLeft="@{ScreenShapeHelper.get(context).safeMargin / 2F + @dimen/movie_details_padding_horizontal}"
+                android:paddingRight="@{ScreenShapeHelper.get(context).safeMargin / 2F + @dimen/movie_details_padding_horizontal}"
+                android:paddingTop="@{ScreenShapeHelper.get(context).safeMargin * 1.5F + @dimen/movie_details_padding_vertical}"
                 tools:paddingBottom="40dp"
                 tools:paddingTop="40dp">
 
@@ -136,9 +136,9 @@
                 style="@style/Movie.Details.Theater.Name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingLeft="@{ScreenShapeHelper.get().safeMargin / 2F + @dimen/movie_details_padding_horizontal}"
-                android:paddingRight="@{ScreenShapeHelper.get().safeMargin / 2F + @dimen/movie_details_padding_horizontal}"
-                android:paddingTop="@{ScreenShapeHelper.get().safeMargin + @dimen/movie_details_padding_vertical}"
+                android:paddingLeft="@{ScreenShapeHelper.get(context).safeMargin / 2F + @dimen/movie_details_padding_horizontal}"
+                android:paddingRight="@{ScreenShapeHelper.get(context).safeMargin / 2F + @dimen/movie_details_padding_horizontal}"
+                android:paddingTop="@{ScreenShapeHelper.get(context).safeMargin + @dimen/movie_details_padding_vertical}"
                 android:textColor="@android:color/transparent"
                 tools:text="MK2 Bibliothèque" />
 
@@ -155,9 +155,9 @@
             style="@style/Movie.Details.Theater.Name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingLeft="@{ScreenShapeHelper.get().safeMargin / 2F + @dimen/movie_details_padding_horizontal}"
-            android:paddingRight="@{ScreenShapeHelper.get().safeMargin / 2F + @dimen/movie_details_padding_horizontal}"
-            android:paddingTop="@{ScreenShapeHelper.get().safeMargin + @dimen/movie_details_padding_vertical}"
+            android:paddingLeft="@{ScreenShapeHelper.get(context).safeMargin / 2F + @dimen/movie_details_padding_horizontal}"
+            android:paddingRight="@{ScreenShapeHelper.get(context).safeMargin / 2F + @dimen/movie_details_padding_horizontal}"
+            android:paddingTop="@{ScreenShapeHelper.get(context).safeMargin + @dimen/movie_details_padding_vertical}"
             android:visibility="invisible"
             tools:text="MK2 Bibliothèque" />
 

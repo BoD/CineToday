@@ -24,68 +24,41 @@
  */
 package org.jraf.android.cinetoday.util.ui;
 
-import android.app.Activity;
-import android.support.annotation.Nullable;
+import android.content.Context;
+import android.content.res.Resources;
 import android.util.DisplayMetrics;
-import android.view.View;
-import android.view.WindowInsets;
 
 public class ScreenShapeHelper {
-    public interface Callbacks {
-        void onScreenShapeAvailable(boolean isRound, int chinHeight, float safeMargin);
-    }
-
     private static ScreenShapeHelper INSTANCE = new ScreenShapeHelper();
-    private Integer mChinHeight;
-    private Boolean mIsRound;
-    private Float mSafeMargin;
+    private boolean isInitialized;
+
+    public int width;
+    public int height;
+    public int chinHeight;
+    public boolean isRound;
+    public float safeMargin;
 
     private ScreenShapeHelper() {}
 
-    public static ScreenShapeHelper get() {
+    public static ScreenShapeHelper get(Context context) {
+        if (!INSTANCE.isInitialized) INSTANCE.init(context);
         return INSTANCE;
     }
 
-    public void init(Activity activity, @Nullable final Callbacks callbacks) {
-        if (mChinHeight != null && mIsRound != null && mSafeMargin != null) {
-            if (callbacks != null) callbacks.onScreenShapeAvailable(mIsRound, mChinHeight, mSafeMargin);
-            return;
-        }
-        mIsRound = activity.getResources().getConfiguration().isScreenRound();
-        if (mIsRound) {
-            // Assume width=height for round screens (I guess oval is not supported)
-            DisplayMetrics metrics = activity.getResources().getDisplayMetrics();
+    public void init(Context context) {
+        Resources resources = context.getResources();
+        DisplayMetrics metrics = resources.getDisplayMetrics();
+        width = metrics.widthPixels;
+        height = metrics.heightPixels;
+        isRound = resources.getConfiguration().isScreenRound();
+        if (isRound) {
+            // Assume width=height for round screens (I guess that means oval is not supported!)
+            chinHeight = width - height;
+
             // Pythagorean Theorem
-            double edge = metrics.widthPixels / Math.sqrt(2);
-            mSafeMargin = (float) ((metrics.widthPixels - edge) / 2.0);
-        } else {
-            mSafeMargin = 0F;
+            double edge = width / Math.sqrt(2);
+            safeMargin = (float) ((width - edge) / 2.0);
         }
-        final View contentView = activity.getWindow().getDecorView().findViewById(android.R.id.content);
-        contentView.setOnApplyWindowInsetsListener(new View.OnApplyWindowInsetsListener() {
-            @Override
-            public WindowInsets onApplyWindowInsets(View v, WindowInsets insets) {
-                mChinHeight = insets.getSystemWindowInsetBottom();
-                v.onApplyWindowInsets(insets);
-                if (callbacks != null) callbacks.onScreenShapeAvailable(mIsRound, mChinHeight, mSafeMargin);
-                contentView.setOnApplyWindowInsetsListener(null);
-                return insets;
-            }
-        });
-    }
-
-    public int getChinHeight() {
-        if (mChinHeight == null) throw new IllegalStateException("init must be called prior to calling getChinHeight");
-        return mChinHeight;
-    }
-
-    public boolean getIsRound() {
-        if (mIsRound == null) throw new IllegalStateException("init must be called prior to calling getIsRound");
-        return mIsRound;
-    }
-
-    public float getSafeMargin() {
-        if (mSafeMargin == null) throw new IllegalStateException("init must be called prior to calling getSafeMargin");
-        return mSafeMargin;
+        isInitialized = true;
     }
 }

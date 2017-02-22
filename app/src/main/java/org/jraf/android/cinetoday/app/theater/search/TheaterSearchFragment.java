@@ -56,7 +56,7 @@ public class TheaterSearchFragment extends BaseFragment<TheaterSearchCallbacks> 
         mBinding.rclList.setCenterEdgeItems(true);
 
         // Apply an offset + scale on the items depending on their distance from the center (only for Round screens)
-        if (ScreenShapeHelper.get().getIsRound()) {
+        if (ScreenShapeHelper.get(getContext()).isRound) {
             mBinding.rclList.setOffsettingHelper(new DefaultOffsettingHelper() {
                 private static final float FACTOR = .75F;
 

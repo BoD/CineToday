@@ -39,7 +39,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.wearable.view.ConfirmationOverlay;
 import android.support.wearable.view.drawer.WearableActionDrawer;
 import android.support.wearable.view.drawer.WearableNavigationDrawer;
-import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.ViewTreeObserver;
@@ -84,18 +83,12 @@ public class MainActivity extends FragmentActivity implements MovieListCallbacks
         mBinding.actionDrawer.setOnMenuItemClickListener(this);
         mBinding.actionDrawer.setShouldOnlyOpenWhenAtTop(true);
 
-        ScreenShapeHelper.get().init(this, new ScreenShapeHelper.Callbacks() {
-            @Override
-            public void onScreenShapeAvailable(boolean isRound, int chinHeight, float safeMargin) {
-                // XXX If the screen is round, we consider the height *must* be the same as the width
-                // This is a workaround for http://stackoverflow.com/questions/42141631
-                DisplayMetrics metrics = getResources().getDisplayMetrics();
-                mBinding.conFragment.getLayoutParams().height = metrics.widthPixels;
+        // Workaround for http://stackoverflow.com/questions/42141631
+        // XXX If the screen is round, we consider the height *must* be the same as the width
+        if (ScreenShapeHelper.get(this).isRound) mBinding.conFragment.getLayoutParams().height = ScreenShapeHelper.get(this).width;
 
-                showMovieListFragment();
-                ensureFavoriteTheaters();
-            }
-        });
+        showMovieListFragment();
+        ensureFavoriteTheaters();
 
         getMenuInflater().inflate(R.menu.main, mBinding.actionDrawer.getMenu());
 
