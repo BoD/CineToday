@@ -36,10 +36,15 @@ import android.content.ContentProviderOperation;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.WorkerThread;
+import android.support.v7.graphics.Palette;
 import android.text.TextUtils;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.bitmap.GlideBitmapDrawable;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 
 import org.jraf.android.cinetoday.R;
 import org.jraf.android.cinetoday.api.Api;
@@ -142,6 +147,26 @@ public class LoadMoviesHelper {
                             .load(movie.posterUri)
                             .centerCrop()
                             .diskCacheStrategy(DiskCacheStrategy.RESULT)
+                            .listener(new RequestListener<String, GlideDrawable>() {
+                                @Override
+                                public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+                                    return false;
+                                }
+
+                                @Override
+                                public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache,
+                                                               boolean isFirstResource) {
+                                    if (!(resource instanceof GlideBitmapDrawable)) return false;
+                                    GlideBitmapDrawable glideBitmapDrawable = (GlideBitmapDrawable) resource;
+                                    Palette.from(glideBitmapDrawable.getBitmap()).generate(new Palette.PaletteAsyncListener() {
+                                        @Override
+                                        public void onGenerated(Palette p) {
+                                            movie.color = p.getDarkVibrantColor(context.getColor(R.color.movie_list_bg));
+                                        }
+                                    });
+                                    return false;
+                                }
+                            })
                             .preload(finalWidth, finalHeight);
                 }
             });
@@ -197,7 +222,8 @@ public class LoadMoviesHelper {
                         .putPosterUri(movie.posterUri)
                         .putTrailerUri(movie.trailerUri)
                         .putWebUri(movie.webUri)
-                        .putSynopsis(movie.synopsis);
+                        .putSynopsis(movie.synopsis)
+                        .putColor(movie.color);
                 operations.add(ContentProviderOperation.newInsert(MovieColumns.CONTENT_URI).withValues(movieValues.values()).build());
             }
 
