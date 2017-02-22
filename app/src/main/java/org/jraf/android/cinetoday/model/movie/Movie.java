@@ -47,6 +47,7 @@ public class Movie {
     public String synopsis;
 
     public boolean isNew;
+    public Integer color;
 
     /**
      * Keys: id of the theater<br/>
