@@ -1,11 +1,11 @@
 <!-- Theater name -->
 <TextView
     android:id="@+id/txtTheaterName"
+    style="@style/Widget.CineToday.TextView.Movie.Details.TheaterName"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_marginTop="6dp"
     android:layout_marginBottom="4dp"
-    style="@style/Movie.Details.Theater.Name"
+    android:layout_marginTop="6dp"
     tools:text="MK2 Bibliothèque" />

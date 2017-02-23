@@ -8,16 +8,18 @@
     android:orientation="horizontal"
     android:paddingBottom="6dp">
 
+    <!-- Showtime -->
     <TextView
         android:id="@+id/txtShowtime"
-        style="@style/movieCardShowtime"
+        style="@style/Widget.CineToday.TextView.ShowTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         tools:text="19:30" />
 
+    <!-- 3D indicator -->
     <TextView
         android:id="@+id/txtIs3d"
-        style="@style/movieCardShowtime"
+        style="@style/Widget.CineToday.TextView.ShowTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="4dp"

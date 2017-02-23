@@ -1,53 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Widget.AppTheme.Button.Colored" parent="@android:style/Widget.DeviceDefault.Button">
+    <style name="Widget.CineToday.Button.Colored" parent="@android:style/Widget.DeviceDefault.Button">
         <item name="android:backgroundTint">@color/accent</item>
         <item name="android:textColor">@android:color/white</item>
     </style>
 
-    <style name="movieCardTitle" parent="CardTitle">
-        <item name="android:textColor">@color/primary_text_light</item>
+    <style name="Widget.CineToday.LinearLayout.Movie.Details" parent="">
+        <item name="android:gravity">start</item>
     </style>
 
-    <style name="movieCardOriginalTitle" parent="CardText">
-        <item name="android:textColor">@color/secondary_text_light</item>
+    <style name="Widget.CineToday.TextView" parent="@android:style/Widget.DeviceDefault.TextView">
+        <item name="android:textAppearance">@android:style/TextAppearance.Material</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:lineSpacingExtra">2sp</item>
     </style>
 
-    <style name="movieCardDuration" parent="CardText">
+    <style name="Widget.CineToday.TextView.Title1">
+        <item name="android:fontFamily">sans-serif-condensed</item>
+        <item name="android:textSize">22sp</item>
     </style>
 
-    <style name="movieCardShowtime" parent="CardText">
+    <style name="Widget.CineToday.TextView.Title2">
+        <item name="android:fontFamily">sans-serif-condensed</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    <style name="Widget.CineToday.TextView.Title3">
+        <item name="android:fontFamily">sans-serif-condensed</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
+
+    <style name="Widget.CineToday.TextView.ShowTime">
         <item name="android:background">@drawable/shape_showtime_bg</item>
         <item name="android:paddingTop">4dp</item>
         <item name="android:paddingBottom">4dp</item>
         <item name="android:paddingLeft">8dp</item>
         <item name="android:paddingRight">8dp</item>
         <item name="android:elevation">2dp</item>
+        <item name="android:textSize">20sp</item>
         <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textColor">?android:textColorPrimaryInverse</item>
     </style>
 
-    <style name="movieDetails">
+
+    <style name="Widget.CineToday.TextView.TheaterName" parent="Widget.CineToday.TextView.Title2" />
+
+    <style name="Base.Widget.CineToday.TextView.Movie.Details.Title" parent="Widget.CineToday.TextView.Title1" />
+
+    <style name="Widget.CineToday.TextView.Movie.Details.Title" parent="Base.Widget.CineToday.TextView.Movie.Details.Title">
         <item name="android:gravity">start</item>
     </style>
 
-    <style name="Movie.Details.Title" parent="@android:style/Widget.DeviceDefault.TextView">
-        <item name="android:textAppearance">@android:style/TextAppearance.Material.Title</item>
+    <style name="Base.Widget.CineToday.TextView.Movie.Details.Field" parent="Widget.CineToday.TextView" />
+
+    <style name="Widget.CineToday.TextView.Movie.Details.Field" parent="Base.Widget.CineToday.TextView.Movie.Details.Field">
         <item name="android:gravity">start</item>
     </style>
 
-    <style name="Movie.Details.Field" parent="@android:style/Widget.DeviceDefault.TextView">
-        <item name="android:textAppearance">@android:style/TextAppearance.Material.Body1</item>
+    <style name="Widget.CineToday.TextView.Movie.Details.Synopsis" parent="Widget.CineToday.TextView">
+        <item name="android:breakStrategy">high_quality</item>
+        <item name="android:hyphenationFrequency">full</item>
+    </style>
+
+    <style name="Base.Widget.CineToday.TextView.Movie.Details.TheaterName" parent="Widget.CineToday.TextView.TheaterName" />
+
+    <style name="Widget.CineToday.TextView.Movie.Details.TheaterName" parent="Base.Widget.CineToday.TextView.Movie.Details.TheaterName">
         <item name="android:gravity">start</item>
     </style>
 
-    <style name="Movie.Details.Field.Synopsis">
-        <item name="android:gravity">start</item>
-    </style>
-
-    <style name="Movie.Details.Theater.Name" parent="@android:style/Widget.DeviceDefault.TextView">
-        <item name="android:textAppearance">@android:style/TextAppearance.Material.Body2</item>
-        <item name="android:gravity">start</item>
+    <style name="Widget.CineToday.TextView.Theater.Search.NoResults" parent="Widget.CineToday.TextView.Title3">
+        <item name="android:textColor">?android:textColorSecondary</item>
     </style>
 
 </resources>

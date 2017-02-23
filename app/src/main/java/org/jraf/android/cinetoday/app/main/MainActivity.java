@@ -240,7 +240,7 @@ public class MainActivity extends FragmentActivity implements MovieListCallbacks
         FrameworkAlertDialogFragment.newInstance(DIALOG_THEATER_DELETE_CONFIRM)
                 .message(R.string.main_theater_delete_confirm_message)
                 .positiveButton(R.string.main_delete)
-                .negativeButton(android.R.string.cancel)
+                .negativeButton(R.string.common_cancel)
                 .payload(theaterId)
                 .show(this);
     }

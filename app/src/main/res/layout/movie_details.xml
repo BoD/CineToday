@@ -36,7 +36,7 @@
 
             <LinearLayout
                 android:id="@+id/conMovieDetails"
-                style="@style/movieDetails"
+                style="@style/Widget.CineToday.LinearLayout.Movie.Details"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
@@ -49,7 +49,7 @@
 
                 <!-- Title -->
                 <TextView
-                    style="@style/Movie.Details.Title"
+                    style="@style/Widget.CineToday.TextView.Movie.Details.Title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@{movie.titleLocal}"
@@ -57,7 +57,7 @@
 
                 <!-- Directors -->
                 <TextView
-                    style="@style/Movie.Details.Field"
+                    style="@style/Widget.CineToday.TextView.Movie.Details.Field"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
@@ -67,7 +67,7 @@
 
                 <!-- Genres -->
                 <TextView
-                    style="@style/Movie.Details.Field"
+                    style="@style/Widget.CineToday.TextView.Movie.Details.Field"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
@@ -78,7 +78,7 @@
 
                 <!-- Actors -->
                 <TextView
-                    style="@style/Movie.Details.Field"
+                    style="@style/Widget.CineToday.TextView.Movie.Details.Field"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
@@ -88,27 +88,25 @@
 
                 <!-- Synopsis -->
                 <TextView
-                    style="@style/Movie.Details.Field.Synopsis"
+                    style="@style/Widget.CineToday.TextView.Movie.Details.Synopsis"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:breakStrategy="high_quality"
-                    android:hyphenationFrequency="full"
+                    android:layout_marginTop="6dp"
                     android:text="@{movie.synopsis}"
                     tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean in augue eu sem feugiat rutrum. Nam volutpat dolor arcu, sit amet ornare augue rutrum sit amet. Vestibulum congue, nisi non placerat dictum, justo neque fringilla nibh, eu sagittis lacus sapien sit amet lectus. Morbi sed ullamcorper est. Aliquam tempus, sem at cursus molestie, turpis lectus ultricies felis, non condimentum urna quam ac lectus. Vestibulum turpis tellus, commodo cursus tempor a, venenatis at ligula" />
 
                 <!-- Duration -->
                 <TextView
-                    style="@style/Movie.Details.Field"
+                    style="@style/Widget.CineToday.TextView.Movie.Details.Field"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
+                    android:layout_marginTop="6dp"
                     app:textHtml="@{@string/movie_card_duration(movie.durationFormatted)}"
                     tools:text="Duration: 1h43" />
 
                 <!-- Original title -->
                 <TextView
-                    style="@style/Movie.Details.Field"
+                    style="@style/Widget.CineToday.TextView.Movie.Details.Field"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
@@ -126,14 +124,14 @@
             android:id="@+id/conTheaterName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginRight="48dp"
+            android:layout_marginRight="32dp"
             android:orientation="vertical"
             android:visibility="gone">
 
             <!-- Theater name (invisible) -->
             <TextView
                 android:id="@+id/txtTheaterNameInvisible"
-                style="@style/Movie.Details.Theater.Name"
+                style="@style/Widget.CineToday.TextView.Movie.Details.TheaterName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingLeft="@{ScreenShapeHelper.get(context).safeMargin / 2F + @dimen/movie_details_padding_horizontal}"
@@ -152,7 +150,7 @@
         <!-- Theater name -->
         <TextView
             android:id="@+id/txtTheaterName"
-            style="@style/Movie.Details.Theater.Name"
+            style="@style/Widget.CineToday.TextView.Movie.Details.TheaterName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingLeft="@{ScreenShapeHelper.get(context).safeMargin / 2F + @dimen/movie_details_padding_horizontal}"
