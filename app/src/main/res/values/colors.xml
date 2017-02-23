@@ -14,15 +14,15 @@
 
     <color name="cineToday_red_500">#F44336</color>
     <color name="cineToday_red_accent">#FF8880</color>
-    <color name="cineToday_red_15">#330D0B</color>
-    <color name="cineToday_red_40">#661B15</color>
+    <color name="cineToday_red_30">#4D1410</color>
+    <color name="cineToday_red_65">#A62C23</color>
 
 
-    <color name="background">@color/cineToday_red_15</color>
+    <color name="background">@color/cineToday_red_30</color>
 
     <color name="primary">@color/cineToday_red_500</color>
     <color name="accent">@color/cineToday_red_accent</color>
-    <color name="primary_dark">@color/cineToday_red_40</color>
+    <color name="primary_dark">@color/cineToday_red_65</color>
 
     <color name="showTime_bg">@color/cineToday_gray_85</color>
     <color name="showTime_bg_3d">@color/cineToday_red_accent</color>

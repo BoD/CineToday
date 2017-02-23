@@ -53,6 +53,7 @@ public class GlideHelper {
         Glide.with(imageView.getContext()).load(path)
                 .listener(sRequestListener)
                 .centerCrop()
+                .dontAnimate()
                 .into(imageView);
     }
 
@@ -72,6 +73,7 @@ public class GlideHelper {
                     }
                 })
                 .centerCrop()
+                .dontAnimate()
                 .into(imageView);
     }
 }
