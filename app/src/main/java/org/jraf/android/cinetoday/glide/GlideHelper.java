@@ -26,6 +26,7 @@ package org.jraf.android.cinetoday.glide;
 
 import android.widget.ImageView;
 
+import com.bumptech.glide.DrawableRequestBuilder;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
@@ -37,7 +38,7 @@ public class GlideHelper {
     private static RequestListener<? super String, GlideDrawable> sRequestListener = new RequestListener<String, GlideDrawable>() {
         @Override
         public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
-            GlideHelper.onException(e, model);
+            Log.w(e, "Could not load image " + model);
             return false;
         }
 
@@ -47,33 +48,34 @@ public class GlideHelper {
         }
     };
 
-    private static void onException(Exception e, String model) {Log.w(e, "Could not load image " + model);}
+    private static DrawableRequestBuilder<String> getRequestBuilder(String path, ImageView imageView) {
+        return Glide.with(imageView.getContext())
+                .load(path)
+                .centerCrop();
+    }
 
     public static void load(String path, ImageView imageView) {
-        Glide.with(imageView.getContext()).load(path)
+        getRequestBuilder(path, imageView)
                 .listener(sRequestListener)
-                .centerCrop()
-                .dontAnimate()
                 .into(imageView);
     }
 
     public static void load(String path, ImageView imageView, final RequestListener<? super String, GlideDrawable> listener) {
-        Glide.with(imageView.getContext()).load(path)
+        getRequestBuilder(path, imageView)
                 .listener(new RequestListener<String, GlideDrawable>() {
                     @Override
                     public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
-                        GlideHelper.onException(e, model);
+                        sRequestListener.onException(e, model, target, isFirstResource);
                         return listener.onException(e, model, target, isFirstResource);
                     }
 
                     @Override
                     public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache,
                                                    boolean isFirstResource) {
+                        sRequestListener.onResourceReady(resource, model, target, isFromMemoryCache, isFirstResource);
                         return listener.onResourceReady(resource, model, target, isFromMemoryCache, isFirstResource);
                     }
                 })
-                .centerCrop()
-                .dontAnimate()
                 .into(imageView);
     }
 }
