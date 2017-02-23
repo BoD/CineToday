@@ -105,6 +105,10 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.View
             });
         }
         holder.itemBinding.executePendingBindings();
+
+//        if (mCursor.moveToNext()) {
+//            Glide.with(mContext).load(mCursor.getPosterUri()).centerCrop().preload();
+//        }
     }
 
     @Override
