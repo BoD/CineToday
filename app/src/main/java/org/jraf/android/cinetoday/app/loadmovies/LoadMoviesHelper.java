@@ -32,6 +32,9 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.ContentProviderOperation;
 import android.content.Context;
 import android.content.Intent;
@@ -48,6 +51,7 @@ import com.bumptech.glide.request.target.Target;
 
 import org.jraf.android.cinetoday.R;
 import org.jraf.android.cinetoday.api.Api;
+import org.jraf.android.cinetoday.app.main.MainActivity;
 import org.jraf.android.cinetoday.model.movie.Movie;
 import org.jraf.android.cinetoday.model.movie.Showtime;
 import org.jraf.android.cinetoday.prefs.MainPrefs;
@@ -66,6 +70,7 @@ import org.jraf.android.util.log.Log;
 
 public class LoadMoviesHelper {
     private static final LoadMoviesHelper INSTANCE = new LoadMoviesHelper();
+    private static final int NOTIFICATION_ID = 0;
 
     public static LoadMoviesHelper get() {
         return INSTANCE;
@@ -182,7 +187,12 @@ public class LoadMoviesHelper {
         loadMoviesListenerHelper.resetError();
         loadMoviesListenerHelper.onLoadMoviesSuccess();
 
-        // TODO notification
+        // 4/ Show a notification
+        ArrayList<String> newMovieTitles = new ArrayList<>(movies.size());
+        for (Movie movie : movies) {
+            if (movie.isNew) newMovieTitles.add(movie.localTitle);
+        }
+        if (!newMovieTitles.isEmpty()) showNotification(context, newMovieTitles);
     }
 
     private void persist(Context context, SortedSet<Movie> movies) {
@@ -271,6 +281,48 @@ public class LoadMoviesHelper {
         } catch (Exception e) {
             Log.e(e, "Could not apply batch");
         }
+    }
+
+    private void showNotification(Context context, ArrayList<String> newMovieTitles) {
+        Log.d();
+        Notification.Builder mainNotifBuilder = new Notification.Builder(context);
+
+        // Small icon
+        mainNotifBuilder.setSmallIcon(R.drawable.ic_notif);
+
+        // Title
+        String title = context.getString(R.string.notif_title);
+        mainNotifBuilder.setContentTitle(title);
+
+        // Text
+        Notification.BigTextStyle bigTextStyle = new Notification.BigTextStyle();
+        String text = TextUtils.join(", ", newMovieTitles);
+        bigTextStyle.bigText(text);
+        mainNotifBuilder.setStyle(bigTextStyle);
+
+        // Content intent
+        Intent mainActivityIntent = new Intent(context, MainActivity.class);
+        mainActivityIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        PendingIntent mainActivityPendingIntent = PendingIntent.getActivity(context, 0, mainActivityIntent, 0);
+        mainNotifBuilder.setContentIntent(mainActivityPendingIntent);
+
+//        // Wear specifics
+        Notification.WearableExtender wearableExtender = new Notification.WearableExtender();
+//        wearableExtender.setBackground(BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_notif));
+//        wearableExtender
+//                .addAction(new Notification.Action.Builder(Icon.createWithResource(context, R.mipmap.ic_launcher), "Open", mainActivityPendingIntent).build());
+//        wearableExtender.setContentAction(0);
+//
+//
+
+        wearableExtender.setHintContentIntentLaunchesActivity(true);
+        Notification.Builder wearableNotifBuilder = wearableExtender.extend(mainNotifBuilder);
+        Notification notification = wearableNotifBuilder.build();
+//        Notification notification = mainNotifBuilder.build();
+
+
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(NOTIFICATION_ID, notification);
     }
 
     public void startLoadMoviesIntentService(Context context) {
