@@ -1,4 +1,7 @@
 <resources>
+    <!-- Common -->
+    <string name="common_cancel">Annuler</string>
+
     <!-- Main -->
     <string name="main_empty_intro">Aucun cinéma choisi</string>
     <string name="theater_favorites_empty_pickTheater">Choisir un cinéma</string>

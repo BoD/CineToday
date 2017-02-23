@@ -124,7 +124,7 @@ public class MovieDetailsActivity extends FragmentActivity implements LoaderMana
 
                     // Time
                     boolean isTooLate = getTimeAsCalendar(showtimeCursor.getTime().getTime()).before(now);
-                    View conShowtimeItem = inflater.inflate(R.layout.movie_card_showtime_item, mBinding.conMovieDetails, false);
+                    View conShowtimeItem = inflater.inflate(R.layout.movie_details_showtime, mBinding.conMovieDetails, false);
                     TextView txtShowtime = (TextView) conShowtimeItem.findViewById(R.id.txtShowtime);
                     txtShowtime.setText(getTimeFormat(this).format(showtimeCursor.getTime()));
                     TextView txtIs3d = (TextView) conShowtimeItem.findViewById(R.id.txtIs3d);

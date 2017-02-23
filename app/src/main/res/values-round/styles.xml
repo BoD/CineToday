@@ -1,26 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="movieDetails">
-        <item name="android:gravity">center</item>
+    <style name="Widget.CineToday.LinearLayout.Movie.Details" parent="">
+        <item name="android:gravity">center_horizontal</item>
     </style>
 
-    <style name="Movie.Details.Title" parent="@android:style/Widget.DeviceDefault.TextView">
-        <item name="android:textAppearance">@android:style/TextAppearance.Material.Title</item>
-        <item name="android:gravity">center</item>
+    <style name="Widget.CineToday.TextView.Movie.Details.Title" parent="Base.Widget.CineToday.TextView.Movie.Details.Title">
+        <item name="android:gravity">center_horizontal</item>
     </style>
 
-    <style name="Movie.Details.Field" parent="@android:style/Widget.DeviceDefault.TextView">
-        <item name="android:textAppearance">@android:style/TextAppearance.Material.Body1</item>
-        <item name="android:gravity">center</item>
+    <style name="Widget.CineToday.TextView.Movie.Details.Field" parent="Base.Widget.CineToday.TextView.Movie.Details.Field">
+        <item name="android:gravity">center_horizontal</item>
     </style>
 
-    <style name="Movie.Details.Field.Synopsis">
-        <item name="android:gravity">start</item>
-    </style>
-
-    <style name="Movie.Details.Theater.Name" parent="@android:style/Widget.DeviceDefault.TextView">
-        <item name="android:textAppearance">@android:style/TextAppearance.Material.Body2</item>
+    <style name="Widget.CineToday.TextView.Movie.Details.TheaterName" parent="Base.Widget.CineToday.TextView.Movie.Details.TheaterName">
         <item name="android:gravity">center_horizontal</item>
     </style>
 
