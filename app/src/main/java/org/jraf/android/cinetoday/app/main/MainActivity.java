@@ -38,9 +38,12 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.wearable.view.ConfirmationOverlay;
 import android.support.wearable.view.drawer.WearableActionDrawer;
+import android.support.wearable.view.drawer.WearableDrawerLayout;
+import android.support.wearable.view.drawer.WearableDrawerView;
 import android.support.wearable.view.drawer.WearableNavigationDrawer;
 import android.view.Gravity;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.ViewTreeObserver;
 
 import com.google.android.wearable.intent.RemoteIntent;
@@ -63,6 +66,7 @@ import org.jraf.android.cinetoday.provider.theater.TheaterSelection;
 import org.jraf.android.cinetoday.util.ui.ScreenShapeHelper;
 import org.jraf.android.util.dialog.AlertDialogListener;
 import org.jraf.android.util.dialog.FrameworkAlertDialogFragment;
+import org.jraf.android.util.handler.HandlerUtil;
 import org.jraf.android.util.log.Log;
 
 public class MainActivity extends FragmentActivity implements MovieListCallbacks, TheaterFavoritesCallbacks, WearableActionDrawer.OnMenuItemClickListener,
@@ -98,6 +102,27 @@ public class MainActivity extends FragmentActivity implements MovieListCallbacks
                 mBinding.drawerLayout.peekDrawer(Gravity.TOP);
                 mBinding.drawerLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
             }
+        });
+
+        mBinding.drawerLayout.setDrawerStateCallback(new WearableDrawerLayout.DrawerStateCallback() {
+            @Override
+            public void onDrawerOpened(View view) {}
+
+            @Override
+            public void onDrawerClosed(View view) {
+                // Hide the action drawer after a second
+                if (view == mBinding.navigationDrawer && getTheaterFavoritesFragment().isVisible()) {
+                    HandlerUtil.getMainHandler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            mBinding.drawerLayout.closeDrawer(Gravity.BOTTOM);
+                        }
+                    }, 1000);
+                }
+            }
+
+            @Override
+            public void onDrawerStateChanged(@WearableDrawerView.DrawerState int i) {}
         });
     }
 

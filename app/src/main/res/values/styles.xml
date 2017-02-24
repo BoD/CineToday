@@ -70,7 +70,7 @@
         <item name="android:gravity">start</item>
     </style>
 
-    <style name="Widget.CineToday.TextView.Theater.Search.NoResults" parent="Widget.CineToday.TextView.Title3">
+    <style name="Widget.CineToday.TextView.Empty" parent="Widget.CineToday.TextView.Title3">
         <item name="android:textColor">?android:textColorSecondary</item>
     </style>
 
