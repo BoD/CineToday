@@ -105,6 +105,9 @@ public class MovieDetailsActivity extends FragmentActivity implements LoaderMana
                 break;
 
             case LOADER_SHOWTIMES:
+                mTxtTheaterNameList.clear();
+                mBinding.conMovieDetails.removeAllViews();
+
                 ShowtimeCursor showtimeCursor = (ShowtimeCursor) data;
                 showtimeCursor.moveToPosition(-1);
                 long theaterId = -1;

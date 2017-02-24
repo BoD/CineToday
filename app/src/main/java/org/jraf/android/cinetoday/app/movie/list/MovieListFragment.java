@@ -45,6 +45,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import org.jraf.android.cinetoday.R;
+import org.jraf.android.cinetoday.app.loadmovies.LoadMoviesListener;
+import org.jraf.android.cinetoday.app.loadmovies.LoadMoviesListenerHelper;
 import org.jraf.android.cinetoday.databinding.MovieListBinding;
 import org.jraf.android.cinetoday.provider.movie.MovieContentValues;
 import org.jraf.android.cinetoday.provider.movie.MovieCursor;
@@ -57,6 +59,7 @@ public class MovieListFragment extends BaseFragment<MovieListCallbacks> implemen
     private SparseIntArray mPalette = new SparseIntArray();
     private ValueAnimator mColorAnimation;
     private boolean mScrolling;
+    private boolean mLoadMoviesStarted;
 
     public static MovieListFragment newInstance() {
         return new MovieListFragment();
@@ -68,6 +71,12 @@ public class MovieListFragment extends BaseFragment<MovieListCallbacks> implemen
         getLoaderManager().initLoader(0, null, this);
     }
 
+    @Override
+    public void onDestroy() {
+        LoadMoviesListenerHelper.get().removeListener(mLoadMoviesListener);
+        super.onDestroy();
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -77,6 +86,9 @@ public class MovieListFragment extends BaseFragment<MovieListCallbacks> implemen
         SnapHelper snapHelper = new PagerSnapHelper();
         snapHelper.attachToRecyclerView(mBinding.rclList);
         mBinding.rclList.addOnScrollListener(mOnScrollListener);
+
+        LoadMoviesListenerHelper.get().addListener(mLoadMoviesListener);
+
         return mBinding.getRoot();
     }
 
@@ -89,9 +101,17 @@ public class MovieListFragment extends BaseFragment<MovieListCallbacks> implemen
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         mBinding.pgbLoading.setVisibility(View.GONE);
         if (data.getCount() == 0) {
-            mBinding.txtEmpty.setVisibility(View.VISIBLE);
+            // No movies
+            if (mLoadMoviesStarted) {
+                mBinding.conMoviesLoading.setVisibility(View.VISIBLE);
+                mBinding.txtEmpty.setVisibility(View.GONE);
+            } else {
+                mBinding.conMoviesLoading.setVisibility(View.GONE);
+                mBinding.txtEmpty.setVisibility(View.VISIBLE);
+            }
             mBinding.rclList.setVisibility(View.GONE);
         } else {
+            mBinding.conMoviesLoading.setVisibility(View.GONE);
             mBinding.txtEmpty.setVisibility(View.GONE);
             mBinding.rclList.setVisibility(View.VISIBLE);
             if (mAdapter == null) {
@@ -179,4 +199,40 @@ public class MovieListFragment extends BaseFragment<MovieListCallbacks> implemen
         }
     };
 
+    //--------------------------------------------------------------------------
+    // region Movie loading.
+    //--------------------------------------------------------------------------
+
+    private LoadMoviesListener mLoadMoviesListener = new LoadMoviesListener() {
+        @Override
+        public void onLoadMoviesStarted() {
+            if (mAdapter == null || mAdapter.getItemCount() == 0) {
+                mLoadMoviesStarted = true;
+                mBinding.conMoviesLoading.setVisibility(View.VISIBLE);
+                mBinding.txtEmpty.setVisibility(View.GONE);
+            }
+        }
+
+        @Override
+        public void onLoadMoviesProgress(int currentMovie, int totalMovies, String movieName) {
+            mBinding.txtMoviesLoadingInfo.setText(getString(R.string.movie_list_loadingMovies_progress, currentMovie, totalMovies));
+        }
+
+        @Override
+        public void onLoadMoviesInterrupted() {}
+
+        @Override
+        public void onLoadMoviesSuccess() {
+            mLoadMoviesStarted = false;
+            mBinding.conMoviesLoading.setVisibility(View.GONE);
+        }
+
+        @Override
+        public void onLoadMoviesError(Throwable t) {
+            mLoadMoviesStarted = false;
+            mBinding.conMoviesLoading.setVisibility(View.GONE);
+        }
+    };
+
+    // endregion
 }
