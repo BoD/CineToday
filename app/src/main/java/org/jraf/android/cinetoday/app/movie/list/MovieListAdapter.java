@@ -122,6 +122,13 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.View
         return mCursor.getCount();
     }
 
+    @Override
+    public long getItemId(int position) {
+        if (mCursor == null) return RecyclerView.NO_ID;
+        if (!mCursor.moveToPosition(position)) return RecyclerView.NO_ID;
+        return mCursor.getId();
+    }
+
     public void swapCursor(MovieCursor cursor) {
         mCursor = cursor;
         notifyDataSetChanged();

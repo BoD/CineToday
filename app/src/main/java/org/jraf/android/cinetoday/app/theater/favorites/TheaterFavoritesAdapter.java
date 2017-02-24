@@ -78,6 +78,13 @@ public class TheaterFavoritesAdapter extends RecyclerView.Adapter<TheaterFavorit
         return mCursor.getCount();
     }
 
+    @Override
+    public long getItemId(int position) {
+        if (mCursor == null) return RecyclerView.NO_ID;
+        if (!mCursor.moveToPosition(position)) return RecyclerView.NO_ID;
+        return mCursor.getId();
+    }
+
     public void swapCursor(TheaterCursor cursor) {
         mCursor = cursor;
         notifyDataSetChanged();
