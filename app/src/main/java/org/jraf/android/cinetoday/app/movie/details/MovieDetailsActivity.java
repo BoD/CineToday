@@ -106,7 +106,7 @@ public class MovieDetailsActivity extends FragmentActivity implements LoaderMana
 
             case LOADER_SHOWTIMES:
                 mTxtTheaterNameList.clear();
-                mBinding.conMovieDetails.removeAllViews();
+                mBinding.conShowtimes.removeAllViews();
 
                 ShowtimeCursor showtimeCursor = (ShowtimeCursor) data;
                 showtimeCursor.moveToPosition(-1);
@@ -118,16 +118,16 @@ public class MovieDetailsActivity extends FragmentActivity implements LoaderMana
                     if (showtimeCursor.getTheaterId() != theaterId) {
                         theaterId = showtimeCursor.getTheaterId();
                         TextView txtTheaterName =
-                                (TextView) inflater.inflate(R.layout.movie_details_theater_name, mBinding.conMovieDetails, false);
+                                (TextView) inflater.inflate(R.layout.movie_details_theater_name, mBinding.conShowtimes, false);
                         txtTheaterName.setText(showtimeCursor.getTheaterName());
-                        mBinding.conMovieDetails.addView(txtTheaterName);
+                        mBinding.conShowtimes.addView(txtTheaterName);
 
                         mTxtTheaterNameList.add(txtTheaterName);
                     }
 
                     // Time
                     boolean isTooLate = getTimeAsCalendar(showtimeCursor.getTime().getTime()).before(now);
-                    View conShowtimeItem = inflater.inflate(R.layout.movie_details_showtime, mBinding.conMovieDetails, false);
+                    View conShowtimeItem = inflater.inflate(R.layout.movie_details_showtime, mBinding.conShowtimes, false);
                     TextView txtShowtime = (TextView) conShowtimeItem.findViewById(R.id.txtShowtime);
                     txtShowtime.setText(getTimeFormat(this).format(showtimeCursor.getTime()));
                     TextView txtIs3d = (TextView) conShowtimeItem.findViewById(R.id.txtIs3d);
@@ -139,7 +139,7 @@ public class MovieDetailsActivity extends FragmentActivity implements LoaderMana
                     if (isTooLate) {
                         conShowtimeItem.setAlpha(.33F);
                     }
-                    mBinding.conMovieDetails.addView(conShowtimeItem);
+                    mBinding.conShowtimes.addView(conShowtimeItem);
                 }
                 break;
         }
@@ -168,7 +168,7 @@ public class MovieDetailsActivity extends FragmentActivity implements LoaderMana
     private View.OnScrollChangeListener mOnScrollChangeListener = new View.OnScrollChangeListener() {
         @Override
         public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-            if (scrollY < mTxtTheaterNameList.get(0).getY() - mBinding.txtTheaterName.getPaddingTop()) {
+            if (scrollY < mBinding.conShowtimes.getY() + mTxtTheaterNameList.get(0).getY() - mBinding.txtTheaterName.getPaddingTop()) {
                 mBinding.txtTheaterName.setVisibility(View.GONE);
                 mBinding.conTheaterName.setVisibility(View.GONE);
                 mTxtTheaterNameList.get(0).setVisibility(View.VISIBLE);
@@ -176,7 +176,7 @@ public class MovieDetailsActivity extends FragmentActivity implements LoaderMana
                 mBinding.txtTheaterName.setVisibility(View.VISIBLE);
                 AnimationUtil.animateVisible(mBinding.conTheaterName);
                 for (TextView textView : mTxtTheaterNameList) {
-                    if (scrollY >= textView.getY() - mBinding.txtTheaterName.getPaddingTop()) {
+                    if (scrollY >= textView.getY() - mBinding.txtTheaterName.getPaddingTop() + mBinding.conShowtimes.getY()) {
                         mBinding.txtTheaterName.setText(textView.getText());
                         mBinding.txtTheaterNameInvisible.setText(textView.getText());
                         textView.setVisibility(View.INVISIBLE);
