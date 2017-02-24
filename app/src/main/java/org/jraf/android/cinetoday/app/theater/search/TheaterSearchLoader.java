@@ -24,6 +24,8 @@
  */
 package org.jraf.android.cinetoday.app.theater.search;
 
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 
 import android.content.Context;
@@ -31,6 +33,8 @@ import android.support.v4.content.AsyncTaskLoader;
 
 import org.jraf.android.cinetoday.api.Api;
 import org.jraf.android.cinetoday.model.theater.Theater;
+import org.jraf.android.cinetoday.provider.theater.TheaterCursor;
+import org.jraf.android.cinetoday.provider.theater.TheaterSelection;
 import org.jraf.android.util.log.Log;
 
 public class TheaterSearchLoader extends AsyncTaskLoader<List<Theater>> {
@@ -45,8 +49,23 @@ public class TheaterSearchLoader extends AsyncTaskLoader<List<Theater>> {
     @Override
     public List<Theater> loadInBackground() {
         Log.d();
+        // Get the list of favorite theaters, so we can filter them out from the search results
+        HashSet<String> favoriteTheaterPublicIds = new HashSet<>();
+        try (TheaterCursor cursor = new TheaterSelection().query(getContext())) {
+            while (cursor.moveToNext()) {
+                favoriteTheaterPublicIds.add(cursor.getPublicId());
+            }
+        }
         try {
-            return Api.get(getContext()).searchTheaters(mQuery);
+            // API call (blocking)
+            List<Theater> res = Api.get(getContext()).searchTheaters(mQuery);
+
+            // Filter out favorite theaters
+            Iterator<Theater> i = res.iterator();
+            while (i.hasNext()) {
+                if (favoriteTheaterPublicIds.contains(i.next().id)) i.remove();
+            }
+            return res;
         } catch (Exception e) {
             Log.w(e, "Could not search for theaters");
             return null;
