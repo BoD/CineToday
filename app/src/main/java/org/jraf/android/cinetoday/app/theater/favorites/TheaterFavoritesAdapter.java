@@ -33,6 +33,7 @@ import android.view.ViewGroup;
 import org.jraf.android.cinetoday.R;
 import org.jraf.android.cinetoday.databinding.TheaterFavoriteListItemBinding;
 import org.jraf.android.cinetoday.provider.theater.TheaterCursor;
+import org.jraf.android.cinetoday.provider.theater.TheaterModel;
 
 public class TheaterFavoritesAdapter extends RecyclerView.Adapter<TheaterFavoritesAdapter.ViewHolder> {
     private final Context mContext;
@@ -47,12 +48,14 @@ public class TheaterFavoritesAdapter extends RecyclerView.Adapter<TheaterFavorit
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
+
         public final TheaterFavoriteListItemBinding itemBinding;
 
         public ViewHolder(TheaterFavoriteListItemBinding itemBinding) {
             super(itemBinding.getRoot());
             this.itemBinding = itemBinding;
         }
+
     }
 
     @Override
@@ -88,5 +91,11 @@ public class TheaterFavoritesAdapter extends RecyclerView.Adapter<TheaterFavorit
     public void swapCursor(TheaterCursor cursor) {
         mCursor = cursor;
         notifyDataSetChanged();
+    }
+
+    public TheaterModel getTheater(int position) {
+        if (mCursor == null) return null;
+        if (!mCursor.moveToPosition(position)) return null;
+        return mCursor;
     }
 }

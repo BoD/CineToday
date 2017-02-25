@@ -175,14 +175,55 @@ public class MainActivity extends FragmentActivity implements MovieListCallbacks
 
     @Override
     public boolean onMenuItemClick(MenuItem menuItem) {
+        Log.d();
         switch (menuItem.getItemId()) {
             case R.id.main_action_add_favorite:
-                Log.d();
-                mBinding.actionDrawer.closeDrawer();
                 startTheaterSearchActivity();
                 break;
+
+            case R.id.main_action_directions:
+                openDirectionsToTheater(getTheaterFavoritesFragment().getCurrentVisibleTheater().getAddress());
+                break;
+
+            case R.id.main_action_web:
+                openTheaterWebsite(getTheaterFavoritesFragment().getCurrentVisibleTheater().getName());
+                break;
+
+            case R.id.main_action_delete:
+                confirmDeleteTheater(getTheaterFavoritesFragment().getCurrentVisibleTheater().getId());
+                break;
         }
+        mBinding.actionDrawer.closeDrawer();
         return false;
+    }
+
+    private void openDirectionsToTheater(String theaterAddress) {
+        Log.d();
+        try {
+            theaterAddress = URLEncoder.encode(theaterAddress, "utf-8");
+        } catch (UnsupportedEncodingException ignored) {}
+        Uri uri = Uri.parse("http://maps.google.com/maps?f=d&daddr=" + theaterAddress);
+        openOnPhone(uri);
+    }
+
+    public void openTheaterWebsite(String theaterName) {
+        Log.d();
+        theaterName = "cinema " + theaterName;
+        try {
+            theaterName = URLEncoder.encode(theaterName, "utf-8");
+        } catch (UnsupportedEncodingException ignored) {}
+        Uri uri = Uri.parse("https://www.google.com/search?sourceid=navclient&btnI=I&q=" + theaterName);
+        openOnPhone(uri);
+    }
+
+    public void confirmDeleteTheater(long theaterId) {
+        Log.d();
+        FrameworkAlertDialogFragment.newInstance(DIALOG_THEATER_DELETE_CONFIRM)
+                .message(R.string.main_theater_delete_confirm_message)
+                .positiveButton(R.string.main_action_delete)
+                .negativeButton(R.string.common_cancel)
+                .payload(theaterId)
+                .show(this);
     }
 
     // endregion
@@ -244,38 +285,6 @@ public class MainActivity extends FragmentActivity implements MovieListCallbacks
     //--------------------------------------------------------------------------
     // region Callbacks.
     //--------------------------------------------------------------------------
-
-    @Override
-    public void onTheaterNavigateClick(String theaterAddress) {
-        Log.d();
-        try {
-            theaterAddress = URLEncoder.encode(theaterAddress, "utf-8");
-        } catch (UnsupportedEncodingException ignored) {}
-        Uri uri = Uri.parse("http://maps.google.com/maps?f=d&daddr=" + theaterAddress);
-        openOnPhone(uri);
-    }
-
-    @Override
-    public void onTheaterWebSiteClick(String theaterName) {
-        Log.d();
-        theaterName = "cinema " + theaterName;
-        try {
-            theaterName = URLEncoder.encode(theaterName, "utf-8");
-        } catch (UnsupportedEncodingException ignored) {}
-        Uri uri = Uri.parse("https://www.google.com/search?sourceid=navclient&btnI=I&q=" + theaterName);
-        openOnPhone(uri);
-    }
-
-    @Override
-    public void onTheaterDeleteClick(long theaterId) {
-        Log.d();
-        FrameworkAlertDialogFragment.newInstance(DIALOG_THEATER_DELETE_CONFIRM)
-                .message(R.string.main_theater_delete_confirm_message)
-                .positiveButton(R.string.main_action_delete)
-                .negativeButton(R.string.common_cancel)
-                .payload(theaterId)
-                .show(this);
-    }
 
     @Override
     public void onTheaterListScrolled() {
@@ -384,6 +393,11 @@ public class MainActivity extends FragmentActivity implements MovieListCallbacks
                                 + " ) = 0");
                         movieSelection.delete(MainActivity.this);
                         return null;
+                    }
+
+                    @Override
+                    protected void onPostExecute(Void aVoid) {
+                        ensureFavoriteTheaters();
                     }
                 }.execute();
                 break;
