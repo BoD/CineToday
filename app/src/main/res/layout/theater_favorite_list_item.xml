@@ -28,119 +28,50 @@
             type="org.jraf.android.cinetoday.provider.theater.TheaterModel" />
     </data>
 
-    <RelativeLayout
+    <android.support.wearable.view.BoxInsetLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/cineToday_black"
-        android:foreground="?android:attr/selectableItemBackground"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
-        <android.support.wearable.view.BoxInsetLayout
+        <!-- Picture -->
+        <ImageView
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:foreground="@color/theater_favorite_list_item_overlay"
+            app:uri="@{theater.pictureUri}"
+            tools:src="#00F" />
 
-            <!-- Picture -->
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:foreground="@drawable/shape_theater_favorite_bg"
-                app:layout_box="bottom"
-                app:uri="@{theater.pictureUri}"
-                tools:src="#00F" />
-        </android.support.wearable.view.BoxInsetLayout>
-
-        <!-- Overlay -->
-        <FrameLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:orientation="vertical"
+            app:layout_box="all">
 
-            <android.support.wearable.view.BoxInsetLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@android:color/transparent">
+            <!-- Name -->
+            <TextView
+                android:id="@+id/txtName"
+                style="@style/Widget.CineToday.TextView.TheaterName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:shadowColor="@android:color/black"
+                android:shadowRadius="@{context.resources.getDimensionPixelSize(R.dimen.shadow_radius)}"
+                android:text="@{theater.name}"
+                tools:text="MK2 Bibliothèque" />
 
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    app:layout_box="all">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_above="@+id/conButtons"
-                        android:layout_alignParentTop="true"
-                        android:layout_centerHorizontal="true"
-                        android:gravity="center"
-                        android:orientation="vertical">
-
-                        <!-- Name -->
-                        <TextView
-                            android:id="@+id/txtName"
-                            style="@style/Widget.CineToday.TextView.TheaterName"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center_horizontal"
-                            android:shadowColor="@android:color/black"
-                            android:shadowRadius="@{context.resources.getDimensionPixelSize(R.dimen.shadow_radius)}"
-                            android:text="@{theater.name}"
-                            tools:text="MK2 Bibliothèque" />
-
-                        <!-- Address -->
-                        <TextView
-                            android:id="@+id/txtAddress"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center_horizontal"
-                            android:maxLines="4"
-                            android:shadowColor="@android:color/black"
-                            android:shadowRadius="@{context.resources.getDimensionPixelSize(R.dimen.shadow_radius)}"
-                            android:text="@{theater.address}"
-                            tools:text="23 rue Nationale\n75013 PARIS" />
-                    </LinearLayout>
-
-                    <!-- Buttons -->
-                    <LinearLayout
-                        android:id="@+id/conButtons"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentBottom="true"
-                        android:gravity="center_horizontal"
-                        android:orientation="horizontal"
-                        android:paddingBottom="@dimen/theater_favorite_list_item_buttons_paddingBottom">
-
-                        <!-- Navigate -->
-                        <ImageButton
-                            android:id="@+id/btnNavigate"
-                            android:layout_width="0px"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:background="?android:selectableItemBackgroundBorderless"
-                            android:onClick="@{() -> callbacks.onTheaterNavigateClick(theaterAddress)}"
-                            android:src="@drawable/ic_directions_24dp" />
-
-                        <!-- Web site -->
-                        <ImageButton
-                            android:id="@+id/btnWebSite"
-                            android:layout_width="0px"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:background="?android:selectableItemBackgroundBorderless"
-                            android:onClick="@{() -> callbacks.onTheaterWebSiteClick(theaterName)}"
-                            android:src="@drawable/ic_web_24dp" />
-
-                        <!-- Delete -->
-                        <ImageButton
-                            android:id="@+id/btnDelete"
-                            android:layout_width="0px"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:background="?android:selectableItemBackgroundBorderless"
-                            android:onClick="@{() -> callbacks.onTheaterDeleteClick(theaterId)}"
-                            android:src="@drawable/ic_delete_24dp" />
-                    </LinearLayout>
-
-                </RelativeLayout>
-            </android.support.wearable.view.BoxInsetLayout>
-        </FrameLayout>
-    </RelativeLayout>
+            <!-- Address -->
+            <TextView
+                android:id="@+id/txtAddress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="marquee"
+                android:gravity="center_horizontal"
+                android:maxLines="4"
+                android:shadowColor="@android:color/black"
+                android:shadowRadius="@{context.resources.getDimensionPixelSize(R.dimen.shadow_radius)}"
+                android:text="@{theater.address}"
+                tools:text="23 rue Nationale\n75013 PARIS" />
+        </LinearLayout>
+    </android.support.wearable.view.BoxInsetLayout>
 </layout>

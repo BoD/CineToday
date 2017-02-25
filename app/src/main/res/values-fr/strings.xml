@@ -33,9 +33,9 @@
     <string name="main_lastUpdateDate_ongoing">Mise à jour en cours…</string>
     <string name="main_menu_settings">Paramètres</string>
     <string name="main_action_about">À propos</string>
-    <string name="main_navigate">Itinéraire</string>
-    <string name="main_webSite">Site web</string>
-    <string name="main_delete">Supprimer</string>
+    <string name="main_action_directions">Itinéraire</string>
+    <string name="main_action_webSite">Site web</string>
+    <string name="main_action_delete">Supprimer</string>
     <string name="main_theater_delete_confirm_title">Supprimer</string>
     <string name="main_theater_delete_confirm_message">Voulez-vous supprimer ce cinéma ?</string>
     <string name="main_page_add_btnAdd_empty">Choisir un cinéma</string>
