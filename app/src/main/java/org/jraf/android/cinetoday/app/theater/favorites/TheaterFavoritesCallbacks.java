@@ -30,4 +30,6 @@ public interface TheaterFavoritesCallbacks {
     void onTheaterWebSiteClick(String theaterName);
 
     void onTheaterDeleteClick(long theaterId);
+
+    void onTheaterListScrolled();
 }

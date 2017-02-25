@@ -31,6 +31,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.PagerSnapHelper;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SnapHelper;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -66,6 +67,8 @@ public class TheaterFavoritesFragment extends BaseFragment<TheaterFavoritesCallb
         SnapHelper snapHelper = new PagerSnapHelper();
         snapHelper.attachToRecyclerView(mBinding.rclList);
 
+        mBinding.rclList.addOnScrollListener(mOnScrollListener);
+
         return mBinding.getRoot();
     }
 
@@ -88,4 +91,11 @@ public class TheaterFavoritesFragment extends BaseFragment<TheaterFavoritesCallb
     public void onLoaderReset(Loader<Cursor> loader) {
         if (mAdapter != null) mAdapter.swapCursor(null);
     }
+
+    private RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
+        @Override
+        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+            if (newState != RecyclerView.SCROLL_STATE_IDLE) getCallbacks().onTheaterListScrolled();
+        }
+    };
 }

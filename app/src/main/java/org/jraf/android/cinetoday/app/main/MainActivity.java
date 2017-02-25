@@ -73,11 +73,13 @@ public class MainActivity extends FragmentActivity implements MovieListCallbacks
         AlertDialogListener {
     private static final int REQUEST_ADD_THEATER = 0;
     private static final int DIALOG_THEATER_DELETE_CONFIRM = 0;
+    private static final int DELAY_HIDE_PEEKING_ACTION_DRAWER_MS = 2500;
 
     private MainBinding mBinding;
     private TheaterFavoritesFragment mTheaterFavoritesFragment;
     private MovieListFragment mMovieListFragment;
     private boolean mAtLeastOneFavorite;
+    private boolean mShouldClosePeekingActionDrawer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,7 +87,7 @@ public class MainActivity extends FragmentActivity implements MovieListCallbacks
         mBinding = DataBindingUtil.setContentView(this, R.layout.main);
         mBinding.navigationDrawer.setAdapter(new NavigationDrawerAdapter());
         mBinding.actionDrawer.setOnMenuItemClickListener(this);
-        mBinding.actionDrawer.setShouldOnlyOpenWhenAtTop(true);
+        mBinding.actionDrawer.setShouldPeekOnScrollDown(true);
 
         // Workaround for http://stackoverflow.com/questions/42141631
         // XXX If the screen is round, we consider the height *must* be the same as the width
@@ -110,14 +112,10 @@ public class MainActivity extends FragmentActivity implements MovieListCallbacks
 
             @Override
             public void onDrawerClosed(View view) {
-                // Hide the action drawer after a second
-                if (view == mBinding.navigationDrawer && getTheaterFavoritesFragment().isVisible()) {
-                    HandlerUtil.getMainHandler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            mBinding.drawerLayout.closeDrawer(Gravity.BOTTOM);
-                        }
-                    }, 1000);
+                if (view == mBinding.navigationDrawer && getTheaterFavoritesFragment().isVisible() && mShouldClosePeekingActionDrawer) {
+                    mBinding.drawerLayout.peekDrawer(Gravity.BOTTOM);
+                    HandlerUtil.getMainHandler().postDelayed(mHideActionDrawerRunnable, DELAY_HIDE_PEEKING_ACTION_DRAWER_MS);
+                    mShouldClosePeekingActionDrawer = false;
                 }
             }
 
@@ -125,6 +123,15 @@ public class MainActivity extends FragmentActivity implements MovieListCallbacks
             public void onDrawerStateChanged(@WearableDrawerView.DrawerState int i) {}
         });
     }
+
+    private Runnable mHideActionDrawerRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (mBinding.actionDrawer.isPeeking()) {
+                mBinding.drawerLayout.closeDrawer(Gravity.BOTTOM);
+            }
+        }
+    };
 
     private class NavigationDrawerAdapter extends WearableNavigationDrawer.WearableNavigationDrawerAdapter {
         private String[] mTexts = getResources().getStringArray(R.array.main_navigationDrawer_text);
@@ -226,7 +233,7 @@ public class MainActivity extends FragmentActivity implements MovieListCallbacks
                 .commit();
 
         mBinding.actionDrawer.unlockDrawer();
-        mBinding.drawerLayout.peekDrawer(Gravity.BOTTOM);
+        mShouldClosePeekingActionDrawer = true;
     }
 
     // endregion
@@ -264,10 +271,16 @@ public class MainActivity extends FragmentActivity implements MovieListCallbacks
         Log.d();
         FrameworkAlertDialogFragment.newInstance(DIALOG_THEATER_DELETE_CONFIRM)
                 .message(R.string.main_theater_delete_confirm_message)
-                .positiveButton(R.string.main_delete)
+                .positiveButton(R.string.main_action_delete)
                 .negativeButton(R.string.common_cancel)
                 .payload(theaterId)
                 .show(this);
+    }
+
+    @Override
+    public void onTheaterListScrolled() {
+        HandlerUtil.getMainHandler().removeCallbacks(mHideActionDrawerRunnable);
+        HandlerUtil.getMainHandler().postDelayed(mHideActionDrawerRunnable, DELAY_HIDE_PEEKING_ACTION_DRAWER_MS);
     }
 
     @Override

@@ -115,6 +115,13 @@
                     app:visible="@{!movie.titleLocal.equals(movie.titleOriginal)}"
                     tools:text="Original title: Star Wars Episode VII: The Force Awakens" />
 
+                <LinearLayout
+                    android:id="@+id/conShowtimes"
+                    style="@style/Widget.CineToday.LinearLayout.Movie.Details"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
+
             </LinearLayout>
 
         </ScrollView>

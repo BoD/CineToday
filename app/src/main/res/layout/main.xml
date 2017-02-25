@@ -22,6 +22,7 @@
             android:id="@+id/actionDrawer"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
+        <!--android:theme="@style/Theme.CineToday.ActionDrawer"-->
 
     </android.support.wearable.view.drawer.WearableDrawerLayout>
 </layout>

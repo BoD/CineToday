@@ -27,13 +27,13 @@
     <color name="showTime_bg">@color/cineToday_gray_85</color>
     <color name="showTime_bg_3d">@color/cineToday_red_accent</color>
 
-    <color name="movie_list_bg">@color/cineToday_gray_25</color>
+    <color name="movie_list_bg">@color/background</color>
 
     <color name="movie_placeHolder_gradient_start">@color/cineToday_gray_25</color>
     <color name="movie_placeHolder_gradient_center">@color/cineToday_gray_65</color>
     <color name="movie_placeHolder_gradient_end">@color/cineToday_gray_15</color>
-    <color name="theater_favorite_list_item_overlay_start">@color/cineToday_black_a33</color>
-    <color name="theater_favorite_list_item_overlay_end">@color/cineToday_black_a66</color>
+
+    <color name="theater_favorite_list_item_overlay">@color/cineToday_black_a66</color>
 
 
 </resources>

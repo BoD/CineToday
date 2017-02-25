@@ -21,4 +21,9 @@
         <item name="android:colorBackgroundFloating">@color/primary_dark</item>
     </style>
 
+    <style name="Theme.CineToday.ActionDrawer">
+        <item name="android:colorBackground">?android:colorBackgroundFloating</item>
+    </style>
+
+
 </resources>
