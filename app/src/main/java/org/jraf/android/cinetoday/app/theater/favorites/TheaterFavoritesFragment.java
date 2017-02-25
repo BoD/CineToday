@@ -30,6 +30,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PagerSnapHelper;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SnapHelper;
@@ -40,6 +41,7 @@ import android.view.ViewGroup;
 import org.jraf.android.cinetoday.R;
 import org.jraf.android.cinetoday.databinding.TheaterFavoritesBinding;
 import org.jraf.android.cinetoday.provider.theater.TheaterCursor;
+import org.jraf.android.cinetoday.provider.theater.TheaterModel;
 import org.jraf.android.cinetoday.provider.theater.TheaterSelection;
 import org.jraf.android.util.app.base.BaseFragment;
 
@@ -72,6 +74,11 @@ public class TheaterFavoritesFragment extends BaseFragment<TheaterFavoritesCallb
         return mBinding.getRoot();
     }
 
+
+    //--------------------------------------------------------------------------
+    // region Loader.
+    //--------------------------------------------------------------------------
+
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         return new TheaterSelection().getCursorLoader(getContext());
@@ -92,10 +99,19 @@ public class TheaterFavoritesFragment extends BaseFragment<TheaterFavoritesCallb
         if (mAdapter != null) mAdapter.swapCursor(null);
     }
 
+    // endregion
+
+
     private RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
         @Override
         public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
             if (newState != RecyclerView.SCROLL_STATE_IDLE) getCallbacks().onTheaterListScrolled();
         }
     };
+
+    public TheaterModel getCurrentVisibleTheater() {
+        int firstItemPosition = ((LinearLayoutManager) mBinding.rclList.getLayoutManager()).findFirstVisibleItemPosition();
+        if (firstItemPosition == RecyclerView.NO_POSITION) return null;
+        return mAdapter.getTheater(firstItemPosition);
+    }
 }
