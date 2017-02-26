@@ -26,6 +26,8 @@ package org.jraf.android.cinetoday.app.movie.list;
 
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
+import android.app.LoaderManager;
+import android.content.Loader;
 import android.database.Cursor;
 import android.databinding.DataBindingUtil;
 import android.graphics.drawable.ColorDrawable;
@@ -33,8 +35,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.ColorInt;
 import android.support.annotation.Nullable;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PagerSnapHelper;
 import android.support.v7.widget.RecyclerView;
@@ -51,9 +51,9 @@ import org.jraf.android.cinetoday.databinding.MovieListBinding;
 import org.jraf.android.cinetoday.provider.movie.MovieContentValues;
 import org.jraf.android.cinetoday.provider.movie.MovieCursor;
 import org.jraf.android.cinetoday.provider.movie.MovieSelection;
-import org.jraf.android.util.app.base.BaseFragment;
+import org.jraf.android.util.app.base.BaseFrameworkFragment;
 
-public class MovieListFragment extends BaseFragment<MovieListCallbacks> implements LoaderManager.LoaderCallbacks<Cursor>, PaletteListener {
+public class MovieListFragment extends BaseFrameworkFragment<MovieListCallbacks> implements LoaderManager.LoaderCallbacks<Cursor>, PaletteListener {
     private MovieListBinding mBinding;
     private MovieListAdapter mAdapter;
     private SparseIntArray mPalette = new SparseIntArray();

@@ -32,7 +32,6 @@
     <string name="main_lastUpdateDate">Dernière mise à jour : %1$s</string>
     <string name="main_lastUpdateDate_ongoing">Mise à jour en cours…</string>
     <string name="main_menu_settings">Paramètres</string>
-    <string name="main_action_about">À propos</string>
     <string name="main_action_directions">Itinéraire</string>
     <string name="main_action_webSite">Site web</string>
     <string name="main_action_delete">Supprimer</string>
@@ -59,8 +58,7 @@
 
     <!-- Preferences -->
     <string name="preference_showNewReleasesNotification_title">Notifications de nouvelles sorties</string>
-    <string name="preference_showNewReleasesNotification_summary">Afficher une notification sur votre montre quand de nouveaux films sont sortis</string>
-    <string name="preferences_title">Paramètres</string>
+    <string name="preference_about_title">À propos</string>
 
     <!-- About -->
     <string name="about_shareText_subject">Une super app !</string>

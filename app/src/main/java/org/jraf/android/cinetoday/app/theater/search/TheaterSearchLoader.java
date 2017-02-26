@@ -28,8 +28,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
+import android.content.AsyncTaskLoader;
 import android.content.Context;
-import android.support.v4.content.AsyncTaskLoader;
 
 import org.jraf.android.cinetoday.api.Api;
 import org.jraf.android.cinetoday.model.theater.Theater;

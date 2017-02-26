@@ -24,18 +24,18 @@
  */
 package org.jraf.android.cinetoday.app.theater.search;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.FragmentActivity;
 
 import org.jraf.android.cinetoday.R;
 import org.jraf.android.cinetoday.databinding.TheaterSearchBinding;
 import org.jraf.android.cinetoday.model.theater.Theater;
 import org.jraf.android.util.log.Log;
 
-public class TheaterSearchActivity extends FragmentActivity implements TheaterSearchCallbacks {
+public class TheaterSearchActivity extends Activity implements TheaterSearchCallbacks {
     private static final String PREFIX = TheaterSearchActivity.class.getName() + ".";
     public static final String EXTRA_RESULT = PREFIX + "EXTRA_RESULT";
 
@@ -69,7 +69,7 @@ public class TheaterSearchActivity extends FragmentActivity implements TheaterSe
 
     public TheaterSearchFragment getTheaterSearchFragment() {
         if (mTheaterSearchFragment == null) {
-            mTheaterSearchFragment = (TheaterSearchFragment) getSupportFragmentManager().findFragmentById(R.id.fraTheaterSearch);
+            mTheaterSearchFragment = (TheaterSearchFragment) getFragmentManager().findFragmentById(R.id.fraTheaterSearch);
         }
         return mTheaterSearchFragment;
     }

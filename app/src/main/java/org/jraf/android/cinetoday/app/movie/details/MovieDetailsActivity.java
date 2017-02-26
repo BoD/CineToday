@@ -28,17 +28,17 @@ import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import android.app.Activity;
+import android.app.LoaderManager;
 import android.content.ContentUris;
 import android.content.Context;
+import android.content.CursorLoader;
+import android.content.Loader;
 import android.database.Cursor;
 import android.databinding.DataBindingUtil;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
@@ -49,7 +49,7 @@ import org.jraf.android.cinetoday.provider.showtime.ShowtimeCursor;
 import org.jraf.android.cinetoday.provider.showtime.ShowtimeSelection;
 import org.jraf.android.util.ui.animation.AnimationUtil;
 
-public class MovieDetailsActivity extends FragmentActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+public class MovieDetailsActivity extends Activity implements LoaderManager.LoaderCallbacks<Cursor> {
     private static final int LOADER_MOVIE = 0;
     private static final int LOADER_SHOWTIMES = 1;
 
@@ -62,8 +62,8 @@ public class MovieDetailsActivity extends FragmentActivity implements LoaderMana
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mBinding = DataBindingUtil.setContentView(this, R.layout.movie_details);
-        getSupportLoaderManager().initLoader(LOADER_MOVIE, null, this);
-        getSupportLoaderManager().initLoader(LOADER_SHOWTIMES, null, this);
+        getLoaderManager().initLoader(LOADER_MOVIE, null, this);
+        getLoaderManager().initLoader(LOADER_SHOWTIMES, null, this);
 
         mBinding.conMovie.setOnScrollChangeListener(mOnScrollChangeListener);
     }
@@ -101,7 +101,7 @@ public class MovieDetailsActivity extends FragmentActivity implements LoaderMana
                 mBinding.txtTheaterNameInvisible.setBackgroundColor(color);
                 int gradientColors[] = {color, 0};
                 GradientDrawable gradientDrawable = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, gradientColors);
-                mBinding.vieTheaterNameGradient.setBackgroundDrawable(gradientDrawable);
+                mBinding.vieTheaterNameGradient.setBackground(gradientDrawable);
                 break;
 
             case LOADER_SHOWTIMES:

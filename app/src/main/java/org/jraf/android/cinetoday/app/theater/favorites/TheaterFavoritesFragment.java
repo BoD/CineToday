@@ -24,12 +24,12 @@
  */
 package org.jraf.android.cinetoday.app.theater.favorites;
 
+import android.app.LoaderManager;
+import android.content.Loader;
 import android.database.Cursor;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PagerSnapHelper;
 import android.support.v7.widget.RecyclerView;
@@ -43,9 +43,9 @@ import org.jraf.android.cinetoday.databinding.TheaterFavoritesBinding;
 import org.jraf.android.cinetoday.provider.theater.TheaterCursor;
 import org.jraf.android.cinetoday.provider.theater.TheaterModel;
 import org.jraf.android.cinetoday.provider.theater.TheaterSelection;
-import org.jraf.android.util.app.base.BaseFragment;
+import org.jraf.android.util.app.base.BaseFrameworkFragment;
 
-public class TheaterFavoritesFragment extends BaseFragment<TheaterFavoritesCallbacks> implements LoaderManager.LoaderCallbacks<Cursor> {
+public class TheaterFavoritesFragment extends BaseFrameworkFragment<TheaterFavoritesCallbacks> implements LoaderManager.LoaderCallbacks<Cursor> {
     private TheaterFavoritesBinding mBinding;
     private TheaterFavoritesAdapter mAdapter;
 
