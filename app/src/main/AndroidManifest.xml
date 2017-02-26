@@ -74,7 +74,7 @@
         <activity android:name=".app.movie.details.MovieDetailsActivity" />
 
         <!-- About -->
-        <activity android:name="org.jraf.android.util.about.AboutActivity" />
+        <activity android:name="org.jraf.android.util.about.WearAboutActivity" />
 
         <!-- Confirmation -->
         <activity

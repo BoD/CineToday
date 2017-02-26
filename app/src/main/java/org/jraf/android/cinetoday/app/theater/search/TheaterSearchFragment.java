@@ -42,8 +42,8 @@ import android.view.ViewGroup;
 import org.jraf.android.cinetoday.R;
 import org.jraf.android.cinetoday.databinding.TheaterSearchListBinding;
 import org.jraf.android.cinetoday.model.theater.Theater;
-import org.jraf.android.cinetoday.util.ui.ScreenShapeHelper;
 import org.jraf.android.util.app.base.BaseFrameworkFragment;
+import org.jraf.android.util.ui.screenshape.ScreenShapeHelper;
 
 public class TheaterSearchFragment extends BaseFrameworkFragment<TheaterSearchCallbacks> implements LoaderManager.LoaderCallbacks<List<Theater>> {
     private TheaterSearchAdapter mAdapter;

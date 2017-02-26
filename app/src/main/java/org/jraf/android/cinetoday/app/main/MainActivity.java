@@ -64,11 +64,11 @@ import org.jraf.android.cinetoday.provider.movie.MovieSelection;
 import org.jraf.android.cinetoday.provider.showtime.ShowtimeColumns;
 import org.jraf.android.cinetoday.provider.theater.TheaterContentValues;
 import org.jraf.android.cinetoday.provider.theater.TheaterSelection;
-import org.jraf.android.cinetoday.util.ui.ScreenShapeHelper;
 import org.jraf.android.util.dialog.AlertDialogListener;
 import org.jraf.android.util.dialog.FrameworkAlertDialogFragment;
 import org.jraf.android.util.handler.HandlerUtil;
 import org.jraf.android.util.log.Log;
+import org.jraf.android.util.ui.screenshape.ScreenShapeHelper;
 
 public class MainActivity extends Activity implements MovieListCallbacks, TheaterFavoritesCallbacks, WearableActionDrawer.OnMenuItemClickListener,
         AlertDialogListener {

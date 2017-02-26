@@ -1,4 +1,4 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <string name="app_name" translatable="false">Cine Today</string>
 
     <!-- Common -->
@@ -63,7 +63,7 @@
     <string name="preference_about_title">About</string>
 
     <!-- About -->
-    <string name="about_authorCopyright" translatable="false" tools:ignore="TypographyOther">Copyright (C) 2015–2016 Benoit \'BoD\' Lubek.\nLogo and artwork by David Rodriguez.\nAdditional code by Carmen Alvarez.</string>
+    <string name="about_authorCopyright" translatable="false">Copyright (C) 2015-2017 Benoit \'BoD\' Lubek.\nLogo and artwork by David Rodriguez.\nAdditional code by Carmen Alvarez.</string>
     <string name="about_License" translatable="false">Licensed under the terms of the GNU General Public License.</string>
     <string name="about_email_uri" translatable="false">mailto:BoD@JRAF.org</string>
     <string name="about_email_text">Contact the author</string>
