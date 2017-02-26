@@ -26,11 +26,11 @@ package org.jraf.android.cinetoday.app.theater.search;
 
 import java.util.List;
 
+import android.app.LoaderManager;
+import android.content.Loader;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearSnapHelper;
 import android.support.v7.widget.SnapHelper;
 import android.support.wearable.view.DefaultOffsettingHelper;
@@ -43,9 +43,9 @@ import org.jraf.android.cinetoday.R;
 import org.jraf.android.cinetoday.databinding.TheaterSearchListBinding;
 import org.jraf.android.cinetoday.model.theater.Theater;
 import org.jraf.android.cinetoday.util.ui.ScreenShapeHelper;
-import org.jraf.android.util.app.base.BaseFragment;
+import org.jraf.android.util.app.base.BaseFrameworkFragment;
 
-public class TheaterSearchFragment extends BaseFragment<TheaterSearchCallbacks> implements LoaderManager.LoaderCallbacks<List<Theater>> {
+public class TheaterSearchFragment extends BaseFrameworkFragment<TheaterSearchCallbacks> implements LoaderManager.LoaderCallbacks<List<Theater>> {
     private TheaterSearchAdapter mAdapter;
     private TheaterSearchListBinding mBinding;
 

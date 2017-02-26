@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <android.support.v7.preference.SwitchPreferenceCompat
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:title="@string/main_menu_settings">
+    <SwitchPreference
         android:defaultValue="true"
         android:key="showNewReleasesNotification"
-        android:summary="@string/preference_showNewReleasesNotification_summary"
         android:title="@string/preference_showNewReleasesNotification_title" />
+
+    <Preference
+        android:icon="@drawable/ic_settings_info_white_24dp"
+        android:key="about"
+        android:persistent="false"
+        android:title="@string/preference_about_title" />
 
 </PreferenceScreen>

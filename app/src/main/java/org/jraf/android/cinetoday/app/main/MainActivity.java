@@ -27,6 +27,8 @@ package org.jraf.android.cinetoday.app.main;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
+import android.app.Activity;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.res.TypedArray;
 import android.databinding.DataBindingUtil;
@@ -34,8 +36,6 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentTransaction;
 import android.support.wearable.view.ConfirmationOverlay;
 import android.support.wearable.view.drawer.WearableActionDrawer;
 import android.support.wearable.view.drawer.WearableDrawerLayout;
@@ -53,6 +53,7 @@ import org.jraf.android.cinetoday.app.loadmovies.LoadMoviesHelper;
 import org.jraf.android.cinetoday.app.movie.details.MovieDetailsActivity;
 import org.jraf.android.cinetoday.app.movie.list.MovieListCallbacks;
 import org.jraf.android.cinetoday.app.movie.list.MovieListFragment;
+import org.jraf.android.cinetoday.app.preferences.PreferencesFragment;
 import org.jraf.android.cinetoday.app.theater.favorites.TheaterFavoritesCallbacks;
 import org.jraf.android.cinetoday.app.theater.favorites.TheaterFavoritesFragment;
 import org.jraf.android.cinetoday.app.theater.search.TheaterSearchActivity;
@@ -69,7 +70,7 @@ import org.jraf.android.util.dialog.FrameworkAlertDialogFragment;
 import org.jraf.android.util.handler.HandlerUtil;
 import org.jraf.android.util.log.Log;
 
-public class MainActivity extends FragmentActivity implements MovieListCallbacks, TheaterFavoritesCallbacks, WearableActionDrawer.OnMenuItemClickListener,
+public class MainActivity extends Activity implements MovieListCallbacks, TheaterFavoritesCallbacks, WearableActionDrawer.OnMenuItemClickListener,
         AlertDialogListener {
     private static final int REQUEST_ADD_THEATER = 0;
     private static final int DIALOG_THEATER_DELETE_CONFIRM = 0;
@@ -78,6 +79,7 @@ public class MainActivity extends FragmentActivity implements MovieListCallbacks
     private MainBinding mBinding;
     private TheaterFavoritesFragment mTheaterFavoritesFragment;
     private MovieListFragment mMovieListFragment;
+    private PreferencesFragment mPreferencesFragment;
     private boolean mAtLeastOneFavorite;
     private boolean mShouldClosePeekingActionDrawer;
 
@@ -149,7 +151,7 @@ public class MainActivity extends FragmentActivity implements MovieListCallbacks
 
         @Override
         public void onItemSelected(int position) {
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            FragmentTransaction transaction = getFragmentManager().beginTransaction();
             switch (position) {
                 case 0:
                     showMovieListFragment();
@@ -157,6 +159,10 @@ public class MainActivity extends FragmentActivity implements MovieListCallbacks
 
                 case 1:
                     showTheaterFavoritesFragment();
+                    break;
+
+                case 2:
+                    showPreferencesFragment();
                     break;
             }
             transaction.commit();
@@ -236,9 +242,9 @@ public class MainActivity extends FragmentActivity implements MovieListCallbacks
     private MovieListFragment getMovieListFragment() {
         if (mMovieListFragment == null) {
             mMovieListFragment =
-                    (MovieListFragment) getSupportFragmentManager().findFragmentByTag(MovieListFragment.class.getName());
+                    (MovieListFragment) getFragmentManager().findFragmentByTag(MovieListFragment.class.getName());
             if (mMovieListFragment == null) {
-                getSupportFragmentManager().beginTransaction()
+                getFragmentManager().beginTransaction()
                         .add(R.id.conFragment, mMovieListFragment = MovieListFragment.newInstance(), MovieListFragment.class.getName())
                         .commit();
             }
@@ -248,9 +254,9 @@ public class MainActivity extends FragmentActivity implements MovieListCallbacks
 
     private TheaterFavoritesFragment getTheaterFavoritesFragment() {
         if (mTheaterFavoritesFragment == null) {
-            mTheaterFavoritesFragment = (TheaterFavoritesFragment) getSupportFragmentManager().findFragmentByTag(TheaterFavoritesFragment.class.getName());
+            mTheaterFavoritesFragment = (TheaterFavoritesFragment) getFragmentManager().findFragmentByTag(TheaterFavoritesFragment.class.getName());
             if (mTheaterFavoritesFragment == null) {
-                getSupportFragmentManager().beginTransaction()
+                getFragmentManager().beginTransaction()
                         .add(R.id.conFragment, mTheaterFavoritesFragment = TheaterFavoritesFragment.newInstance(), TheaterFavoritesFragment.class.getName())
                         .commit();
             }
@@ -258,9 +264,23 @@ public class MainActivity extends FragmentActivity implements MovieListCallbacks
         return mTheaterFavoritesFragment;
     }
 
+    private PreferencesFragment getPreferencesFragment() {
+        if (mPreferencesFragment == null) {
+            mPreferencesFragment = (PreferencesFragment) getFragmentManager().findFragmentByTag(PreferencesFragment.class.getName());
+            if (mPreferencesFragment == null) {
+                getFragmentManager().beginTransaction()
+                        .add(R.id.conFragment, mPreferencesFragment = PreferencesFragment.newInstance(), PreferencesFragment.class.getName())
+                        .commit();
+            }
+        }
+        return mPreferencesFragment;
+    }
+
+
     private void showMovieListFragment() {
-        getSupportFragmentManager().beginTransaction()
+        getFragmentManager().beginTransaction()
                 .hide(getTheaterFavoritesFragment())
+                .hide(getPreferencesFragment())
                 .show(getMovieListFragment())
                 .commit();
 
@@ -268,13 +288,24 @@ public class MainActivity extends FragmentActivity implements MovieListCallbacks
     }
 
     private void showTheaterFavoritesFragment() {
-        getSupportFragmentManager().beginTransaction()
+        getFragmentManager().beginTransaction()
                 .hide(getMovieListFragment())
+                .hide(getPreferencesFragment())
                 .show(getTheaterFavoritesFragment())
                 .commit();
 
         mBinding.actionDrawer.unlockDrawer();
         mShouldClosePeekingActionDrawer = true;
+    }
+
+    private void showPreferencesFragment() {
+        getFragmentManager().beginTransaction()
+                .hide(getMovieListFragment())
+                .hide(getTheaterFavoritesFragment())
+                .show(getPreferencesFragment())
+                .commit();
+
+        mBinding.actionDrawer.lockDrawerClosed();
     }
 
     // endregion
