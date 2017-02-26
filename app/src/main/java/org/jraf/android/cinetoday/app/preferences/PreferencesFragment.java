@@ -25,9 +25,12 @@
 package org.jraf.android.cinetoday.app.preferences;
 
 import android.os.Bundle;
+import android.preference.Preference;
 import android.preference.PreferenceFragment;
 
+import org.jraf.android.cinetoday.BuildConfig;
 import org.jraf.android.cinetoday.R;
+import org.jraf.android.util.about.AboutActivityIntentBuilder;
 
 public class PreferencesFragment extends PreferenceFragment {
 
@@ -39,5 +42,26 @@ public class PreferencesFragment extends PreferenceFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences);
+
+        findPreference("about").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                AboutActivityIntentBuilder builder = new AboutActivityIntentBuilder();
+                builder.setAppName(getString(R.string.app_name));
+                builder.setBuildDate(BuildConfig.BUILD_DATE);
+                builder.setGitSha1(BuildConfig.GIT_SHA1);
+                builder.setAuthorCopyright(getString(R.string.about_authorCopyright));
+                builder.setLicense(getString(R.string.about_License));
+                builder.setShareTextSubject(getString(R.string.about_shareText_subject));
+                builder.setShareTextBody(getString(R.string.about_shareText_body));
+                builder.setBackgroundResId(R.drawable.about_bg);
+                builder.addLink(getString(R.string.about_email_uri), getString(R.string.about_email_text));
+                builder.addLink(getString(R.string.about_web_uri), getString(R.string.about_web_text));
+                builder.addLink(getString(R.string.about_artwork_uri), getString(R.string.about_artwork_text));
+                builder.addLink(getString(R.string.about_sources_uri), getString(R.string.about_sources_text));
+                startActivity(builder.build(getContext()));
+                return true;
+            }
+        });
     }
 }

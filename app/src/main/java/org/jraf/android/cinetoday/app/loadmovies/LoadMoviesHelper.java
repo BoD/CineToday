@@ -64,9 +64,9 @@ import org.jraf.android.cinetoday.provider.showtime.ShowtimeColumns;
 import org.jraf.android.cinetoday.provider.showtime.ShowtimeContentValues;
 import org.jraf.android.cinetoday.provider.theater.TheaterCursor;
 import org.jraf.android.cinetoday.provider.theater.TheaterSelection;
-import org.jraf.android.cinetoday.util.ui.ScreenShapeHelper;
 import org.jraf.android.util.handler.HandlerUtil;
 import org.jraf.android.util.log.Log;
+import org.jraf.android.util.ui.screenshape.ScreenShapeHelper;
 
 public class LoadMoviesHelper {
     private static final LoadMoviesHelper INSTANCE = new LoadMoviesHelper();

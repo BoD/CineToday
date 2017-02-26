@@ -5,7 +5,7 @@
 
     <data>
 
-        <import type="org.jraf.android.cinetoday.util.ui.ScreenShapeHelper" />
+        <import type="org.jraf.android.util.ui.screenshape.ScreenShapeHelper" />
 
         <variable
             name="callbacks"
