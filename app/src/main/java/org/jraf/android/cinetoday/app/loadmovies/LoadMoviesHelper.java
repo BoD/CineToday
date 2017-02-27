@@ -31,6 +31,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -38,6 +41,10 @@ import android.app.PendingIntent;
 import android.content.ContentProviderOperation;
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkCapabilities;
+import android.net.NetworkRequest;
 import android.support.annotation.WorkerThread;
 import android.support.v7.graphics.Palette;
 import android.text.TextUtils;
@@ -71,6 +78,8 @@ import org.jraf.android.util.ui.screenshape.ScreenShapeHelper;
 public class LoadMoviesHelper {
     private static final LoadMoviesHelper INSTANCE = new LoadMoviesHelper();
     private static final int NOTIFICATION_ID = 0;
+    private static final int MIN_BANDWIDTH_KBPS = 320;
+
 
     public static LoadMoviesHelper get() {
         return INSTANCE;
@@ -83,52 +92,67 @@ public class LoadMoviesHelper {
     }
 
     @WorkerThread
+    private boolean requestHighBandwidthNetwork(Context context, long timeout, TimeUnit unit) {
+        final ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        Network activeNetwork = connectivityManager.getActiveNetwork();
+        if (activeNetwork == null || connectivityManager.getNetworkCapabilities(activeNetwork).getLinkDownstreamBandwidthKbps() < MIN_BANDWIDTH_KBPS) {
+            final AtomicBoolean res = new AtomicBoolean(false);
+            final CountDownLatch countDownLatch = new CountDownLatch(1);
+
+            // Request a high-bandwidth network
+            ConnectivityManager.NetworkCallback networkCallback = new ConnectivityManager.NetworkCallback() {
+                @Override
+                public void onAvailable(Network network) {
+                    connectivityManager.unregisterNetworkCallback(this);
+                    res.set(connectivityManager.bindProcessToNetwork(network));
+                    countDownLatch.countDown();
+                }
+            };
+            NetworkRequest request = new NetworkRequest.Builder()
+                    .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
+                    .addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR)
+                    .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+                    .build();
+
+            Log.d("Requesting a high-bandwidth network");
+            connectivityManager.requestNetwork(request, networkCallback);
+            try {
+                countDownLatch.await(timeout, unit);
+            } catch (InterruptedException ignored) {}
+
+            return res.get();
+        } else {
+            // Already on a high-bandwidth network
+            return true;
+        }
+    }
+
+    @WorkerThread
     public void loadMovies(final Context context) throws Exception {
         mWantStop = false;
         LoadMoviesListenerHelper loadMoviesListenerHelper = LoadMoviesListenerHelper.get();
         loadMoviesListenerHelper.onLoadMoviesStarted();
 
-        // 1/ Retrieve list of movies (including showtimes), for all the theaters
+        // 0/ Try to connect to a fast network
+        boolean highBandwidthNetworkSuccess = requestHighBandwidthNetwork(context, 10, TimeUnit.SECONDS);
+        Log.d("Fast network success=%s", highBandwidthNetworkSuccess);
+
         SortedSet<Movie> movies = new TreeSet<>(Movie.COMPARATOR);
-        try (TheaterCursor theaterCursor = new TheaterSelection().query(context)) {
-            while (theaterCursor.moveToNext()) {
-                Api.get(context).getMovieList(movies, theaterCursor.getPublicId(), new Date());
+        try {
+            // 1/ Retrieve list of movies (including showtimes), for all the theaters
+            try (TheaterCursor theaterCursor = new TheaterSelection().query(context)) {
+                while (theaterCursor.moveToNext()) {
+                    Api.get(context).getMovieList(movies, theaterCursor.getPublicId(), new Date());
 
-                if (mWantStop) {
-                    loadMoviesListenerHelper.onLoadMoviesInterrupted();
-                    return;
+                    if (mWantStop) {
+                        loadMoviesListenerHelper.onLoadMoviesInterrupted();
+                        return;
+                    }
                 }
-            }
-        } catch (Exception e) {
-            Log.e(e, "Could not load movies");
-            loadMoviesListenerHelper.onLoadMoviesError(e);
-            throw e;
-        }
-
-        if (mWantStop) {
-            loadMoviesListenerHelper.onLoadMoviesInterrupted();
-            return;
-        }
-
-        // 2/ Retrieve more details about each movie
-        int size = movies.size();
-        int i = 0;
-        for (final Movie movie : movies) {
-            loadMoviesListenerHelper.onLoadMoviesProgress(i, size, movie.localTitle);
-
-            // Check if we already have info for this movie
-            if (new MovieSelection().publicId(movie.id).count(context) == 0) {
-                movie.isNew = true;
-
-                // Get movie info
-                try {
-                    Api.get(context).getMovieInfo(movie);
-                    Log.d(movie.toString());
-                } catch (Exception e) {
-                    Log.e(e, "Could not load movie info: movie = %s", movie);
-                    loadMoviesListenerHelper.onLoadMoviesError(e);
-                    throw e;
-                }
+            } catch (Exception e) {
+                Log.e(e, "Could not load movies");
+                loadMoviesListenerHelper.onLoadMoviesError(e);
+                throw e;
             }
 
             if (mWantStop) {
@@ -136,48 +160,83 @@ public class LoadMoviesHelper {
                 return;
             }
 
-            // Download the poster now
-            int height = ScreenShapeHelper.get(context).height;
-            int width = (int) (context.getResources().getFraction(R.fraction.movie_list_item_poster, height, 1) + .5F);
-            int border = context.getResources().getDimensionPixelSize(R.dimen.movie_list_item_posterBorder);
-            height -= border * 2;
-            width -= border * 2;
-            // Glide insists this is done on the main thread
-            final int finalWidth = width;
-            final int finalHeight = height;
-            HandlerUtil.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Glide.with(context)
-                            .load(movie.posterUri)
-                            .centerCrop()
-                            .diskCacheStrategy(DiskCacheStrategy.RESULT)
-                            .listener(new RequestListener<String, GlideDrawable>() {
-                                @Override
-                                public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
-                                    return false;
-                                }
+            // 2/ Retrieve more details about each movie
+            int size = movies.size();
+            int i = 0;
+            for (final Movie movie : movies) {
+                loadMoviesListenerHelper.onLoadMoviesProgress(i, size, movie.localTitle);
 
-                                @Override
-                                public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache,
-                                                               boolean isFirstResource) {
-                                    if (!(resource instanceof GlideBitmapDrawable)) return false;
-                                    GlideBitmapDrawable glideBitmapDrawable = (GlideBitmapDrawable) resource;
-                                    Palette.from(glideBitmapDrawable.getBitmap()).generate(new Palette.PaletteAsyncListener() {
-                                        @Override
-                                        public void onGenerated(Palette p) {
-                                            movie.color = p.getDarkVibrantColor(context.getColor(R.color.movie_list_bg));
-                                        }
-                                    });
-                                    return false;
-                                }
-                            })
-                            .preload(finalWidth, finalHeight);
+                // Check if we already have info for this movie
+                if (new MovieSelection().publicId(movie.id).count(context) == 0) {
+                    movie.isNew = true;
+
+                    // Get movie info
+                    try {
+                        Api.get(context).getMovieInfo(movie);
+                        Log.d(movie.toString());
+                    } catch (Exception e) {
+                        Log.e(e, "Could not load movie info: movie = %s", movie);
+                        loadMoviesListenerHelper.onLoadMoviesError(e);
+                        throw e;
+                    }
                 }
-            });
 
-            i++;
-            loadMoviesListenerHelper.onLoadMoviesProgress(i, size, movie.localTitle);
+                if (mWantStop) {
+                    loadMoviesListenerHelper.onLoadMoviesInterrupted();
+                    return;
+                }
+
+                // Download the poster now
+                int height = ScreenShapeHelper.get(context).height;
+                int width = (int) (context.getResources().getFraction(R.fraction.movie_list_item_poster, height, 1) + .5F);
+                int border = context.getResources().getDimensionPixelSize(R.dimen.movie_list_item_posterBorder);
+                height -= border * 2;
+                width -= border * 2;
+                // Glide insists this is done on the main thread
+                final int finalWidth = width;
+                final int finalHeight = height;
+                HandlerUtil.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Glide.with(context)
+                                .load(movie.posterUri)
+                                .centerCrop()
+                                .diskCacheStrategy(DiskCacheStrategy.RESULT)
+                                .listener(new RequestListener<String, GlideDrawable>() {
+                                    @Override
+                                    public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+                                        return false;
+                                    }
+
+                                    @Override
+                                    public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target,
+                                                                   boolean isFromMemoryCache,
+                                                                   boolean isFirstResource) {
+                                        if (!(resource instanceof GlideBitmapDrawable)) return false;
+                                        GlideBitmapDrawable glideBitmapDrawable = (GlideBitmapDrawable) resource;
+                                        Palette.from(glideBitmapDrawable.getBitmap()).generate(new Palette.PaletteAsyncListener() {
+                                            @Override
+                                            public void onGenerated(Palette p) {
+                                                movie.color = p.getDarkVibrantColor(context.getColor(R.color.movie_list_bg));
+                                            }
+                                        });
+                                        return false;
+                                    }
+                                })
+                                .preload(finalWidth, finalHeight);
+                    }
+                });
+
+                i++;
+                loadMoviesListenerHelper.onLoadMoviesProgress(i, size, movie.localTitle);
+            }
+
+        } finally {
+            // Releasing the high-bandwidth network
+            if (highBandwidthNetworkSuccess) {
+                ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+                connectivityManager.bindProcessToNetwork(null);
+            }
         }
 
         // 3/ Save everything to the local db
