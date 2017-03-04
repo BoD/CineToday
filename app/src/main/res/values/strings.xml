@@ -30,9 +30,6 @@
     </plurals>
 
     <!-- Main -->
-    <string name="main_lastUpdateDate_none">Never updated</string>
-    <string name="main_lastUpdateDate">Last update: %1$s</string>
-    <string name="main_lastUpdateDate_ongoing">Update ongoing…</string>
     <string name="main_menu_settings">Settings</string>
     <string name="main_action_directions">Directions</string>
     <string name="main_action_webSite">Web site</string>
@@ -61,6 +58,10 @@
     <!-- Preferences -->
     <string name="preference_showNewReleasesNotification_title">New releases notifications</string>
     <string name="preference_about_title">About</string>
+    <string name="preference_refresh_title">Load movies</string>
+    <string name="preference_refresh_summary_none">Never updated</string>
+    <string name="preference_refresh_summary_date">Last update: %1$s</string>
+    <string name="preference_refresh_summary_ongoing">Loading (%1$d/%2$d)…</string>
 
     <!-- About -->
     <string name="about_authorCopyright" translatable="false">Copyright (C) 2015-2017 Benoit \'BoD\' Lubek.\nLogo and artwork by David Rodriguez.\nAdditional code by Carmen Alvarez.</string>
