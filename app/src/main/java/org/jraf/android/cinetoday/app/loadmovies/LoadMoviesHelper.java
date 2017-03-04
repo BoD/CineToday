@@ -128,7 +128,7 @@ public class LoadMoviesHelper {
     }
 
     @WorkerThread
-    public void loadMovies(final Context context) throws Exception {
+    /* package */ void loadMovies(final Context context) throws Exception {
         mWantStop = false;
         LoadMoviesListenerHelper loadMoviesListenerHelper = LoadMoviesListenerHelper.get();
         loadMoviesListenerHelper.onLoadMoviesStarted();

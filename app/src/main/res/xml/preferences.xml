@@ -8,6 +8,12 @@
         android:title="@string/preference_showNewReleasesNotification_title" />
 
     <Preference
+        android:icon="@drawable/ic_settings_refresh_white_24dp"
+        android:key="refresh"
+        android:persistent="false"
+        android:title="@string/preference_refresh_title" />
+
+    <Preference
         android:icon="@drawable/ic_settings_info_white_24dp"
         android:key="about"
         android:persistent="false"

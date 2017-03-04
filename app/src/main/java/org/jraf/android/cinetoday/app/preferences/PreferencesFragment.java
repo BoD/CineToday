@@ -27,9 +27,14 @@ package org.jraf.android.cinetoday.app.preferences;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
+import android.text.format.DateUtils;
 
 import org.jraf.android.cinetoday.BuildConfig;
 import org.jraf.android.cinetoday.R;
+import org.jraf.android.cinetoday.app.loadmovies.LoadMoviesHelper;
+import org.jraf.android.cinetoday.app.loadmovies.LoadMoviesListener;
+import org.jraf.android.cinetoday.app.loadmovies.LoadMoviesListenerHelper;
+import org.jraf.android.cinetoday.prefs.MainPrefs;
 import org.jraf.android.util.about.AboutActivityIntentBuilder;
 
 public class PreferencesFragment extends PreferenceFragment {
@@ -38,11 +43,25 @@ public class PreferencesFragment extends PreferenceFragment {
         return new PreferencesFragment();
     }
 
+    private boolean mLoadMoviesStarted;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences);
 
+        // Refresh
+        findPreference("refresh").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                if (mLoadMoviesStarted) return true;
+                LoadMoviesHelper.get().startLoadMoviesIntentService(getContext());
+                return true;
+            }
+        });
+        setLastUpdateDateSummary();
+
+        // About
         findPreference("about").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
@@ -63,5 +82,57 @@ public class PreferencesFragment extends PreferenceFragment {
                 return true;
             }
         });
+
+        LoadMoviesListenerHelper.get().addListener(mLoadMoviesListener);
+    }
+
+    @Override
+    public void onDestroy() {
+        LoadMoviesListenerHelper.get().removeListener(mLoadMoviesListener);
+        super.onDestroy();
+    }
+
+    private LoadMoviesListener mLoadMoviesListener = new LoadMoviesListener() {
+        @Override
+        public void onLoadMoviesStarted() {
+            mLoadMoviesStarted = true;
+            Preference refreshPref = findPreference("refresh");
+            refreshPref.setEnabled(false);
+        }
+
+        @Override
+        public void onLoadMoviesProgress(int currentMovie, int totalMovies, String movieName) {
+            findPreference("refresh").setSummary(getString(R.string.preference_refresh_summary_ongoing, currentMovie, totalMovies));
+        }
+
+        @Override
+        public void onLoadMoviesInterrupted() {
+            mLoadMoviesStarted = false;
+            setLastUpdateDateSummary();
+        }
+
+        @Override
+        public void onLoadMoviesSuccess() {
+            mLoadMoviesStarted = false;
+            setLastUpdateDateSummary();
+        }
+
+        @Override
+        public void onLoadMoviesError(Throwable t) {
+            mLoadMoviesStarted = false;
+            setLastUpdateDateSummary();
+        }
+    };
+
+    private void setLastUpdateDateSummary() {
+        Long lastUpdateDate = MainPrefs.get(getContext()).getLastUpdateDate();
+        Preference refreshPref = findPreference("refresh");
+        if (lastUpdateDate == null) {
+            refreshPref.setSummary(R.string.preference_refresh_summary_none);
+        } else {
+            String lastUpdateDateStr = DateUtils.formatDateTime(getContext(), lastUpdateDate, DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_TIME);
+            refreshPref.setSummary(getString(R.string.preference_refresh_summary_date, lastUpdateDateStr));
+        }
+        refreshPref.setEnabled(true);
     }
 }
