@@ -26,10 +26,8 @@ cache:
     - $HOME/.android/build-cache
 
 install:
-  - test ! -e $HOME/android-sdk-dl/tools_r25.2.5-linux.zip && mkdir -p $HOME/android-sdk-dl
   - test ! -e $HOME/android-sdk-dl/tools_r25.2.5-linux.zip && curl https://dl.google.com/android/repository/tools_r25.2.5-linux.zip > $HOME/android-sdk-dl/tools_r25.2.5-linux.zip
-  - test ! -e $HOME/android-sdk-dl/tools_r25.2.5-linux.zip && mkdir -p $HOME/android-sdk
-  - test ! -e $HOME/android-sdk-dl/tools_r25.2.5-linux.zip && unzip $HOME/android-sdk-dl/tools_r25.2.5-linux.zip -d $HOME/android-sdk
+  - unzip $HOME/android-sdk-dl/tools_r25.2.5-linux.zip -d $HOME/android-sdk
   - echo y | $HOME/android-sdk/tools/bin/sdkmanager 'tools'
   - echo y | $HOME/android-sdk/tools/bin/sdkmanager 'platform-tools'
   - echo y | $HOME/android-sdk/tools/bin/sdkmanager 'build-tools;25.0.2'
