@@ -28,9 +28,6 @@
     </plurals>
 
     <!-- Main -->
-    <string name="main_lastUpdateDate_none">Jamais mis à jour</string>
-    <string name="main_lastUpdateDate">Dernière mise à jour : %1$s</string>
-    <string name="main_lastUpdateDate_ongoing">Mise à jour en cours…</string>
     <string name="main_menu_settings">Paramètres</string>
     <string name="main_action_directions">Itinéraire</string>
     <string name="main_action_webSite">Site web</string>
@@ -59,6 +56,10 @@
     <!-- Preferences -->
     <string name="preference_showNewReleasesNotification_title">Notifications de nouvelles sorties</string>
     <string name="preference_about_title">À propos</string>
+    <string name="preference_refresh_title">Mettre à jour</string>
+    <string name="preference_refresh_summary_none">Jamais mis à jour</string>
+    <string name="preference_refresh_summary_date">Dernière mise à jour : %1$s</string>
+    <string name="preference_refresh_summary_ongoing">Mise à jour en cours (%1$d/%2$d)…</string>
 
     <!-- About -->
     <string name="about_shareText_subject">Une super app !</string>

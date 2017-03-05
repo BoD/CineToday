@@ -13,21 +13,23 @@ jdk: oraclejdk8
 #    - extra-google-google_play_services
 #    - extra-google-m2repository
 
-#before_cache:
-#  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
-#  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
-#
-#cache:
-#  directories:
-#    - $HOME/.gradle/caches/
-#    - $HOME/.gradle/wrapper/
+before_cache:
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+
+cache:
+  directories:
+    - $HOME/android-sdk-dl
+    - $HOME/android-sdk
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+    - $HOME/.android/build-cache
 
 install:
-  - curl https://dl.google.com/android/repository/tools_r25.2.5-linux.zip > $HOME/android-sdk-tools.zip
-  - mkdir $HOME/android-sdk
-  - unzip $HOME/android-sdk-tools.zip -d $HOME/android-sdk
-  - rm $HOME/android-sdk-tools.zip
-
+  - test ! -e $HOME/android-sdk-dl/tools_r25.2.5-linux.zip && mkdir $HOME/android-sdk-dl
+  - test ! -e $HOME/android-sdk-dl/tools_r25.2.5-linux.zip && curl https://dl.google.com/android/repository/tools_r25.2.5-linux.zip > $HOME/android-sdk-dl/tools_r25.2.5-linux.zip
+  - test ! -e $HOME/android-sdk-dl/tools_r25.2.5-linux.zip && mkdir $HOME/android-sdk
+  - test ! -e $HOME/android-sdk-dl/tools_r25.2.5-linux.zip && unzip $HOME/android-sdk-dl/tools_r25.2.5-linux.zip -d $HOME/android-sdk
   - echo y | $HOME/android-sdk/tools/bin/sdkmanager 'tools'
   - echo y | $HOME/android-sdk/tools/bin/sdkmanager 'platform-tools'
   - echo y | $HOME/android-sdk/tools/bin/sdkmanager 'build-tools;25.0.2'
