@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 if (buildProperties.enableFabric.toBoolean()) apply plugin: 'io.fabric'
 apply plugin: 'org.jraf.acpg.gradleplugin'
+apply plugin: 'me.tatarka.retrolambda'
 
 android {
     compileSdkVersion versions.compileSdk
@@ -37,6 +38,11 @@ android {
             keyAlias buildProperties.signingKeyAlias
             keyPassword buildProperties.signingKeyPassword
         }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 
     buildTypes {

@@ -60,7 +60,7 @@ public class GlideHelper {
                 .into(imageView);
     }
 
-    public static void load(String path, ImageView imageView, final RequestListener<? super String, GlideDrawable> listener) {
+    public static void load(String path, ImageView imageView, RequestListener<? super String, GlideDrawable> listener) {
         getRequestBuilder(path, imageView)
                 .listener(new RequestListener<String, GlideDrawable>() {
                     @Override

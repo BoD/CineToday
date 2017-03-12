@@ -56,12 +56,9 @@ public class Application extends android.app.Application {
 
     private void setupStrictMode() {
         // Do this in a Handler.post because of this issue: http://code.google.com/p/android/issues/detail?id=35298
-        new Handler().post(new Runnable() {
-            @Override
-            public void run() {
-                StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectAll().penaltyLog().build());
-                StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder().detectAll().penaltyLog().build());
-            }
+        new Handler().post(() -> {
+            StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectAll().penaltyLog().build());
+            StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder().detectAll().penaltyLog().build());
         });
     }
 }

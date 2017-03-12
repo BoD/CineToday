@@ -129,7 +129,7 @@ public class MovieListFragment extends BaseFrameworkFragment<MovieListCallbacks>
 
 
     @Override
-    public void onPaletteAvailable(int position, @ColorInt final int color, boolean cached, final long id) {
+    public void onPaletteAvailable(int position, @ColorInt int color, boolean cached, long id) {
         if (mPalette.indexOfKey(position) >= 0 && position > 0) return;
         mPalette.put(position, color);
         int firstItemPosition = ((LinearLayoutManager) mBinding.rclList.getLayoutManager()).findFirstVisibleItemPosition();
@@ -160,12 +160,7 @@ public class MovieListFragment extends BaseFrameworkFragment<MovieListCallbacks>
             int colorTo = mPalette.get(position);
             mColorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
             mColorAnimation.setDuration(200);
-            mColorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                @Override
-                public void onAnimationUpdate(ValueAnimator animator) {
-                    mBinding.conRoot.setBackgroundColor((int) animator.getAnimatedValue());
-                }
-            });
+            mColorAnimation.addUpdateListener(animator -> mBinding.conRoot.setBackgroundColor((int) animator.getAnimatedValue()));
             mColorAnimation.start();
         }
     }

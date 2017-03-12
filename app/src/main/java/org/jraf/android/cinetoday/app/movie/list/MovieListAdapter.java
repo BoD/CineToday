@@ -73,13 +73,13 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.View
     }
 
     @Override
-    public void onBindViewHolder(final MovieListAdapter.ViewHolder holder, @SuppressLint("RecyclerView") final int position) {
+    public void onBindViewHolder(MovieListAdapter.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
         mCursor.moveToPosition(position);
         holder.itemBinding.setMovie(mCursor);
         holder.itemBinding.setMovieId(mCursor.getId());
         holder.itemBinding.setCallbacks(mMovieListCallbacks);
-        final long id = mCursor.getId();
-        final boolean hasColor = mCursor.getColor() != null;
+        long id = mCursor.getId();
+        boolean hasColor = mCursor.getColor() != null;
         if (hasColor) mPaletteListener.onPaletteAvailable(position, mCursor.getColor(), true, id);
 
         holder.itemBinding.executePendingBindings();
@@ -96,12 +96,9 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.View
                 // Generate the color
                 if (!hasColor) {
                     GlideBitmapDrawable glideBitmapDrawable = (GlideBitmapDrawable) resource;
-                    Palette.from(glideBitmapDrawable.getBitmap()).generate(new Palette.PaletteAsyncListener() {
-                        @Override
-                        public void onGenerated(Palette p) {
-                            int color = p.getDarkVibrantColor(mContext.getColor(R.color.movie_list_bg));
-                            mPaletteListener.onPaletteAvailable(position, color, false, id);
-                        }
+                    Palette.from(glideBitmapDrawable.getBitmap()).generate(palette -> {
+                        int color = palette.getDarkVibrantColor(mContext.getColor(R.color.movie_list_bg));
+                        mPaletteListener.onPaletteAvailable(position, color, false, id);
                     });
                 }
 

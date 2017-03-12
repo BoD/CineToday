@@ -37,18 +37,15 @@ public class LoadMoviesListenerHelper implements LoadMoviesListener {
     private Integer mTotalMovie;
 
     private LoadMoviesListenerHelper() {
-        mListeners.setNewListenerDispatcher(new Listeners.Dispatcher<LoadMoviesListener>() {
-            @Override
-            public void dispatch(LoadMoviesListener listener) {
-                if (mStarted) {
-                    listener.onLoadMoviesStarted();
-                } else {
-                    listener.onLoadMoviesSuccess();
-                }
-                if (mError != null) listener.onLoadMoviesError(mError);
-                if (mCurrentMovieIndex != null && mTotalMovie != null && mCurrentMovieName != null) {
-                    listener.onLoadMoviesProgress(mCurrentMovieIndex, mTotalMovie, mCurrentMovieName);
-                }
+        mListeners.setNewListenerDispatcher(listener -> {
+            if (mStarted) {
+                listener.onLoadMoviesStarted();
+            } else {
+                listener.onLoadMoviesSuccess();
+            }
+            if (mError != null) listener.onLoadMoviesError(mError);
+            if (mCurrentMovieIndex != null && mTotalMovie != null && mCurrentMovieName != null) {
+                listener.onLoadMoviesProgress(mCurrentMovieIndex, mTotalMovie, mCurrentMovieName);
             }
         });
     }
@@ -68,25 +65,15 @@ public class LoadMoviesListenerHelper implements LoadMoviesListener {
     @Override
     public void onLoadMoviesStarted() {
         mStarted = true;
-        mListeners.dispatch(new Listeners.Dispatcher<LoadMoviesListener>() {
-            @Override
-            public void dispatch(LoadMoviesListener listener) {
-                listener.onLoadMoviesStarted();
-            }
-        });
+        mListeners.dispatch(LoadMoviesListener::onLoadMoviesStarted);
     }
 
     @Override
-    public void onLoadMoviesProgress(final int currentMovie, final int totalMovies, final String movieName) {
+    public void onLoadMoviesProgress(int currentMovie, int totalMovies, String movieName) {
         mCurrentMovieIndex = currentMovie;
         mTotalMovie = totalMovies;
         mCurrentMovieName = movieName;
-        mListeners.dispatch(new Listeners.Dispatcher<LoadMoviesListener>() {
-            @Override
-            public void dispatch(LoadMoviesListener listener) {
-                listener.onLoadMoviesProgress(currentMovie, totalMovies, movieName);
-            }
-        });
+        mListeners.dispatch(listener -> listener.onLoadMoviesProgress(currentMovie, totalMovies, movieName));
     }
 
     @Override
@@ -94,12 +81,7 @@ public class LoadMoviesListenerHelper implements LoadMoviesListener {
         mStarted = false;
         mCurrentMovieIndex = mTotalMovie = null;
         mCurrentMovieName = null;
-        mListeners.dispatch(new Listeners.Dispatcher<LoadMoviesListener>() {
-            @Override
-            public void dispatch(LoadMoviesListener listener) {
-                listener.onLoadMoviesInterrupted();
-            }
-        });
+        mListeners.dispatch(LoadMoviesListener::onLoadMoviesInterrupted);
     }
 
     @Override
@@ -107,26 +89,16 @@ public class LoadMoviesListenerHelper implements LoadMoviesListener {
         mStarted = false;
         mCurrentMovieIndex = mTotalMovie = null;
         mCurrentMovieName = null;
-        mListeners.dispatch(new Listeners.Dispatcher<LoadMoviesListener>() {
-            @Override
-            public void dispatch(LoadMoviesListener listener) {
-                listener.onLoadMoviesSuccess();
-            }
-        });
+        mListeners.dispatch(LoadMoviesListener::onLoadMoviesSuccess);
     }
 
     @Override
-    public void onLoadMoviesError(final Throwable error) {
+    public void onLoadMoviesError(Throwable error) {
         mError = error;
         mStarted = false;
         mCurrentMovieIndex = mTotalMovie = null;
         mCurrentMovieName = null;
-        mListeners.dispatch(new Listeners.Dispatcher<LoadMoviesListener>() {
-            @Override
-            public void dispatch(LoadMoviesListener listener) {
-                listener.onLoadMoviesError(error);
-            }
-        });
+        mListeners.dispatch(listener -> listener.onLoadMoviesError(error));
     }
 
     public void resetError() {

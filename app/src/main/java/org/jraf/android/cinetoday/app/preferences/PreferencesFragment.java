@@ -57,36 +57,30 @@ public class PreferencesFragment extends PreferenceFragment {
         addPreferencesFromResource(R.xml.preferences);
 
         // Refresh
-        findPreference("refresh").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                if (mLoadMoviesStarted) return true;
-                mLoadMoviesHelper.startLoadMoviesIntentService();
-                return true;
-            }
+        findPreference("refresh").setOnPreferenceClickListener(preference -> {
+            if (mLoadMoviesStarted) return true;
+            mLoadMoviesHelper.startLoadMoviesIntentService();
+            return true;
         });
         setLastUpdateDateSummary();
 
         // About
-        findPreference("about").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                AboutActivityIntentBuilder builder = new AboutActivityIntentBuilder();
-                builder.setAppName(getString(R.string.app_name));
-                builder.setBuildDate(BuildConfig.BUILD_DATE);
-                builder.setGitSha1(BuildConfig.GIT_SHA1);
-                builder.setAuthorCopyright(getString(R.string.about_authorCopyright));
-                builder.setLicense(getString(R.string.about_License));
-                builder.setShareTextSubject(getString(R.string.about_shareText_subject));
-                builder.setShareTextBody(getString(R.string.about_shareText_body));
-                builder.setBackgroundResId(R.drawable.about_bg);
-                builder.addLink(getString(R.string.about_email_uri), getString(R.string.about_email_text));
-                builder.addLink(getString(R.string.about_web_uri), getString(R.string.about_web_text));
-                builder.addLink(getString(R.string.about_artwork_uri), getString(R.string.about_artwork_text));
-                builder.addLink(getString(R.string.about_sources_uri), getString(R.string.about_sources_text));
-                startActivity(builder.build(getContext()));
-                return true;
-            }
+        findPreference("about").setOnPreferenceClickListener(preference -> {
+            AboutActivityIntentBuilder builder = new AboutActivityIntentBuilder();
+            builder.setAppName(getString(R.string.app_name));
+            builder.setBuildDate(BuildConfig.BUILD_DATE);
+            builder.setGitSha1(BuildConfig.GIT_SHA1);
+            builder.setAuthorCopyright(getString(R.string.about_authorCopyright));
+            builder.setLicense(getString(R.string.about_License));
+            builder.setShareTextSubject(getString(R.string.about_shareText_subject));
+            builder.setShareTextBody(getString(R.string.about_shareText_body));
+            builder.setBackgroundResId(R.drawable.about_bg);
+            builder.addLink(getString(R.string.about_email_uri), getString(R.string.about_email_text));
+            builder.addLink(getString(R.string.about_web_uri), getString(R.string.about_web_text));
+            builder.addLink(getString(R.string.about_artwork_uri), getString(R.string.about_artwork_text));
+            builder.addLink(getString(R.string.about_sources_uri), getString(R.string.about_sources_text));
+            startActivity(builder.build(getContext()));
+            return true;
         });
 
         LoadMoviesListenerHelper.get().addListener(mLoadMoviesListener);
