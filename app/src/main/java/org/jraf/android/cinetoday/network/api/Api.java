@@ -22,7 +22,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jraf.android.cinetoday.api;
+package org.jraf.android.cinetoday.network.api;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -32,7 +32,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.SortedSet;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
 import android.support.annotation.WorkerThread;
@@ -43,23 +42,21 @@ import org.json.JSONObject;
 
 import okhttp3.CacheControl;
 import okhttp3.HttpUrl;
+import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
 import static android.support.annotation.VisibleForTesting.PRIVATE;
 
-import org.jraf.android.cinetoday.api.codec.movie.MovieCodec;
-import org.jraf.android.cinetoday.api.codec.showtime.ShowtimeCodec;
-import org.jraf.android.cinetoday.api.codec.theater.TheaterCodec;
 import org.jraf.android.cinetoday.model.ParseException;
 import org.jraf.android.cinetoday.model.movie.Movie;
 import org.jraf.android.cinetoday.model.theater.Theater;
-import org.jraf.android.cinetoday.util.http.HttpUtil;
+import org.jraf.android.cinetoday.network.api.codec.movie.MovieCodec;
+import org.jraf.android.cinetoday.network.api.codec.showtime.ShowtimeCodec;
+import org.jraf.android.cinetoday.network.api.codec.theater.TheaterCodec;
 import org.jraf.android.util.log.Log;
 
 public class Api {
-    private static final Api INSTANCE = new Api();
-
     public static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
 
     private static final String SCHEME = "http";
@@ -84,13 +81,16 @@ public class Api {
     private static final String QUERY_FILTER_KEY = "filter";
     private static final String QUERY_FILTER_VALUE = "theater";
 
-    private Context mContext;
+    private final OkHttpClient mCachingOkHttpClient;
+    private final MovieCodec mMovieCodec;
+    private final ShowtimeCodec mShowTimeCodec;
+    private final TheaterCodec mTheaterCodec;
 
-    private Api() {}
-
-    public static Api get(Context context) {
-        if (INSTANCE.mContext == null) INSTANCE.mContext = context.getApplicationContext();
-        return INSTANCE;
+    public Api(OkHttpClient cachingOkHttpClient, MovieCodec movieCodec, ShowtimeCodec showtimeCodec, TheaterCodec theaterCodec) {
+        mCachingOkHttpClient = cachingOkHttpClient;
+        mMovieCodec = movieCodec;
+        mShowTimeCodec = showtimeCodec;
+        mTheaterCodec = theaterCodec;
     }
 
     @WorkerThread
@@ -105,7 +105,7 @@ public class Api {
     }
 
     @VisibleForTesting(otherwise = PRIVATE)
-    static void parseMovieList(@NonNull SortedSet<Movie> movies, String jsonStr, String theaterId, Date date) throws ParseException {
+    void parseMovieList(@NonNull SortedSet<Movie> movies, String jsonStr, String theaterId, Date date) throws ParseException {
         try {
             JSONObject jsonRoot = new JSONObject(jsonStr);
             JSONObject jsonFeed = jsonRoot.getJSONObject("feed");
@@ -121,7 +121,7 @@ public class Api {
                 Movie movie = new Movie();
 
                 // Movie (does not include showtimes, only the movie details)
-                MovieCodec.get().fill(movie, jsonMovie);
+                mMovieCodec.fill(movie, jsonMovie);
                 // See if the movie was already in the set, if yes use this one, so the showtimes are merged
                 if (movies.contains(movie)) {
                     // Already in the set: find it
@@ -135,7 +135,7 @@ public class Api {
                 }
 
                 // Showtimes
-                ShowtimeCodec.get().fill(movie, jsonMovieShowtime, theaterId, date);
+                mShowTimeCodec.fill(movie, jsonMovieShowtime, theaterId, date);
 
                 // If there is no showtimes for today, skip the movie
                 if (movie.todayShowtimes == null || movie.todayShowtimes.size() == 0) {
@@ -159,7 +159,7 @@ public class Api {
         try {
             JSONObject jsonRoot = new JSONObject(jsonStr);
             JSONObject jsonMovie = jsonRoot.getJSONObject("movie");
-            MovieCodec.get().fill(movie, jsonMovie);
+            mMovieCodec.fill(movie, jsonMovie);
         } catch (JSONException e) {
             throw new ParseException(e);
         }
@@ -189,7 +189,7 @@ public class Api {
                 Theater theater = new Theater();
 
                 // Theater
-                TheaterCodec.get().fill(theater, jsonTheater);
+                mTheaterCodec.fill(theater, jsonTheater);
                 res.add(theater);
             }
             return res;
@@ -205,7 +205,7 @@ public class Api {
         Request.Builder urlBuilder = new Request.Builder().url(url);
         if (!useCache) urlBuilder.cacheControl(CacheControl.FORCE_NETWORK);
         Request request = urlBuilder.build();
-        Response response = HttpUtil.getCachingOkHttpClient(mContext).newCall(request).execute();
+        Response response = mCachingOkHttpClient.newCall(request).execute();
         return response.body().string();
     }
 

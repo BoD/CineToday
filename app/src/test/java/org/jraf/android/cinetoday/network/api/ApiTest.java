@@ -22,7 +22,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jraf.android.cinetoday.api;
+package org.jraf.android.cinetoday.network.api;
 
 import java.io.IOException;
 import java.util.SortedSet;
@@ -40,6 +40,9 @@ import org.jraf.android.cinetoday.mobile.TestUtil;
 import org.jraf.android.cinetoday.model.ParseException;
 import org.jraf.android.cinetoday.model.movie.Movie;
 import org.jraf.android.cinetoday.model.movie.MovieAssert;
+import org.jraf.android.cinetoday.network.api.codec.movie.MovieCodec;
+import org.jraf.android.cinetoday.network.api.codec.showtime.ShowtimeCodec;
+import org.jraf.android.cinetoday.network.api.codec.theater.TheaterCodec;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(constants = BuildConfig.class, sdk = 21)
@@ -53,7 +56,8 @@ public class ApiTest {
     private void testParseMovieListFile(String filename, int movieCount) throws IOException, JSONException, ParseException, java.text.ParseException {
         String json = TestUtil.readTestResource(filename);
         SortedSet<Movie> movies = new TreeSet<>(Movie.COMPARATOR);
-        Api.parseMovieList(movies, json, "Test", Api.SIMPLE_DATE_FORMAT.parse("2016-04-10"));
+        Api api = new Api(null, new MovieCodec(), new ShowtimeCodec(), new TheaterCodec());
+        api.parseMovieList(movies, json, "Test", Api.SIMPLE_DATE_FORMAT.parse("2016-04-10"));
         Assertions.assertThat(movies).hasSize(movieCount);
         for (Movie movie : movies) {
             MovieAssert.assertThat(movie).hasRequiredMovieListFields();

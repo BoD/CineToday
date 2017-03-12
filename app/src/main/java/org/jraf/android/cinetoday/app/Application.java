@@ -32,6 +32,7 @@ import com.crashlytics.android.Crashlytics;
 import io.fabric.sdk.android.Fabric;
 
 import org.jraf.android.cinetoday.BuildConfig;
+import org.jraf.android.cinetoday.dagger.Components;
 import org.jraf.android.util.log.Log;
 
 public class Application extends android.app.Application {
@@ -48,6 +49,9 @@ public class Application extends android.app.Application {
 
         // Crashlytics
         if (BuildConfig.CRASH_REPORT) Fabric.with(this, new Crashlytics());
+
+        // Dagger
+        Components.init(this);
     }
 
     private void setupStrictMode() {

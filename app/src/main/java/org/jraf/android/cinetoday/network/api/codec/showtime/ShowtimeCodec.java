@@ -22,7 +22,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jraf.android.cinetoday.api.codec.showtime;
+package org.jraf.android.cinetoday.network.api.codec.showtime;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -42,15 +42,7 @@ import org.jraf.android.cinetoday.model.movie.Showtime;
 import org.jraf.android.util.log.Log;
 
 public class ShowtimeCodec {
-    private static final ShowtimeCodec INSTANCE = new ShowtimeCodec();
-
-    public static final SimpleDateFormat DAY_DATE_FORMAT = new SimpleDateFormat("d MMMM", Locale.FRENCH);
-
-    private ShowtimeCodec() {}
-
-    public static ShowtimeCodec get() {
-        return INSTANCE;
-    }
+    private static final SimpleDateFormat DAY_DATE_FORMAT = new SimpleDateFormat("d MMMM", Locale.FRENCH);
 
     public void fill(Movie movie, JSONObject jsonMovieShowtime, String theaterId, Date date) throws ParseException {
         // Example input:

@@ -28,22 +28,27 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import android.content.AsyncTaskLoader;
 import android.content.Context;
 
-import org.jraf.android.cinetoday.api.Api;
+import org.jraf.android.cinetoday.dagger.Components;
 import org.jraf.android.cinetoday.model.theater.Theater;
+import org.jraf.android.cinetoday.network.api.Api;
 import org.jraf.android.cinetoday.provider.theater.TheaterCursor;
 import org.jraf.android.cinetoday.provider.theater.TheaterSelection;
 import org.jraf.android.util.log.Log;
 
 public class TheaterSearchLoader extends AsyncTaskLoader<List<Theater>> {
+    @Inject Api mApi;
     private final String mQuery;
     private List<Theater> mData;
 
     public TheaterSearchLoader(Context context, String query) {
         super(context);
         mQuery = query;
+        Components.application.inject(this);
     }
 
     @Override
@@ -58,7 +63,7 @@ public class TheaterSearchLoader extends AsyncTaskLoader<List<Theater>> {
         }
         try {
             // API call (blocking)
-            List<Theater> res = Api.get(getContext()).searchTheaters(mQuery);
+            List<Theater> res = mApi.searchTheaters(mQuery);
 
             // Filter out favorite theaters
             Iterator<Theater> i = res.iterator();

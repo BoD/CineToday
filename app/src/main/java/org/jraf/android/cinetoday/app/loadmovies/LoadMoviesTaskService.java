@@ -33,11 +33,13 @@ import com.google.android.gms.gcm.GcmTaskService;
 import com.google.android.gms.gcm.PeriodicTask;
 import com.google.android.gms.gcm.TaskParams;
 
+import org.jraf.android.cinetoday.dagger.Components;
+
 public class LoadMoviesTaskService extends GcmTaskService {
     @Override
     public int onRunTask(TaskParams taskParams) {
         try {
-            LoadMoviesHelper.get().loadMovies(this);
+            Components.application.getLoadMoviesHelper().loadMovies();
         } catch (Exception e) {
             return GcmNetworkManager.RESULT_RESCHEDULE;
         }

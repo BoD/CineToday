@@ -24,6 +24,8 @@
  */
 package org.jraf.android.cinetoday.app.preferences;
 
+import javax.inject.Inject;
+
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
@@ -34,6 +36,7 @@ import org.jraf.android.cinetoday.R;
 import org.jraf.android.cinetoday.app.loadmovies.LoadMoviesHelper;
 import org.jraf.android.cinetoday.app.loadmovies.LoadMoviesListener;
 import org.jraf.android.cinetoday.app.loadmovies.LoadMoviesListenerHelper;
+import org.jraf.android.cinetoday.dagger.Components;
 import org.jraf.android.cinetoday.prefs.MainPrefs;
 import org.jraf.android.util.about.AboutActivityIntentBuilder;
 
@@ -44,10 +47,13 @@ public class PreferencesFragment extends PreferenceFragment {
     }
 
     private boolean mLoadMoviesStarted;
+    @Inject LoadMoviesHelper mLoadMoviesHelper;
+    @Inject MainPrefs mMainPrefs;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Components.application.inject(this);
         addPreferencesFromResource(R.xml.preferences);
 
         // Refresh
@@ -55,7 +61,7 @@ public class PreferencesFragment extends PreferenceFragment {
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 if (mLoadMoviesStarted) return true;
-                LoadMoviesHelper.get().startLoadMoviesIntentService(getContext());
+                mLoadMoviesHelper.startLoadMoviesIntentService();
                 return true;
             }
         });
@@ -125,7 +131,7 @@ public class PreferencesFragment extends PreferenceFragment {
     };
 
     private void setLastUpdateDateSummary() {
-        Long lastUpdateDate = MainPrefs.get(getContext()).getLastUpdateDate();
+        Long lastUpdateDate = mMainPrefs.getLastUpdateDate();
         Preference refreshPref = findPreference("refresh");
         if (lastUpdateDate == null) {
             refreshPref.setSummary(R.string.preference_refresh_summary_none);

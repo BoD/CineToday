@@ -22,7 +22,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jraf.android.cinetoday.api.codec.movie;
+package org.jraf.android.cinetoday.network.api.codec.movie;
 
 import java.util.ArrayList;
 
@@ -32,20 +32,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import org.jraf.android.cinetoday.api.Api;
 import org.jraf.android.cinetoday.model.ParseException;
 import org.jraf.android.cinetoday.model.movie.Movie;
+import org.jraf.android.cinetoday.network.api.Api;
 import org.jraf.android.util.log.Log;
 
 public class MovieCodec {
-    private static final MovieCodec INSTANCE = new MovieCodec();
-
-    private MovieCodec() {}
-
-    public static MovieCodec get() {
-        return INSTANCE;
-    }
-
     public void fill(Movie movie, JSONObject jsonMovie) throws ParseException {
         try {
             movie.id = jsonMovie.getString("code");

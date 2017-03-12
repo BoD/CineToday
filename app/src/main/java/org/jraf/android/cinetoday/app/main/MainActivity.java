@@ -27,6 +27,8 @@ package org.jraf.android.cinetoday.app.main;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
+import javax.inject.Inject;
+
 import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.Intent;
@@ -57,6 +59,7 @@ import org.jraf.android.cinetoday.app.preferences.PreferencesFragment;
 import org.jraf.android.cinetoday.app.theater.favorites.TheaterFavoritesCallbacks;
 import org.jraf.android.cinetoday.app.theater.favorites.TheaterFavoritesFragment;
 import org.jraf.android.cinetoday.app.theater.search.TheaterSearchActivity;
+import org.jraf.android.cinetoday.dagger.Components;
 import org.jraf.android.cinetoday.databinding.MainBinding;
 import org.jraf.android.cinetoday.model.theater.Theater;
 import org.jraf.android.cinetoday.provider.movie.MovieColumns;
@@ -82,10 +85,13 @@ public class MainActivity extends Activity implements MovieListCallbacks, Theate
     private PreferencesFragment mPreferencesFragment;
     private boolean mAtLeastOneFavorite;
     private boolean mShouldClosePeekingActionDrawer;
+    @Inject LoadMoviesHelper mLoadMoviesHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Components.application.inject(this);
+
         mBinding = DataBindingUtil.setContentView(this, R.layout.main);
         mBinding.navigationDrawer.setAdapter(new NavigationDrawerAdapter());
         mBinding.actionDrawer.setOnMenuItemClickListener(this);
@@ -379,7 +385,7 @@ public class MainActivity extends Activity implements MovieListCallbacks, Theate
             @Override
             protected void onPostExecute(Void aVoid) {
                 mAtLeastOneFavorite = true;
-                LoadMoviesHelper.get().startLoadMoviesIntentService(MainActivity.this);
+                mLoadMoviesHelper.startLoadMoviesIntentService();
             }
         }.execute();
     }

@@ -46,7 +46,7 @@ import com.bumptech.glide.module.GlideModule;
 
 import okhttp3.OkHttpClient;
 
-import org.jraf.android.cinetoday.util.http.HttpUtil;
+import org.jraf.android.cinetoday.dagger.Components;
 
 public class CineTodayGlideModule implements GlideModule {
     private static final int CACHE_SIZE_B = 5 * 1024 * 1024;
@@ -68,7 +68,8 @@ public class CineTodayGlideModule implements GlideModule {
 
     @Override
     public void registerComponents(Context context, Glide glide) {
-        glide.register(GlideUrl.class, InputStream.class, new OkHttpUrlResizeModelLoaderFactory(HttpUtil.getNotCachingOkHttpClient()));
+        OkHttpClient okHttpClient = Components.application.getNotCachingOkHttpClient();
+        glide.register(GlideUrl.class, InputStream.class, new OkHttpUrlResizeModelLoaderFactory(okHttpClient));
     }
 
 

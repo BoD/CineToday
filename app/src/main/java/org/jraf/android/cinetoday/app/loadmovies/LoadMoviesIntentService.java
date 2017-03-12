@@ -27,6 +27,7 @@ package org.jraf.android.cinetoday.app.loadmovies;
 import android.app.IntentService;
 import android.content.Intent;
 
+import org.jraf.android.cinetoday.dagger.Components;
 import org.jraf.android.util.log.Log;
 
 public class LoadMoviesIntentService extends IntentService {
@@ -43,7 +44,7 @@ public class LoadMoviesIntentService extends IntentService {
             String action = intent.getAction();
             if (ACTION_LOAD_MOVIES.equals(action)) {
                 try {
-                    LoadMoviesHelper.get().loadMovies(this);
+                    Components.application.getLoadMoviesHelper().loadMovies();
                 } catch (Exception e) {
                     Log.e(e, "Could not load movies");
                 }

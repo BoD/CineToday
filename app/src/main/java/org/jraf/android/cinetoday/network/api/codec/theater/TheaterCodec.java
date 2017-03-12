@@ -22,7 +22,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jraf.android.cinetoday.api.codec.theater;
+package org.jraf.android.cinetoday.network.api.codec.theater;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -31,14 +31,6 @@ import org.jraf.android.cinetoday.model.ParseException;
 import org.jraf.android.cinetoday.model.theater.Theater;
 
 public class TheaterCodec {
-    private static final TheaterCodec INSTANCE = new TheaterCodec();
-
-    private TheaterCodec() {}
-
-    public static TheaterCodec get() {
-        return INSTANCE;
-    }
-
     public void fill(Theater theater, JSONObject jsonTheater) throws ParseException {
         try {
             theater.id = jsonTheater.getString("code");
