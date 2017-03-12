@@ -57,10 +57,10 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 
 import org.jraf.android.cinetoday.R;
-import org.jraf.android.cinetoday.api.Api;
 import org.jraf.android.cinetoday.app.main.MainActivity;
 import org.jraf.android.cinetoday.model.movie.Movie;
 import org.jraf.android.cinetoday.model.movie.Showtime;
+import org.jraf.android.cinetoday.network.api.Api;
 import org.jraf.android.cinetoday.prefs.MainPrefs;
 import org.jraf.android.cinetoday.provider.CineTodayProvider;
 import org.jraf.android.cinetoday.provider.movie.MovieColumns;
@@ -76,24 +76,27 @@ import org.jraf.android.util.log.Log;
 import org.jraf.android.util.ui.screenshape.ScreenShapeHelper;
 
 public class LoadMoviesHelper {
-    private static final LoadMoviesHelper INSTANCE = new LoadMoviesHelper();
     private static final int NOTIFICATION_ID = 0;
     private static final int MIN_BANDWIDTH_KBPS = 320;
 
-
-    public static LoadMoviesHelper get() {
-        return INSTANCE;
-    }
-
+    private final Context mContext;
+    private final MainPrefs mMainPrefs;
+    private final Api mApi;
     private volatile boolean mWantStop;
+
+    public LoadMoviesHelper(Context context, MainPrefs mainPrefs, Api api) {
+        mContext = context;
+        mMainPrefs = mainPrefs;
+        mApi = api;
+    }
 
     public void setWantStop(boolean wantStop) {
         mWantStop = wantStop;
     }
 
     @WorkerThread
-    private boolean requestHighBandwidthNetwork(Context context, long timeout, TimeUnit unit) {
-        final ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+    private boolean requestHighBandwidthNetwork(long timeout, TimeUnit unit) {
+        final ConnectivityManager connectivityManager = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
         Network activeNetwork = connectivityManager.getActiveNetwork();
         if (activeNetwork == null || connectivityManager.getNetworkCapabilities(activeNetwork).getLinkDownstreamBandwidthKbps() < MIN_BANDWIDTH_KBPS) {
             final AtomicBoolean res = new AtomicBoolean(false);
@@ -128,21 +131,21 @@ public class LoadMoviesHelper {
     }
 
     @WorkerThread
-    /* package */ void loadMovies(final Context context) throws Exception {
+    /* package */ void loadMovies() throws Exception {
         mWantStop = false;
         LoadMoviesListenerHelper loadMoviesListenerHelper = LoadMoviesListenerHelper.get();
         loadMoviesListenerHelper.onLoadMoviesStarted();
 
         // 0/ Try to connect to a fast network
-        boolean highBandwidthNetworkSuccess = requestHighBandwidthNetwork(context, 10, TimeUnit.SECONDS);
+        boolean highBandwidthNetworkSuccess = requestHighBandwidthNetwork(10, TimeUnit.SECONDS);
         Log.d("Fast network success=%s", highBandwidthNetworkSuccess);
 
         SortedSet<Movie> movies = new TreeSet<>(Movie.COMPARATOR);
         try {
             // 1/ Retrieve list of movies (including showtimes), for all the theaters
-            try (TheaterCursor theaterCursor = new TheaterSelection().query(context)) {
+            try (TheaterCursor theaterCursor = new TheaterSelection().query(mContext)) {
                 while (theaterCursor.moveToNext()) {
-                    Api.get(context).getMovieList(movies, theaterCursor.getPublicId(), new Date());
+                    mApi.getMovieList(movies, theaterCursor.getPublicId(), new Date());
 
                     if (mWantStop) {
                         loadMoviesListenerHelper.onLoadMoviesInterrupted();
@@ -167,12 +170,12 @@ public class LoadMoviesHelper {
                 loadMoviesListenerHelper.onLoadMoviesProgress(i, size, movie.localTitle);
 
                 // Check if we already have info for this movie
-                if (new MovieSelection().publicId(movie.id).count(context) == 0) {
+                if (new MovieSelection().publicId(movie.id).count(mContext) == 0) {
                     movie.isNew = true;
 
                     // Get movie info
                     try {
-                        Api.get(context).getMovieInfo(movie);
+                        mApi.getMovieInfo(movie);
                         Log.d(movie.toString());
                     } catch (Exception e) {
                         Log.e(e, "Could not load movie info: movie = %s", movie);
@@ -187,9 +190,9 @@ public class LoadMoviesHelper {
                 }
 
                 // Download the poster now
-                int height = ScreenShapeHelper.get(context).height;
-                int width = (int) (context.getResources().getFraction(R.fraction.movie_list_item_poster, height, 1) + .5F);
-                int border = context.getResources().getDimensionPixelSize(R.dimen.movie_list_item_posterBorder);
+                int height = ScreenShapeHelper.get(mContext).height;
+                int width = (int) (mContext.getResources().getFraction(R.fraction.movie_list_item_poster, height, 1) + .5F);
+                int border = mContext.getResources().getDimensionPixelSize(R.dimen.movie_list_item_posterBorder);
                 height -= border * 2;
                 width -= border * 2;
                 // Glide insists this is done on the main thread
@@ -198,7 +201,7 @@ public class LoadMoviesHelper {
                 HandlerUtil.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Glide.with(context)
+                        Glide.with(mContext)
                                 .load(movie.posterUri)
                                 .centerCrop()
                                 .diskCacheStrategy(DiskCacheStrategy.RESULT)
@@ -217,7 +220,7 @@ public class LoadMoviesHelper {
                                         Palette.from(glideBitmapDrawable.getBitmap()).generate(new Palette.PaletteAsyncListener() {
                                             @Override
                                             public void onGenerated(Palette p) {
-                                                movie.color = p.getDarkVibrantColor(context.getColor(R.color.movie_list_bg));
+                                                movie.color = p.getDarkVibrantColor(mContext.getColor(R.color.movie_list_bg));
                                             }
                                         });
                                         return false;
@@ -234,15 +237,15 @@ public class LoadMoviesHelper {
         } finally {
             // Releasing the high-bandwidth network
             if (highBandwidthNetworkSuccess) {
-                ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+                ConnectivityManager connectivityManager = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
                 connectivityManager.bindProcessToNetwork(null);
             }
         }
 
         // 3/ Save everything to the local db
-        persist(context, movies);
+        persist(movies);
 
-        MainPrefs.get(context).putLastUpdateDate(System.currentTimeMillis());
+        mMainPrefs.putLastUpdateDate(System.currentTimeMillis());
         loadMoviesListenerHelper.resetError();
         loadMoviesListenerHelper.onLoadMoviesSuccess();
 
@@ -251,10 +254,10 @@ public class LoadMoviesHelper {
         for (Movie movie : movies) {
             if (movie.isNew) newMovieTitles.add(movie.localTitle);
         }
-        if (!newMovieTitles.isEmpty()) showNotification(context, newMovieTitles);
+        if (!newMovieTitles.isEmpty()) showNotification(newMovieTitles);
     }
 
-    private void persist(Context context, SortedSet<Movie> movies) {
+    private void persist(SortedSet<Movie> movies) {
         ArrayList<ContentProviderOperation> operations = new ArrayList<>();
 
         // First, delete all the showtimes
@@ -262,7 +265,7 @@ public class LoadMoviesHelper {
 
         // Get a map of theater public ids to internal ids
         HashMap<String, Long> theaterIds = new HashMap<>();
-        try (TheaterCursor cursor = new TheaterSelection().query(context)) {
+        try (TheaterCursor cursor = new TheaterSelection().query(mContext)) {
             while (cursor.moveToNext()) {
                 theaterIds.put(cursor.getPublicId(), cursor.getId());
             }
@@ -270,7 +273,7 @@ public class LoadMoviesHelper {
 
         // Get a map of movie public ids to internal ids
         HashMap<String, Long> movieIds = new HashMap<>();
-        try (MovieCursor cursor = new MovieSelection().query(context)) {
+        try (MovieCursor cursor = new MovieSelection().query(mContext)) {
             while (cursor.moveToNext()) {
                 movieIds.put(cursor.getPublicId(), cursor.getId());
             }
@@ -336,21 +339,21 @@ public class LoadMoviesHelper {
 
         // Apply the batch of operations
         try {
-            context.getContentResolver().applyBatch(CineTodayProvider.AUTHORITY, operations);
+            mContext.getContentResolver().applyBatch(CineTodayProvider.AUTHORITY, operations);
         } catch (Exception e) {
             Log.e(e, "Could not apply batch");
         }
     }
 
-    private void showNotification(Context context, ArrayList<String> newMovieTitles) {
+    private void showNotification(ArrayList<String> newMovieTitles) {
         Log.d();
-        Notification.Builder mainNotifBuilder = new Notification.Builder(context);
+        Notification.Builder mainNotifBuilder = new Notification.Builder(mContext);
 
         // Small icon
         mainNotifBuilder.setSmallIcon(R.drawable.ic_notif);
 
         // Title
-        String title = context.getString(R.string.notif_title);
+        String title = mContext.getString(R.string.notif_title);
         mainNotifBuilder.setContentTitle(title);
 
         // Text
@@ -360,16 +363,16 @@ public class LoadMoviesHelper {
         mainNotifBuilder.setStyle(bigTextStyle);
 
         // Content intent
-        Intent mainActivityIntent = new Intent(context, MainActivity.class);
+        Intent mainActivityIntent = new Intent(mContext, MainActivity.class);
         mainActivityIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        PendingIntent mainActivityPendingIntent = PendingIntent.getActivity(context, 0, mainActivityIntent, 0);
+        PendingIntent mainActivityPendingIntent = PendingIntent.getActivity(mContext, 0, mainActivityIntent, 0);
         mainNotifBuilder.setContentIntent(mainActivityPendingIntent);
 
 //        // Wear specifics
         Notification.WearableExtender wearableExtender = new Notification.WearableExtender();
-//        wearableExtender.setBackground(BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_notif));
+//        wearableExtender.setBackground(BitmapFactory.decodeResource(mContext.getResources(), R.drawable.ic_notif));
 //        wearableExtender
-//                .addAction(new Notification.Action.Builder(Icon.createWithResource(context, R.mipmap.ic_launcher), "Open", mainActivityPendingIntent).build());
+//                .addAction(new Notification.Action.Builder(Icon.createWithResource(mContext, R.mipmap.ic_launcher), "Open", mainActivityPendingIntent).build());
 //        wearableExtender.setContentAction(0);
 //
 //
@@ -380,13 +383,13 @@ public class LoadMoviesHelper {
 //        Notification notification = mainNotifBuilder.build();
 
 
-        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManager notificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(NOTIFICATION_ID, notification);
     }
 
-    public void startLoadMoviesIntentService(Context context) {
-        Intent intent = new Intent(context, LoadMoviesIntentService.class);
+    public void startLoadMoviesIntentService() {
+        Intent intent = new Intent(mContext, LoadMoviesIntentService.class);
         intent.setAction(LoadMoviesIntentService.ACTION_LOAD_MOVIES);
-        context.startService(intent);
+        mContext.startService(intent);
     }
 }

@@ -22,7 +22,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jraf.android.cinetoday.api.codec.movie;
+package org.jraf.android.cinetoday.network.api.codec.movie;
 
 import java.io.IOException;
 
@@ -84,7 +84,7 @@ public class MovieCodecTest {
         JSONObject jsonMovie = jsonRoot.getJSONObject("movie");
 
         Movie movie = new Movie();
-        MovieCodec.get().fill(movie, jsonMovie);
+        new MovieCodec().fill(movie, jsonMovie);
 
         MovieAssert.assertThat(movie)
                 .hasRequiredMovieDetailFields()

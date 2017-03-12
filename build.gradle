@@ -16,6 +16,7 @@ buildscript {
         buildTools = '25.0.2'
         supportLibrary = '25.2.0'
         playServices = '10.2.0'
+        dagger = '2.9'
     }
 
     repositories {
