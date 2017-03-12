@@ -370,7 +370,7 @@ public class MainActivity extends Activity implements MovieListCallbacks, Theate
         }
     }
 
-    private void addToFavorites(final Theater theater) {
+    private void addToFavorites(Theater theater) {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
@@ -414,7 +414,7 @@ public class MainActivity extends Activity implements MovieListCallbacks, Theate
     public void onDialogClickPositive(int dialogId, Object payload) {
         switch (dialogId) {
             case DIALOG_THEATER_DELETE_CONFIRM:
-                final long theaterId = (long) payload;
+                long theaterId = (long) payload;
                 new AsyncTask<Void, Void, Void>() {
                     @Override
                     protected Void doInBackground(Void... params) {

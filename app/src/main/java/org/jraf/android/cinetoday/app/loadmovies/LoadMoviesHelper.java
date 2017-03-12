@@ -96,11 +96,11 @@ public class LoadMoviesHelper {
 
     @WorkerThread
     private boolean requestHighBandwidthNetwork(long timeout, TimeUnit unit) {
-        final ConnectivityManager connectivityManager = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager connectivityManager = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
         Network activeNetwork = connectivityManager.getActiveNetwork();
         if (activeNetwork == null || connectivityManager.getNetworkCapabilities(activeNetwork).getLinkDownstreamBandwidthKbps() < MIN_BANDWIDTH_KBPS) {
-            final AtomicBoolean res = new AtomicBoolean(false);
-            final CountDownLatch countDownLatch = new CountDownLatch(1);
+            AtomicBoolean res = new AtomicBoolean(false);
+            CountDownLatch countDownLatch = new CountDownLatch(1);
 
             // Request a high-bandwidth network
             ConnectivityManager.NetworkCallback networkCallback = new ConnectivityManager.NetworkCallback() {
@@ -166,7 +166,7 @@ public class LoadMoviesHelper {
             // 2/ Retrieve more details about each movie
             int size = movies.size();
             int i = 0;
-            for (final Movie movie : movies) {
+            for (Movie movie : movies) {
                 loadMoviesListenerHelper.onLoadMoviesProgress(i, size, movie.localTitle);
 
                 // Check if we already have info for this movie
@@ -196,39 +196,30 @@ public class LoadMoviesHelper {
                 height -= border * 2;
                 width -= border * 2;
                 // Glide insists this is done on the main thread
-                final int finalWidth = width;
-                final int finalHeight = height;
-                HandlerUtil.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Glide.with(mContext)
-                                .load(movie.posterUri)
-                                .centerCrop()
-                                .diskCacheStrategy(DiskCacheStrategy.RESULT)
-                                .listener(new RequestListener<String, GlideDrawable>() {
-                                    @Override
-                                    public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
-                                        return false;
-                                    }
+                int finalWidth = width;
+                int finalHeight = height;
+                HandlerUtil.runOnUiThread(() -> Glide.with(mContext)
+                        .load(movie.posterUri)
+                        .centerCrop()
+                        .diskCacheStrategy(DiskCacheStrategy.RESULT)
+                        .listener(new RequestListener<String, GlideDrawable>() {
+                            @Override
+                            public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+                                return false;
+                            }
 
-                                    @Override
-                                    public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target,
-                                                                   boolean isFromMemoryCache,
-                                                                   boolean isFirstResource) {
-                                        if (!(resource instanceof GlideBitmapDrawable)) return false;
-                                        GlideBitmapDrawable glideBitmapDrawable = (GlideBitmapDrawable) resource;
-                                        Palette.from(glideBitmapDrawable.getBitmap()).generate(new Palette.PaletteAsyncListener() {
-                                            @Override
-                                            public void onGenerated(Palette p) {
-                                                movie.color = p.getDarkVibrantColor(mContext.getColor(R.color.movie_list_bg));
-                                            }
-                                        });
-                                        return false;
-                                    }
-                                })
-                                .preload(finalWidth, finalHeight);
-                    }
-                });
+                            @Override
+                            public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target,
+                                                           boolean isFromMemoryCache,
+                                                           boolean isFirstResource) {
+                                if (!(resource instanceof GlideBitmapDrawable)) return false;
+                                GlideBitmapDrawable glideBitmapDrawable = (GlideBitmapDrawable) resource;
+                                Palette.from(glideBitmapDrawable.getBitmap())
+                                        .generate(palette -> movie.color = palette.getDarkVibrantColor(mContext.getColor(R.color.movie_list_bg)));
+                                return false;
+                            }
+                        })
+                        .preload(finalWidth, finalHeight));
 
                 i++;
                 loadMoviesListenerHelper.onLoadMoviesProgress(i, size, movie.localTitle);

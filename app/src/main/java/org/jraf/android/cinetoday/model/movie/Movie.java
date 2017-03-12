@@ -91,14 +91,11 @@ public class Movie {
     /**
      * Compares in reverse release date order.
      */
-    public static final Comparator<Movie> COMPARATOR = new Comparator<Movie>() {
-        @Override
-        public int compare(Movie lhs, Movie rhs) {
-            if (rhs.releaseDate != null && lhs.releaseDate != null) {
-                int res = rhs.releaseDate.compareTo(lhs.releaseDate);
-                if (res != 0) return res;
-            }
-            return lhs.id.compareTo(rhs.id);
+    public static final Comparator<Movie> COMPARATOR = (lhs, rhs) -> {
+        if (rhs.releaseDate != null && lhs.releaseDate != null) {
+            int res = rhs.releaseDate.compareTo(lhs.releaseDate);
+            if (res != 0) return res;
         }
+        return lhs.id.compareTo(rhs.id);
     };
 }
