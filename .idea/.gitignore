@@ -9,3 +9,5 @@ gradle.xml
 findbugs-idea.xml
 encodings.xml
 compiler.xml
+gradle_extensions.xml
+dictionaries
