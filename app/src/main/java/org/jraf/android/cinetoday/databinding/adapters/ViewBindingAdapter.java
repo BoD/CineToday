@@ -22,12 +22,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jraf.android.cinetoday.databinding;
+package org.jraf.android.cinetoday.databinding.adapters;
 
 import android.databinding.BindingAdapter;
 import android.view.View;
 
-public class ViewDatabindingAdapter {
+public class ViewBindingAdapter {
     @BindingAdapter("visible")
     public static void setVisible(View view, boolean visible) {
         view.setVisibility(visible ? View.VISIBLE : View.GONE);

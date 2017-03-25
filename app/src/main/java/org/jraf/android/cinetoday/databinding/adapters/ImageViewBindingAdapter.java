@@ -22,15 +22,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jraf.android.cinetoday.databinding;
+package org.jraf.android.cinetoday.databinding.adapters;
 
 import android.databinding.BindingAdapter;
-import android.text.Html;
-import android.widget.TextView;
+import android.widget.ImageView;
 
-public class TextViewDatabindingAdapter {
-    @BindingAdapter("textHtml")
-    public static void setTextHtml(TextView view, String textHtml) {
-        view.setText(Html.fromHtml(textHtml, 0));
+import org.jraf.android.cinetoday.glide.GlideHelper;
+
+public class ImageViewBindingAdapter {
+    @BindingAdapter("uri")
+    public static void loadImage(ImageView view, String uri) {
+        GlideHelper.load(uri, view);
     }
 }
