@@ -10,7 +10,7 @@ buildscript {
     // Versions used across modules
     ext.versions = [:]
     ext.versions.with {
-        androidGradlePlugin = '2.4.0-alpha1'
+        androidGradlePlugin = '2.4.0-alpha3'
         compileSdk = 25
         targetSdk = 25
         buildTools = '25.0.2'
@@ -63,7 +63,7 @@ task clean(type: Delete) {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '3.3'
+    gradleVersion = '3.4.1'
     distributionType = Wrapper.DistributionType.ALL
 }
 
