@@ -1,6 +1,6 @@
 #!groovy
 
-node {
+node('java') {
 /*
     def dockerImage = docker.image('android')
     dockerImage.inside {
