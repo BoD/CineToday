@@ -8,7 +8,7 @@ node {
         }
 
         stage('Build') {
-            sh './gradlew lintDebug testDebug'
+            sh './gradlew -Dgradle.user.home=.gradle lintDebug testDebug'
         }
     }
 }
