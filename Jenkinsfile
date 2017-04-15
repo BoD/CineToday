@@ -1,16 +1,14 @@
-pipeline {
-  agent {
-    label 'android'
-  }
+#!groovy
 
-  stages {
-    stage('Build') {
-      environment {
-        ANDROID_HOME = '/android-sdk'
-      }
-      steps {
-        sh './gradlew lintDebug testDebug'
-      }
+node {
+    def dockerImage = docker.image('android')
+    dockerImage.inside {
+        stage('Checkout') {
+            git url: '/Users/bod/gitrepo/CineToday', branch: 'jenkins'
+        }
+
+        stage('Build') {
+            sh './gradlew lintDebug testDebug'
+        }
     }
-  }
 }
