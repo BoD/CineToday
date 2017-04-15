@@ -8,7 +8,7 @@ node {
         }
 
         stage('Build') {
-            sh './gradlew -Dgradle.user.home=.gradle lintDebug testDebug'
+            sh './gradlew -Duser.home=. -Pandroid.enableBuildCache=false lintDebug testDebug'
         }
     }
 }
