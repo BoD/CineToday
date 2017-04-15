@@ -9,7 +9,7 @@ node {
         }
 */
         stage('Build') {
-            sh './gradlew lintDebug testDebug'
+            sh 'uname -a && ./gradlew lintDebug testDebug'
         }
     //}
 }
