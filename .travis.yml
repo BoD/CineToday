@@ -36,4 +36,4 @@ install:
 env:
   - ANDROID_HOME=$HOME/android-sdk
 
-script: ./gradlew lintDebug testDebug
+script: ./gradlew --no-daemon --parallel lintDebug testDebug
