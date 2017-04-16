@@ -10,13 +10,33 @@ buildscript {
     // Versions used across modules
     ext.versions = [:]
     ext.versions.with {
-        androidGradlePlugin = '2.4.0-alpha3'
+        androidGradlePlugin = '2.4.0-alpha6'
+        gradleVersionsPlugin = '0.14.0'
+        fabricPlugin = '1.22.1'
+        dexCountPlugin = '0.6.4'
+        acpgPlugin = '1.13.0'
+        libFrc = '1.5.2'
+
         compileSdk = 25
         targetSdk = 25
+
         buildTools = '25.0.2'
-        supportLibrary = '25.2.0'
-        playServices = '10.2.0'
+        supportLibrary = '25.3.1'
+        playServices = '10.2.1'
+        espresso = '2.2.2'
+        junit = '4.12'
+        robolectric = '3.3.2'
+        fest = '2.0M10'
+        rxJava = '2.0.8'
+        rxAndroid = '2.0.1'
+        crashlytics = '2.6.7'
         dagger = '2.9'
+        androidWearable = '2.0.1'
+        prefs = '1.1.1'
+        okHttp = '3.7.0'
+        glide = '3.7.0'
+        glideOkHttp = '1.4.0'
+        jsr250 = '1.0'
     }
 
     repositories {
@@ -27,11 +47,11 @@ buildscript {
 
     dependencies {
         classpath "com.android.tools.build:gradle:$versions.androidGradlePlugin"
-        classpath 'com.github.ben-manes:gradle-versions-plugin:0.14.0'
-        classpath 'ca.rmen:lib-french-revolutionary-calendar:1.5.2'
-        classpath 'io.fabric.tools:gradle:1.22.1'
-        classpath 'org.jraf:acpg-gradle-plugin:1.13.0'
-        classpath 'me.tatarka:gradle-retrolambda:3.6.0'
+        classpath "com.github.ben-manes:gradle-versions-plugin:$versions.gradleVersionsPlugin"
+        classpath "ca.rmen:lib-french-revolutionary-calendar:$versions.libFrc"
+        classpath "io.fabric.tools:gradle:$versions.fabricPlugin"
+        classpath "com.getkeepsafe.dexcount:dexcount-gradle-plugin:$versions.dexCountPlugin"
+        classpath "org.jraf:acpg-gradle-plugin:$versions.acpgPlugin"
     }
 }
 
@@ -70,13 +90,13 @@ task clean(type: Delete) {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '3.4.1'
+    gradleVersion = '3.5'
     distributionType = Wrapper.DistributionType.ALL
 }
 
 // Add a 'release' task that increments the build number
 def releaseTask = tasks.create(name: 'release', group: 'build')
-releaseTask << {
+releaseTask.doLast {
     buildNumberProperties.buildNumber = (buildNumber + 1).toString()
     buildNumberProperties.store(buildNumberFile.newWriter(), null)
 }
@@ -92,6 +112,18 @@ subprojects {
 
 // Run './gradlew dependencyUpdates' to see new versions of dependencies
 apply plugin: 'com.github.ben-manes.versions'
+dependencyUpdates.resolutionStrategy = {
+    componentSelection { rules ->
+        rules.all { selection ->
+            boolean rejected = ['alpha', 'beta', 'rc', '20050927'].any { qualifier ->
+                selection.candidate.version ==~ /.*-${qualifier}.*/
+            }
+            if (rejected) {
+                selection.reject('Release candidate')
+            }
+        }
+    }
+}
 
 // Returns the name of the current git branch
 def gitBranch() {
