@@ -129,7 +129,7 @@ dependencies {
     compile "com.google.android.gms:play-services-gcm:$versions.playServices"
 
     // Fabric / Crashlytics
-    compile("com.crashlytics.sdk.android:crashlytics:$versions.crashlytics@aar") { transitive = true; }
+    compile("com.crashlytics.sdk.android:crashlytics:$versions.crashlytics@aar") { transitive = true }
 
     // JRAF
     annotationProcessor "org.jraf:prefs-compiler:$versions.prefs"
