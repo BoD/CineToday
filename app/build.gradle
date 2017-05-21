@@ -1,4 +1,6 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+//apply plugin: 'kotlin-kapt'
 if (buildProperties.enableFabric.toBoolean()) apply plugin: 'io.fabric'
 apply plugin: 'org.jraf.acpg.gradleplugin'
 apply plugin: 'com.getkeepsafe.dexcount'
@@ -26,7 +28,7 @@ android {
         // Useful for api keys in the manifest (Maps, Crashlytics, ...)
         manifestPlaceholders = buildProperties
 
-        // Setting this to false disables the png generation at buildtime
+        // Setting this to true disables the png generation at buildtime
         // (see http://android-developers.blogspot.fr/2016/02/android-support-library-232.html)
         vectorDrawables.useSupportLibrary = true
     }
@@ -38,11 +40,6 @@ android {
             keyAlias buildProperties.signingKeyAlias
             keyPassword buildProperties.signingKeyPassword
         }
-    }
-
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
     }
 
     buildTypes {
@@ -68,6 +65,14 @@ android {
         abortOnError true
         textReport true
         ignoreWarnings true
+    }
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+
+        // Necessary because of this issue: https://youtrack.jetbrains.com/issue/KT-17989
+        debug.java.srcDirs += 'build/generated/source/acpg/debug'
+        release.java.srcDirs += 'build/generated/source/acpg/release'
     }
 }
 
@@ -101,7 +106,6 @@ acpg {
     providerClassName 'CineTodayProvider'
     databaseFileName 'cinetoday.db'
     databaseVersion 1
-    sqliteOpenHelperCallbacksClassName 'CineTodaySQLiteOpenHelperCallbacks'
     enableForeignKeys true
     useAnnotations true
     useSupportLibrary false
@@ -114,6 +118,9 @@ dependencies {
     testCompile "junit:junit:$versions.junit"
     testCompile "org.robolectric:robolectric:$versions.robolectric"
     testCompile "org.easytesting:fest-assert-core:$versions.fest"
+
+    // Kotlin
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$versions.kotlin"
 
     // Support library
     compile "com.android.support:support-fragment:$versions.supportLibrary"
@@ -132,7 +139,8 @@ dependencies {
     compile("com.crashlytics.sdk.android:crashlytics:$versions.crashlytics@aar") { transitive = true }
 
     // JRAF
-    annotationProcessor "org.jraf:prefs-compiler:$versions.prefs"
+    // TODO make it work with Kotlin?
+//    kapt "org.jraf:prefs-compiler:$versions.prefs"
     compile "org.jraf:prefs:$versions.prefs"
     compile 'com.github.BoD:jraf-android-util:-SNAPSHOT'
 //    compile 'org.jraf:jraf-android-util:1.0.0'
@@ -146,6 +154,17 @@ dependencies {
 
     // Dagger
     compile "com.google.dagger:dagger:$versions.dagger"
-    annotationProcessor "com.google.dagger:dagger-compiler:$versions.dagger"
+    kapt "com.google.dagger:dagger-compiler:$versions.dagger"
     provided "javax.annotation:jsr250-api:$versions.jsr250"
+
+    // Necessary to have Kotlin and dataBinding at the same time
+    kapt "com.android.databinding:compiler:$versions.androidGradlePlugin"
+}
+repositories {
+    mavenCentral()
+}
+
+// Necessary to have Kotlin and dataBinding at the same time
+kapt {
+    generateStubs = true
 }

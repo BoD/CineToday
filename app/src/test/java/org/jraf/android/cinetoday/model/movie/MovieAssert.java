@@ -56,67 +56,67 @@ public class MovieAssert extends AbstractAssert<MovieAssert, Movie> {
 
     public MovieAssert hasId(String id) {
         isNotNull();
-        Assertions.assertThat(actual.id).isEqualTo(id);
+        Assertions.assertThat(actual.getId()).isEqualTo(id);
         return this;
     }
 
     public MovieAssert hasOriginalTitle(String originalTitle) {
         isNotNull();
-        Assertions.assertThat(actual.originalTitle).isEqualTo(originalTitle);
+        Assertions.assertThat(actual.getOriginalTitle()).isEqualTo(originalTitle);
         return this;
     }
 
     public MovieAssert hasLocalTitle(String localTitle) {
         isNotNull();
-        Assertions.assertThat(actual.localTitle).isEqualTo(localTitle);
+        Assertions.assertThat(actual.getLocalTitle()).isEqualTo(localTitle);
         return this;
     }
 
     public MovieAssert hasDirectors(String directors) {
         isNotNull();
-        Assertions.assertThat(actual.directors).isEqualTo(directors);
+        Assertions.assertThat(actual.getDirectors()).isEqualTo(directors);
         return this;
     }
 
     public MovieAssert hasActors(String actors) {
         isNotNull();
-        Assertions.assertThat(actual.actors).isEqualTo(actors);
+        Assertions.assertThat(actual.getActors()).isEqualTo(actors);
         return this;
     }
 
     public MovieAssert hasReleaseDate(long releaseDate) {
         isNotNull();
 
-        Assertions.assertThat(actual.releaseDate).isNotNull().hasTime(releaseDate);
+        Assertions.assertThat(actual.getReleaseDate()).isNotNull().hasTime(releaseDate);
         return this;
     }
 
     public MovieAssert hasDurationSeconds(Integer durationSeconds) {
-        Assertions.assertThat(actual.durationSeconds).isEqualTo(durationSeconds);
+        Assertions.assertThat(actual.getDurationSeconds()).isEqualTo(durationSeconds);
         return this;
     }
 
     public MovieAssert hasPosterUri(String posterUri) {
         isNotNull();
-        Assertions.assertThat(actual.posterUri).isEqualTo(posterUri);
+        Assertions.assertThat(actual.getPosterUri()).isEqualTo(posterUri);
         return this;
     }
 
     public MovieAssert hasTrailerUri(String trailerUri) {
         isNotNull();
-        Assertions.assertThat(actual.trailerUri).isEqualTo(trailerUri);
+        Assertions.assertThat(actual.getTrailerUri()).isEqualTo(trailerUri);
         return this;
     }
 
     public MovieAssert hasWebUri(String webUri) {
         isNotNull();
-        Assertions.assertThat(actual.webUri).isEqualTo(webUri);
+        Assertions.assertThat(actual.getWebUri()).isEqualTo(webUri);
         return this;
     }
 
     public MovieAssert hasSynopsis(String synopsis) {
         isNotNull();
-        Assertions.assertThat(actual.synopsis).isEqualTo(synopsis);
+        Assertions.assertThat(actual.getSynopsis()).isEqualTo(synopsis);
         return this;
     }
 
