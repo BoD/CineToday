@@ -29,6 +29,7 @@ import android.text.Html
 import android.widget.TextView
 
 object TextViewBindingAdapter {
+    @JvmStatic
     @BindingAdapter("textHtml")
     fun setTextHtml(view: TextView, textHtml: String) {
         view.text = Html.fromHtml(textHtml, 0)

@@ -77,7 +77,7 @@ class Theater() : Parcelable {
     }
 
     companion object {
-
+        @JvmField
         val CREATOR: Parcelable.Creator<Theater> = object : Parcelable.Creator<Theater> {
             override fun createFromParcel(source: Parcel): Theater {
                 return Theater(source)

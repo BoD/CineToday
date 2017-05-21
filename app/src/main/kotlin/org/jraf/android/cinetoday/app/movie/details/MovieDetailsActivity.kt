@@ -59,7 +59,7 @@ class MovieDetailsActivity : Activity(), LoaderManager.LoaderCallbacks<Cursor> {
         mBinding!!.conMovie.setOnScrollChangeListener(mOnScrollChangeListener)
     }
 
-    override fun onCreateLoader(id: Int, args: Bundle): Loader<Cursor>? {
+    override fun onCreateLoader(id: Int, args: Bundle?): Loader<Cursor>? {
         val movieUri = intent.data
         when (id) {
             LOADER_MOVIE -> return CursorLoader(this, movieUri, null, null, null, null)

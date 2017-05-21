@@ -28,11 +28,13 @@ import android.databinding.BindingAdapter
 import android.view.View
 
 object ViewBindingAdapter {
+    @JvmStatic
     @BindingAdapter("visible")
     fun setVisible(view: View, visible: Boolean) {
         view.visibility = if (visible) View.VISIBLE else View.GONE
     }
 
+    @JvmStatic
     @BindingAdapter("visible")
     fun setVisibleIfNotNull(view: View, `object`: Any?) {
         view.visibility = if (`object` != null) View.VISIBLE else View.GONE

@@ -69,7 +69,7 @@ class TheaterFavoritesFragment : BaseFrameworkFragment<TheaterFavoritesCallbacks
     // region Loader.
     //--------------------------------------------------------------------------
 
-    override fun onCreateLoader(id: Int, args: Bundle): Loader<Cursor> {
+    override fun onCreateLoader(id: Int, args: Bundle?): Loader<Cursor> {
         return TheaterSelection().getCursorLoader(context)
     }
 

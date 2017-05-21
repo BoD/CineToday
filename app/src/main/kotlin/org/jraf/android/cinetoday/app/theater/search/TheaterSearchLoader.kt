@@ -68,7 +68,7 @@ class TheaterSearchLoader(context: Context, private val mQuery: String) : AsyncT
 
     }
 
-    override fun deliverResult(data: List<Theater>) {
+    override fun deliverResult(data: List<Theater>?) {
         Log.d()
         mData = data
 
@@ -100,7 +100,7 @@ class TheaterSearchLoader(context: Context, private val mQuery: String) : AsyncT
         releaseResources()
     }
 
-    override fun onCanceled(data: List<Theater>) {
+    override fun onCanceled(data: List<Theater>?) {
         Log.d()
         super.onCanceled(data)
         releaseResources()

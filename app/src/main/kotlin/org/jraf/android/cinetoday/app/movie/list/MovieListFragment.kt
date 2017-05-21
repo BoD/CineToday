@@ -81,7 +81,7 @@ class MovieListFragment : BaseFrameworkFragment<MovieListCallbacks>(), LoaderMan
         return mBinding!!.root
     }
 
-    override fun onCreateLoader(id: Int, args: Bundle): Loader<Cursor> {
+    override fun onCreateLoader(id: Int, args: Bundle?): Loader<Cursor> {
         return MovieSelection().getCursorLoader(context)
     }
 
