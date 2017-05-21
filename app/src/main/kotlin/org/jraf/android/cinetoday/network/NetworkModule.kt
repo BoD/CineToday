@@ -81,7 +81,7 @@ class NetworkModule {
         builder.cache(Cache(httpCacheDir, CACHE_SIZE_B))
 
         if (BuildConfig.DEBUG) {
-            builder.proxy(Proxy(Proxy.Type.HTTP, InetSocketAddress("192.168.1.52", 8888)))
+            builder.proxy(Proxy(Proxy.Type.HTTP, InetSocketAddress("192.168.1.2", 8888)))
         }
 
         return builder.build()
@@ -97,7 +97,7 @@ class NetworkModule {
         builder.writeTimeout(TIMEOUT_S.toLong(), TimeUnit.SECONDS)
 
         if (BuildConfig.DEBUG) {
-            builder.proxy(Proxy(Proxy.Type.HTTP, InetSocketAddress("192.168.1.52", 8888)))
+            builder.proxy(Proxy(Proxy.Type.HTTP, InetSocketAddress("192.168.1.2", 8888)))
         }
 
         return builder.build()

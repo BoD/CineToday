@@ -342,7 +342,7 @@ class MainActivity : Activity(), MovieListCallbacks, TheaterFavoritesCallbacks, 
 
     private fun addToFavorites(theater: Theater) {
         object : AsyncTask<Void, Void, Void>() {
-            override fun doInBackground(vararg params: Void): Void? {
+            override fun doInBackground(vararg params: Void?): Void? {
                 TheaterContentValues()
                         .putPublicId(theater.id!!)
                         .putName(theater.name!!)
@@ -351,7 +351,7 @@ class MainActivity : Activity(), MovieListCallbacks, TheaterFavoritesCallbacks, 
                 return null
             }
 
-            override fun onPostExecute(aVoid: Void) {
+            override fun onPostExecute(aVoid: Void?) {
                 mAtLeastOneFavorite = true
                 mLoadMoviesHelper.startLoadMoviesIntentService()
             }
@@ -360,7 +360,7 @@ class MainActivity : Activity(), MovieListCallbacks, TheaterFavoritesCallbacks, 
 
     private fun ensureFavoriteTheaters() {
         object : AsyncTask<Void, Void, Boolean>() {
-            override fun doInBackground(vararg params: Void): Boolean? {
+            override fun doInBackground(vararg params: Void?): Boolean? {
                 return TheaterSelection().count(this@MainActivity) > 0
             }
 
@@ -381,7 +381,7 @@ class MainActivity : Activity(), MovieListCallbacks, TheaterFavoritesCallbacks, 
             DIALOG_THEATER_DELETE_CONFIRM -> {
                 val theaterId = payload as Long
                 object : AsyncTask<Void, Void, Void>() {
-                    override fun doInBackground(vararg params: Void): Void? {
+                    override fun doInBackground(vararg params: Void?): Void? {
                         TheaterSelection().id(theaterId).delete(this@MainActivity)
 
                         // Delete movies that have no show times
@@ -396,7 +396,7 @@ class MainActivity : Activity(), MovieListCallbacks, TheaterFavoritesCallbacks, 
                         return null
                     }
 
-                    override fun onPostExecute(aVoid: Void) {
+                    override fun onPostExecute(aVoid: Void?) {
                         ensureFavoriteTheaters()
                     }
                 }.execute()
