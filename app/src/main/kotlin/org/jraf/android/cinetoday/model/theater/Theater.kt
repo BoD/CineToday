@@ -39,13 +39,9 @@ data class Theater(
         var pictureUri: String?
 ) : HasId, Parcelable {
 
-    override fun equals(other: Any?): Boolean {
-        return (other as? Theater)?.id == id
-    }
+    override fun equals(other: Any?) = (other as? Theater)?.id == id
 
-    override fun hashCode(): Int {
-        return id.hashCode()
-    }
+    override fun hashCode() = id.hashCode()
 
 
     //--------------------------------------------------------------------------
