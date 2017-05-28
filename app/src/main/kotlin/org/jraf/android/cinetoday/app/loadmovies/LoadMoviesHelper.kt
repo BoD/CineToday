@@ -27,7 +27,6 @@ package org.jraf.android.cinetoday.app.loadmovies
 import android.app.Notification
 import android.app.NotificationManager
 import android.app.PendingIntent
-import android.content.ContentProviderOperation
 import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
@@ -45,25 +44,21 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import org.jraf.android.cinetoday.R
 import org.jraf.android.cinetoday.app.main.MainActivity
+import org.jraf.android.cinetoday.database.AppDatabase
 import org.jraf.android.cinetoday.model.movie.Movie
 import org.jraf.android.cinetoday.network.api.Api
 import org.jraf.android.cinetoday.prefs.MainPrefs
-import org.jraf.android.cinetoday.provider.CineTodayProvider
-import org.jraf.android.cinetoday.provider.movie.MovieColumns
-import org.jraf.android.cinetoday.provider.movie.MovieContentValues
-import org.jraf.android.cinetoday.provider.movie.MovieSelection
-import org.jraf.android.cinetoday.provider.showtime.ShowtimeColumns
-import org.jraf.android.cinetoday.provider.showtime.ShowtimeContentValues
-import org.jraf.android.cinetoday.provider.theater.TheaterSelection
 import org.jraf.android.util.handler.HandlerUtil
 import org.jraf.android.util.log.Log
 import org.jraf.android.util.ui.screenshape.ScreenShapeHelper
-import java.util.*
+import java.util.Date
+import java.util.SortedSet
+import java.util.TreeSet
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
 
-class LoadMoviesHelper(private val mContext: Context, private val mMainPrefs: MainPrefs, private val mApi: Api) {
+class LoadMoviesHelper(private val mContext: Context, private val mMainPrefs: MainPrefs, private val mApi: Api, private val mAppDatabase: AppDatabase) {
     @Volatile private var mWantStop: Boolean = false
 
     fun setWantStop(wantStop: Boolean) {
@@ -117,18 +112,16 @@ class LoadMoviesHelper(private val mContext: Context, private val mMainPrefs: Ma
         val highBandwidthNetworkSuccess = requestHighBandwidthNetwork(10, TimeUnit.SECONDS)
         Log.d("Fast network success=%s", highBandwidthNetworkSuccess)
 
-        val movies = TreeSet(Movie.COMPARATOR)
+        val movies = TreeSet<Movie>()
         try {
             // 1/ Retrieve list of movies (including showtimes), for all the theaters
             try {
-                TheaterSelection().query(mContext).use { theaterCursor ->
-                    while (theaterCursor.moveToNext()) {
-                        mApi.getMovieList(movies, theaterCursor.publicId, Date())
+                mAppDatabase.theaterDao.allTheaters().forEach { (id) ->
+                    mApi.getMovieList(movies, id, Date())
 
-                        if (mWantStop) {
-                            loadMoviesListenerHelper.onLoadMoviesInterrupted()
-                            return
-                        }
+                    if (mWantStop) {
+                        loadMoviesListenerHelper.onLoadMoviesInterrupted()
+                        return
                     }
                 }
             } catch (e: Exception) {
@@ -146,10 +139,10 @@ class LoadMoviesHelper(private val mContext: Context, private val mMainPrefs: Ma
             val size = movies.size
             var i = 0
             for (movie in movies) {
-                loadMoviesListenerHelper.onLoadMoviesProgress(i, size, movie.localTitle!!)
+                loadMoviesListenerHelper.onLoadMoviesProgress(i, size, movie.localTitle)
 
                 // Check if we already have info for this movie
-                if (MovieSelection().publicId(movie.id).count(mContext) == 0) {
+                if (mAppDatabase.movieDao.countMovieById(movie.id) == 0) {
                     movie.isNew = true
 
                     // Get movie info
@@ -161,7 +154,6 @@ class LoadMoviesHelper(private val mContext: Context, private val mMainPrefs: Ma
                         loadMoviesListenerHelper.onLoadMoviesError(e)
                         throw e
                     }
-
                 }
 
                 if (mWantStop) {
@@ -201,11 +193,11 @@ class LoadMoviesHelper(private val mContext: Context, private val mMainPrefs: Ma
                 }
 
                 i++
-                loadMoviesListenerHelper.onLoadMoviesProgress(i, size, movie.localTitle!!)
+                loadMoviesListenerHelper.onLoadMoviesProgress(i, size, movie.localTitle)
             }
 
         } finally {
-            // Releasing the high-bandwidth network
+            // Release the high-bandwidth network
             if (highBandwidthNetworkSuccess) {
                 val connectivityManager = mContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
                 connectivityManager.bindProcessToNetwork(null)
@@ -222,96 +214,25 @@ class LoadMoviesHelper(private val mContext: Context, private val mMainPrefs: Ma
         // 4/ Show a notification
         val newMovieTitles = ArrayList<String>(movies.size)
         for (movie in movies) {
-            if (movie.isNew) newMovieTitles.add(movie.localTitle!!)
+            if (movie.isNew) newMovieTitles.add(movie.localTitle)
         }
         if (!newMovieTitles.isEmpty()) showNotification(newMovieTitles)
-    }/* package */
+    }
 
     private fun persist(movies: SortedSet<Movie>) {
-        val operations = ArrayList<ContentProviderOperation>()
+        // Delete all showtimes and movies
+        mAppDatabase.showtimeDao.deleteAll()
+        mAppDatabase.movieDao.deleteAll()
 
-        // First, delete all the showtimes
-        operations.add(ContentProviderOperation.newDelete(ShowtimeColumns.CONTENT_URI).build())
+        // Insert movies
+        mAppDatabase.movieDao.insert(movies.toList())
 
-        // Get a map of theater public ids to internal ids
-        val theaterIds = HashMap<String, Long>()
-        TheaterSelection().query(mContext).use { cursor ->
-            while (cursor.moveToNext()) {
-                theaterIds.put(cursor.getPublicId(), cursor.getId())
-            }
-        }
-
-        // Get a map of movie public ids to internal ids
-        val movieIds = HashMap<String, Long>()
-        MovieSelection().query(mContext).use { cursor ->
-            while (cursor.moveToNext()) {
-                movieIds.put(cursor.getPublicId(), cursor.getId())
-            }
-        }
-
+        // Insert showtimes
         for (movie in movies) {
-            // Movie
-            if (movie.isNew) {
-                val movieValues = MovieContentValues()
-                        .putPublicId(movie.id!!)
-                        .putTitleOriginal(movie.originalTitle!!)
-                        .putTitleLocal(movie.localTitle!!)
-                        .putDirectors(movie.directors)
-                        .putActors(movie.actors)
-                        .putReleaseDate(movie.releaseDate)
-                        .putDuration(movie.durationSeconds)
-                        .putGenres(TextUtils.join("|", movie.genres))
-                        .putPosterUri(movie.posterUri)
-                        .putTrailerUri(movie.trailerUri)
-                        .putWebUri(movie.webUri!!)
-                        .putSynopsis(movie.synopsis!!)
-                        .putColor(movie.color)
-                operations.add(ContentProviderOperation.newInsert(MovieColumns.CONTENT_URI).withValues(movieValues.values()).build())
-            }
-
-            // Showtimes
-            val movieIdResultIndex = operations.size - 1
-            for ((theaterPublicId, showtimes) in movie.todayShowtimes!!) {
-                val theaterId = theaterIds[theaterPublicId]
-                for (showtime in showtimes) {
-                    val showtimeValues = ShowtimeContentValues()
-                            .putTheaterId(theaterId!!)
-                            .putTime(showtime.time!!)
-                            .putIs3d(showtime.is3d)
-                    if (!movie.isNew) {
-                        showtimeValues.putMovieId(movieIds[movie.id!!]!!)
-                    }
-
-                    val operationBuilder = ContentProviderOperation.newInsert(ShowtimeColumns.CONTENT_URI)
-                            .withValues(showtimeValues.values())
-                    if (movie.isNew) {
-                        operationBuilder.withValueBackReference(ShowtimeColumns.MOVIE_ID, movieIdResultIndex)
-                    }
-
-                    val operation = operationBuilder.build()
-                    operations.add(operation)
-                }
+            for (entry in movie.todayShowtimes) {
+                mAppDatabase.showtimeDao.insert(entry.value)
             }
         }
-
-        // Delete movies that have no show times
-        val movieSelection = MovieSelection()
-        movieSelection.addRaw("(select "
-                + " count(" + ShowtimeColumns.TABLE_NAME + "." + ShowtimeColumns._ID + ")"
-                + " from " + ShowtimeColumns.TABLE_NAME
-                + " where " + ShowtimeColumns.TABLE_NAME + "." + ShowtimeColumns.MOVIE_ID
-                + " = " + MovieColumns.TABLE_NAME + "." + MovieColumns._ID
-                + " ) = 0")
-        operations.add(ContentProviderOperation.newDelete(MovieColumns.CONTENT_URI)
-                .withSelection(movieSelection.sel(), movieSelection.args()).build())
-
-        // Apply the batch of operations
-        try {
-            mContext.contentResolver.applyBatch(CineTodayProvider.AUTHORITY, operations)
-        } catch (e: Exception) {
-            Log.e(e, "Could not apply batch")
-        }
-
     }
 
     private fun showNotification(newMovieTitles: ArrayList<String>) {

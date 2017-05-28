@@ -35,15 +35,12 @@ class TheaterCodec {
         try {
             theater.id = jsonTheater.getString("code")
             theater.name = jsonTheater.getString("name")
-            theater.address = jsonTheater.getString("address").trim { it <= ' ' } + "\n" + jsonTheater.getString("postalCode").trim { it <= ' ' } + " " + jsonTheater.getString("city").trim { it <= ' ' }
-
-            val jsonPoster = jsonTheater.optJSONObject("poster")
-            if (jsonPoster != null) {
-                theater.pictureUri = jsonPoster.getString("href")
-            }
+            theater.address = jsonTheater.getString("address").trim() +
+                    "\n" +
+                    jsonTheater.getString("postalCode").trim() + " " + jsonTheater.getString("city").trim()
+            theater.pictureUri = jsonTheater.optJSONObject("poster")?.getString("href")
         } catch (e: JSONException) {
             throw ParseException(e)
         }
-
     }
 }

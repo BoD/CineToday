@@ -24,77 +24,72 @@
  */
 package org.jraf.android.cinetoday.model.movie
 
-import java.util.*
+import android.arch.persistence.room.Entity
+import android.arch.persistence.room.Ignore
+import android.arch.persistence.room.PrimaryKey
+import android.arch.persistence.room.TypeConverters
+import org.jraf.android.cinetoday.database.Converters
+import org.jraf.android.cinetoday.model.theater.Theater
+import org.jraf.android.cinetoday.util.uri.HasId
+import java.util.Date
+import java.util.TreeMap
 
-class Movie {
-    var id: String? = null
-    var originalTitle: String? = null
-    var localTitle: String? = null
-    var directors: String? = null
-    var actors: String? = null
-    var releaseDate: Date? = null
-    var durationSeconds: Int? = null
-    var genres: Array<String>? = null
-    var posterUri: String? = null
-    var trailerUri: String? = null
-    var webUri: String? = null
-    var synopsis: String? = null
+@Entity
+data class Movie(
+        @PrimaryKey
+        override var id: String,
 
-    var isNew: Boolean = false
-    var color: Int? = null
+        var originalTitle: String,
+        var localTitle: String,
 
+        var directors: String?,
+        var actors: String?,
+
+        @field:TypeConverters(Converters.DateConverter::class)
+        var releaseDate: Date?,
+        var durationSeconds: Int?,
+
+        @field:TypeConverters(Converters.ListConverter::class)
+        var genres: Array<String>,
+
+        var posterUri: String?,
+        var trailerUri: String?,
+
+        var webUri: String,
+        var synopsis: String?,
+
+        var isNew: Boolean,
+        var color: Int?
+) : HasId, Comparable<Movie> {
     /**
-     * Keys: id of the theater<br></br>
+     * Keys: id of the theater.
+     *
      * Values: showtimes for today at a given theater.
      */
-    var todayShowtimes: SortedMap<String, List<Showtime>>? = null
+    @Ignore
+    var todayShowtimes = TreeMap<String, List<Showtime>>()
 
-    override fun toString(): String {
-        return "Movie{" +
-                "id='" + id + '\'' +
-                ", originalTitle='" + originalTitle + '\'' +
-                ", localTitle='" + localTitle + '\'' +
-                ", directors='" + directors + '\'' +
-                ", actors='" + actors + '\'' +
-                ", releaseDate=" + releaseDate +
-                ", durationSeconds=" + durationSeconds +
-                ", genres=" + Arrays.toString(genres) +
-                ", posterUri='" + posterUri + '\'' +
-                ", trailerUri='" + trailerUri + '\'' +
-                ", webUri='" + webUri + '\'' +
-                ", synopsis='" + synopsis + '\'' +
-                ", todayShowtimes=" + todayShowtimes +
-                '}'
-    }
 
-    override fun equals(o: Any?): Boolean {
-        if (this === o) return true
-        if (o == null || javaClass != o.javaClass) return false
-        val movie = o as Movie?
-        return id == movie!!.id
-
+    override fun equals(other: Any?): Boolean {
+        return (other as? Theater)?.id == id
     }
 
     override fun hashCode(): Int {
-        return id!!.hashCode()
+        return id.hashCode()
     }
 
-    companion object {
-
-        /**
-         * Compares in reverse release date order.
-         */
-        val COMPARATOR: Comparator<Movie> = object : Comparator<Movie> {
-            override fun compare(lhs: Movie, rhs: Movie): Int {
-                var res: Int
-                if (rhs.releaseDate != null && lhs.releaseDate != null) {
-                    res = rhs.releaseDate!!.compareTo(lhs.releaseDate)
-                    if (res == 0) res = lhs.id!!.compareTo(rhs.id!!)
-                } else {
-                    res = lhs.id!!.compareTo(rhs.id!!)
-                }
-                return res
-            }
+    /**
+     * Compare in *reverse* release date order.
+     */
+    override fun compareTo(other: Movie): Int {
+        var res: Int
+        val otherReleaseDate = other.releaseDate
+        if (otherReleaseDate != null && releaseDate != null) {
+            res = otherReleaseDate.compareTo(releaseDate)
+            if (res == 0) res = id.compareTo(other.id)
+        } else {
+            res = id.compareTo(other.id)
         }
+        return res
     }
 }

@@ -24,10 +24,12 @@
  */
 package org.jraf.android.cinetoday.app
 
+import android.arch.persistence.room.Room
 import android.content.Context
 import dagger.Module
 import dagger.Provides
 import org.jraf.android.cinetoday.app.loadmovies.LoadMoviesHelper
+import org.jraf.android.cinetoday.database.AppDatabase
 import org.jraf.android.cinetoday.network.api.Api
 import org.jraf.android.cinetoday.prefs.MainPrefs
 import javax.inject.Singleton
@@ -43,13 +45,19 @@ class ApplicationModule(private val mContext: Context) {
 
     @Singleton
     @Provides
-    fun provideLoadMoviesHelper(context: Context, mainPrefs: MainPrefs, api: Api): LoadMoviesHelper {
-        return LoadMoviesHelper(context, mainPrefs, api)
+    fun provideLoadMoviesHelper(context: Context, mainPrefs: MainPrefs, api: Api, appDatabase: AppDatabase): LoadMoviesHelper {
+        return LoadMoviesHelper(context, mainPrefs, api, appDatabase)
     }
 
     @Singleton
     @Provides
     fun provideMainPrefs(context: Context): MainPrefs {
         return MainPrefs.get(context)
+    }
+
+    @Singleton
+    @Provides
+    fun provideDatabase(context: Context): AppDatabase {
+        return Room.databaseBuilder(context, AppDatabase::class.java, AppDatabase.DATABASE_NAME).build();
     }
 }

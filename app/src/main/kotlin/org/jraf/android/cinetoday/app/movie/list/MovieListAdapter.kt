@@ -24,28 +24,30 @@
  */
 package org.jraf.android.cinetoday.app.movie.list
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.databinding.DataBindingUtil
 import android.support.v7.graphics.Palette
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
-
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.GlideBitmapDrawable
 import com.bumptech.glide.load.resource.drawable.GlideDrawable
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
-
 import org.jraf.android.cinetoday.R
 import org.jraf.android.cinetoday.databinding.MovieListItemBinding
 import org.jraf.android.cinetoday.glide.GlideHelper
-import org.jraf.android.cinetoday.provider.movie.MovieCursor
+import org.jraf.android.cinetoday.model.movie.Movie
 
 class MovieListAdapter(private val mContext: Context, private val mMovieListCallbacks: MovieListCallbacks, private val mPaletteListener: PaletteListener) : RecyclerView.Adapter<MovieListAdapter.ViewHolder>() {
     private val mLayoutInflater: LayoutInflater = LayoutInflater.from(mContext)
-    private var mCursor: MovieCursor? = null
+
+    var data: Array<Movie> = emptyArray()
+        set(value) {
+            field = value
+            notifyDataSetChanged()
+        }
 
     class ViewHolder(val itemBinding: MovieListItemBinding) : RecyclerView.ViewHolder(itemBinding.root)
 
@@ -54,36 +56,36 @@ class MovieListAdapter(private val mContext: Context, private val mMovieListCall
         return ViewHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: MovieListAdapter.ViewHolder, @SuppressLint("RecyclerView") position: Int) {
-        mCursor!!.moveToPosition(position)
-        holder.itemBinding.movie = mCursor
-        holder.itemBinding.movieId = mCursor!!.id
+    override fun onBindViewHolder(holder: MovieListAdapter.ViewHolder, position: Int) {
+        val movie = data[position]
+        holder.itemBinding.movie = movie
         holder.itemBinding.callbacks = mMovieListCallbacks
-        val id = mCursor!!.id
-        val hasColor = mCursor!!.color != null
-        if (hasColor) mPaletteListener.onPaletteAvailable(position, mCursor!!.color!!, true, id)
+        movie.color?.let {
+            mPaletteListener.onPaletteAvailable(position, it, true, movie.id)
+        }
 
         holder.itemBinding.executePendingBindings()
 
-        GlideHelper.load(mCursor!!.posterUri, holder.itemBinding.imgPoster, object : RequestListener<String, GlideDrawable> {
+        GlideHelper.load(movie.posterUri, holder.itemBinding.imgPoster, object : RequestListener<String, GlideDrawable> {
             override fun onException(e: Exception, model: String, target: Target<GlideDrawable>, isFirstResource: Boolean): Boolean {
                 return false
             }
 
             override fun onResourceReady(resource: GlideDrawable, model: String, target: Target<GlideDrawable>, isFromMemoryCache: Boolean,
                                          isFirstResource: Boolean): Boolean {
-                // Generate the color
-                if (!hasColor) {
+                if (movie.color == null) {
+                    // Generate the color
                     val glideBitmapDrawable = resource as GlideBitmapDrawable
                     Palette.from(glideBitmapDrawable.bitmap).generate { palette ->
                         val color = palette.getDarkVibrantColor(mContext.getColor(R.color.movie_list_bg))
-                        mPaletteListener.onPaletteAvailable(position, color, false, id)
+                        mPaletteListener.onPaletteAvailable(position, color, false, movie.id)
                     }
                 }
 
                 // Preload the next image
-                if (mCursor!!.moveToPosition(position + 1)) {
-                    Glide.with(mContext).load(mCursor!!.posterUri).centerCrop()
+                if (position + 1 in data.indices) {
+                    val nextMovie = data[position + 1]
+                    Glide.with(mContext).load(nextMovie.posterUri).centerCrop()
                             .preload(holder.itemBinding.imgPoster.width, holder.itemBinding.imgPoster.height)
                 }
 
@@ -92,19 +94,7 @@ class MovieListAdapter(private val mContext: Context, private val mMovieListCall
         })
     }
 
-    override fun getItemCount(): Int {
-        if (mCursor == null) return 0
-        return mCursor!!.count
-    }
+    override fun getItemCount() = data.size
 
-    override fun getItemId(position: Int): Long {
-        if (mCursor == null) return RecyclerView.NO_ID
-        if (!mCursor!!.moveToPosition(position)) return RecyclerView.NO_ID
-        return mCursor!!.id
-    }
-
-    fun swapCursor(cursor: MovieCursor?) {
-        mCursor = cursor
-        notifyDataSetChanged()
-    }
+    override fun getItemId(position: Int) = if (data.isEmpty()) RecyclerView.NO_ID else data[position].id.hashCode().toLong()
 }

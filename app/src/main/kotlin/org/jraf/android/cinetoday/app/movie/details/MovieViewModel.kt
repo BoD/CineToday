@@ -25,24 +25,19 @@
 package org.jraf.android.cinetoday.app.movie.details
 
 import android.content.Context
-import android.database.Cursor
-
 import org.jraf.android.cinetoday.R
-import org.jraf.android.cinetoday.provider.movie.MovieCursor
+import org.jraf.android.cinetoday.model.movie.Movie
 
-class MovieViewModel(private val mContext: Context, cursor: Cursor) : MovieCursor(cursor) {
+class MovieViewModel(movie: Movie, private val mContext: Context) {
 
-    val durationFormatted: String?
-        get() {
-            if (duration == null) return null
-            return formatDuration(duration!!)
-        }
-
-    val genresFormatted: String?
-        get() {
-            if (genres == null) return null
-            return genres!!.replace("\\|".toRegex(), " · ")
-        }
+    val originalTitle = movie.originalTitle
+    val localTitle = movie.localTitle
+    val directors = movie.directors
+    val actors = movie.actors
+    val synopsis = movie.synopsis
+    val durationFormatted = movie.durationSeconds?.let { formatDuration(it) }
+    val genres = movie.genres
+    val genresFormatted = movie.genres.joinToString(" · ")
 
     private fun formatDuration(durationSeconds: Int): String {
         if (durationSeconds < 60 * 60) return mContext.getString(R.string.durationMinutes, durationSeconds / 60)
@@ -50,29 +45,5 @@ class MovieViewModel(private val mContext: Context, cursor: Cursor) : MovieCurso
         val minutes = durationSeconds % (60 * 60) / 60
         if (minutes == 0) return mContext.resources.getQuantityString(R.plurals.durationHours, hours, hours)
         return mContext.getString(R.string.durationHoursMinutes, hours, minutes)
-    }
-
-    override fun getTitleLocal(): String {
-        return super.getTitleLocal()
-    }
-
-    override fun getDirectors(): String? {
-        return super.getDirectors()
-    }
-
-    override fun getGenres(): String? {
-        return super.getGenres()
-    }
-
-    override fun getActors(): String? {
-        return super.getActors()
-    }
-
-    override fun getSynopsis(): String {
-        return super.getSynopsis()
-    }
-
-    override fun getTitleOriginal(): String {
-        return super.getTitleOriginal()
     }
 }

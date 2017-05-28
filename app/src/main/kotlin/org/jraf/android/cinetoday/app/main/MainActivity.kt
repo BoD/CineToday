@@ -51,13 +51,12 @@ import org.jraf.android.cinetoday.app.theater.favorites.TheaterFavoritesCallback
 import org.jraf.android.cinetoday.app.theater.favorites.TheaterFavoritesFragment
 import org.jraf.android.cinetoday.app.theater.search.TheaterSearchActivity
 import org.jraf.android.cinetoday.dagger.Components
+import org.jraf.android.cinetoday.database.AppDatabase
 import org.jraf.android.cinetoday.databinding.MainBinding
+import org.jraf.android.cinetoday.model.movie.Movie
 import org.jraf.android.cinetoday.model.theater.Theater
-import org.jraf.android.cinetoday.provider.movie.MovieColumns
-import org.jraf.android.cinetoday.provider.movie.MovieSelection
-import org.jraf.android.cinetoday.provider.showtime.ShowtimeColumns
-import org.jraf.android.cinetoday.provider.theater.TheaterContentValues
-import org.jraf.android.cinetoday.provider.theater.TheaterSelection
+import org.jraf.android.cinetoday.util.base.BaseActivity
+import org.jraf.android.cinetoday.util.uri.setData
 import org.jraf.android.util.dialog.AlertDialogListener
 import org.jraf.android.util.dialog.FrameworkAlertDialogFragment
 import org.jraf.android.util.handler.HandlerUtil
@@ -67,12 +66,13 @@ import java.io.UnsupportedEncodingException
 import java.net.URLEncoder
 import javax.inject.Inject
 
-class MainActivity : Activity(), MovieListCallbacks, TheaterFavoritesCallbacks, WearableActionDrawer.OnMenuItemClickListener, AlertDialogListener {
+class MainActivity : BaseActivity(), MovieListCallbacks, TheaterFavoritesCallbacks, WearableActionDrawer.OnMenuItemClickListener, AlertDialogListener {
 
-    private var mBinding: MainBinding? = null
+    private lateinit var mBinding: MainBinding
     private var mAtLeastOneFavorite: Boolean = false
     private var mShouldClosePeekingActionDrawer: Boolean = false
 
+    @Inject lateinit var mDatabase: AppDatabase
     @Inject lateinit var mLoadMoviesHelper: LoadMoviesHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -80,32 +80,32 @@ class MainActivity : Activity(), MovieListCallbacks, TheaterFavoritesCallbacks, 
         Components.application.inject(this)
 
         mBinding = DataBindingUtil.setContentView<MainBinding>(this, R.layout.main)
-        mBinding!!.navigationDrawer.setAdapter(NavigationDrawerAdapter())
-        mBinding!!.actionDrawer.setOnMenuItemClickListener(this)
-        mBinding!!.actionDrawer.setShouldPeekOnScrollDown(true)
+        mBinding.navigationDrawer.setAdapter(NavigationDrawerAdapter())
+        mBinding.actionDrawer.setOnMenuItemClickListener(this)
+        mBinding.actionDrawer.setShouldPeekOnScrollDown(true)
 
         // Workaround for http://stackoverflow.com/questions/42141631
         // XXX If the screen is round, we consider the height *must* be the same as the width
-        if (ScreenShapeHelper.get(this).isRound) mBinding!!.conFragment.layoutParams.height = ScreenShapeHelper.get(this).width
+        if (ScreenShapeHelper.get(this).isRound) mBinding.conFragment.layoutParams.height = ScreenShapeHelper.get(this).width
 
         showMovieListFragment()
         ensureFavoriteTheaters()
 
-        menuInflater.inflate(R.menu.main, mBinding!!.actionDrawer.menu)
+        menuInflater.inflate(R.menu.main, mBinding.actionDrawer.menu)
 
-        mBinding!!.drawerLayout.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+        mBinding.drawerLayout.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
-                mBinding!!.drawerLayout.peekDrawer(Gravity.TOP)
-                mBinding!!.drawerLayout.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                mBinding.drawerLayout.peekDrawer(Gravity.TOP)
+                mBinding.drawerLayout.viewTreeObserver.removeOnGlobalLayoutListener(this)
             }
         })
 
-        mBinding!!.drawerLayout.setDrawerStateCallback(object : WearableDrawerLayout.DrawerStateCallback() {
+        mBinding.drawerLayout.setDrawerStateCallback(object : WearableDrawerLayout.DrawerStateCallback() {
             override fun onDrawerOpened(view: View) {}
 
             override fun onDrawerClosed(view: View) {
-                if (view === mBinding!!.navigationDrawer && mTheaterFavoritesFragment.isVisible && mShouldClosePeekingActionDrawer) {
-                    mBinding!!.drawerLayout.peekDrawer(Gravity.BOTTOM)
+                if (view === mBinding.navigationDrawer && mTheaterFavoritesFragment.isVisible && mShouldClosePeekingActionDrawer) {
+                    mBinding.drawerLayout.peekDrawer(Gravity.BOTTOM)
                     HandlerUtil.getMainHandler().postDelayed(mHideActionDrawerRunnable, DELAY_HIDE_PEEKING_ACTION_DRAWER_MS.toLong())
                     mShouldClosePeekingActionDrawer = false
                 }
@@ -116,8 +116,8 @@ class MainActivity : Activity(), MovieListCallbacks, TheaterFavoritesCallbacks, 
     }
 
     private val mHideActionDrawerRunnable = Runnable {
-        if (mBinding!!.actionDrawer.isPeeking) {
-            mBinding!!.drawerLayout.closeDrawer(Gravity.BOTTOM)
+        if (mBinding.actionDrawer.isPeeking) {
+            mBinding.drawerLayout.closeDrawer(Gravity.BOTTOM)
         }
     }
 
@@ -166,36 +166,33 @@ class MainActivity : Activity(), MovieListCallbacks, TheaterFavoritesCallbacks, 
 
             R.id.main_action_delete -> confirmDeleteTheater(mTheaterFavoritesFragment.currentVisibleTheater!!.id)
         }
-        mBinding!!.actionDrawer.closeDrawer()
+        mBinding.actionDrawer.closeDrawer()
         return false
     }
 
     private fun openDirectionsToTheater(theaterAddress: String) {
-        var theaterAddress = theaterAddress
         Log.d()
-        try {
-            theaterAddress = URLEncoder.encode(theaterAddress, "utf-8")
+        val theaterAddressEncoded = try {
+            URLEncoder.encode(theaterAddress, "utf-8")
         } catch (ignored: UnsupportedEncodingException) {
         }
 
-        val uri = Uri.parse("http://maps.google.com/maps?f=d&daddr=" + theaterAddress)
+        val uri = Uri.parse("http://maps.google.com/maps?f=d&daddr=" + theaterAddressEncoded)
         openOnPhone(uri)
     }
 
     fun openTheaterWebsite(theaterName: String) {
-        var theaterName = theaterName
         Log.d()
-        theaterName = "cinema " + theaterName
-        try {
-            theaterName = URLEncoder.encode(theaterName, "utf-8")
+        val theaterNameEncoded = try {
+            URLEncoder.encode("cinema $theaterName", "utf-8")
         } catch (ignored: UnsupportedEncodingException) {
         }
 
-        val uri = Uri.parse("https://www.google.com/search?sourceid=navclient&btnI=I&q=" + theaterName)
+        val uri = Uri.parse("https://www.google.com/search?sourceid=navclient&btnI=I&q=" + theaterNameEncoded)
         openOnPhone(uri)
     }
 
-    fun confirmDeleteTheater(theaterId: Long) {
+    fun confirmDeleteTheater(theaterId: String) {
         Log.d()
         FrameworkAlertDialogFragment.newInstance(DIALOG_THEATER_DELETE_CONFIRM)
                 .message(R.string.main_theater_delete_confirm_message)
@@ -261,7 +258,7 @@ class MainActivity : Activity(), MovieListCallbacks, TheaterFavoritesCallbacks, 
                 .show(mMovieListFragment)
                 .commit()
 
-        mBinding!!.actionDrawer.lockDrawerClosed()
+        mBinding.actionDrawer.lockDrawerClosed()
     }
 
     private fun showTheaterFavoritesFragment() {
@@ -271,7 +268,7 @@ class MainActivity : Activity(), MovieListCallbacks, TheaterFavoritesCallbacks, 
                 .show(mTheaterFavoritesFragment)
                 .commit()
 
-        mBinding!!.actionDrawer.unlockDrawer()
+        mBinding.actionDrawer.unlockDrawer()
         mShouldClosePeekingActionDrawer = true
     }
 
@@ -282,7 +279,7 @@ class MainActivity : Activity(), MovieListCallbacks, TheaterFavoritesCallbacks, 
                 .show(mPreferencesFragment)
                 .commit()
 
-        mBinding!!.actionDrawer.lockDrawerClosed()
+        mBinding.actionDrawer.lockDrawerClosed()
     }
 
     // endregion
@@ -301,11 +298,10 @@ class MainActivity : Activity(), MovieListCallbacks, TheaterFavoritesCallbacks, 
         HandlerUtil.getMainHandler().postDelayed(mHideActionDrawerRunnable, DELAY_HIDE_PEEKING_ACTION_DRAWER_MS.toLong())
     }
 
-    override fun onMovieClick(movieId: Long) {
+    override fun onMovieClick(movie: Movie) {
         Log.d()
-        val intent = Intent(this, MovieDetailsActivity::class.java)
-                .setData(Uri.withAppendedPath(MovieColumns.CONTENT_URI, movieId.toString()))
-        startActivity(intent)
+        startActivity(Intent(this, MovieDetailsActivity::class.java)
+                .setData(movie))
     }
 
     // endregion
@@ -341,17 +337,12 @@ class MainActivity : Activity(), MovieListCallbacks, TheaterFavoritesCallbacks, 
     }
 
     private fun addToFavorites(theater: Theater) {
-        object : AsyncTask<Void, Void, Void>() {
-            override fun doInBackground(vararg params: Void?): Void? {
-                TheaterContentValues()
-                        .putPublicId(theater.id!!)
-                        .putName(theater.name!!)
-                        .putAddress(theater.address!!)
-                        .putPictureUri(theater.pictureUri).insert(this@MainActivity)
-                return null
+        object : AsyncTask<Unit, Unit, Unit>() {
+            override fun doInBackground(vararg params: Unit) {
+                mDatabase.theaterDao.insert(theater)
             }
 
-            override fun onPostExecute(aVoid: Void?) {
+            override fun onPostExecute(result: Unit) {
                 mAtLeastOneFavorite = true
                 mLoadMoviesHelper.startLoadMoviesIntentService()
             }
@@ -359,13 +350,13 @@ class MainActivity : Activity(), MovieListCallbacks, TheaterFavoritesCallbacks, 
     }
 
     private fun ensureFavoriteTheaters() {
-        object : AsyncTask<Void, Void, Boolean>() {
-            override fun doInBackground(vararg params: Void?): Boolean? {
-                return TheaterSelection().count(this@MainActivity) > 0
+        object : AsyncTask<Unit, Unit, Boolean>() {
+            override fun doInBackground(vararg params: Unit): Boolean {
+                return mDatabase.theaterDao.countTheaters() > 0
             }
 
-            override fun onPostExecute(result: Boolean?) {
-                mAtLeastOneFavorite = result!!
+            override fun onPostExecute(result: Boolean) {
+                mAtLeastOneFavorite = result
                 if (!mAtLeastOneFavorite) startTheaterSearchActivity()
             }
         }.execute()
@@ -379,24 +370,17 @@ class MainActivity : Activity(), MovieListCallbacks, TheaterFavoritesCallbacks, 
     override fun onDialogClickPositive(dialogId: Int, payload: Any) {
         when (dialogId) {
             DIALOG_THEATER_DELETE_CONFIRM -> {
-                val theaterId = payload as Long
-                object : AsyncTask<Void, Void, Void>() {
-                    override fun doInBackground(vararg params: Void?): Void? {
-                        TheaterSelection().id(theaterId).delete(this@MainActivity)
+                val theaterId = payload as String
+                object : AsyncTask<Unit, Unit, Unit>() {
+                    override fun doInBackground(vararg params: Unit) {
+                        // Delete theater
+                        mDatabase.theaterDao.delete(theaterId)
 
                         // Delete movies that have no show times
-                        val movieSelection = MovieSelection()
-                        movieSelection.addRaw("(select "
-                                + " count(" + ShowtimeColumns.TABLE_NAME + "." + ShowtimeColumns._ID + ")"
-                                + " from " + ShowtimeColumns.TABLE_NAME
-                                + " where " + ShowtimeColumns.TABLE_NAME + "." + ShowtimeColumns.MOVIE_ID
-                                + " = " + MovieColumns.TABLE_NAME + "." + MovieColumns._ID
-                                + " ) = 0")
-                        movieSelection.delete(this@MainActivity)
-                        return null
+                        mDatabase.movieDao.deleteWithNoShowtimes()
                     }
 
-                    override fun onPostExecute(aVoid: Void?) {
+                    override fun onPostExecute(result: Unit) {
                         ensureFavoriteTheaters()
                     }
                 }.execute()

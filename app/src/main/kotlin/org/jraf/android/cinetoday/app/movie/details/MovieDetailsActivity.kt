@@ -24,13 +24,8 @@
  */
 package org.jraf.android.cinetoday.app.movie.details
 
-import android.app.Activity
-import android.app.LoaderManager
-import android.content.ContentUris
+import android.arch.lifecycle.Observer
 import android.content.Context
-import android.content.CursorLoader
-import android.content.Loader
-import android.database.Cursor
 import android.databinding.DataBindingUtil
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
@@ -38,113 +33,94 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.TextView
 import org.jraf.android.cinetoday.R
+import org.jraf.android.cinetoday.dagger.Components
+import org.jraf.android.cinetoday.database.AppDatabase
+import org.jraf.android.cinetoday.database.ShowtimeWithTheater
 import org.jraf.android.cinetoday.databinding.MovieDetailsBinding
-import org.jraf.android.cinetoday.provider.showtime.ShowtimeCursor
-import org.jraf.android.cinetoday.provider.showtime.ShowtimeSelection
+import org.jraf.android.cinetoday.model.movie.Movie
+import org.jraf.android.cinetoday.util.base.BaseActivity
+import org.jraf.android.cinetoday.util.uri.contentId
 import org.jraf.android.util.ui.animation.AnimationUtil
 import java.text.DateFormat
-import java.util.*
+import java.util.Calendar
+import javax.inject.Inject
 
-class MovieDetailsActivity : Activity(), LoaderManager.LoaderCallbacks<Cursor> {
+class MovieDetailsActivity : BaseActivity() {
 
-    private var mBinding: MovieDetailsBinding? = null
+    @Inject lateinit var mDatabase: AppDatabase
+
+    private lateinit var mBinding: MovieDetailsBinding
     private val mTxtTheaterNameList = ArrayList<TextView>(3)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Components.application.inject(this)
         mBinding = DataBindingUtil.setContentView<MovieDetailsBinding>(this, R.layout.movie_details)
-        loaderManager.initLoader(LOADER_MOVIE, null, this)
-        loaderManager.initLoader(LOADER_SHOWTIMES, null, this)
+        mBinding.conMovie.setOnScrollChangeListener(mOnScrollChangeListener)
 
-        mBinding!!.conMovie.setOnScrollChangeListener(mOnScrollChangeListener)
+        val movieId = intent.data.contentId
+        mDatabase.movieDao.movieByIdLive(movieId).observe(this, Observer { if (it != null) onMovieResult(it) })
+        mDatabase.showtimeDao.showtimesWithTheaterByMovieIdLive(movieId).observe(this, Observer { if (it != null) onShowtimesResult(it) })
     }
 
-    override fun onCreateLoader(id: Int, args: Bundle?): Loader<Cursor>? {
-        val movieUri = intent.data
-        when (id) {
-            LOADER_MOVIE -> return CursorLoader(this, movieUri, null, null, null, null)
+    private fun onMovieResult(movie: Movie) {
+        mBinding.pgbLoading.visibility = View.GONE
+        mBinding.conMovie.visibility = View.VISIBLE
+        val movieViewModel = MovieViewModel(movie, this)
+        mBinding.movie = movieViewModel
 
-            LOADER_SHOWTIMES -> return ShowtimeSelection()
-                    .movieId(ContentUris.parseId(movieUri))
-                    .orderByTheaterId()
-                    .getCursorLoader(this)
-        }
-        return null
+        // Use the movie color in certain elements
+        val color = movie.color ?: getColor(R.color.background)
+        mBinding.root.setBackgroundColor(color)
+        mBinding.txtTheaterNameInvisible.setBackgroundColor(color)
+        val gradientColors = intArrayOf(color, 0)
+        val gradientDrawable = GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, gradientColors)
+        mBinding.vieTheaterNameGradient.background = gradientDrawable
     }
 
-    override fun onLoadFinished(loader: Loader<Cursor>, data: Cursor) {
-        when (loader.id) {
-            LOADER_MOVIE -> {
-                mBinding!!.pgbLoading.visibility = View.GONE
-                mBinding!!.conMovie.visibility = View.VISIBLE
-                val movieViewModel = MovieViewModel(this, data)
-                movieViewModel.moveToFirst()
-                mBinding!!.movie = movieViewModel
+    private fun onShowtimesResult(showtimes: Array<ShowtimeWithTheater>) {
+        mTxtTheaterNameList.clear()
+        mBinding.conShowtimes.removeAllViews()
 
-                // Use the movie color in certain elements
-                var color = movieViewModel.color
-                if (color == null) color = getColor(R.color.background)
-                mBinding!!.root.setBackgroundColor(color)
-                mBinding!!.txtTheaterNameInvisible.setBackgroundColor(color)
-                val gradientColors = intArrayOf(color, 0)
-                val gradientDrawable = GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, gradientColors)
-                mBinding!!.vieTheaterNameGradient.background = gradientDrawable
+        var theaterId: String? = null
+        val now = Calendar.getInstance()
+        val inflater = LayoutInflater.from(this)
+        for (showtime in showtimes) {
+            // Theater name
+            if (showtime.theaterId != theaterId) {
+                theaterId = showtime.theaterId
+                val txtTheaterName = inflater.inflate(R.layout.movie_details_theater_name, mBinding.conShowtimes, false) as TextView
+                txtTheaterName.text = showtime.theaterName
+                mBinding.conShowtimes.addView(txtTheaterName)
+
+                mTxtTheaterNameList.add(txtTheaterName)
             }
 
-            LOADER_SHOWTIMES -> {
-                mTxtTheaterNameList.clear()
-                mBinding!!.conShowtimes.removeAllViews()
-
-                val showtimeCursor = data as ShowtimeCursor
-                showtimeCursor.moveToPosition(-1)
-                var theaterId: Long = -1
-                val now = Calendar.getInstance()
-                val inflater = LayoutInflater.from(this)
-                while (showtimeCursor.moveToNext()) {
-                    // Theater name
-                    if (showtimeCursor.theaterId != theaterId) {
-                        theaterId = showtimeCursor.theaterId
-                        val txtTheaterName = inflater.inflate(R.layout.movie_details_theater_name, mBinding!!.conShowtimes, false) as TextView
-                        txtTheaterName.text = showtimeCursor.theaterName
-                        mBinding!!.conShowtimes.addView(txtTheaterName)
-
-                        mTxtTheaterNameList.add(txtTheaterName)
-                    }
-
-                    // Time
-                    val isTooLate = getTimeAsCalendar(showtimeCursor.time.time).before(now)
-                    val conShowtimeItem = inflater.inflate(R.layout.movie_details_showtime, mBinding!!.conShowtimes, false)
-                    val txtShowtime = conShowtimeItem.findViewById(R.id.txtShowtime) as TextView
-                    txtShowtime.text = getTimeFormat(this).format(showtimeCursor.time)
-                    val txtIs3d = conShowtimeItem.findViewById(R.id.txtIs3d) as TextView
-                    if (showtimeCursor.is3d) {
-                        txtIs3d.visibility = View.VISIBLE
-                    } else {
-                        txtIs3d.visibility = View.GONE
-                    }
-                    if (isTooLate) {
-                        conShowtimeItem.alpha = .33f
-                    }
-                    mBinding!!.conShowtimes.addView(conShowtimeItem)
-                }
-            }
+            // Time
+            val isTooLate = getTimeAsCalendar(showtime.time.time).before(now)
+            val conShowtimeItem = inflater.inflate(R.layout.movie_details_showtime, mBinding.conShowtimes, false)
+            val txtShowtime = conShowtimeItem.findViewById(R.id.txtShowtime) as TextView
+            txtShowtime.text = getTimeFormat(this).format(showtime.time)
+            val txtIs3d = conShowtimeItem.findViewById(R.id.txtIs3d) as TextView
+            txtIs3d.visibility = if (showtime.is3d) View.VISIBLE else View.GONE
+            if (isTooLate) conShowtimeItem.alpha = .33f
+            mBinding.conShowtimes.addView(conShowtimeItem)
         }
     }
 
-    override fun onLoaderReset(loader: Loader<Cursor>) {}
 
-    private val mOnScrollChangeListener = View.OnScrollChangeListener { _, scrollX, scrollY, oldScrollX, oldScrollY ->
-        if (scrollY < mBinding!!.conShowtimes.y + mTxtTheaterNameList[0].y - mBinding!!.txtTheaterName.paddingTop) {
-            mBinding!!.txtTheaterName.visibility = View.GONE
-            mBinding!!.conTheaterName.visibility = View.GONE
+    private val mOnScrollChangeListener = View.OnScrollChangeListener { _, _, scrollY, _, _ ->
+        if (scrollY < mBinding.conShowtimes.y + mTxtTheaterNameList[0].y - mBinding.txtTheaterName.paddingTop) {
+            mBinding.txtTheaterName.visibility = View.GONE
+            mBinding.conTheaterName.visibility = View.GONE
             mTxtTheaterNameList[0].visibility = View.VISIBLE
         } else {
-            mBinding!!.txtTheaterName.visibility = View.VISIBLE
-            AnimationUtil.animateVisible(mBinding!!.conTheaterName)
+            mBinding.txtTheaterName.visibility = View.VISIBLE
+            AnimationUtil.animateVisible(mBinding.conTheaterName)
             for (textView in mTxtTheaterNameList) {
-                if (scrollY >= textView.y - mBinding!!.txtTheaterName.paddingTop + mBinding!!.conShowtimes.y) {
-                    mBinding!!.txtTheaterName.text = textView.text
-                    mBinding!!.txtTheaterNameInvisible.text = textView.text
+                if (scrollY >= textView.y - mBinding.txtTheaterName.paddingTop + mBinding.conShowtimes.y) {
+                    mBinding.txtTheaterName.text = textView.text
+                    mBinding.txtTheaterNameInvisible.text = textView.text
                     textView.visibility = View.INVISIBLE
                 } else {
                     textView.visibility = View.VISIBLE
@@ -154,8 +130,6 @@ class MovieDetailsActivity : Activity(), LoaderManager.LoaderCallbacks<Cursor> {
     }
 
     companion object {
-        private val LOADER_MOVIE = 0
-        private val LOADER_SHOWTIMES = 1
 
         private var sTimeFormat: DateFormat? = null
 

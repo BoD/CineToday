@@ -37,21 +37,21 @@ import android.view.ViewGroup
 import org.jraf.android.cinetoday.R
 import org.jraf.android.cinetoday.databinding.TheaterSearchListBinding
 import org.jraf.android.cinetoday.model.theater.Theater
-import org.jraf.android.util.app.base.BaseFrameworkFragment
+import org.jraf.android.cinetoday.util.base.BaseFragment
 import org.jraf.android.util.ui.screenshape.ScreenShapeHelper
 
-class TheaterSearchFragment : BaseFrameworkFragment<TheaterSearchCallbacks>(), LoaderManager.LoaderCallbacks<List<Theater>> {
-    private var mAdapter: TheaterSearchAdapter? = null
-    private var mBinding: TheaterSearchListBinding? = null
+class TheaterSearchFragment : BaseFragment<TheaterSearchCallbacks>(), LoaderManager.LoaderCallbacks<List<Theater>> {
+    private lateinit var mAdapter: TheaterSearchAdapter
+    private lateinit var mBinding: TheaterSearchListBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         mBinding = DataBindingUtil.inflate<TheaterSearchListBinding>(inflater, R.layout.theater_search_list, container, false)
-        mBinding!!.rclList.setHasFixedSize(true)
-        mBinding!!.rclList.centerEdgeItems = true
+        mBinding.rclList.setHasFixedSize(true)
+        mBinding.rclList.centerEdgeItems = true
 
         // Apply an offset + scale on the items depending on their distance from the center (only for Round screens)
         if (ScreenShapeHelper.get(context).isRound) {
-            mBinding!!.rclList.offsettingHelper = object : DefaultOffsettingHelper() {
+            mBinding.rclList.offsettingHelper = object : DefaultOffsettingHelper() {
                 private val FACTOR = .75f
 
                 override fun updateChild(child: View, parent: WearableRecyclerView) {
@@ -69,18 +69,18 @@ class TheaterSearchFragment : BaseFrameworkFragment<TheaterSearchCallbacks>(), L
 
             // Also snaps
             val snapHelper = LinearSnapHelper()
-            snapHelper.attachToRecyclerView(mBinding!!.rclList)
+            snapHelper.attachToRecyclerView(mBinding.rclList)
         }
-        return mBinding!!.root
+        return mBinding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         mAdapter = TheaterSearchAdapter(activity, callbacks)
-        mBinding!!.rclList.adapter = mAdapter
+        mBinding.rclList.adapter = mAdapter
     }
 
     fun search(query: String) {
-        mAdapter!!.setLoading(true)
+        mAdapter.setLoading(true)
         val args = Bundle()
         args.putString("query", query)
         loaderManager.restartLoader(0, args, this)
@@ -97,12 +97,12 @@ class TheaterSearchFragment : BaseFrameworkFragment<TheaterSearchCallbacks>(), L
     }
 
     override fun onLoadFinished(loader: Loader<List<Theater>>, data: List<Theater>) {
-        mAdapter!!.setLoading(false)
-        mAdapter!!.setResults(data)
+        mAdapter.setLoading(false)
+        mAdapter.setResults(data)
     }
 
     override fun onLoaderReset(loader: Loader<List<Theater>>) {
-        mAdapter!!.setResults(null)
+        mAdapter.setResults(null)
     }
 
     // endregion

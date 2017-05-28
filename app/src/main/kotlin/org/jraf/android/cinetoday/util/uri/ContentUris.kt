@@ -22,10 +22,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jraf.android.cinetoday.app.movie.list
+package org.jraf.android.cinetoday.util.uri
 
-import android.support.annotation.ColorInt
+import android.content.Intent
+import android.net.Uri
 
-interface PaletteListener {
-    fun onPaletteAvailable(position: Int, @ColorInt color: Int, cached: Boolean, id: String)
+object ContentUris {
+    fun uriFromId(hasId: HasId) = uriFromId(hasId.id)
+
+    fun uriFromId(id: String): Uri = Uri.fromParts("content", id, null)
+
+    fun idFromUri(uri: Uri) = uri.schemeSpecificPart
 }
+
+fun Intent.setData(hasId: HasId): Intent = setData(hasId.uri)
+
+val Uri.contentId get() = ContentUris.idFromUri(this)

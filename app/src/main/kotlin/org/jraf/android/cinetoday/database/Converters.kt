@@ -22,10 +22,30 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jraf.android.cinetoday.app.movie.list
+package org.jraf.android.cinetoday.database
 
-import android.support.annotation.ColorInt
+import android.arch.persistence.room.TypeConverter
+import java.util.Date
 
-interface PaletteListener {
-    fun onPaletteAvailable(position: Int, @ColorInt color: Int, cached: Boolean, id: String)
+object Converters {
+    object DateConverter {
+        @JvmStatic
+        @TypeConverter
+        fun longToDate(value: Long?) = value?.let { Date(value) }
+
+        @JvmStatic
+        @TypeConverter
+        fun dateToLong(date: Date?) = date?.time
+    }
+
+    object ListConverter {
+        @JvmStatic
+        @TypeConverter
+        fun stringArrayToString(value: Array<String>?) = value?.let { value.joinToString("|") }
+
+        @JvmStatic
+        @TypeConverter
+        fun stringToStringArray(string: String?) = string?.split("|")?.toTypedArray()
+    }
+
 }

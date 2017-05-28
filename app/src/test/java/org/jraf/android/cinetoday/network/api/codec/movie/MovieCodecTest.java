@@ -83,7 +83,20 @@ public class MovieCodecTest {
         JSONObject jsonRoot = new JSONObject(json);
         JSONObject jsonMovie = jsonRoot.getJSONObject("movie");
 
-        Movie movie = new Movie();
+        Movie movie = new Movie("",
+                "",
+                "",
+                "",
+                "",
+                null,
+                null,
+                new String[] {},
+                null,
+                null,
+                "",
+                null,
+                false,
+                null);
         new MovieCodec().fill(movie, jsonMovie);
 
         MovieAssert.assertThat(movie)

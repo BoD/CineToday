@@ -22,10 +22,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jraf.android.cinetoday.app.movie.list
+package org.jraf.android.cinetoday.util.uri
 
-import android.support.annotation.ColorInt
-
-interface PaletteListener {
-    fun onPaletteAvailable(position: Int, @ColorInt color: Int, cached: Boolean, id: String)
+interface HasId {
+    val id: String
+    val uri get() = ContentUris.uriFromId(this)
 }

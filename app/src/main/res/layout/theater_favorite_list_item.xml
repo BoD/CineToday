@@ -8,24 +8,8 @@
         <import type="org.jraf.android.cinetoday.R" />
 
         <variable
-            name="callbacks"
-            type="org.jraf.android.cinetoday.app.theater.favorites.TheaterFavoritesCallbacks" />
-
-        <variable
-            name="theaterId"
-            type="long" />
-
-        <variable
-            name="theaterAddress"
-            type="String" />
-
-        <variable
-            name="theaterName"
-            type="String" />
-
-        <variable
             name="theater"
-            type="org.jraf.android.cinetoday.provider.theater.TheaterModel" />
+            type="org.jraf.android.cinetoday.model.theater.Theater" />
     </data>
 
     <android.support.wearable.view.BoxInsetLayout

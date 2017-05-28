@@ -52,7 +52,7 @@
                     style="@style/Widget.CineToday.TextView.Movie.Details.Title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@{movie.titleLocal}"
+                    android:text="@{movie.localTitle}"
                     tools:text="Star Wars Episode VII: The Force Awakens" />
 
                 <!-- Directors -->
@@ -73,7 +73,7 @@
                     android:layout_marginTop="2dp"
                     android:text="@{movie.genresFormatted}"
                     android:textStyle="italic"
-                    app:visible="@{movie.genres}"
+                    app:visible="@{movie.genres.length > 0}"
                     tools:text="Thriller" />
 
                 <!-- Actors -->
@@ -111,8 +111,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
                     android:textColor="?android:textColorSecondary"
-                    app:textHtml="@{@string/movie_card_originalTitle(movie.titleOriginal)}"
-                    app:visible="@{!movie.titleLocal.equals(movie.titleOriginal)}"
+                    app:textHtml="@{@string/movie_card_originalTitle(movie.originalTitle)}"
+                    app:visible="@{!movie.localTitle.equals(movie.originalTitle)}"
                     tools:text="Original title: Star Wars Episode VII: The Force Awakens" />
 
                 <LinearLayout
