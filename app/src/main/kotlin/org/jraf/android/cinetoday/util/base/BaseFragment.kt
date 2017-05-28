@@ -25,15 +25,17 @@
 package org.jraf.android.cinetoday.util.base
 
 import android.app.Fragment
+import android.arch.lifecycle.Lifecycle
 import android.arch.lifecycle.LifecycleRegistry
 import android.arch.lifecycle.LifecycleRegistryOwner
 import android.content.Context
+import android.os.Bundle
 
-abstract class BaseFragment<C> : Fragment(), LifecycleRegistryOwner {
+abstract class BaseFragment<out C> : Fragment(), LifecycleRegistryOwner {
 
     private var mCallbacks: C? = null
 
-    private var lifecycleRegistry = LifecycleRegistry(this)
+    private var mLifecycleRegistry = LifecycleRegistry(this)
 
     protected val callbacks get() = mCallbacks!!
 
@@ -54,7 +56,43 @@ abstract class BaseFragment<C> : Fragment(), LifecycleRegistryOwner {
         super.onDetach()
     }
 
-    override fun getLifecycle(): LifecycleRegistry {
-        return lifecycleRegistry
+    override fun getLifecycle() = mLifecycleRegistry
+
+
+    //--------------------------------------------------------------------------
+    // region Lifecycle.
+    // TODO: this is only needed because of this bug: https://issuetracker.google.com/issues/62160522
+    //--------------------------------------------------------------------------
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_CREATE)
     }
+
+    override fun onStart() {
+        super.onStart()
+        mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_START)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_RESUME)
+    }
+
+    override fun onPause() {
+        mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+        super.onPause()
+    }
+
+    override fun onStop() {
+        mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_STOP)
+        super.onStop()
+    }
+
+    override fun onDestroy() {
+        mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+        super.onDestroy()
+    }
+
+    // endregion
 }
