@@ -74,22 +74,7 @@ class Api(private val mCachingOkHttpClient: OkHttpClient, private val mMovieCode
                 val jsonMovieShowtime = jsonMovieShowtimes.getJSONObject(i)
                 val jsonOnShow = jsonMovieShowtime.getJSONObject("onShow")
                 val jsonMovie = jsonOnShow.getJSONObject("movie")
-                var movie = Movie(
-                        id = "",
-                        originalTitle = "",
-                        localTitle = "",
-                        directors = "",
-                        actors = "",
-                        releaseDate = null,
-                        durationSeconds = null,
-                        genres = emptyArray(),
-                        posterUri = null,
-                        trailerUri = null,
-                        webUri = "",
-                        synopsis = "",
-                        isNew = false,
-                        color = null
-                )
+                var movie = Movie()
 
                 // Movie (does not include showtimes, only the movie details)
                 mMovieCodec.fill(movie, jsonMovie)

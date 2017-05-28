@@ -61,6 +61,9 @@ data class Movie(
         var isNew: Boolean,
         var color: Int?
 ) : HasId, Comparable<Movie> {
+    @Ignore
+    constructor() :
+        this("", "", "", null, null, null, null, emptyArray<String>(), null, null, "", null, false, null)
     /**
      * Keys: id of the theater.
      *
