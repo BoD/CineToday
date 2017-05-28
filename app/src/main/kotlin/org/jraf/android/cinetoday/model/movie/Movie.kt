@@ -29,7 +29,6 @@ import android.arch.persistence.room.Ignore
 import android.arch.persistence.room.PrimaryKey
 import android.arch.persistence.room.TypeConverters
 import org.jraf.android.cinetoday.database.Converters
-import org.jraf.android.cinetoday.model.theater.Theater
 import org.jraf.android.cinetoday.util.uri.HasId
 import java.util.Date
 import java.util.TreeMap
@@ -61,9 +60,10 @@ data class Movie(
         var isNew: Boolean,
         var color: Int?
 ) : HasId, Comparable<Movie> {
+
     @Ignore
-    constructor() :
-        this("", "", "", null, null, null, null, emptyArray<String>(), null, null, "", null, false, null)
+    constructor() : this("", "", "", null, null, null, null, emptyArray<String>(), null, null, "", null, false, null)
+
     /**
      * Keys: id of the theater.
      *
@@ -73,13 +73,9 @@ data class Movie(
     var todayShowtimes = TreeMap<String, List<Showtime>>()
 
 
-    override fun equals(other: Any?): Boolean {
-        return (other as? Theater)?.id == id
-    }
+    override fun equals(other: Any?) = (other as? Movie)?.id == id
 
-    override fun hashCode(): Int {
-        return id.hashCode()
-    }
+    override fun hashCode() = id.hashCode()
 
     /**
      * Compare in *reverse* release date order.

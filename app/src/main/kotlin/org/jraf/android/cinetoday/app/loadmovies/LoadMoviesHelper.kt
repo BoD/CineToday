@@ -116,8 +116,8 @@ class LoadMoviesHelper(private val mContext: Context, private val mMainPrefs: Ma
         try {
             // 1/ Retrieve list of movies (including showtimes), for all the theaters
             try {
-                mAppDatabase.theaterDao.allTheaters().forEach { (id) ->
-                    mApi.getMovieList(movies, id, Date())
+                mAppDatabase.theaterDao.allTheaters().forEach { (theaterId) ->
+                    mApi.getMovieList(movies, theaterId, Date())
 
                     if (mWantStop) {
                         loadMoviesListenerHelper.onLoadMoviesInterrupted()

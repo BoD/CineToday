@@ -31,7 +31,6 @@ import org.jraf.android.util.log.Log
 import org.json.JSONException
 import org.json.JSONObject
 import java.text.SimpleDateFormat
-import java.util.ArrayList
 import java.util.Date
 import java.util.Locale
 import java.util.TreeSet
@@ -47,7 +46,7 @@ class ShowtimeCodec {
             val display = jsonMovieShowtime.getString("display")
 
             // Split per day
-            val showtimesDays = display.split("\r\n".toRegex()).dropLastWhile({ it.isEmpty() }).toTypedArray()
+            val showtimesDays = display.split("\r\n")
 
             // Find today's date in the list
             val todayFormatted = DAY_DATE_FORMAT.format(date)
@@ -101,7 +100,7 @@ class ShowtimeCodec {
                 // The movie already has showtimes for *this* theater: merge them into the new ones
                 todayShowtimesSet.addAll(showTimesForThisTheater)
             }
-            val todayShowtimesList = ArrayList(todayShowtimesSet)
+            val todayShowtimesList = todayShowtimesSet.toList()
             movie.todayShowtimes.put(theaterId, todayShowtimesList)
 
         } catch (e: JSONException) {
