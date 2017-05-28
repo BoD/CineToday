@@ -140,6 +140,7 @@ public class MovieAssert extends AbstractAssert<MovieAssert, Movie> {
         for (String fieldName : fieldNames) {
             try {
                 Field field = Movie.class.getDeclaredField(fieldName);
+                field.setAccessible(true);
                 Assertions.assertThat(field.get(actual))
                         .overridingErrorMessage("movie is missing the required %s field", field.getName())
                         .isNotNull();
