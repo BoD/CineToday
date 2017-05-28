@@ -37,14 +37,6 @@
             android:name="org.jraf.android.cinetoday.glide.CineTodayGlideModule"
             android:value="GlideModule" />
 
-
-        <!-- Content provider -->
-        <provider
-            android:name=".provider.CineTodayProvider"
-            android:authorities="org.jraf.android.cinetoday.provider"
-            android:exported="false" />
-
-
         <!-- Load movies -->
         <service
             android:name=".app.loadmovies.LoadMoviesIntentService"

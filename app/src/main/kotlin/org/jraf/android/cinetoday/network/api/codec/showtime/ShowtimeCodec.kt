@@ -31,7 +31,10 @@ import org.jraf.android.util.log.Log
 import org.json.JSONException
 import org.json.JSONObject
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.ArrayList
+import java.util.Date
+import java.util.Locale
+import java.util.TreeSet
 import java.util.concurrent.TimeUnit
 
 class ShowtimeCodec {
@@ -85,21 +88,21 @@ class ShowtimeCodec {
             // Make a set and merge it with the previous one if any
             val todayShowtimesSet = TreeSet<Showtime>()
             for (timeStr in todayShowtimesStrElem) {
-                val showtime = Showtime()
-                showtime.is3d = is3d
-                showtime.time = stringTimeToDate(timeStr)
+                val showtime = Showtime(
+                        id = 0,
+                        theaterId = theaterId,
+                        movieId = movie.id,
+                        time = stringTimeToDate(timeStr),
+                        is3d = is3d)
                 todayShowtimesSet.add(showtime)
             }
-            if (movie.todayShowtimes == null) {
-                movie.todayShowtimes = TreeMap<String, List<Showtime>>()
-            }
-            val showTimesForThisTheater = movie.todayShowtimes!![theaterId]
+            val showTimesForThisTheater = movie.todayShowtimes[theaterId]
             if (showTimesForThisTheater != null) {
                 // The movie already has showtimes for *this* theater: merge them into the new ones
                 todayShowtimesSet.addAll(showTimesForThisTheater)
             }
             val todayShowtimesList = ArrayList(todayShowtimesSet)
-            movie.todayShowtimes!!.put(theaterId, todayShowtimesList)
+            movie.todayShowtimes.put(theaterId, todayShowtimesList)
 
         } catch (e: JSONException) {
             throw ParseException(e)
@@ -111,12 +114,10 @@ class ShowtimeCodec {
         private val DAY_DATE_FORMAT = SimpleDateFormat("d MMMM", Locale.FRENCH)
 
         private fun stringTimeToDate(time: String): Date {
-            val split = time.split(":".toRegex()).dropLastWhile({ it.isEmpty() }).toTypedArray()
-            val hourStr = split[0]
-            val minuteStr = split[1]
-            val hour = Integer.valueOf(hourStr)!!
-            val minute = Integer.valueOf(minuteStr)!!
-            return Date(TimeUnit.HOURS.toMillis(hour!!.toLong()) + TimeUnit.MINUTES.toMillis(minute!!.toLong()))
+            val split = time.split(":")
+            val hour = split[0].toInt()
+            val minute = split[1].toInt()
+            return Date(TimeUnit.HOURS.toMillis(hour.toLong()) + TimeUnit.MINUTES.toMillis(minute.toLong()))
         }
     }
 }

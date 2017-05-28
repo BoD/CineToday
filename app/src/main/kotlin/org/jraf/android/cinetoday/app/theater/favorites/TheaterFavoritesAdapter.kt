@@ -29,15 +29,18 @@ import android.databinding.DataBindingUtil
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
-
 import org.jraf.android.cinetoday.R
 import org.jraf.android.cinetoday.databinding.TheaterFavoriteListItemBinding
-import org.jraf.android.cinetoday.provider.theater.TheaterCursor
-import org.jraf.android.cinetoday.provider.theater.TheaterModel
+import org.jraf.android.cinetoday.model.theater.Theater
 
-class TheaterFavoritesAdapter(context: Context, private val mCallbacks: TheaterFavoritesCallbacks) : RecyclerView.Adapter<TheaterFavoritesAdapter.ViewHolder>() {
+class TheaterFavoritesAdapter(context: Context) : RecyclerView.Adapter<TheaterFavoritesAdapter.ViewHolder>() {
     private val mLayoutInflater: LayoutInflater = LayoutInflater.from(context)
-    private var mCursor: TheaterCursor? = null
+
+    var data: Array<Theater> = emptyArray()
+        set(value) {
+            field = value
+            notifyDataSetChanged()
+        }
 
     class ViewHolder(val itemBinding: TheaterFavoriteListItemBinding) : RecyclerView.ViewHolder(itemBinding.root)
 
@@ -47,34 +50,11 @@ class TheaterFavoritesAdapter(context: Context, private val mCallbacks: TheaterF
     }
 
     override fun onBindViewHolder(holder: TheaterFavoritesAdapter.ViewHolder, position: Int) {
-        mCursor!!.moveToPosition(position)
-        holder.itemBinding.theaterAddress = mCursor!!.address
-        holder.itemBinding.theaterName = mCursor!!.name
-        holder.itemBinding.theaterId = mCursor!!.id
-        holder.itemBinding.theater = mCursor
-        holder.itemBinding.callbacks = mCallbacks
+        holder.itemBinding.theater = data[position]
         holder.itemBinding.executePendingBindings()
     }
 
-    override fun getItemCount(): Int {
-        if (mCursor == null) return 0
-        return mCursor!!.count
-    }
+    override fun getItemCount() = data.size
 
-    override fun getItemId(position: Int): Long {
-        if (mCursor == null) return RecyclerView.NO_ID
-        if (!mCursor!!.moveToPosition(position)) return RecyclerView.NO_ID
-        return mCursor!!.id
-    }
-
-    fun swapCursor(cursor: TheaterCursor?) {
-        mCursor = cursor
-        notifyDataSetChanged()
-    }
-
-    fun getTheater(position: Int): TheaterModel? {
-        if (mCursor == null) return null
-        if (!mCursor!!.moveToPosition(position)) return null
-        return mCursor
-    }
+    override fun getItemId(position: Int) = if (data.isEmpty()) RecyclerView.NO_ID else data[position].id.hashCode().toLong()
 }

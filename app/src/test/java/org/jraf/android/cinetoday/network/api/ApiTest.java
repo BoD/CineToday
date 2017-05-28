@@ -35,6 +35,8 @@ import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
+import okhttp3.OkHttpClient;
+
 import org.jraf.android.cinetoday.BuildConfig;
 import org.jraf.android.cinetoday.mobile.TestUtil;
 import org.jraf.android.cinetoday.model.ParseException;
@@ -55,8 +57,8 @@ public class ApiTest {
 
     private void testParseMovieListFile(String filename, int movieCount) throws IOException, JSONException, ParseException, java.text.ParseException {
         String json = TestUtil.readTestResource(filename);
-        SortedSet<Movie> movies = new TreeSet<>(Movie.Companion.getCOMPARATOR());
-        Api api = new Api(null, new MovieCodec(), new ShowtimeCodec(), new TheaterCodec());
+        SortedSet<Movie> movies = new TreeSet<>();
+        Api api = new Api(new OkHttpClient.Builder().build(), new MovieCodec(), new ShowtimeCodec(), new TheaterCodec());
         api.parseMovieList(movies, json, "Test", Api.Companion.getSIMPLE_DATE_FORMAT().parse("2016-04-10"));
         Assertions.assertThat(movies).hasSize(movieCount);
         for (Movie movie : movies) {

@@ -24,43 +24,47 @@
  */
 package org.jraf.android.cinetoday.model.movie
 
-import java.util.*
+import android.arch.persistence.room.Entity
+import android.arch.persistence.room.ForeignKey
+import android.arch.persistence.room.Index
+import android.arch.persistence.room.PrimaryKey
+import android.arch.persistence.room.TypeConverters
+import org.jraf.android.cinetoday.database.Converters
+import org.jraf.android.cinetoday.model.theater.Theater
+import java.util.Date
 
-class Showtime : Comparable<Showtime> {
-    var time: Date? = null
-    var is3d: Boolean = false
+@Entity(foreignKeys = arrayOf(
+        ForeignKey(
+                entity = Theater::class,
+                parentColumns = arrayOf("id"),
+                childColumns = arrayOf("theaterId")),
+        ForeignKey(
+                entity = Movie::class,
+                parentColumns = arrayOf("id"),
+                childColumns = arrayOf("movieId"))
+),
+        indices = arrayOf(
+                Index("theaterId"),
+                Index("movieId")))
+data class Showtime(
+        @PrimaryKey(autoGenerate = true)
+        val id: Long,
+        val theaterId: String,
+        val movieId: String,
 
-    override fun toString(): String {
-        return "Showtime{" +
-                "time='" + time + '\'' +
-                ", is3d=" + is3d +
-                '}'
-    }
+        @field:TypeConverters(Converters.DateConverter::class)
+        val time: Date,
+        val is3d: Boolean
+) : Comparable<Showtime> {
 
-    override fun equals(o: Any?): Boolean {
-        if (this === o) return true
-        if (o == null || javaClass != o.javaClass) return false
-
-        val showtime = o as Showtime?
-
-        if (is3d != showtime!!.is3d) return false
-        return if (time != null) time == showtime.time else showtime.time == null
-    }
-
-    override fun hashCode(): Int {
-        var result = if (time != null) time!!.hashCode() else 0
-        result = 31 * result + if (is3d) 1 else 0
-        return result
-    }
-
-    override fun compareTo(another: Showtime): Int {
-        val res = time!!.compareTo(another.time)
+    override fun compareTo(other: Showtime): Int {
+        val res = time.compareTo(other.time)
         if (res != 0) return res
         if (is3d) {
-            if (another.is3d) return 0
+            if (other.is3d) return 0
             return 1
         } else {
-            if (!another.is3d) return 0
+            if (!other.is3d) return 0
             return -1
         }
     }

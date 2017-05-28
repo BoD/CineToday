@@ -1,8 +1,8 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
-//apply plugin: 'kotlin-kapt'
+apply plugin: 'kotlin-kapt'
 if (buildProperties.enableFabric.toBoolean()) apply plugin: 'io.fabric'
-apply plugin: 'org.jraf.acpg.gradleplugin'
+//apply plugin: 'org.jraf.acpg.gradleplugin'
 apply plugin: 'com.getkeepsafe.dexcount'
 
 android {
@@ -70,9 +70,9 @@ android {
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
 
-        // Necessary because of this issue: https://youtrack.jetbrains.com/issue/KT-17989
-        debug.java.srcDirs += 'build/generated/source/acpg/debug'
-        release.java.srcDirs += 'build/generated/source/acpg/release'
+//        // Necessary because of this issue: https://youtrack.jetbrains.com/issue/KT-17989
+//        debug.java.srcDirs += 'build/generated/source/acpg/debug'
+//        release.java.srcDirs += 'build/generated/source/acpg/release'
     }
 }
 
@@ -100,16 +100,16 @@ android.applicationVariants.all { variant ->
     }
 }
 
-acpg {
-    providerJavaPackage 'org.jraf.android.cinetoday.provider'
-    authority 'org.jraf.android.cinetoday.provider'
-    providerClassName 'CineTodayProvider'
-    databaseFileName 'cinetoday.db'
-    databaseVersion 1
-    enableForeignKeys true
-    useAnnotations true
-    useSupportLibrary false
-}
+//acpg {
+//    providerJavaPackage 'org.jraf.android.cinetoday.provider'
+//    authority 'org.jraf.android.cinetoday.provider'
+//    providerClassName 'CineTodayProvider'
+//    databaseFileName 'cinetoday.db'
+//    databaseVersion 1
+//    enableForeignKeys true
+//    useAnnotations true
+//    useSupportLibrary false
+//}
 
 dependencies {
     androidTestCompile("com.android.support.test.espresso:espresso-core:$versions.espresso", {
@@ -159,12 +159,21 @@ dependencies {
 
     // Necessary to have Kotlin and dataBinding at the same time
     kapt "com.android.databinding:compiler:$versions.androidGradlePlugin"
+
+    // Architecture components
+    compile "android.arch.lifecycle:runtime:$versions.arch"
+    compile "android.arch.lifecycle:extensions:$versions.arch"
+    kapt "android.arch.lifecycle:compiler:$versions.arch"
+
+    // Room
+    compile "android.arch.persistence.room:runtime:$versions.arch"
+    kapt "android.arch.persistence.room:compiler:$versions.arch"
 }
 repositories {
     mavenCentral()
 }
 
-// Necessary to have Kotlin and dataBinding at the same time
-kapt {
-    generateStubs = true
-}
+//// Necessary to have Kotlin and dataBinding at the same time
+//kapt {
+//    generateStubs = true
+//}

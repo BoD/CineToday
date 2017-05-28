@@ -22,10 +22,26 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jraf.android.cinetoday.app.movie.list
+package org.jraf.android.cinetoday.database
 
-import android.support.annotation.ColorInt
+import android.arch.persistence.room.Database
+import android.arch.persistence.room.RoomDatabase
+import org.jraf.android.cinetoday.model.movie.Movie
+import org.jraf.android.cinetoday.model.movie.Showtime
+import org.jraf.android.cinetoday.model.theater.Theater
 
-interface PaletteListener {
-    fun onPaletteAvailable(position: Int, @ColorInt color: Int, cached: Boolean, id: String)
+@Database(entities = arrayOf(
+        Theater::class,
+        Movie::class,
+        Showtime::class
+), version = 1)
+abstract class AppDatabase : RoomDatabase() {
+    companion object {
+        const val DATABASE_NAME = "cinetoday.db"
+    }
+
+    abstract val theaterDao: TheaterDao
+    abstract val movieDao: MovieDao
+    abstract val showtimeDao: ShowtimeDao
 }
+

@@ -22,10 +22,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jraf.android.cinetoday.app.movie.list
+package org.jraf.android.cinetoday.util.base
 
-import android.support.annotation.ColorInt
+import android.app.Activity
+import android.arch.lifecycle.LifecycleRegistry
+import android.arch.lifecycle.LifecycleRegistryOwner
 
-interface PaletteListener {
-    fun onPaletteAvailable(position: Int, @ColorInt color: Int, cached: Boolean, id: String)
+abstract class BaseActivity : Activity(), LifecycleRegistryOwner {
+
+    private var lifecycleRegistry = LifecycleRegistry(this)
+
+    override fun getLifecycle(): LifecycleRegistry {
+        return lifecycleRegistry
+    }
 }

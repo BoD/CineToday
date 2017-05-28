@@ -24,39 +24,47 @@
  */
 package org.jraf.android.cinetoday.model.theater
 
+import android.arch.persistence.room.Entity
+import android.arch.persistence.room.PrimaryKey
 import android.os.Parcel
 import android.os.Parcelable
+import org.jraf.android.cinetoday.util.uri.HasId
 
-class Theater() : Parcelable {
-    var id: String? = null
-    var name: String? = null
-    var address: String? = null
-    var pictureUri: String? = null
+@Entity
+data class Theater(
+        @PrimaryKey
+        override var id: String,
+        var name: String,
+        var address: String,
+        var pictureUri: String?
+) : HasId, Parcelable {
 
-    override fun toString(): String {
-        return "Theater{" +
-                "id='" + id + '\'' +
-                ", name='" + name + '\'' +
-                ", address='" + address + '\'' +
-                ", pictureUri='" + pictureUri + '\'' +
-                '}'
-    }
-
-    override fun equals(o: Any?): Boolean {
-        if (this === o) return true
-        if (o == null || javaClass != o.javaClass) return false
-        val theater = o as Theater?
-        return id == theater!!.id
-
+    override fun equals(other: Any?): Boolean {
+        return (other as? Theater)?.id == id
     }
 
     override fun hashCode(): Int {
-        return id?.hashCode() ?: 0
+        return id.hashCode()
     }
+
 
     //--------------------------------------------------------------------------
     // region Parcelable implementation.
     //--------------------------------------------------------------------------
+
+    companion object {
+        @Suppress("unused")
+        @JvmField
+        val CREATOR: Parcelable.Creator<Theater> = object : Parcelable.Creator<Theater> {
+            override fun createFromParcel(source: Parcel): Theater {
+                return Theater(source)
+            }
+
+            override fun newArray(size: Int): Array<Theater?> {
+                return arrayOfNulls(size)
+            }
+        }
+    }
 
     override fun describeContents(): Int {
         return 0
@@ -69,25 +77,12 @@ class Theater() : Parcelable {
         dest.writeString(pictureUri)
     }
 
-    protected constructor(`in`: Parcel) : this() {
-        id = `in`.readString()
-        name = `in`.readString()
-        address = `in`.readString()
-        pictureUri = `in`.readString()
-    }
-
-    companion object {
-        @JvmField
-        val CREATOR: Parcelable.Creator<Theater> = object : Parcelable.Creator<Theater> {
-            override fun createFromParcel(source: Parcel): Theater {
-                return Theater(source)
-            }
-
-            override fun newArray(size: Int): Array<Theater?> {
-                return arrayOfNulls(size)
-            }
-        }
-    }
+    private constructor(input: Parcel) : this(
+            id = input.readString(),
+            name = input.readString(),
+            address = input.readString(),
+            pictureUri = input.readString()
+    )
 
     // endregion
 }

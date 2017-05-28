@@ -26,9 +26,7 @@ package org.jraf.android.cinetoday.app.movie.list
 
 import android.animation.ArgbEvaluator
 import android.animation.ValueAnimator
-import android.app.LoaderManager
-import android.content.Loader
-import android.database.Cursor
+import android.arch.lifecycle.Observer
 import android.databinding.DataBindingUtil
 import android.graphics.drawable.ColorDrawable
 import android.os.AsyncTask
@@ -44,14 +42,23 @@ import android.view.ViewGroup
 import org.jraf.android.cinetoday.R
 import org.jraf.android.cinetoday.app.loadmovies.LoadMoviesListener
 import org.jraf.android.cinetoday.app.loadmovies.LoadMoviesListenerHelper
+import org.jraf.android.cinetoday.dagger.Components
+import org.jraf.android.cinetoday.database.AppDatabase
 import org.jraf.android.cinetoday.databinding.MovieListBinding
-import org.jraf.android.cinetoday.provider.movie.MovieContentValues
-import org.jraf.android.cinetoday.provider.movie.MovieCursor
-import org.jraf.android.cinetoday.provider.movie.MovieSelection
-import org.jraf.android.util.app.base.BaseFrameworkFragment
+import org.jraf.android.cinetoday.model.movie.Movie
+import org.jraf.android.cinetoday.util.base.BaseFragment
+import javax.inject.Inject
 
-class MovieListFragment : BaseFrameworkFragment<MovieListCallbacks>(), LoaderManager.LoaderCallbacks<Cursor>, PaletteListener {
-    private var mBinding: MovieListBinding? = null
+class MovieListFragment : BaseFragment<MovieListCallbacks>(), PaletteListener {
+    companion object {
+        fun newInstance(): MovieListFragment {
+            return MovieListFragment()
+        }
+    }
+
+    @Inject lateinit var mDatabase: AppDatabase
+
+    private lateinit var mBinding: MovieListBinding
     private var mAdapter: MovieListAdapter? = null
     private val mPalette = SparseIntArray()
     private var mColorAnimation: ValueAnimator? = null
@@ -60,7 +67,8 @@ class MovieListFragment : BaseFrameworkFragment<MovieListCallbacks>(), LoaderMan
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        loaderManager.initLoader(0, null, this)
+        Components.application.inject(this)
+        mDatabase.movieDao.allMoviesLive().observe(this, Observer { if (it != null) onMoviesResult(it) })
     }
 
     override fun onDestroy() {
@@ -70,67 +78,59 @@ class MovieListFragment : BaseFrameworkFragment<MovieListCallbacks>(), LoaderMan
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         mBinding = DataBindingUtil.inflate<MovieListBinding>(inflater, R.layout.movie_list, container, false)
-        mBinding!!.callbacks = callbacks
-        mBinding!!.rclList.setHasFixedSize(true)
+        mBinding.callbacks = callbacks
+        mBinding.rclList.setHasFixedSize(true)
         val snapHelper = PagerSnapHelper()
-        snapHelper.attachToRecyclerView(mBinding!!.rclList)
-        mBinding!!.rclList.addOnScrollListener(mOnScrollListener)
+        snapHelper.attachToRecyclerView(mBinding.rclList)
+        mBinding.rclList.addOnScrollListener(mOnScrollListener)
 
         LoadMoviesListenerHelper.get().addListener(mLoadMoviesListener)
 
-        return mBinding!!.root
+        return mBinding.root
     }
 
-    override fun onCreateLoader(id: Int, args: Bundle?): Loader<Cursor> {
-        return MovieSelection().getCursorLoader(context)
-    }
-
-    override fun onLoadFinished(loader: Loader<Cursor>, data: Cursor) {
-        mBinding!!.pgbLoading.visibility = View.GONE
-        if (data.count == 0) {
+    private fun onMoviesResult(movies: Array<Movie>) {
+        mBinding.pgbLoading.visibility = View.GONE
+        if (movies.isEmpty()) {
             // No movies
             if (mLoadMoviesStarted) {
-                mBinding!!.conMoviesLoading.visibility = View.VISIBLE
-                mBinding!!.txtEmpty.visibility = View.GONE
+                // Loading
+                mBinding.conMoviesLoading.visibility = View.VISIBLE
+                mBinding.txtEmpty.visibility = View.GONE
             } else {
-                mBinding!!.conMoviesLoading.visibility = View.GONE
-                mBinding!!.txtEmpty.visibility = View.VISIBLE
+                mBinding.conMoviesLoading.visibility = View.GONE
+                mBinding.txtEmpty.visibility = View.VISIBLE
             }
-            mBinding!!.rclList.visibility = View.GONE
+            mBinding.rclList.visibility = View.GONE
         } else {
-            mBinding!!.conMoviesLoading.visibility = View.GONE
-            mBinding!!.txtEmpty.visibility = View.GONE
-            mBinding!!.rclList.visibility = View.VISIBLE
-            if (mAdapter == null) {
-                mAdapter = MovieListAdapter(context, callbacks, this)
-                mBinding!!.rclList.adapter = mAdapter
+            mBinding.conMoviesLoading.visibility = View.GONE
+            mBinding.txtEmpty.visibility = View.GONE
+            mBinding.rclList.visibility = View.VISIBLE
+
+
+            var adapter: MovieListAdapter? = mAdapter
+            if (adapter == null) {
+                adapter = MovieListAdapter(context, callbacks, this)
+                mAdapter = adapter
+                mBinding.rclList.adapter = adapter
             }
-            mAdapter!!.swapCursor(data as MovieCursor)
+            adapter.data = movies
         }
     }
 
-    override fun onLoaderReset(loader: Loader<Cursor>) {
-        if (mAdapter != null) mAdapter!!.swapCursor(null)
-    }
-
-
-    override fun onPaletteAvailable(position: Int, @ColorInt color: Int, cached: Boolean, id: Long) {
+    override fun onPaletteAvailable(position: Int, @ColorInt color: Int, cached: Boolean, id: String) {
         if (mPalette.indexOfKey(position) >= 0 && position > 0) return
         mPalette.put(position, color)
-        var firstItemPosition = (mBinding!!.rclList.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
+        var firstItemPosition = (mBinding.rclList.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
         if (firstItemPosition == RecyclerView.NO_POSITION) firstItemPosition = 0
         if (firstItemPosition == position && !mScrolling) {
             updateBackgroundColor(position)
         }
         if (!cached) {
             // Save the value
-            object : AsyncTask<Void, Void, Void>() {
-                override fun doInBackground(vararg params: Void): Void? {
-                    MovieContentValues()
-                            .putColor(color)
-                            .notify(false)
-                            .update(context, MovieSelection().id(id))
-                    return null
+            object : AsyncTask<Unit, Unit, Unit>() {
+                override fun doInBackground(vararg params: Unit) {
+                    mDatabase.movieDao.updateColor(id, color)
                 }
             }.execute()
         }
@@ -140,11 +140,11 @@ class MovieListFragment : BaseFrameworkFragment<MovieListCallbacks>(), LoaderMan
         if (mPalette.indexOfKey(position) >= 0) {
             if (mColorAnimation != null) mColorAnimation!!.cancel()
 
-            val colorFrom = (mBinding!!.conRoot.background as ColorDrawable).color
+            val colorFrom = (mBinding.conRoot.background as ColorDrawable).color
             val colorTo = mPalette.get(position)
             mColorAnimation = ValueAnimator.ofObject(ArgbEvaluator(), colorFrom, colorTo)
             mColorAnimation!!.duration = 200
-            mColorAnimation!!.addUpdateListener { animator -> mBinding!!.conRoot.setBackgroundColor(animator.animatedValue as Int) }
+            mColorAnimation!!.addUpdateListener { animator -> mBinding.conRoot.setBackgroundColor(animator.animatedValue as Int) }
             mColorAnimation!!.start()
         }
     }
@@ -172,7 +172,7 @@ class MovieListFragment : BaseFrameworkFragment<MovieListCallbacks>(), LoaderMan
             if (nextItemColor == -1) return
 
             val resultColor = mArgbEvaluator.evaluate(firstItemRatio, firstItemColor, nextItemColor) as Int
-            mBinding!!.conRoot.setBackgroundColor(resultColor)
+            mBinding.conRoot.setBackgroundColor(resultColor)
         }
     }
 
@@ -184,34 +184,28 @@ class MovieListFragment : BaseFrameworkFragment<MovieListCallbacks>(), LoaderMan
         override fun onLoadMoviesStarted() {
             if (mAdapter == null || mAdapter!!.itemCount == 0) {
                 mLoadMoviesStarted = true
-                mBinding!!.conMoviesLoading.visibility = View.VISIBLE
-                mBinding!!.txtEmpty.visibility = View.GONE
+                mBinding.conMoviesLoading.visibility = View.VISIBLE
+                mBinding.txtEmpty.visibility = View.GONE
             }
         }
 
         override fun onLoadMoviesProgress(currentMovie: Int, totalMovies: Int, movieName: String) {
-            mBinding!!.txtMoviesLoadingInfo.text = getString(R.string.movie_list_loadingMovies_progress, currentMovie, totalMovies)
+            mBinding.txtMoviesLoadingInfo.text = getString(R.string.movie_list_loadingMovies_progress, currentMovie, totalMovies)
         }
 
         override fun onLoadMoviesInterrupted() {}
 
         override fun onLoadMoviesSuccess() {
             mLoadMoviesStarted = false
-            mBinding!!.conMoviesLoading.visibility = View.GONE
+            mBinding.conMoviesLoading.visibility = View.GONE
         }
 
         override fun onLoadMoviesError(t: Throwable) {
             mLoadMoviesStarted = false
-            mBinding!!.conMoviesLoading.visibility = View.GONE
+            mBinding.conMoviesLoading.visibility = View.GONE
         }
     }
 
-    companion object {
-
-        fun newInstance(): MovieListFragment {
-            return MovieListFragment()
-        }
-    }
 
     // endregion
 }

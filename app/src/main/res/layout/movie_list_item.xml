@@ -12,12 +12,8 @@
             type="org.jraf.android.cinetoday.app.movie.list.MovieListCallbacks" />
 
         <variable
-            name="movieId"
-            type="long" />
-
-        <variable
             name="movie"
-            type="org.jraf.android.cinetoday.provider.movie.MovieModel" />
+            type="org.jraf.android.cinetoday.model.movie.Movie" />
 
 
     </data>
@@ -34,7 +30,7 @@
             android:background="@android:color/white"
             android:elevation="8dp"
             android:foreground="?android:attr/selectableItemBackground"
-            android:onClick="@{() -> callbacks.onMovieClick(movieId)}"
+            android:onClick="@{() -> callbacks.onMovieClick(movie)}"
             android:padding="@dimen/movie_list_item_posterBorder"
             app:layout_aspectRatio="@fraction/movie_list_item_poster"
             app:layout_heightPercent="100%">
@@ -53,7 +49,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:text="@{movie.titleLocal}"
+                android:text="@{movie.localTitle}"
                 app:layout_marginTopPercent="20%"
                 tools:text="The Revenant" />
 

@@ -31,7 +31,6 @@ import org.jraf.android.cinetoday.network.api.Api
 import org.jraf.android.util.log.Log
 import org.json.JSONException
 import org.json.JSONObject
-import java.util.*
 
 class MovieCodec {
     @Throws(ParseException::class)
@@ -39,54 +38,47 @@ class MovieCodec {
         try {
             movie.id = jsonMovie.getString("code")
             movie.localTitle = jsonMovie.getString("title")
-            movie.originalTitle = jsonMovie.optString("originalTitle", null)
-            movie.synopsis = jsonMovie.optString("synopsis", null)
-            if (movie.synopsis != null) {
+            movie.originalTitle = jsonMovie.optString("originalTitle", null) ?: ""
+            movie.synopsis = jsonMovie.optString("synopsis", null)?.let {
                 // Strip html
-                movie.synopsis = Html.fromHtml(movie.synopsis).toString().trim { it <= ' ' }
+                Html.fromHtml(it).toString().trim()
             }
 
-            val jsonCastingShort = jsonMovie.optJSONObject("castingShort")
-            if (jsonCastingShort != null) {
-                movie.directors = jsonCastingShort.optString("directors", null)
-                movie.actors = jsonCastingShort.optString("actors", null)
+            jsonMovie.optJSONObject("castingShort")?.let {
+                movie.directors = it.optString("directors", null)
+                movie.actors = it.optString("actors", null)
             }
 
-            val jsonRelease = jsonMovie.optJSONObject("release")
-            if (jsonRelease != null) {
-                val releaseDateStr = jsonRelease.getString("releaseDate")
+            movie.releaseDate = jsonMovie.optJSONObject("release")?.let {
+                val releaseDateStr = it.getString("releaseDate")
                 try {
-                    movie.releaseDate = Api.SIMPLE_DATE_FORMAT.parse(releaseDateStr)
+                    Api.SIMPLE_DATE_FORMAT.parse(releaseDateStr)
                 } catch (e: java.text.ParseException) {
-                    Log.d(e, "Invalid releaseDate %s in movie %s", movie, releaseDateStr)
+                    Log.d(e, "Invalid releaseDate %s in movie %s", releaseDateStr, movie.id)
+                    null
                 }
-
             }
 
-            val durationSeconds = jsonMovie.optInt("runtime", -1)
-            movie.durationSeconds = if (durationSeconds == -1) null else durationSeconds
+            movie.durationSeconds = jsonMovie.optInt("runtime", -1).let { if (it == -1) null else it }
 
             val jsonGenreArray = jsonMovie.getJSONArray("genre")
             val len = jsonGenreArray.length()
-            val genres = ArrayList<String>(len)
-            for (i in 0..len - 1) {
+            val genres = mutableListOf<String>()
+            for (i in 0 until len) {
                 val jsonGenre = jsonGenreArray.getJSONObject(i)
                 genres.add(jsonGenre.getString("$"))
             }
-            movie.genres = genres.toTypedArray<String>()
+            movie.genres = genres.toTypedArray()
 
-            val jsonPoster = jsonMovie.optJSONObject("poster")
-            if (jsonPoster != null) movie.posterUri = jsonPoster.getString("href")
-
-            val jsonTrailer = jsonMovie.optJSONObject("trailer")
-            if (jsonTrailer != null) movie.trailerUri = jsonTrailer.getString("href")
+            movie.posterUri = jsonMovie.optJSONObject("poster")?.getString("href")
+            movie.trailerUri = jsonMovie.optJSONObject("trailer")?.getString("href")
 
             val jsonLinkArray = jsonMovie.getJSONArray("link")
             val jsonLink = jsonLinkArray.getJSONObject(0)
             movie.webUri = jsonLink.getString("href")
+
         } catch (e: JSONException) {
             throw ParseException(e)
         }
-
     }
 }

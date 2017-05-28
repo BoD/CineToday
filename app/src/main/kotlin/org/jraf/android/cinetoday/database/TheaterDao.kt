@@ -22,10 +22,29 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jraf.android.cinetoday.app.movie.list
+package org.jraf.android.cinetoday.database
 
-import android.support.annotation.ColorInt
+import android.arch.lifecycle.LiveData
+import android.arch.persistence.room.Dao
+import android.arch.persistence.room.Insert
+import android.arch.persistence.room.Query
+import org.jraf.android.cinetoday.model.theater.Theater
 
-interface PaletteListener {
-    fun onPaletteAvailable(position: Int, @ColorInt color: Int, cached: Boolean, id: String)
+@Dao
+interface TheaterDao {
+    @Query("SELECT * FROM theater")
+    fun allTheatersLive(): LiveData<Array<Theater>>
+
+    @Query("SELECT * FROM theater")
+    fun allTheaters(): Array<Theater>
+
+    @Query("SELECT count(*) FROM theater")
+    fun countTheaters(): Int
+
+    @Insert
+    fun insert(theater: Theater)
+
+    // TODO "p0" is named "p0" because of this issue: https://youtrack.jetbrains.com/issue/KT-17959
+    @Query("DELETE from THEATER where id=:p0")
+    fun delete(id: String)
 }

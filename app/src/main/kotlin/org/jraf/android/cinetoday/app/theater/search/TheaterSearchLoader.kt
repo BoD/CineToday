@@ -27,15 +27,16 @@ package org.jraf.android.cinetoday.app.theater.search
 import android.content.AsyncTaskLoader
 import android.content.Context
 import org.jraf.android.cinetoday.dagger.Components
+import org.jraf.android.cinetoday.database.AppDatabase
 import org.jraf.android.cinetoday.model.theater.Theater
 import org.jraf.android.cinetoday.network.api.Api
-import org.jraf.android.cinetoday.provider.theater.TheaterSelection
 import org.jraf.android.util.log.Log
-import java.util.*
 import javax.inject.Inject
 
 class TheaterSearchLoader(context: Context, private val mQuery: String) : AsyncTaskLoader<List<Theater>>(context) {
     @Inject lateinit var mApi: Api
+    @Inject lateinit var mDatabase: AppDatabase
+
     private var mData: List<Theater>? = null
 
     init {
@@ -45,27 +46,19 @@ class TheaterSearchLoader(context: Context, private val mQuery: String) : AsyncT
     override fun loadInBackground(): List<Theater>? {
         Log.d()
         // Get the list of favorite theaters, so we can filter them out from the search results
-        val favoriteTheaterPublicIds = HashSet<String>()
-        TheaterSelection().query(context).use { cursor ->
-            while (cursor.moveToNext()) {
-                favoriteTheaterPublicIds.add(cursor.getPublicId())
-            }
-        }
+        val favoriteTheaters = mDatabase.theaterDao.allTheaters()
+
         try {
             // API call (blocking)
-            val res = mApi!!.searchTheaters(mQuery).toMutableList()
+            val res = mApi.searchTheaters(mQuery).toMutableList()
 
             // Filter out favorite theaters
-            val i = res.iterator()
-            while (i.hasNext()) {
-                if (favoriteTheaterPublicIds.contains(i.next().id)) i.remove()
-            }
+            res.removeAll { favoriteTheaters.contains(it) }
             return res
         } catch (e: Exception) {
             Log.w(e, "Could not search for theaters")
             return null
         }
-
     }
 
     override fun deliverResult(data: List<Theater>?) {
@@ -73,7 +66,7 @@ class TheaterSearchLoader(context: Context, private val mQuery: String) : AsyncT
         mData = data
 
         if (isStarted) {
-            super.deliverResult(data)
+            if (data != null) super.deliverResult(data)
         }
     }
 

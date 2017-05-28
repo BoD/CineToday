@@ -24,6 +24,8 @@
  */
 package org.jraf.android.cinetoday.app.movie.list
 
+import org.jraf.android.cinetoday.model.movie.Movie
+
 interface MovieListCallbacks {
-    fun onMovieClick(movieId: Long)
+    fun onMovieClick(movie: Movie)
 }

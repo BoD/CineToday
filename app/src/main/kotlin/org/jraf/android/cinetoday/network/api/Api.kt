@@ -42,7 +42,10 @@ import org.json.JSONException
 import org.json.JSONObject
 import java.io.IOException
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.ArrayList
+import java.util.Date
+import java.util.Locale
+import java.util.SortedSet
 
 class Api(private val mCachingOkHttpClient: OkHttpClient, private val mMovieCodec: MovieCodec, private val mShowTimeCodec: ShowtimeCodec, private val mTheaterCodec: TheaterCodec) {
 
@@ -59,7 +62,7 @@ class Api(private val mCachingOkHttpClient: OkHttpClient, private val mMovieCode
 
     @VisibleForTesting(otherwise = PRIVATE)
     @Throws(ParseException::class)
-    internal fun parseMovieList(movies: SortedSet<Movie>, jsonStr: String, theaterId: String, date: Date) {
+    fun parseMovieList(movies: SortedSet<Movie>, jsonStr: String, theaterId: String, date: Date) {
         try {
             val jsonRoot = JSONObject(jsonStr)
             val jsonFeed = jsonRoot.getJSONObject("feed")
@@ -71,7 +74,22 @@ class Api(private val mCachingOkHttpClient: OkHttpClient, private val mMovieCode
                 val jsonMovieShowtime = jsonMovieShowtimes.getJSONObject(i)
                 val jsonOnShow = jsonMovieShowtime.getJSONObject("onShow")
                 val jsonMovie = jsonOnShow.getJSONObject("movie")
-                var movie = Movie()
+                var movie = Movie(
+                        id = "",
+                        originalTitle = "",
+                        localTitle = "",
+                        directors = "",
+                        actors = "",
+                        releaseDate = null,
+                        durationSeconds = null,
+                        genres = emptyArray(),
+                        posterUri = null,
+                        trailerUri = null,
+                        webUri = "",
+                        synopsis = "",
+                        isNew = false,
+                        color = null
+                )
 
                 // Movie (does not include showtimes, only the movie details)
                 mMovieCodec.fill(movie, jsonMovie)
@@ -91,7 +109,7 @@ class Api(private val mCachingOkHttpClient: OkHttpClient, private val mMovieCode
                 mShowTimeCodec.fill(movie, jsonMovieShowtime, theaterId, date)
 
                 // If there is no showtimes for today, skip the movie
-                if (movie.todayShowtimes == null || movie.todayShowtimes!!.size == 0) {
+                if (movie.todayShowtimes.size == 0) {
                     Log.w("Movie %s has no showtimes: skip it", movie.id)
                 } else {
                     movies.add(movie)
@@ -140,10 +158,14 @@ class Api(private val mCachingOkHttpClient: OkHttpClient, private val mMovieCode
 
             val jsonTheaters = jsonFeed.getJSONArray("theater")
             val len = jsonTheaters.length()
-            val res = ArrayList<Theater>(len)
+            val res = mutableListOf<Theater>()
             for (i in 0..len - 1) {
                 val jsonTheater = jsonTheaters.getJSONObject(i)
-                val theater = Theater()
+                val theater = Theater(
+                        id = "",
+                        name = "",
+                        address = "",
+                        pictureUri = null)
 
                 // Theater
                 mTheaterCodec.fill(theater, jsonTheater)
@@ -153,7 +175,6 @@ class Api(private val mCachingOkHttpClient: OkHttpClient, private val mMovieCode
         } catch (e: JSONException) {
             throw ParseException(e)
         }
-
     }
 
     @WorkerThread
