@@ -62,6 +62,6 @@ interface MovieDao {
     fun deleteWithNoShowtimes()
 
     // TODO "p0" is named "p0" because of this issue: https://youtrack.jetbrains.com/issue/KT-17959
-    @Query("UPDATE movie SET color = :p0 WHERE id = :p1")
+    @Query("UPDATE movie SET color = :p1 WHERE id = :p0")
     fun updateColor(id: String, color: Int)
 }
