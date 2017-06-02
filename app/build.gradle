@@ -139,11 +139,9 @@ dependencies {
     compile("com.crashlytics.sdk.android:crashlytics:$versions.crashlytics@aar") { transitive = true }
 
     // JRAF
-    // TODO make it work with Kotlin?
-//    kapt "org.jraf:prefs-compiler:$versions.prefs"
+    kapt "org.jraf:prefs-compiler:$versions.prefs"
     compile "org.jraf:prefs:$versions.prefs"
     compile 'com.github.BoD:jraf-android-util:-SNAPSHOT'
-//    compile 'org.jraf:jraf-android-util:1.0.0'
 
     // OkHttp
     compile "com.squareup.okhttp3:okhttp:$versions.okHttp"
@@ -173,7 +171,7 @@ repositories {
     mavenCentral()
 }
 
-//// Necessary to have Kotlin and dataBinding at the same time
-//kapt {
-//    generateStubs = true
-//}
+// Necessary for Prefs to work (see https://kotlinlang.org/docs/reference/kapt.html)
+kapt {
+    correctErrorTypes = true
+}
