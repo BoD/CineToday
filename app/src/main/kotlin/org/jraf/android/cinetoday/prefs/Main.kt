@@ -22,30 +22,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jraf.android.cinetoday.prefs;
+package org.jraf.android.cinetoday.prefs
 
-import java.util.Set;
-
-import org.jraf.android.prefs.DefaultBoolean;
-import org.jraf.android.prefs.DefaultStringSet;
-import org.jraf.android.prefs.Prefs;
+import org.jraf.android.prefs.DefaultBoolean
+import org.jraf.android.prefs.DefaultStringSet
+import org.jraf.android.prefs.Prefs
 
 @Prefs
-public class Main {
+class Main {
     /**
      * Last time an update was successfully called.
      */
-    Long lastUpdateDate;
+    var lastUpdateDate: Long? = null
 
     /**
      * Show a notification on new movie release day.
      */
     @DefaultBoolean(true)
-    Boolean showNewReleasesNotification;
+    var showNewReleasesNotification: Boolean? = null
 
     /**
      * List of movies that have been used in 'new release' notifications.
      */
     @DefaultStringSet("")
-    Set<String> notifiedMovieIds;
+    var notifiedMovieIds: Set<String>? = null
 }

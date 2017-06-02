@@ -43,6 +43,7 @@ buildscript {
     }
 
     repositories {
+        mavenLocal()
         maven { url 'https://maven.google.com' }
         jcenter()
         maven { url 'https://maven.fabric.io/public' }
@@ -61,6 +62,7 @@ buildscript {
 
 allprojects {
     repositories {
+        mavenLocal()
         maven { url 'https://maven.google.com' }
         jcenter()
         maven { url 'https://jitpack.io' }
