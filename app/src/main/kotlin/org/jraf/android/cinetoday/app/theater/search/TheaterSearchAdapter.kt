@@ -33,6 +33,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import android.widget.TextView
 import org.jraf.android.cinetoday.R
 import org.jraf.android.cinetoday.databinding.TheaterSearchListItemBinding
 import org.jraf.android.cinetoday.databinding.TheaterSearchListItemSearchBinding
@@ -49,31 +50,17 @@ class TheaterSearchAdapter(context: Context, private val mCallbacks: TheaterSear
         private const val TYPE_EMPTY = 3
     }
 
-
     private val mLayoutInflater: LayoutInflater = LayoutInflater.from(context)
     private var mTheaters: MutableList<Theater>? = null
     private var mLoading: Boolean = false
     private var mSearchQuery: String? = null
 
+    sealed class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        class SearchViewHolder(val searchBinding: TheaterSearchListItemSearchBinding) : ViewHolder(searchBinding.root)
 
-    class ViewHolder : RecyclerView.ViewHolder {
-        val itemBinding: TheaterSearchListItemBinding?
-        val searchBinding: TheaterSearchListItemSearchBinding?
+        class ItemViewHolder(val itemBinding: TheaterSearchListItemBinding) : ViewHolder(itemBinding.root)
 
-        constructor(itemBinding: TheaterSearchListItemBinding) : super(itemBinding.root) {
-            this.itemBinding = itemBinding
-            searchBinding = null
-        }
-
-        constructor(searchBinding: TheaterSearchListItemSearchBinding) : super(searchBinding.root) {
-            itemBinding = null
-            this.searchBinding = searchBinding
-        }
-
-        constructor(root: View) : super(root) {
-            itemBinding = null
-            searchBinding = null
-        }
+        class GenericViewHolder(view: View) : ViewHolder(view)
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -92,14 +79,15 @@ class TheaterSearchAdapter(context: Context, private val mCallbacks: TheaterSear
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TheaterSearchAdapter.ViewHolder {
         return when (viewType) {
-            TYPE_SEARCH -> ViewHolder(DataBindingUtil.inflate<TheaterSearchListItemSearchBinding>(mLayoutInflater, R.layout.theater_search_list_item_search, parent, false))
+            TYPE_SEARCH -> ViewHolder.SearchViewHolder(DataBindingUtil.inflate<TheaterSearchListItemSearchBinding>(mLayoutInflater, R.layout.theater_search_list_item_search, parent, false))
 
-            TYPE_LOADING -> ViewHolder(mLayoutInflater.inflate(R.layout.theater_search_list_item_loading, parent, false))
+            TYPE_LOADING -> ViewHolder.GenericViewHolder(mLayoutInflater.inflate(R.layout.theater_search_list_item_loading, parent, false))
 
-            TYPE_EMPTY -> ViewHolder(mLayoutInflater.inflate(R.layout.theater_search_list_item_empty, parent, false))
+            TYPE_EMPTY -> ViewHolder.GenericViewHolder(mLayoutInflater.inflate(R.layout.theater_search_list_item_empty, parent, false))
 
-        // TYPE_EMPTY
-            else -> ViewHolder(DataBindingUtil.inflate<TheaterSearchListItemBinding>(mLayoutInflater, R.layout.theater_search_list_item, parent, false))
+            TYPE_ITEM -> ViewHolder.ItemViewHolder(DataBindingUtil.inflate<TheaterSearchListItemBinding>(mLayoutInflater, R.layout.theater_search_list_item, parent, false))
+
+            else -> throw IllegalStateException()
         }
     }
 
@@ -107,21 +95,18 @@ class TheaterSearchAdapter(context: Context, private val mCallbacks: TheaterSear
         val viewType = getItemViewType(position)
         when (viewType) {
             TYPE_SEARCH -> {
-                holder.searchBinding!!.searchQuery = mSearchQuery
+                holder as ViewHolder.SearchViewHolder
+                holder.searchBinding.searchQuery = mSearchQuery
                 holder.searchBinding.executePendingBindings()
                 holder.searchBinding.edtSearch.removeTextChangedListener(this)
                 holder.searchBinding.edtSearch.addTextChangedListener(this)
-                holder.searchBinding.edtSearch.setOnEditorActionListener { textView, _, _ ->
-                    Log.d()
-                    // Close keyboard
-                    val inputMethodManager = textView.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                    inputMethodManager.hideSoftInputFromWindow(holder.searchBinding.edtSearch.windowToken, 0);
-                }
+                holder.searchBinding.edtSearch.setOnEditorActionListener(mOnEditorActionListener)
             }
 
             TYPE_ITEM -> {
+                holder as ViewHolder.ItemViewHolder
                 val theater = mTheaters!![position - 1]
-                holder.itemBinding!!.theater = theater
+                holder.itemBinding.theater = theater
                 holder.itemBinding.callbacks = mCallbacks
                 holder.itemBinding.executePendingBindings()
             }
@@ -135,6 +120,14 @@ class TheaterSearchAdapter(context: Context, private val mCallbacks: TheaterSear
     override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
         mSearchQuery = s.toString()
         mCallbacks.onSearch(s.toString())
+    }
+
+    private val mOnEditorActionListener = TextView.OnEditorActionListener { textView, _, _ ->
+        Log.d()
+        // Close keyboard
+        val inputMethodManager = textView.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodManager.hideSoftInputFromWindow(textView.windowToken, 0)
+        true
     }
 
     override fun getItemCount(): Int {
