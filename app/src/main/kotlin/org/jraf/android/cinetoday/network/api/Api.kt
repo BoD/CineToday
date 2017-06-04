@@ -170,7 +170,7 @@ class Api(private val mCachingOkHttpClient: OkHttpClient, private val mMovieCode
         if (!useCache) urlBuilder.cacheControl(CacheControl.FORCE_NETWORK)
         val request = urlBuilder.build()
         val response = mCachingOkHttpClient.newCall(request).execute()
-        return response.body().string()
+        return response.body()?.string() ?: ""
     }
 
     private fun getBaseBuilder(path: String): HttpUrl.Builder {
