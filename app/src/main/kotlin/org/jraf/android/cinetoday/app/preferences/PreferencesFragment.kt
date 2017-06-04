@@ -38,6 +38,11 @@ import org.jraf.android.util.about.AboutActivityIntentBuilder
 import javax.inject.Inject
 
 class PreferencesFragment : PreferenceFragment() {
+    companion object {
+        fun newInstance(): PreferencesFragment {
+            return PreferencesFragment()
+        }
+    }
 
     @Inject lateinit var mLoadMoviesHelper: LoadMoviesHelper
     @Inject lateinit var mMainPrefs: MainPrefs
@@ -52,7 +57,7 @@ class PreferencesFragment : PreferenceFragment() {
 
         // Refresh
         findPreference("refresh").setOnPreferenceClickListener { _ ->
-            if (!mLoadMoviesStarted) mLoadMoviesHelper!!.startLoadMoviesIntentService()
+            if (!mLoadMoviesStarted) mLoadMoviesHelper.startLoadMoviesIntentService()
             true
         }
         setLastUpdateDateSummary()
@@ -112,7 +117,7 @@ class PreferencesFragment : PreferenceFragment() {
     }
 
     private fun setLastUpdateDateSummary() {
-        val lastUpdateDate = mMainPrefs!!.lastUpdateDate
+        val lastUpdateDate = mMainPrefs.lastUpdateDate
         val refreshPref = findPreference("refresh")
         if (lastUpdateDate == null) {
             refreshPref.setSummary(R.string.preference_refresh_summary_none)
@@ -121,12 +126,5 @@ class PreferencesFragment : PreferenceFragment() {
             refreshPref.summary = getString(R.string.preference_refresh_summary_date, lastUpdateDateStr)
         }
         refreshPref.isEnabled = true
-    }
-
-    companion object {
-
-        fun newInstance(): PreferencesFragment {
-            return PreferencesFragment()
-        }
     }
 }
