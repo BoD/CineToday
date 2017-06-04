@@ -26,7 +26,7 @@ package org.jraf.android.cinetoday.app.loadmovies
 
 import org.jraf.android.util.listeners.Listeners
 
-class LoadMoviesListenerHelper private constructor() : LoadMoviesListener {
+class LoadMoviesListenerHelper : LoadMoviesListener {
 
     private var mStarted: Boolean = false
     private val mListeners = Listeners<LoadMoviesListener>()
@@ -96,13 +96,5 @@ class LoadMoviesListenerHelper private constructor() : LoadMoviesListener {
 
     fun resetError() {
         mError = null
-    }
-
-    companion object {
-        private val INSTANCE = LoadMoviesListenerHelper()
-
-        fun get(): LoadMoviesListenerHelper {
-            return INSTANCE
-        }
     }
 }

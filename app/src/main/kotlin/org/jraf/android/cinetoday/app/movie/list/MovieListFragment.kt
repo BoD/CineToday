@@ -57,6 +57,7 @@ class MovieListFragment : BaseFragment<MovieListCallbacks>(), PaletteListener {
     }
 
     @Inject lateinit var mDatabase: AppDatabase
+    @Inject lateinit var mLoadMoviesListenerHelper: LoadMoviesListenerHelper
 
     private lateinit var mBinding: MovieListBinding
     private var mAdapter: MovieListAdapter? = null
@@ -72,7 +73,7 @@ class MovieListFragment : BaseFragment<MovieListCallbacks>(), PaletteListener {
     }
 
     override fun onDestroy() {
-        LoadMoviesListenerHelper.get().removeListener(mLoadMoviesListener)
+        mLoadMoviesListenerHelper.removeListener(mLoadMoviesListener)
         super.onDestroy()
     }
 
@@ -84,7 +85,7 @@ class MovieListFragment : BaseFragment<MovieListCallbacks>(), PaletteListener {
         snapHelper.attachToRecyclerView(mBinding.rclList)
         mBinding.rclList.addOnScrollListener(mOnScrollListener)
 
-        LoadMoviesListenerHelper.get().addListener(mLoadMoviesListener)
+        mLoadMoviesListenerHelper.addListener(mLoadMoviesListener)
 
         return mBinding.root
     }
@@ -200,12 +201,11 @@ class MovieListFragment : BaseFragment<MovieListCallbacks>(), PaletteListener {
             mBinding.conMoviesLoading.visibility = View.GONE
         }
 
-        override fun onLoadMoviesError(t: Throwable) {
+        override fun onLoadMoviesError(error: Throwable) {
             mLoadMoviesStarted = false
             mBinding.conMoviesLoading.visibility = View.GONE
         }
     }
-
 
     // endregion
 }
