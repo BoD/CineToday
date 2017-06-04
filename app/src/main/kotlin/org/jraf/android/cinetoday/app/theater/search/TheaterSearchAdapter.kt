@@ -32,11 +32,14 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import org.jraf.android.cinetoday.R
 import org.jraf.android.cinetoday.databinding.TheaterSearchListItemBinding
 import org.jraf.android.cinetoday.databinding.TheaterSearchListItemSearchBinding
 import org.jraf.android.cinetoday.model.theater.Theater
-import java.util.*
+import org.jraf.android.util.log.Log
+import java.util.ArrayList
+
 
 class TheaterSearchAdapter(context: Context, private val mCallbacks: TheaterSearchCallbacks) : RecyclerView.Adapter<TheaterSearchAdapter.ViewHolder>(), TextWatcher {
     companion object {
@@ -108,6 +111,12 @@ class TheaterSearchAdapter(context: Context, private val mCallbacks: TheaterSear
                 holder.searchBinding.executePendingBindings()
                 holder.searchBinding.edtSearch.removeTextChangedListener(this)
                 holder.searchBinding.edtSearch.addTextChangedListener(this)
+                holder.searchBinding.edtSearch.setOnEditorActionListener { textView, _, _ ->
+                    Log.d()
+                    // Close keyboard
+                    val inputMethodManager = textView.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                    inputMethodManager.hideSoftInputFromWindow(holder.searchBinding.edtSearch.windowToken, 0);
+                }
             }
 
             TYPE_ITEM -> {
