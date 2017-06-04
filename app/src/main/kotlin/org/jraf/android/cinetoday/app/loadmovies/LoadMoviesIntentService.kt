@@ -30,24 +30,19 @@ import android.content.Intent
 import org.jraf.android.cinetoday.dagger.Components
 import org.jraf.android.util.log.Log
 
-class LoadMoviesIntentService : IntentService(LoadMoviesIntentService::class.java!!.getName()) {
-
-    override fun onHandleIntent(intent: Intent?) {
-        if (intent != null) {
-            val action = intent.action
-            if (ACTION_LOAD_MOVIES == action) {
-                try {
-                    Components.application.loadMoviesHelper.loadMovies()
-                } catch (e: Exception) {
-                    Log.e(e, "Could not load movies")
-                }
-
-            }
-        }
-    }
+class LoadMoviesIntentService : IntentService(LoadMoviesIntentService::class.java.name) {
 
     companion object {
-        private val PREFIX = LoadMoviesIntentService::class.java!!.getName() + "."
-        val ACTION_LOAD_MOVIES = PREFIX + "LOAD_MOVIES"
+        val ACTION_LOAD_MOVIES = "${LoadMoviesIntentService::class.java.name}.LOAD_MOVIES"
+    }
+
+    override fun onHandleIntent(intent: Intent?) {
+        if (intent?.action == ACTION_LOAD_MOVIES) {
+            try {
+                Components.application.loadMoviesHelper.loadMovies()
+            } catch (e: Exception) {
+                Log.e(e, "Could not load movies")
+            }
+        }
     }
 }

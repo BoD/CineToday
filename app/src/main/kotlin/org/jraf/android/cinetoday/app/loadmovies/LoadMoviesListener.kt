@@ -33,5 +33,5 @@ interface LoadMoviesListener {
 
     fun onLoadMoviesSuccess()
 
-    fun onLoadMoviesError(t: Throwable)
+    fun onLoadMoviesError(error: Throwable)
 }
