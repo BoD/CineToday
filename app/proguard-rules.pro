@@ -9,3 +9,5 @@
 # OkHttp (Okio)
 -dontwarn okio.**
 
+# Jraf Util
+-dontwarn org.jraf.android.util.databinding.UtilAboutWearBinding
