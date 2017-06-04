@@ -58,7 +58,12 @@ import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
 
-class LoadMoviesHelper(private val mContext: Context, private val mMainPrefs: MainPrefs, private val mApi: Api, private val mAppDatabase: AppDatabase) {
+class LoadMoviesHelper(
+        private val mContext: Context,
+        private val mMainPrefs: MainPrefs,
+        private val mApi: Api,
+        private val mAppDatabase: AppDatabase,
+        private val mLoadMoviesListenerHelper: LoadMoviesListenerHelper) {
     companion object {
         private const val NOTIFICATION_ID = 0
         private const val MIN_BANDWIDTH_KBPS = 320
@@ -110,8 +115,7 @@ class LoadMoviesHelper(private val mContext: Context, private val mMainPrefs: Ma
     @Throws(Exception::class)
     internal fun loadMovies() {
         mWantStop = false
-        val loadMoviesListenerHelper = LoadMoviesListenerHelper.get()
-        loadMoviesListenerHelper.onLoadMoviesStarted()
+        mLoadMoviesListenerHelper.onLoadMoviesStarted()
 
         // 0/ Try to connect to a fast network
         val highBandwidthNetworkSuccess = requestHighBandwidthNetwork(10, TimeUnit.SECONDS)
@@ -125,18 +129,18 @@ class LoadMoviesHelper(private val mContext: Context, private val mMainPrefs: Ma
                     mApi.getMovieList(movies, theaterId, Date())
 
                     if (mWantStop) {
-                        loadMoviesListenerHelper.onLoadMoviesInterrupted()
+                        mLoadMoviesListenerHelper.onLoadMoviesInterrupted()
                         return
                     }
                 }
             } catch (e: Exception) {
                 Log.e(e, "Could not load movies")
-                loadMoviesListenerHelper.onLoadMoviesError(e)
+                mLoadMoviesListenerHelper.onLoadMoviesError(e)
                 throw e
             }
 
             if (mWantStop) {
-                loadMoviesListenerHelper.onLoadMoviesInterrupted()
+                mLoadMoviesListenerHelper.onLoadMoviesInterrupted()
                 return
             }
 
@@ -144,7 +148,7 @@ class LoadMoviesHelper(private val mContext: Context, private val mMainPrefs: Ma
             val size = movies.size
             var i = 0
             for (movie in movies) {
-                loadMoviesListenerHelper.onLoadMoviesProgress(i, size, movie.localTitle)
+                mLoadMoviesListenerHelper.onLoadMoviesProgress(i, size, movie.localTitle)
 
                 // Check if we already have info for this movie
                 if (mAppDatabase.movieDao.countMovieById(movie.id) == 0) {
@@ -156,13 +160,13 @@ class LoadMoviesHelper(private val mContext: Context, private val mMainPrefs: Ma
                         Log.d(movie.toString())
                     } catch (e: Exception) {
                         Log.e(e, "Could not load movie info: movie = %s", movie)
-                        loadMoviesListenerHelper.onLoadMoviesError(e)
+                        mLoadMoviesListenerHelper.onLoadMoviesError(e)
                         throw e
                     }
                 }
 
                 if (mWantStop) {
-                    loadMoviesListenerHelper.onLoadMoviesInterrupted()
+                    mLoadMoviesListenerHelper.onLoadMoviesInterrupted()
                     return
                 }
 
@@ -198,7 +202,7 @@ class LoadMoviesHelper(private val mContext: Context, private val mMainPrefs: Ma
                 }
 
                 i++
-                loadMoviesListenerHelper.onLoadMoviesProgress(i, size, movie.localTitle)
+                mLoadMoviesListenerHelper.onLoadMoviesProgress(i, size, movie.localTitle)
             }
 
         } finally {
@@ -213,8 +217,8 @@ class LoadMoviesHelper(private val mContext: Context, private val mMainPrefs: Ma
         persist(movies)
 
         mMainPrefs.putLastUpdateDate(System.currentTimeMillis())
-        loadMoviesListenerHelper.resetError()
-        loadMoviesListenerHelper.onLoadMoviesSuccess()
+        mLoadMoviesListenerHelper.resetError()
+        mLoadMoviesListenerHelper.onLoadMoviesSuccess()
 
         // 4/ Show a notification
         val newMovieTitles = movies.filter { it.isNew }

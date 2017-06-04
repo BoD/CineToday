@@ -29,6 +29,7 @@ import android.content.Context
 import dagger.Module
 import dagger.Provides
 import org.jraf.android.cinetoday.app.loadmovies.LoadMoviesHelper
+import org.jraf.android.cinetoday.app.loadmovies.LoadMoviesListenerHelper
 import org.jraf.android.cinetoday.database.AppDatabase
 import org.jraf.android.cinetoday.network.api.Api
 import org.jraf.android.cinetoday.prefs.MainPrefs
@@ -45,8 +46,8 @@ class ApplicationModule(private val mContext: Context) {
 
     @Singleton
     @Provides
-    fun provideLoadMoviesHelper(context: Context, mainPrefs: MainPrefs, api: Api, appDatabase: AppDatabase): LoadMoviesHelper {
-        return LoadMoviesHelper(context, mainPrefs, api, appDatabase)
+    fun provideLoadMoviesHelper(context: Context, mainPrefs: MainPrefs, api: Api, appDatabase: AppDatabase, loadMoviesListenerHelper: LoadMoviesListenerHelper): LoadMoviesHelper {
+        return LoadMoviesHelper(context, mainPrefs, api, appDatabase, loadMoviesListenerHelper)
     }
 
     @Singleton
@@ -60,4 +61,11 @@ class ApplicationModule(private val mContext: Context) {
     fun provideDatabase(context: Context): AppDatabase {
         return Room.databaseBuilder(context, AppDatabase::class.java, AppDatabase.DATABASE_NAME).build();
     }
+
+    @Singleton
+    @Provides
+    fun provideLoadMoviesListenerHelper(): LoadMoviesListenerHelper {
+        return LoadMoviesListenerHelper()
+    }
+
 }

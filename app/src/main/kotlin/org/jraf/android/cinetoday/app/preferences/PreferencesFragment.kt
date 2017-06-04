@@ -39,9 +39,11 @@ import javax.inject.Inject
 
 class PreferencesFragment : PreferenceFragment() {
 
-    private var mLoadMoviesStarted: Boolean = false
     @Inject lateinit var mLoadMoviesHelper: LoadMoviesHelper
     @Inject lateinit var mMainPrefs: MainPrefs
+    @Inject lateinit var mLoadMoviesListenerHelper: LoadMoviesListenerHelper
+
+    private var mLoadMoviesStarted: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,11 +76,11 @@ class PreferencesFragment : PreferenceFragment() {
             true
         }
 
-        LoadMoviesListenerHelper.get().addListener(mLoadMoviesListener)
+        mLoadMoviesListenerHelper.addListener(mLoadMoviesListener)
     }
 
     override fun onDestroy() {
-        LoadMoviesListenerHelper.get().removeListener(mLoadMoviesListener)
+        mLoadMoviesListenerHelper.removeListener(mLoadMoviesListener)
         super.onDestroy()
     }
 
@@ -103,7 +105,7 @@ class PreferencesFragment : PreferenceFragment() {
             setLastUpdateDateSummary()
         }
 
-        override fun onLoadMoviesError(t: Throwable) {
+        override fun onLoadMoviesError(error: Throwable) {
             mLoadMoviesStarted = false
             setLastUpdateDateSummary()
         }
