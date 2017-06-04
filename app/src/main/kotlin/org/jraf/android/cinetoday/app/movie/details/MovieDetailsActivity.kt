@@ -25,7 +25,6 @@
 package org.jraf.android.cinetoday.app.movie.details
 
 import android.arch.lifecycle.Observer
-import android.content.Context
 import android.databinding.DataBindingUtil
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
@@ -51,6 +50,9 @@ class MovieDetailsActivity : BaseActivity() {
 
     private lateinit var mBinding: MovieDetailsBinding
     private val mTxtTheaterNameList = ArrayList<TextView>(3)
+    private val mTimeFormat: DateFormat by lazy {
+        android.text.format.DateFormat.getTimeFormat(this)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -100,7 +102,7 @@ class MovieDetailsActivity : BaseActivity() {
             val isTooLate = getTimeAsCalendar(showtime.time.time).before(now)
             val conShowtimeItem = inflater.inflate(R.layout.movie_details_showtime, mBinding.conShowtimes, false)
             val txtShowtime = conShowtimeItem.findViewById(R.id.txtShowtime) as TextView
-            txtShowtime.text = getTimeFormat(this).format(showtime.time)
+            txtShowtime.text = mTimeFormat.format(showtime.time)
             val txtIs3d = conShowtimeItem.findViewById(R.id.txtIs3d) as TextView
             txtIs3d.visibility = if (showtime.is3d) View.VISIBLE else View.GONE
             if (isTooLate) conShowtimeItem.alpha = .33f
@@ -130,9 +132,6 @@ class MovieDetailsActivity : BaseActivity() {
     }
 
     companion object {
-
-        private var sTimeFormat: DateFormat? = null
-
         private fun getTimeAsCalendar(time: Long): Calendar {
             val res = Calendar.getInstance()
             res.set(Calendar.HOUR_OF_DAY, 0)
@@ -140,16 +139,6 @@ class MovieDetailsActivity : BaseActivity() {
             res.set(Calendar.SECOND, 0)
             res.set(Calendar.MILLISECOND, 0)
             res.add(Calendar.MILLISECOND, time.toInt())
-            return res
-        }
-
-        private fun getTimeFormat(context: Context): DateFormat {
-            var res = sTimeFormat
-            if (res == null) {
-                res = android.text.format.DateFormat.getTimeFormat(context)
-                sTimeFormat = res
-                return res
-            }
             return res
         }
     }
