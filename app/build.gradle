@@ -2,8 +2,8 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 if (buildProperties.enableFabric.toBoolean()) apply plugin: 'io.fabric'
-//apply plugin: 'org.jraf.acpg.gradleplugin'
-apply plugin: 'com.getkeepsafe.dexcount'
+// Disabled because not compatible with the Gradle Android Plugin v3.x
+//apply plugin: 'com.getkeepsafe.dexcount'
 
 android {
     compileSdkVersion versions.compileSdk
@@ -69,10 +69,6 @@ android {
 
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
-
-//        // Necessary because of this issue: https://youtrack.jetbrains.com/issue/KT-17989
-//        debug.java.srcDirs += 'build/generated/source/acpg/debug'
-//        release.java.srcDirs += 'build/generated/source/acpg/release'
     }
 }
 
@@ -80,36 +76,26 @@ android.applicationVariants.all { variant ->
     // Create new copy tasks, for release builds
     if (variant.buildType.name == 'release') {
         variant.outputs.each { output ->
+            def outputFile = file("build/outputs/apk/release/$output.outputFileName")
             def apkName = "${globalProjectName}-${project.name}-${android.defaultConfig.versionCode}-${variant.flavorName}-signed.apk"
 
             // Copy the apk to the 'etc' folder
             def copyApkToEtc = tasks.create("copy${variant.name.capitalize()}ApkToEtc", Copy)
-            copyApkToEtc.from(output.outputFile)
+            copyApkToEtc.from(outputFile)
             copyApkToEtc.into('../etc/apk')
-            copyApkToEtc.rename output.outputFile.name, apkName
+            copyApkToEtc.rename output.outputFileName, apkName
 
             // Copy the apk to the deploy folder
             def copyApkToDeploy = tasks.create("copy${variant.name.capitalize()}ApkToDeploy", Copy)
-            copyApkToDeploy.from(output.outputFile)
+            copyApkToDeploy.from(outputFile)
             copyApkToDeploy.into(buildProperties.deployFolder)
-            copyApkToDeploy.rename output.outputFile.name, apkName
+            copyApkToDeploy.rename output.outputFileName, apkName
 
             // Make the copy tasks run after the assemble tasks of the variant
             variant.assemble.finalizedBy(copyApkToEtc, copyApkToDeploy)
         }
     }
 }
-
-//acpg {
-//    providerJavaPackage 'org.jraf.android.cinetoday.provider'
-//    authority 'org.jraf.android.cinetoday.provider'
-//    providerClassName 'CineTodayProvider'
-//    databaseFileName 'cinetoday.db'
-//    databaseVersion 1
-//    enableForeignKeys true
-//    useAnnotations true
-//    useSupportLibrary false
-//}
 
 dependencies {
     androidTestCompile("com.android.support.test.espresso:espresso-core:$versions.espresso", {
@@ -129,8 +115,8 @@ dependencies {
     compile "com.android.support:palette-v7:$versions.supportLibrary"
 
     //  Wear
-    provided "com.google.android.wearable:wearable:$versions.androidWearable"
     compile "com.google.android.support:wearable:$versions.androidWearable"
+    provided "com.google.android.wearable:wearable:$versions.androidWearable"
 
     // Play Services
     compile "com.google.android.gms:play-services-gcm:$versions.playServices"
@@ -141,7 +127,8 @@ dependencies {
     // JRAF
     kapt "org.jraf:prefs-compiler:$versions.prefs"
     compile "org.jraf:prefs:$versions.prefs"
-    compile 'com.github.BoD:jraf-android-util:-SNAPSHOT'
+//    compile 'com.github.BoD:jraf-android-util:-SNAPSHOT'
+    compile 'org.jraf:jraf-android-util:1.0.0'
 
     // OkHttp
     compile "com.squareup.okhttp3:okhttp:$versions.okHttp"
