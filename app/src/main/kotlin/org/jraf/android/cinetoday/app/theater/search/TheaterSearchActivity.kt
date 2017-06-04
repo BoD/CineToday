@@ -37,14 +37,20 @@ import org.jraf.android.util.log.Log
 
 class TheaterSearchActivity : Activity(), TheaterSearchCallbacks {
 
+    companion object {
+        val EXTRA_RESULT = "${TheaterSearchActivity::class.java.name}.EXTRA_RESULT"
+    }
+
     private var mBinding: TheaterSearchBinding? = null
-    private var mHandler: Handler? = null
+    private val mHandler = Handler()
     private var mQuery: String? = null
+    private val mTheaterSearchFragment: TheaterSearchFragment by lazy {
+        fragmentManager.findFragmentById(R.id.fraTheaterSearch) as TheaterSearchFragment
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mBinding = DataBindingUtil.setContentView<TheaterSearchBinding>(this, R.layout.theater_search)
-        mHandler = Handler()
     }
 
     override fun onTheaterClicked(theater: Theater) {
@@ -57,26 +63,17 @@ class TheaterSearchActivity : Activity(), TheaterSearchCallbacks {
 
     override fun onSearch(query: String) {
         mQuery = query
-        mHandler!!.removeCallbacks(mQueryRunnable)
-        mHandler!!.postDelayed(mQueryRunnable, 500)
-    }
-
-    val mTheaterSearchFragment: TheaterSearchFragment by lazy {
-        fragmentManager.findFragmentById(R.id.fraTheaterSearch) as TheaterSearchFragment
+        mHandler.removeCallbacks(mQueryRunnable)
+        mHandler.postDelayed(mQueryRunnable, 500)
     }
 
     private val mQueryRunnable = Runnable {
-        val query = mQuery!!.trim { it <= ' ' }
-        mTheaterSearchFragment.search(query)
+        val query = mQuery?.trim()
+        if (query != null) mTheaterSearchFragment.search(query)
     }
 
     override fun onDestroy() {
-        mHandler!!.removeCallbacks(mQueryRunnable)
+        mHandler.removeCallbacks(mQueryRunnable)
         super.onDestroy()
-    }
-
-    companion object {
-        private val PREFIX = TheaterSearchActivity::class.java!!.getName() + "."
-        val EXTRA_RESULT = PREFIX + "EXTRA_RESULT"
     }
 }
