@@ -10,19 +10,17 @@ buildscript {
     // Versions used across modules
     ext.versions = [:]
     ext.versions.with {
-        androidGradlePlugin = '2.4.0-alpha7'
-//        androidGradlePlugin = '3.0.0-alpha1'
-        gradleVersionsPlugin = '0.14.0'
-        fabricPlugin = '1.22.1'
+        androidGradlePlugin = '3.0.0-alpha3'
+        gradleVersionsPlugin = '0.15.0'
+        fabricPlugin = '1.22.2'
         dexCountPlugin = '0.6.4'
-        acpgPlugin = '1.13.0'
-        libFrc = '1.5.2'
+        libFrc = '1.6.1'
 
         compileSdk = 25
         targetSdk = 25
 
         buildTools = '25.0.2'
-        kotlin = '1.1.2-2'
+        kotlin = '1.1.2-3'
         supportLibrary = '25.3.1'
         playServices = '10.2.6'
         espresso = '2.2.2'
@@ -32,10 +30,10 @@ buildscript {
         rxJava = '2.0.8'
         rxAndroid = '2.0.1'
         crashlytics = '2.6.8'
-        dagger = '2.9'
-        androidWearable = '2.0.1'
+        dagger = '2.11'
+        androidWearable = '2.0.2'
         prefs = '1.1.1'
-        okHttp = '3.7.0'
+        okHttp = '3.8.0'
         glide = '3.7.0'
         glideOkHttp = '1.4.0'
         jsr250 = '1.0'
@@ -55,7 +53,6 @@ buildscript {
         classpath "ca.rmen:lib-french-revolutionary-calendar:$versions.libFrc"
         classpath "io.fabric.tools:gradle:$versions.fabricPlugin"
         classpath "com.getkeepsafe.dexcount:dexcount-gradle-plugin:$versions.dexCountPlugin"
-        classpath "org.jraf:acpg-gradle-plugin:$versions.acpgPlugin"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$versions.kotlin"
     }
 }
