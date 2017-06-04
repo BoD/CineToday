@@ -217,10 +217,8 @@ class LoadMoviesHelper(private val mContext: Context, private val mMainPrefs: Ma
         loadMoviesListenerHelper.onLoadMoviesSuccess()
 
         // 4/ Show a notification
-        val newMovieTitles = ArrayList<String>(movies.size)
-        for (movie in movies) {
-            if (movie.isNew) newMovieTitles.add(movie.localTitle)
-        }
+        val newMovieTitles = movies.filter { it.isNew }
+                .map { it.localTitle }
         if (!newMovieTitles.isEmpty()) showNotification(newMovieTitles)
     }
 
@@ -240,7 +238,7 @@ class LoadMoviesHelper(private val mContext: Context, private val mMainPrefs: Ma
         }
     }
 
-    private fun showNotification(newMovieTitles: ArrayList<String>) {
+    private fun showNotification(newMovieTitles: List<String>) {
         Log.d()
         val mainNotifBuilder = Notification.Builder(mContext)
 
@@ -263,20 +261,11 @@ class LoadMoviesHelper(private val mContext: Context, private val mMainPrefs: Ma
         val mainActivityPendingIntent = PendingIntent.getActivity(mContext, 0, mainActivityIntent, 0)
         mainNotifBuilder.setContentIntent(mainActivityPendingIntent)
 
-        //        // Wear specifics
+        // Wear specifics
         val wearableExtender = Notification.WearableExtender()
-        //        wearableExtender.setBackground(BitmapFactory.decodeResource(mContext.getResources(), R.drawable.ic_notif));
-        //        wearableExtender
-        //                .addAction(new Notification.Action.Builder(Icon.createWithResource(mContext, R.mipmap.ic_launcher), "Open", mainActivityPendingIntent).build());
-        //        wearableExtender.setContentAction(0);
-        //
-        //
-
         wearableExtender.hintContentIntentLaunchesActivity = true
         val wearableNotifBuilder = wearableExtender.extend(mainNotifBuilder)
         val notification = wearableNotifBuilder.build()
-        //        Notification notification = mainNotifBuilder.build();
-
 
         val notificationManager = mContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.notify(NOTIFICATION_ID, notification)

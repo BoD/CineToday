@@ -50,14 +50,13 @@ class LoadMoviesTaskService : GcmTaskService() {
     }
 
     companion object {
-
         fun scheduleTask(context: Context) {
             val periodSecs = TimeUnit.HOURS.toSeconds(12)
             val flexSecs = TimeUnit.HOURS.toSeconds(1)
             val tag = "dailyLoadMovies"
             val periodicTask = PeriodicTask.Builder()
                     .setTag(tag)
-                    .setService(LoadMoviesTaskService::class.java!!)
+                    .setService(LoadMoviesTaskService::class.java)
                     .setPeriod(periodSecs)
                     .setFlex(flexSecs)
                     .setPersisted(true)
