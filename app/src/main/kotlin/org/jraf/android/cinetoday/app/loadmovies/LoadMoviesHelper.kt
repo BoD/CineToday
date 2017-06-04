@@ -59,6 +59,11 @@ import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
 
 class LoadMoviesHelper(private val mContext: Context, private val mMainPrefs: MainPrefs, private val mApi: Api, private val mAppDatabase: AppDatabase) {
+    companion object {
+        private const val NOTIFICATION_ID = 0
+        private const val MIN_BANDWIDTH_KBPS = 320
+    }
+
     @Volatile private var mWantStop: Boolean = false
 
     fun setWantStop(wantStop: Boolean) {
@@ -281,10 +286,5 @@ class LoadMoviesHelper(private val mContext: Context, private val mMainPrefs: Ma
         val intent = Intent(mContext, LoadMoviesIntentService::class.java)
         intent.action = LoadMoviesIntentService.ACTION_LOAD_MOVIES
         mContext.startService(intent)
-    }
-
-    companion object {
-        private val NOTIFICATION_ID = 0
-        private val MIN_BANDWIDTH_KBPS = 320
     }
 }
