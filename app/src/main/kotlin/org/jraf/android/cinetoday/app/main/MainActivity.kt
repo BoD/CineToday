@@ -56,6 +56,7 @@ import org.jraf.android.cinetoday.databinding.MainBinding
 import org.jraf.android.cinetoday.model.movie.Movie
 import org.jraf.android.cinetoday.model.theater.Theater
 import org.jraf.android.cinetoday.util.base.BaseActivity
+import org.jraf.android.cinetoday.util.fragment.FragmentDelegate
 import org.jraf.android.cinetoday.util.uri.setData
 import org.jraf.android.util.dialog.AlertDialogListener
 import org.jraf.android.util.dialog.FrameworkAlertDialogFragment
@@ -68,12 +69,18 @@ import javax.inject.Inject
 
 class MainActivity : BaseActivity(), MovieListCallbacks, TheaterFavoritesCallbacks, WearableActionDrawer.OnMenuItemClickListener, AlertDialogListener {
 
+    @Inject lateinit var mDatabase: AppDatabase
+    @Inject lateinit var mLoadMoviesHelper: LoadMoviesHelper
+
     private lateinit var mBinding: MainBinding
     private var mAtLeastOneFavorite: Boolean = false
     private var mShouldClosePeekingActionDrawer: Boolean = false
 
-    @Inject lateinit var mDatabase: AppDatabase
-    @Inject lateinit var mLoadMoviesHelper: LoadMoviesHelper
+    companion object {
+        private const val REQUEST_ADD_THEATER = 0
+        private const val DIALOG_THEATER_DELETE_CONFIRM = 0
+        private const val DELAY_HIDE_PEEKING_ACTION_DRAWER_MS = 2500
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -209,46 +216,16 @@ class MainActivity : BaseActivity(), MovieListCallbacks, TheaterFavoritesCallbac
     // region Fragments.
     //--------------------------------------------------------------------------
 
-    private val mMovieListFragment: MovieListFragment by lazy {
-        val current = fragmentManager.findFragmentByTag(MovieListFragment::class.java.name) as MovieListFragment?
-        val res: MovieListFragment
-        if (current == null) {
-            res = MovieListFragment.newInstance()
-            fragmentManager.beginTransaction()
-                    .add(R.id.conFragment, res, MovieListFragment::class.java.name)
-                    .commit()
-        } else {
-            res = current
-        }
-        res
+    private val mMovieListFragment: MovieListFragment by FragmentDelegate(R.id.conFragment, "MovieList") {
+        MovieListFragment.newInstance()
     }
 
-    private val mTheaterFavoritesFragment: TheaterFavoritesFragment by lazy {
-        val current = fragmentManager.findFragmentByTag(TheaterFavoritesFragment::class.java.name) as TheaterFavoritesFragment?
-        val res: TheaterFavoritesFragment
-        if (current == null) {
-            res = TheaterFavoritesFragment.newInstance()
-            fragmentManager.beginTransaction()
-                    .add(R.id.conFragment, res, TheaterFavoritesFragment::class.java.name)
-                    .commit()
-        } else {
-            res = current
-        }
-        res
+    private val mTheaterFavoritesFragment: TheaterFavoritesFragment by FragmentDelegate(R.id.conFragment, "TheaterFavorites") {
+        TheaterFavoritesFragment.newInstance()
     }
 
-    private val mPreferencesFragment: PreferencesFragment by lazy {
-        val current = fragmentManager.findFragmentByTag(PreferencesFragment::class.java.name) as PreferencesFragment?
-        val res: PreferencesFragment
-        if (current == null) {
-            res = PreferencesFragment.newInstance()
-            fragmentManager.beginTransaction()
-                    .add(R.id.conFragment, res, PreferencesFragment::class.java.name)
-                    .commit()
-        } else {
-            res = current
-        }
-        res
+    private val mPreferencesFragment: PreferencesFragment by FragmentDelegate(R.id.conFragment, "Preferences") {
+        PreferencesFragment.newInstance()
     }
 
     private fun showMovieListFragment() {
@@ -391,13 +368,6 @@ class MainActivity : BaseActivity(), MovieListCallbacks, TheaterFavoritesCallbac
     override fun onDialogClickNegative(dialogId: Int, payload: Any) {}
 
     override fun onDialogClickListItem(dialogId: Int, index: Int, payload: Any) {}
-
-    companion object {
-        private val REQUEST_ADD_THEATER = 0
-        private val DIALOG_THEATER_DELETE_CONFIRM = 0
-        private val DELAY_HIDE_PEEKING_ACTION_DRAWER_MS = 2500
-    }
-
 
     // endregion
 }
