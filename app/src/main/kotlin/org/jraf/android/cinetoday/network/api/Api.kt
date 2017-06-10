@@ -45,13 +45,12 @@ import java.text.SimpleDateFormat
 import java.util.ArrayList
 import java.util.Date
 import java.util.Locale
-import java.util.SortedSet
 
 class Api(private val mCachingOkHttpClient: OkHttpClient, private val mMovieCodec: MovieCodec, private val mShowTimeCodec: ShowtimeCodec, private val mTheaterCodec: TheaterCodec) {
 
     @WorkerThread
     @Throws(IOException::class, ParseException::class)
-    fun getMovieList(movies: SortedSet<Movie>, theaterId: String, date: Date) {
+    fun getMovieList(movies: MutableSet<Movie>, theaterId: String, date: Date) {
         val url = getBaseBuilder(PATH_SHOWTIMELIST)
                 .addQueryParameter(QUERY_THEATERS_KEY, theaterId)
                 .addQueryParameter(QUERY_DATE_KEY, SIMPLE_DATE_FORMAT.format(date))
@@ -62,7 +61,7 @@ class Api(private val mCachingOkHttpClient: OkHttpClient, private val mMovieCode
 
     @VisibleForTesting(otherwise = PRIVATE)
     @Throws(ParseException::class)
-    fun parseMovieList(movies: SortedSet<Movie>, jsonStr: String, theaterId: String, date: Date) {
+    fun parseMovieList(movies: MutableSet<Movie>, jsonStr: String, theaterId: String, date: Date) {
         try {
             val jsonRoot = JSONObject(jsonStr)
             val jsonFeed = jsonRoot.getJSONObject("feed")

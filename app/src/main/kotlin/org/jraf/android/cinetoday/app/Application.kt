@@ -24,16 +24,15 @@
  */
 package org.jraf.android.cinetoday.app
 
+import android.annotation.SuppressLint
 import android.os.Handler
 import android.os.StrictMode
-
 import com.crashlytics.android.Crashlytics
-
 import io.fabric.sdk.android.Fabric
-
 import org.jraf.android.cinetoday.BuildConfig
 import org.jraf.android.cinetoday.dagger.Components
 import org.jraf.android.util.log.Log
+
 
 class Application : android.app.Application() {
 
@@ -44,7 +43,7 @@ class Application : android.app.Application() {
     override fun onCreate() {
         super.onCreate()
         // Log
-        Log.init(this, TAG)
+        Log.init(this, TAG, BuildConfig.DEBUG_LOGS)
 
         // Strict mode
         if (BuildConfig.STRICT_MODE) setupStrictMode()
@@ -54,6 +53,9 @@ class Application : android.app.Application() {
 
         // Dagger
         Components.init(this)
+
+        // Sqlite debug logs
+        if (BuildConfig.DEBUG_LOGS) enableSqliteDebugLogs(false)
     }
 
     private fun setupStrictMode() {
@@ -61,6 +63,27 @@ class Application : android.app.Application() {
         Handler().post {
             StrictMode.setThreadPolicy(StrictMode.ThreadPolicy.Builder().detectAll().penaltyLog().build())
             StrictMode.setVmPolicy(StrictMode.VmPolicy.Builder().detectAll().penaltyLog().build())
+        }
+    }
+
+    @SuppressLint("PrivateApi")
+    private fun enableSqliteDebugLogs(executionTime: Boolean) {
+        try {
+            val sqliteDebugClass = Class.forName("android.database.sqlite.SQLiteDebug")
+
+            // Statements
+            val debugStatementsField = sqliteDebugClass.getDeclaredField("DEBUG_SQL_STATEMENTS")
+            debugStatementsField.isAccessible = true
+            debugStatementsField.set(null, true)
+
+            // Execution time (more verbose)
+            if (executionTime) {
+                val debugTimeField = sqliteDebugClass.getDeclaredField("DEBUG_SQL_TIME")
+                debugTimeField.isAccessible = true
+                debugTimeField.set(null, true)
+            }
+        } catch (t: Throwable) {
+            Log.w(t, "Could not enable SQLiteDebug logging")
         }
     }
 }

@@ -54,7 +54,10 @@ interface ShowtimeDao {
             + "FROM "
             + "showtime JOIN theater ON showtime.theaterId = theater.id "
             + "WHERE "
-            + "movieId = :p0")
+            + "movieId = :p0 "
+            + "ORDER BY "
+            + "showtime.theaterId, "
+            + "showtime.time")
     fun showtimesWithTheaterByMovieIdLive(movieId: String): LiveData<Array<ShowtimeWithTheater>>
 }
 
