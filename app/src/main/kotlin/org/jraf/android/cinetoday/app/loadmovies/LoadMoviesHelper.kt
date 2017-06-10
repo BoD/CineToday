@@ -120,6 +120,8 @@ class LoadMoviesHelper(
         Log.d("Fast network success=%s", highBandwidthNetworkSuccess)
 
         val movies = hashSetOf<Movie>()
+        val moviesFromDbToKeep = mutableListOf<Movie>()
+        val allMoviesFromDb = mAppDatabase.movieDao.allMovies().associateBy { it.id }
         try {
             // 1/ Retrieve list of movies (including showtimes), for all the theaters
             try {
@@ -145,19 +147,24 @@ class LoadMoviesHelper(
             // 2/ Retrieve more details about each movie
             val size = movies.size
             var i = 0
-            for (movie in movies) {
-                mLoadMoviesListenerHelper.onLoadMoviesProgress(i, size, movie.localTitle)
+            for (movieFromApi in movies) {
+                mLoadMoviesListenerHelper.onLoadMoviesProgress(i, size, movieFromApi.localTitle)
 
-                // Check if we already have info for this movie
-                if (mAppDatabase.movieDao.countMovieById(movie.id) == 0) {
-                    movie.isNew = true
-
-                    // Get movie info
+                // Check if we already have this movie in the db
+                val movieFromDb = allMoviesFromDb[movieFromApi.id]
+                if (movieFromDb != null) {
+                    // Already in db: keep it (with updated showtimes)
+                    movieFromDb.isNew = false
+                    movieFromDb.todayShowtimes.putAll(movieFromApi.todayShowtimes)
+                    moviesFromDbToKeep += movieFromDb
+                } else {
+                    // Not in db: get movie info
+                    movieFromApi.isNew = true
                     try {
-                        mApi.getMovieInfo(movie)
-                        Log.d(movie.toString())
+                        mApi.getMovieInfo(movieFromApi)
+                        Log.d(movieFromApi.toString())
                     } catch (e: Exception) {
-                        Log.e(e, "Could not load movie info: movie = %s", movie)
+                        Log.e(e, "Could not load movie info: movie = %s", movieFromApi)
                         mLoadMoviesListenerHelper.onLoadMoviesError(e)
                         throw e
                     }
@@ -179,7 +186,7 @@ class LoadMoviesHelper(
                 val finalHeight = height
                 HandlerUtil.runOnUiThread {
                     Glide.with(mContext)
-                            .load(movie.posterUri)
+                            .load(movieFromApi.posterUri)
                             .centerCrop()
                             .diskCacheStrategy(DiskCacheStrategy.RESULT)
                             .listener(object : RequestListener<String, GlideDrawable> {
@@ -192,7 +199,7 @@ class LoadMoviesHelper(
                                                              isFirstResource: Boolean): Boolean {
                                     if (resource !is GlideBitmapDrawable) return false
                                     Palette.from(resource.bitmap)
-                                            .generate { palette -> movie.color = palette.getDarkVibrantColor(mContext.getColor(R.color.movie_list_bg)) }
+                                            .generate { palette -> movieFromApi.color = palette.getDarkVibrantColor(mContext.getColor(R.color.movie_list_bg)) }
                                     return false
                                 }
                             })
@@ -200,7 +207,7 @@ class LoadMoviesHelper(
                 }
 
                 i++
-                mLoadMoviesListenerHelper.onLoadMoviesProgress(i, size, movie.localTitle)
+                mLoadMoviesListenerHelper.onLoadMoviesProgress(i, size, movieFromApi.localTitle)
             }
 
         } finally {
@@ -211,6 +218,12 @@ class LoadMoviesHelper(
             }
         }
 
+        // Remove from the list the incomplete movies for which we already have complete info in the db
+        movies.removeAll(moviesFromDbToKeep)
+
+        // Add to the list the complete movies that were in the db
+        movies.addAll(moviesFromDbToKeep)
+
         // 3/ Save everything to the local db
         persist(movies)
 
@@ -219,7 +232,8 @@ class LoadMoviesHelper(
         mLoadMoviesListenerHelper.onLoadMoviesSuccess()
 
         // 4/ Show a notification
-        val newMovieTitles = movies.filter { it.isNew }
+        val newMovieTitles = movies
+                .filter { it.isNew }
                 .map { it.localTitle }
         if (!newMovieTitles.isEmpty()) showNotification(newMovieTitles)
     }
@@ -229,7 +243,7 @@ class LoadMoviesHelper(
         mAppDatabase.showtimeDao.deleteAll()
         mAppDatabase.movieDao.deleteAll()
 
-        // Insert movies
+        // Insert (only new) movies
         mAppDatabase.movieDao.insert(movies.toList())
 
         // Insert showtimes

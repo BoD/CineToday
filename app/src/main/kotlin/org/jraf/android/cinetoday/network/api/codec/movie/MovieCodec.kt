@@ -38,7 +38,8 @@ class MovieCodec {
         try {
             movie.id = jsonMovie.getString("code")
             movie.localTitle = jsonMovie.getString("title")
-            movie.originalTitle = jsonMovie.optString("originalTitle", null) ?: ""
+            // Original title defaults to local title
+            movie.originalTitle = jsonMovie.optString("originalTitle", null) ?: movie.localTitle
             movie.synopsis = jsonMovie.optString("synopsis", null)?.let {
                 // Strip html
                 Html.fromHtml(it).toString().trim()

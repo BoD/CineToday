@@ -49,10 +49,6 @@ interface MovieDao {
     @Query("SELECT * FROM movie where id = :p0")
     fun movieByIdLive(id: String): LiveData<Movie?>
 
-    // TODO "p0" is named "p0" because of this issue: https://youtrack.jetbrains.com/issue/KT-17959
-    @Query("SELECT COUNT(*) FROM movie where id = :p0")
-    fun countMovieById(id: String): Int
-
     @Query("DELETE FROM movie")
     fun deleteAll()
 
