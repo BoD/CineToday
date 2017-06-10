@@ -45,6 +45,10 @@ import org.jraf.android.cinetoday.dagger.Components
 import java.io.InputStream
 
 class CineTodayGlideModule : GlideModule {
+    companion object {
+        private const val CACHE_SIZE_B = 5 * 1024 * 1024
+        private const val CACHE_DIRECTORY_NAME = "images"
+    }
 
     override fun applyOptions(context: Context, builder: GlideBuilder) {
         // Disk cache
@@ -73,8 +77,7 @@ class CineTodayGlideModule : GlideModule {
         override fun build(context: Context, factories: GenericLoaderFactory): ModelLoader<GlideUrl, InputStream> {
             return object : OkHttpUrlLoader(mOkHttpClient) {
                 override fun getResourceFetcher(model: GlideUrl?, width: Int, height: Int): DataFetcher<InputStream> {
-                    var model = model
-                    if (model != null) {
+                    val zimageModel = model?.let {
                         val uriStr = model.toStringUrl()
                         var uri = Uri.parse("http://edge.zimage.io")
                         uri = uri.buildUpon()
@@ -82,20 +85,16 @@ class CineTodayGlideModule : GlideModule {
                                 .appendQueryParameter("w", width.toString())
                                 .appendQueryParameter("h", height.toString())
                                 .appendQueryParameter("mode", "crop")
-                                //                                .appendQueryParameter("format", "webp")
+                                // Webp should work but doesn't :(
+                                // .appendQueryParameter("format", "webp")
                                 .build()
-                        model = GlideUrl(uri.toString())
+                        GlideUrl(uri.toString())
                     }
-                    return super.getResourceFetcher(model, width, height)
+                    return super.getResourceFetcher(zimageModel, width, height)
                 }
             }
         }
 
         override fun teardown() {}
-    }
-
-    companion object {
-        private val CACHE_SIZE_B = 5 * 1024 * 1024
-        private val CACHE_DIRECTORY_NAME = "images"
     }
 }

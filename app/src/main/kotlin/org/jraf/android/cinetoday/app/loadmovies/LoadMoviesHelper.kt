@@ -52,8 +52,6 @@ import org.jraf.android.util.handler.HandlerUtil
 import org.jraf.android.util.log.Log
 import org.jraf.android.util.ui.screenshape.ScreenShapeHelper
 import java.util.Date
-import java.util.SortedSet
-import java.util.TreeSet
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
@@ -121,7 +119,7 @@ class LoadMoviesHelper(
         val highBandwidthNetworkSuccess = requestHighBandwidthNetwork(10, TimeUnit.SECONDS)
         Log.d("Fast network success=%s", highBandwidthNetworkSuccess)
 
-        val movies = TreeSet<Movie>()
+        val movies = hashSetOf<Movie>()
         try {
             // 1/ Retrieve list of movies (including showtimes), for all the theaters
             try {
@@ -226,7 +224,7 @@ class LoadMoviesHelper(
         if (!newMovieTitles.isEmpty()) showNotification(newMovieTitles)
     }
 
-    private fun persist(movies: SortedSet<Movie>) {
+    private fun persist(movies: Set<Movie>) {
         // Delete all showtimes and movies
         mAppDatabase.showtimeDao.deleteAll()
         mAppDatabase.movieDao.deleteAll()

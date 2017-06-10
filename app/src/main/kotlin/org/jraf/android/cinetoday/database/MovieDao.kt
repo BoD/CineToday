@@ -35,10 +35,10 @@ interface MovieDao {
     @Insert
     fun insert(movies: List<Movie>)
 
-    @Query("SELECT * FROM movie")
+    @Query("SELECT * FROM movie ORDER BY releaseDate DESC")
     fun allMoviesLive(): LiveData<Array<Movie>>
 
-    @Query("SELECT * FROM movie")
+    @Query("SELECT * FROM movie ORDER BY releaseDate DESC")
     fun allMovies(): Array<Movie>
 
     // TODO "p0" is named "p0" because of this issue: https://youtrack.jetbrains.com/issue/KT-17959
@@ -50,7 +50,7 @@ interface MovieDao {
     fun movieByIdLive(id: String): LiveData<Movie?>
 
     // TODO "p0" is named "p0" because of this issue: https://youtrack.jetbrains.com/issue/KT-17959
-    @Query("SELECT count(*) FROM movie where id = :p0")
+    @Query("SELECT COUNT(*) FROM movie where id = :p0")
     fun countMovieById(id: String): Int
 
     @Query("DELETE FROM movie")

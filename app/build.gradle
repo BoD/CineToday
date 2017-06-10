@@ -22,6 +22,8 @@ android {
         buildConfigField 'String', 'BUILD_DATE', "\"${buildDate}\""
         // For now we enable strict mode for all the configs
         buildConfigField 'boolean', 'STRICT_MODE', 'true'
+        // For now we enable debug logs all the configs
+        buildConfigField 'boolean', 'DEBUG_LOGS', 'true'
 
         resConfigs 'en', 'fr'
 
@@ -115,7 +117,7 @@ dependencies {
     compile "com.android.support:palette-v7:$versions.supportLibrary"
 
     //  Wear
-    compile "com.google.android.support:wearable:$versions.androidWearable"
+    provided "com.google.android.support:wearable:$versions.androidWearable"
     provided "com.google.android.wearable:wearable:$versions.androidWearable"
 
     // Play Services
@@ -127,8 +129,8 @@ dependencies {
     // JRAF
     kapt "org.jraf:prefs-compiler:$versions.prefs"
     compile "org.jraf:prefs:$versions.prefs"
-//    compile 'com.github.BoD:jraf-android-util:-SNAPSHOT'
-    compile 'org.jraf:jraf-android-util:1.0.0'
+    compile 'com.github.BoD:jraf-android-util:-SNAPSHOT'
+//    compile 'org.jraf:jraf-android-util:1.0.0'
 
     // OkHttp
     compile "com.squareup.okhttp3:okhttp:$versions.okHttp"

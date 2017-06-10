@@ -59,7 +59,7 @@ data class Movie(
 
         var isNew: Boolean,
         var color: Int?
-) : HasId, Comparable<Movie> {
+) : HasId {
 
     @Ignore
     constructor() : this("", "", "", null, null, null, null, emptyArray<String>(), null, null, "", null, false, null)
@@ -77,18 +77,4 @@ data class Movie(
 
     override fun hashCode() = id.hashCode()
 
-    /**
-     * Compare in *reverse* release date order.
-     */
-    override fun compareTo(other: Movie): Int {
-        var res: Int
-        val otherReleaseDate = other.releaseDate
-        if (otherReleaseDate != null && releaseDate != null) {
-            res = otherReleaseDate.compareTo(releaseDate)
-            if (res == 0) res = id.compareTo(other.id)
-        } else {
-            res = id.compareTo(other.id)
-        }
-        return res
-    }
 }
