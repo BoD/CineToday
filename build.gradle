@@ -21,7 +21,7 @@ buildscript {
 
         buildTools = '25.0.2'
         kotlin = '1.1.2-3'
-        supportLibrary = '25.3.1'
+        supportLibrary = '25.4.0'
         playServices = '10.2.6'
         espresso = '2.2.2'
         junit = '4.12'

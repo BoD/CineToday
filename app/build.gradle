@@ -18,8 +18,6 @@ android {
 
         testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
 
-        buildConfigField 'String', 'GIT_SHA1', "\"${gitSha1}\""
-        buildConfigField 'String', 'BUILD_DATE', "\"${buildDate}\""
         // For now we enable strict mode for all the configs
         buildConfigField 'boolean', 'STRICT_MODE', 'true'
         // For now we enable debug logs all the configs
@@ -46,10 +44,14 @@ android {
 
     buildTypes {
         debug {
+            buildConfigField 'String', 'GIT_SHA1', "\"dev\""
+            buildConfigField 'String', 'BUILD_DATE', "\"dev\""
             buildConfigField 'boolean', 'CRASH_REPORT', 'false'
         }
 
         release {
+            buildConfigField 'String', 'GIT_SHA1', "\"${gitSha1}\""
+            buildConfigField 'String', 'BUILD_DATE', "\"${buildDate}\""
             buildConfigField 'boolean', 'CRASH_REPORT', 'true'
 
             minifyEnabled true
@@ -129,8 +131,8 @@ dependencies {
     // JRAF
     kapt "org.jraf:prefs-compiler:$versions.prefs"
     compile "org.jraf:prefs:$versions.prefs"
-    compile 'com.github.BoD:jraf-android-util:-SNAPSHOT'
-//    compile 'org.jraf:jraf-android-util:1.0.0'
+//    compile 'com.github.BoD:jraf-android-util:-SNAPSHOT'
+    compile 'org.jraf:jraf-android-util:1.0.0'
 
     // OkHttp
     compile "com.squareup.okhttp3:okhttp:$versions.okHttp"

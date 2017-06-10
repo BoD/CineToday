@@ -23,7 +23,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
-        android:paddingBottom="@{ScreenShapeHelper.get(context).chinHeight}">
+        android:paddingTop="@{Math.max(ScreenShapeHelper.get(context).getSafeMargin(@fraction/movie_list_item_poster), ScreenShapeHelper.get(context).chinHeight)}"
+        android:paddingBottom="@{Math.max(ScreenShapeHelper.get(context).getSafeMargin(@fraction/movie_list_item_poster), ScreenShapeHelper.get(context).chinHeight)}">
 
         <android.support.percent.PercentFrameLayout
             android:layout_gravity="center_horizontal"
