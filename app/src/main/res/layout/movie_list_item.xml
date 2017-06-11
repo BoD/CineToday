@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    >
 
     <data>
 
@@ -14,53 +15,49 @@
         <variable
             name="movie"
             type="org.jraf.android.cinetoday.model.movie.Movie" />
-
-
     </data>
 
-    <android.support.percent.PercentFrameLayout
-        android:id="@+id/conPoster"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:clipToPadding="false"
-        android:paddingTop="@{Math.max(ScreenShapeHelper.get(context).getSafeMargin(@fraction/movie_list_item_poster), ScreenShapeHelper.get(context).chinHeight)}"
-        android:paddingBottom="@{Math.max(ScreenShapeHelper.get(context).getSafeMargin(@fraction/movie_list_item_poster), ScreenShapeHelper.get(context).chinHeight)}">
+        android:clipToPadding="false">
 
         <android.support.percent.PercentFrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
             android:layout_gravity="center_horizontal"
             android:background="@android:color/white"
             android:elevation="8dp"
             android:foreground="?android:attr/selectableItemBackground"
             android:onClick="@{() -> callbacks.onMovieClick(movie)}"
-            android:padding="@dimen/movie_list_item_posterBorder"
-            app:layout_aspectRatio="@fraction/movie_list_item_poster"
-            app:layout_heightPercent="100%">
+            android:paddingBottom="@dimen/movie_list_item_posterBorder_topBottom"
+            android:paddingLeft="@dimen/movie_list_item_posterBorder_leftRight"
+            android:paddingRight="@dimen/movie_list_item_posterBorder_leftRight"
+            android:paddingTop="@dimen/movie_list_item_posterBorder_topBottom">
 
             <!-- Placeholder -->
             <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
                 android:background="@drawable/shape_movie_place_holder_bg"
-                android:scaleType="center"
-                android:src="@drawable/movie_place_holder" />
+                app:layout_aspectRatio="@fraction/movie_list_item_poster"
+                app:layout_heightPercent="100%" />
 
             <!-- Title -->
             <TextView
                 style="@style/Widget.CineToday.TextView.Movie.Details.Title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
+                android:gravity="center"
+                android:padding="8dp"
                 android:text="@{movie.localTitle}"
-                app:layout_marginTopPercent="20%"
-                tools:text="The Revenant" />
+                app:layout_aspectRatio="@fraction/movie_list_item_poster"
+                app:layout_heightPercent="100%"
+                tools:text="The Beauty and the Beast" />
 
             <!-- Poster -->
             <ImageView
                 android:id="@+id/imgPoster"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                app:layout_aspectRatio="@fraction/movie_list_item_poster"
+                app:layout_heightPercent="100%" />
 
         </android.support.percent.PercentFrameLayout>
 
-    </android.support.percent.PercentFrameLayout>
+    </FrameLayout>
 </layout>

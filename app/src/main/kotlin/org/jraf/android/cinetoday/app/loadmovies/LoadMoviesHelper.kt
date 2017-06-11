@@ -176,35 +176,7 @@ class LoadMoviesHelper(
                 }
 
                 // Download the poster now
-                var height = ScreenShapeHelper.get(mContext).height
-                var width = (mContext.resources.getFraction(R.fraction.movie_list_item_poster, height, 1) + .5f).toInt()
-                val border = mContext.resources.getDimensionPixelSize(R.dimen.movie_list_item_posterBorder)
-                height -= border * 2
-                width -= border * 2
-                // Glide insists this is done on the main thread
-                val finalWidth = width
-                val finalHeight = height
-                HandlerUtil.runOnUiThread {
-                    Glide.with(mContext)
-                            .load(movieFromApi.posterUri)
-                            .centerCrop()
-                            .diskCacheStrategy(DiskCacheStrategy.RESULT)
-                            .listener(object : RequestListener<String, GlideDrawable> {
-                                override fun onException(e: Exception, model: String, target: Target<GlideDrawable>, isFirstResource: Boolean): Boolean {
-                                    return false
-                                }
-
-                                override fun onResourceReady(resource: GlideDrawable, model: String, target: Target<GlideDrawable>,
-                                                             isFromMemoryCache: Boolean,
-                                                             isFirstResource: Boolean): Boolean {
-                                    if (resource !is GlideBitmapDrawable) return false
-                                    Palette.from(resource.bitmap)
-                                            .generate { palette -> movieFromApi.color = palette.getDarkVibrantColor(mContext.getColor(R.color.movie_list_bg)) }
-                                    return false
-                                }
-                            })
-                            .preload(finalWidth, finalHeight)
-                }
+                downloadPoster(movieFromApi)
 
                 i++
                 mLoadMoviesListenerHelper.onLoadMoviesProgress(i, size, movieFromApi.localTitle)
@@ -236,6 +208,45 @@ class LoadMoviesHelper(
                 .filter { it.isNew }
                 .map { it.localTitle }
         if (!newMovieTitles.isEmpty()) showNotification(newMovieTitles)
+    }
+
+    private fun downloadPoster(movie: Movie) {
+        val width: Int
+        var height: Int
+        val screenShapeHelper = ScreenShapeHelper.get(mContext)
+        if (screenShapeHelper.isRound) {
+            // Round
+            height = screenShapeHelper.height + screenShapeHelper.chinHeight
+            width = (mContext.resources.getFraction(R.fraction.movie_list_item_poster, height, 1) + .5f).toInt()
+        } else {
+            // Square
+            height = screenShapeHelper.height
+            val border = mContext.resources.getDimensionPixelSize(R.dimen.movie_list_item_posterBorder_topBottom)
+            height -= border * 2
+            width = (mContext.resources.getFraction(R.fraction.movie_list_item_poster, height, 1) + .5f).toInt()
+        }
+        // Glide insists this is done on the main thread
+        HandlerUtil.runOnUiThread {
+            Glide.with(mContext)
+                    .load(movie.posterUri)
+                    .centerCrop()
+                    .diskCacheStrategy(DiskCacheStrategy.RESULT)
+                    .listener(object : RequestListener<String, GlideDrawable> {
+                        override fun onException(e: Exception, model: String, target: Target<GlideDrawable>, isFirstResource: Boolean): Boolean {
+                            return false
+                        }
+
+                        override fun onResourceReady(resource: GlideDrawable, model: String, target: Target<GlideDrawable>,
+                                                     isFromMemoryCache: Boolean,
+                                                     isFirstResource: Boolean): Boolean {
+                            if (resource !is GlideBitmapDrawable) return false
+                            Palette.from(resource.bitmap)
+                                    .generate { palette -> movie.color = palette.getDarkVibrantColor(mContext.getColor(R.color.movie_list_bg)) }
+                            return false
+                        }
+                    })
+                    .preload(width, height)
+        }
     }
 
     private fun persist(movies: Set<Movie>) {
