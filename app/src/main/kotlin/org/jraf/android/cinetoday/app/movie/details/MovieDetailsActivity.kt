@@ -101,9 +101,9 @@ class MovieDetailsActivity : BaseActivity() {
             // Time
             val isTooLate = getTimeAsCalendar(showtime.time.time).before(now)
             val conShowtimeItem = inflater.inflate(R.layout.movie_details_showtime, mBinding.conShowtimes, false)
-            val txtShowtime = conShowtimeItem.findViewById(R.id.txtShowtime) as TextView
+            val txtShowtime = conShowtimeItem.findViewById<TextView>(R.id.txtShowtime)
             txtShowtime.text = mTimeFormat.format(showtime.time)
-            val txtIs3d = conShowtimeItem.findViewById(R.id.txtIs3d) as TextView
+            val txtIs3d = conShowtimeItem.findViewById<TextView>(R.id.txtIs3d)
             txtIs3d.visibility = if (showtime.is3d) View.VISIBLE else View.GONE
             if (isTooLate) conShowtimeItem.alpha = .33f
             mBinding.conShowtimes.addView(conShowtimeItem)

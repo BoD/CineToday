@@ -2,8 +2,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 if (buildProperties.enableFabric.toBoolean()) apply plugin: 'io.fabric'
-// Disabled because not compatible with the Gradle Android Plugin v3.x
-//apply plugin: 'com.getkeepsafe.dexcount'
+apply plugin: 'com.getkeepsafe.dexcount'
 
 android {
     compileSdkVersion versions.compileSdk
@@ -119,8 +118,8 @@ dependencies {
     compile "com.android.support:palette-v7:$versions.supportLibrary"
 
     //  Wear
-    provided "com.google.android.support:wearable:$versions.androidWearable"
-    provided "com.google.android.wearable:wearable:$versions.androidWearable"
+    compile "com.google.android.support:wearable:$versions.androidWearable"
+    compile "com.google.android.wearable:wearable:$versions.androidWearable"
 
     // Play Services
     compile "com.google.android.gms:play-services-gcm:$versions.playServices"
