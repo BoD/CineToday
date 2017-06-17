@@ -26,10 +26,11 @@ package org.jraf.android.cinetoday.util.async
 
 import android.annotation.SuppressLint
 import android.os.AsyncTask
+import org.jraf.android.util.log.Log
 
 object AsyncUtil {
     @SuppressLint("StaticFieldLeak")
-    fun <T> doAsync(doInBackground: () -> T, onPostExecute: (T) -> Unit) {
+    inline fun <T> doAsync(crossinline doInBackground: () -> T, crossinline onPostExecute: (T) -> Unit) {
         object : AsyncTask<Unit, Unit, T>() {
             override fun doInBackground(vararg params: Unit?): T {
                 return doInBackground()
@@ -42,7 +43,15 @@ object AsyncUtil {
     }
 
     inline fun <T> doAsync(crossinline doInBackground: () -> T) {
-        AsyncTask.execute { doInBackground() }
+        val origin = Exception()
+        AsyncTask.execute {
+            try {
+                doInBackground()
+            } catch (t: Throwable) {
+                Log.e(origin, "Caught an exception in doAsync")
+                throw t
+            }
+        }
     }
 
 }

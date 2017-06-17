@@ -17,6 +17,8 @@
 
     <!-- Notif -->
     <string name="notif_title">New releases!</string>
+    <string name="notif_channel_main_name">Main</string>
+    <string name="notif_channel_main_description">The main channel</string>
 
     <!-- Configure -->
     <string name="configure_openedOnPhone">Opened on phone</string>

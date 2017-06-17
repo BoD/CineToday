@@ -37,11 +37,13 @@ import java.util.Date
         ForeignKey(
                 entity = Theater::class,
                 parentColumns = arrayOf("id"),
-                childColumns = arrayOf("theaterId")),
+                childColumns = arrayOf("theaterId"),
+                onDelete = ForeignKey.CASCADE),
         ForeignKey(
                 entity = Movie::class,
                 parentColumns = arrayOf("id"),
-                childColumns = arrayOf("movieId"))
+                childColumns = arrayOf("movieId"),
+                onDelete = ForeignKey.CASCADE)
 ),
         indices = arrayOf(
                 Index("theaterId"),
