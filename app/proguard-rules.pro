@@ -3,11 +3,10 @@
 -keepattributes SourceFile, LineNumberTable
 -dontoptimize
 
-# Picasso
--dontwarn com.squareup.okhttp.**
-
 # OkHttp (Okio)
 -dontwarn okio.**
+-dontwarn javax.annotation.Nullable
+-dontwarn javax.annotation.ParametersAreNonnullByDefault
 
 # Jraf Util
 -dontwarn org.jraf.android.util.databinding.UtilAboutWearBinding
