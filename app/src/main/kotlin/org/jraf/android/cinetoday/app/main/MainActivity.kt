@@ -29,7 +29,6 @@ import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.graphics.drawable.Drawable
 import android.net.Uri
-import android.os.AsyncTask
 import android.os.Bundle
 import android.support.wearable.view.ConfirmationOverlay
 import android.support.wearable.view.drawer.WearableActionDrawer
@@ -55,6 +54,7 @@ import org.jraf.android.cinetoday.database.AppDatabase
 import org.jraf.android.cinetoday.databinding.MainBinding
 import org.jraf.android.cinetoday.model.movie.Movie
 import org.jraf.android.cinetoday.model.theater.Theater
+import org.jraf.android.cinetoday.util.async.AsyncUtil.doAsync
 import org.jraf.android.cinetoday.util.base.BaseActivity
 import org.jraf.android.cinetoday.util.fragment.FragmentDelegate
 import org.jraf.android.cinetoday.util.uri.setData
@@ -314,29 +314,20 @@ class MainActivity : BaseActivity(), MovieListCallbacks, TheaterFavoritesCallbac
     }
 
     private fun addToFavorites(theater: Theater) {
-        object : AsyncTask<Unit, Unit, Unit>() {
-            override fun doInBackground(vararg params: Unit) {
-                mDatabase.theaterDao.insert(theater)
-            }
-
-            override fun onPostExecute(result: Unit) {
-                mAtLeastOneFavorite = true
-                mLoadMoviesHelper.startLoadMoviesIntentService()
-            }
-        }.execute()
+        doAsync {
+            mDatabase.theaterDao.insert(theater)
+            mAtLeastOneFavorite = true
+            mLoadMoviesHelper.startLoadMoviesIntentService()
+        }
     }
 
     private fun ensureFavoriteTheaters() {
-        object : AsyncTask<Unit, Unit, Boolean>() {
-            override fun doInBackground(vararg params: Unit): Boolean {
-                return mDatabase.theaterDao.countTheaters() > 0
-            }
-
-            override fun onPostExecute(result: Boolean) {
-                mAtLeastOneFavorite = result
-                if (!mAtLeastOneFavorite) startTheaterSearchActivity()
-            }
-        }.execute()
+        doAsync({
+            mDatabase.theaterDao.countTheaters() > 0
+        }, { result ->
+            mAtLeastOneFavorite = result
+            if (!mAtLeastOneFavorite) startTheaterSearchActivity()
+        })
     }
 
 
@@ -348,19 +339,15 @@ class MainActivity : BaseActivity(), MovieListCallbacks, TheaterFavoritesCallbac
         when (dialogId) {
             DIALOG_THEATER_DELETE_CONFIRM -> {
                 val theaterId = payload as String
-                object : AsyncTask<Unit, Unit, Unit>() {
-                    override fun doInBackground(vararg params: Unit) {
-                        // Delete theater
-                        mDatabase.theaterDao.delete(theaterId)
+                doAsync {
+                    // Delete theater
+                    mDatabase.theaterDao.delete(theaterId)
 
-                        // Delete movies that have no show times
-                        mDatabase.movieDao.deleteWithNoShowtimes()
-                    }
+                    // Delete movies that have no show times
+                    mDatabase.movieDao.deleteWithNoShowtimes()
 
-                    override fun onPostExecute(result: Unit) {
-                        ensureFavoriteTheaters()
-                    }
-                }.execute()
+                    ensureFavoriteTheaters()
+                }
             }
         }
     }

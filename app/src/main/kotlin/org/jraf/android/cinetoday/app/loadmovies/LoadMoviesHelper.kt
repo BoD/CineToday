@@ -24,7 +24,7 @@
  */
 package org.jraf.android.cinetoday.app.loadmovies
 
-import android.app.Notification
+import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
@@ -33,7 +33,10 @@ import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
+import android.os.Build
+import android.support.annotation.RequiresApi
 import android.support.annotation.WorkerThread
+import android.support.v4.app.NotificationCompat
 import android.support.v7.graphics.Palette
 import android.text.TextUtils
 import com.bumptech.glide.Glide
@@ -62,7 +65,9 @@ class LoadMoviesHelper(
         private val mApi: Api,
         private val mAppDatabase: AppDatabase,
         private val mLoadMoviesListenerHelper: LoadMoviesListenerHelper) {
+
     companion object {
+        private const val NOTIFICATION_CHANNEL_MAIN = "NOTIFICATION_CHANNEL_MAIN"
         private const val NOTIFICATION_ID = 0
         private const val MIN_BANDWIDTH_KBPS = 320
     }
@@ -267,7 +272,8 @@ class LoadMoviesHelper(
 
     private fun showNotification(newMovieTitles: List<String>) {
         Log.d()
-        val mainNotifBuilder = Notification.Builder(mContext)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) createNotificationChannel()
+        val mainNotifBuilder = NotificationCompat.Builder(mContext, NOTIFICATION_CHANNEL_MAIN)
 
         // Small icon
         mainNotifBuilder.setSmallIcon(R.drawable.ic_notif)
@@ -277,7 +283,7 @@ class LoadMoviesHelper(
         mainNotifBuilder.setContentTitle(title)
 
         // Text
-        val bigTextStyle = Notification.BigTextStyle()
+        val bigTextStyle = NotificationCompat.BigTextStyle()
         val text = TextUtils.join(", ", newMovieTitles)
         bigTextStyle.bigText(text)
         mainNotifBuilder.setStyle(bigTextStyle)
@@ -289,13 +295,25 @@ class LoadMoviesHelper(
         mainNotifBuilder.setContentIntent(mainActivityPendingIntent)
 
         // Wear specifics
-        val wearableExtender = Notification.WearableExtender()
+        val wearableExtender = NotificationCompat.WearableExtender()
         wearableExtender.hintContentIntentLaunchesActivity = true
         val wearableNotifBuilder = wearableExtender.extend(mainNotifBuilder)
         val notification = wearableNotifBuilder.build()
 
         val notificationManager = mContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.notify(NOTIFICATION_ID, notification)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun createNotificationChannel() {
+        val name = mContext.getString(R.string.notif_channel_main_name)
+        val description = mContext.getString(R.string.notif_channel_main_description)
+        // Let's face it
+        val importance = NotificationManager.IMPORTANCE_LOW
+        val channel = NotificationChannel(NOTIFICATION_CHANNEL_MAIN, name, importance)
+        channel.description = description
+        val notificationManager = mContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.createNotificationChannel(channel)
     }
 
     fun startLoadMoviesIntentService() {

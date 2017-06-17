@@ -21,7 +21,7 @@ buildscript {
 
         buildTools = '26.0.0'
         kotlin = '1.1.2-5'
-        supportLibrary = '25.4.0'
+        supportLibrary = '26.0.0-beta2'
         constraintLayout = '1.0.2'
         playServices = '11.0.1'
         espresso = '2.2.2'
@@ -35,8 +35,8 @@ buildscript {
         androidWearable = '2.0.3'
         prefs = '1.1.1'
         okHttp = '3.8.0'
-        glide = '3.7.0'
-        glideOkHttp = '1.4.0'
+        glide = '3.8.0'
+        glideOkHttp = '1.5.0'
         jsr250 = '1.0'
         arch = '1.0.0-alpha2'
     }

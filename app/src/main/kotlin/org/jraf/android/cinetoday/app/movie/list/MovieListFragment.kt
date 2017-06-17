@@ -29,7 +29,6 @@ import android.animation.ValueAnimator
 import android.arch.lifecycle.Observer
 import android.databinding.DataBindingUtil
 import android.graphics.drawable.ColorDrawable
-import android.os.AsyncTask
 import android.os.Bundle
 import android.support.annotation.ColorInt
 import android.support.v7.widget.LinearLayoutManager
@@ -46,6 +45,7 @@ import org.jraf.android.cinetoday.dagger.Components
 import org.jraf.android.cinetoday.database.AppDatabase
 import org.jraf.android.cinetoday.databinding.MovieListBinding
 import org.jraf.android.cinetoday.model.movie.Movie
+import org.jraf.android.cinetoday.util.async.AsyncUtil.doAsync
 import org.jraf.android.cinetoday.util.base.BaseFragment
 import javax.inject.Inject
 
@@ -129,11 +129,9 @@ class MovieListFragment : BaseFragment<MovieListCallbacks>(), PaletteListener {
         }
         if (!cached) {
             // Save the value
-            object : AsyncTask<Unit, Unit, Unit>() {
-                override fun doInBackground(vararg params: Unit) {
-                    mDatabase.movieDao.updateColor(id, color)
-                }
-            }.execute()
+            doAsync {
+                mDatabase.movieDao.updateColor(id, color)
+            }
         }
     }
 
