@@ -29,7 +29,7 @@ import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Insert
 import android.arch.persistence.room.Query
 import android.arch.persistence.room.TypeConverters
-import org.jraf.android.cinetoday.model.movie.Showtime
+import org.jraf.android.cinetoday.model.showtime.Showtime
 import java.util.Date
 
 @Dao
