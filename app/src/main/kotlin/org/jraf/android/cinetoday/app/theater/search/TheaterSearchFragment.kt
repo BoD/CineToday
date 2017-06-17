@@ -24,8 +24,7 @@
  */
 package org.jraf.android.cinetoday.app.theater.search
 
-import android.app.LoaderManager
-import android.content.Loader
+import android.arch.lifecycle.Observer
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v7.widget.LinearSnapHelper
@@ -36,13 +35,14 @@ import android.view.View
 import android.view.ViewGroup
 import org.jraf.android.cinetoday.R
 import org.jraf.android.cinetoday.databinding.TheaterSearchListBinding
-import org.jraf.android.cinetoday.model.theater.Theater
 import org.jraf.android.cinetoday.util.base.BaseFragment
 import org.jraf.android.util.ui.screenshape.ScreenShapeHelper
 
-class TheaterSearchFragment : BaseFragment<TheaterSearchCallbacks>(), LoaderManager.LoaderCallbacks<List<Theater>> {
+class TheaterSearchFragment : BaseFragment<TheaterSearchCallbacks>() {
     private lateinit var mAdapter: TheaterSearchAdapter
     private lateinit var mBinding: TheaterSearchListBinding
+
+    private val mTheaterSearchLiveData: TheaterSearchLiveData by lazy { TheaterSearchLiveData() }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         mBinding = DataBindingUtil.inflate<TheaterSearchListBinding>(inflater, R.layout.theater_search_list, container, false)
@@ -83,27 +83,11 @@ class TheaterSearchFragment : BaseFragment<TheaterSearchCallbacks>(), LoaderMana
         mAdapter.setLoading(true)
         val args = Bundle()
         args.putString("query", query)
-        loaderManager.restartLoader(0, args, this)
+        mTheaterSearchLiveData.query = query
+        mTheaterSearchLiveData.observe(this, Observer {
+            mAdapter.setLoading(false)
+            mAdapter.setResults(it)
+        })
     }
 
-
-    //--------------------------------------------------------------------------
-    // region LoaderCallbacks.
-    //--------------------------------------------------------------------------
-
-    override fun onCreateLoader(id: Int, args: Bundle): Loader<List<Theater>> {
-        val query = args.getString("query")
-        return TheaterSearchLoader(activity, query)
-    }
-
-    override fun onLoadFinished(loader: Loader<List<Theater>>, data: List<Theater>) {
-        mAdapter.setLoading(false)
-        mAdapter.setResults(data)
-    }
-
-    override fun onLoaderReset(loader: Loader<List<Theater>>) {
-        mAdapter.setResults(null)
-    }
-
-    // endregion
 }
