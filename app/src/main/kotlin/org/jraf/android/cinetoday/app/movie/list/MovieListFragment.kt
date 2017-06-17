@@ -45,7 +45,7 @@ import org.jraf.android.cinetoday.dagger.Components
 import org.jraf.android.cinetoday.database.AppDatabase
 import org.jraf.android.cinetoday.databinding.MovieListBinding
 import org.jraf.android.cinetoday.model.movie.Movie
-import org.jraf.android.cinetoday.util.async.AsyncUtil.doAsync
+import org.jraf.android.cinetoday.util.async.doAsync
 import org.jraf.android.cinetoday.util.base.BaseFragment
 import javax.inject.Inject
 

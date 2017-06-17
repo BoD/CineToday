@@ -54,7 +54,7 @@ import org.jraf.android.cinetoday.database.AppDatabase
 import org.jraf.android.cinetoday.databinding.MainBinding
 import org.jraf.android.cinetoday.model.movie.Movie
 import org.jraf.android.cinetoday.model.theater.Theater
-import org.jraf.android.cinetoday.util.async.AsyncUtil.doAsync
+import org.jraf.android.cinetoday.util.async.doAsync
 import org.jraf.android.cinetoday.util.base.BaseActivity
 import org.jraf.android.cinetoday.util.fragment.FragmentDelegate
 import org.jraf.android.cinetoday.util.uri.setData
