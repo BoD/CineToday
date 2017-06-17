@@ -28,30 +28,27 @@ import android.annotation.SuppressLint
 import android.os.AsyncTask
 import org.jraf.android.util.log.Log
 
-object AsyncUtil {
-    @SuppressLint("StaticFieldLeak")
-    inline fun <T> doAsync(crossinline doInBackground: () -> T, crossinline onPostExecute: (T) -> Unit) {
-        object : AsyncTask<Unit, Unit, T>() {
-            override fun doInBackground(vararg params: Unit?): T {
-                return doInBackground()
-            }
+@SuppressLint("StaticFieldLeak")
+inline fun <T> doAsync(crossinline doInBackground: () -> T, crossinline onPostExecute: (T) -> Unit) {
+    object : AsyncTask<Unit, Unit, T>() {
+        override fun doInBackground(vararg params: Unit?): T {
+            return doInBackground()
+        }
 
-            override fun onPostExecute(result: T) {
-                onPostExecute(result)
-            }
-        }.execute()
-    }
+        override fun onPostExecute(result: T) {
+            onPostExecute(result)
+        }
+    }.execute()
+}
 
-    inline fun <T> doAsync(crossinline doInBackground: () -> T) {
-        val origin = Exception()
-        AsyncTask.execute {
-            try {
-                doInBackground()
-            } catch (t: Throwable) {
-                Log.e(origin, "Caught an exception in doAsync")
-                throw t
-            }
+inline fun <T> doAsync(crossinline doInBackground: () -> T) {
+    val origin = Exception()
+    AsyncTask.execute {
+        try {
+            doInBackground()
+        } catch (t: Throwable) {
+            Log.e(origin, "Caught an exception in doAsync")
+            throw t
         }
     }
-
 }

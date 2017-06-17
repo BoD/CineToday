@@ -29,7 +29,7 @@ import org.jraf.android.cinetoday.dagger.Components
 import org.jraf.android.cinetoday.database.AppDatabase
 import org.jraf.android.cinetoday.model.theater.Theater
 import org.jraf.android.cinetoday.network.api.Api
-import org.jraf.android.cinetoday.util.async.AsyncUtil.doAsync
+import org.jraf.android.cinetoday.util.async.doAsync
 import org.jraf.android.util.log.Log
 import javax.inject.Inject
 
