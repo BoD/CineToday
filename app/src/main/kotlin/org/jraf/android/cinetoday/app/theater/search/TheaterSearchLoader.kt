@@ -24,83 +24,46 @@
  */
 package org.jraf.android.cinetoday.app.theater.search
 
-import android.content.AsyncTaskLoader
-import android.content.Context
+import android.arch.lifecycle.LiveData
 import org.jraf.android.cinetoday.dagger.Components
 import org.jraf.android.cinetoday.database.AppDatabase
 import org.jraf.android.cinetoday.model.theater.Theater
 import org.jraf.android.cinetoday.network.api.Api
+import org.jraf.android.cinetoday.util.async.AsyncUtil.doAsync
 import org.jraf.android.util.log.Log
 import javax.inject.Inject
 
-class TheaterSearchLoader(context: Context, private val mQuery: String) : AsyncTaskLoader<List<Theater>>(context) {
+class TheaterSearchLiveData : LiveData<List<Theater>>() {
+    var query: String? = null
+        set(value) {
+            field = value
+            load()
+        }
+
     @Inject lateinit var mApi: Api
     @Inject lateinit var mDatabase: AppDatabase
-
-    private var mData: List<Theater>? = null
 
     init {
         Components.application.inject(this)
     }
 
-    override fun loadInBackground(): List<Theater>? {
+    private fun load() {
         Log.d()
-        // Get the list of favorite theaters, so we can filter them out from the search results
-        val favoriteTheaters = mDatabase.theaterDao.allTheaters()
 
-        try {
-            // API call (blocking)
-            val res = mApi.searchTheaters(mQuery).toMutableList()
+        doAsync {
+            // Get the list of favorite theaters, so we can filter them out from the search results
+            val favoriteTheaters = mDatabase.theaterDao.allTheaters()
 
-            // Filter out favorite theaters
-            res.removeAll { favoriteTheaters.contains(it) }
-            return res
-        } catch (e: Exception) {
-            Log.w(e, "Could not search for theaters")
-            return null
+            try {
+                // API call (blocking)
+                val res = mApi.searchTheaters(query ?: "").toMutableList()
+
+                // Filter out favorite theaters
+                res.removeAll { favoriteTheaters.contains(it) }
+                postValue(res)
+            } catch (e: Exception) {
+                Log.w(e, "Could not search for theaters")
+            }
         }
-    }
-
-    override fun deliverResult(data: List<Theater>?) {
-        Log.d()
-        mData = data
-
-        if (isStarted) {
-            if (data != null) super.deliverResult(data)
-        }
-    }
-
-    override fun onStartLoading() {
-        Log.d()
-        val data = mData
-        if (data != null) {
-            deliverResult(data)
-        }
-
-        if (takeContentChanged() || data == null) {
-            forceLoad()
-        }
-    }
-
-    override fun onStopLoading() {
-        Log.d()
-        cancelLoad()
-    }
-
-    override fun onReset() {
-        Log.d()
-        onStopLoading()
-        releaseResources()
-    }
-
-    override fun onCanceled(data: List<Theater>?) {
-        Log.d()
-        super.onCanceled(data)
-        releaseResources()
-    }
-
-    private fun releaseResources() {
-        Log.d()
-        mData = null
     }
 }
