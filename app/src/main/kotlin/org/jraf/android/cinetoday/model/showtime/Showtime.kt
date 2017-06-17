@@ -7,7 +7,7 @@
  *                              /___/
  * repository.
  *
- * Copyright (C) 2016 Benoit 'BoD' Lubek (BoD@JRAF.org)
+ * Copyright (C) 2017 Benoit 'BoD' Lubek (BoD@JRAF.org)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jraf.android.cinetoday.model.movie
+package org.jraf.android.cinetoday.model.showtime
 
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.ForeignKey
@@ -30,6 +30,7 @@ import android.arch.persistence.room.Index
 import android.arch.persistence.room.PrimaryKey
 import android.arch.persistence.room.TypeConverters
 import org.jraf.android.cinetoday.database.Converters
+import org.jraf.android.cinetoday.model.movie.Movie
 import org.jraf.android.cinetoday.model.theater.Theater
 import java.util.Date
 

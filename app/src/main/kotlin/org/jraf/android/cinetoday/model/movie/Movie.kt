@@ -29,6 +29,7 @@ import android.arch.persistence.room.Ignore
 import android.arch.persistence.room.PrimaryKey
 import android.arch.persistence.room.TypeConverters
 import org.jraf.android.cinetoday.database.Converters
+import org.jraf.android.cinetoday.model.showtime.Showtime
 import org.jraf.android.cinetoday.util.uri.HasId
 import java.util.Date
 import java.util.TreeMap

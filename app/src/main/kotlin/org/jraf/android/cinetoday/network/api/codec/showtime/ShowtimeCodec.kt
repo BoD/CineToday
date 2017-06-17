@@ -26,7 +26,7 @@ package org.jraf.android.cinetoday.network.api.codec.showtime
 
 import org.jraf.android.cinetoday.model.ParseException
 import org.jraf.android.cinetoday.model.movie.Movie
-import org.jraf.android.cinetoday.model.movie.Showtime
+import org.jraf.android.cinetoday.model.showtime.Showtime
 import org.jraf.android.util.log.Log
 import org.json.JSONException
 import org.json.JSONObject
