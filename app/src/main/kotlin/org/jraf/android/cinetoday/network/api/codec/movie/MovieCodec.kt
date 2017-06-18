@@ -25,9 +25,9 @@
 package org.jraf.android.cinetoday.network.api.codec.movie
 
 import android.text.Html
-import org.jraf.android.cinetoday.model.ParseException
 import org.jraf.android.cinetoday.model.movie.Movie
 import org.jraf.android.cinetoday.network.api.Api
+import org.jraf.android.cinetoday.network.api.ParseException
 import org.jraf.android.util.log.Log
 import org.json.JSONException
 import org.json.JSONObject

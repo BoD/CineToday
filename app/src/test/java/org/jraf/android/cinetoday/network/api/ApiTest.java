@@ -39,7 +39,6 @@ import okhttp3.OkHttpClient;
 
 import org.jraf.android.cinetoday.BuildConfig;
 import org.jraf.android.cinetoday.mobile.TestUtil;
-import org.jraf.android.cinetoday.model.ParseException;
 import org.jraf.android.cinetoday.model.movie.Movie;
 import org.jraf.android.cinetoday.model.movie.MovieAssert;
 import org.jraf.android.cinetoday.network.api.codec.movie.MovieCodec;

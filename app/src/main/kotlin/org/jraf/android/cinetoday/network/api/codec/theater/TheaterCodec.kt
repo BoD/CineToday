@@ -24,8 +24,8 @@
  */
 package org.jraf.android.cinetoday.network.api.codec.theater
 
-import org.jraf.android.cinetoday.model.ParseException
 import org.jraf.android.cinetoday.model.theater.Theater
+import org.jraf.android.cinetoday.network.api.ParseException
 import org.json.JSONException
 import org.json.JSONObject
 
