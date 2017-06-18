@@ -156,6 +156,10 @@ dependencies {
     // Room
     compile "android.arch.persistence.room:runtime:$versions.arch"
     kapt "android.arch.persistence.room:compiler:$versions.arch"
+
+    // Rx
+    compile "io.reactivex.rxjava2:rxandroid:$versions.rxAndroid"
+    compile "io.reactivex.rxjava2:rxjava:$versions.rxJava"
 }
 
 // Necessary for Prefs to work (see https://kotlinlang.org/docs/reference/kapt.html)

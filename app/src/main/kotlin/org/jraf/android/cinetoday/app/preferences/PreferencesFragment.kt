@@ -27,10 +27,11 @@ package org.jraf.android.cinetoday.app.preferences
 import android.os.Bundle
 import android.preference.PreferenceFragment
 import android.text.format.DateUtils
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
 import org.jraf.android.cinetoday.BuildConfig
 import org.jraf.android.cinetoday.R
 import org.jraf.android.cinetoday.app.loadmovies.LoadMoviesHelper
-import org.jraf.android.cinetoday.app.loadmovies.LoadMoviesListener
 import org.jraf.android.cinetoday.app.loadmovies.LoadMoviesListenerHelper
 import org.jraf.android.cinetoday.dagger.Components
 import org.jraf.android.cinetoday.prefs.MainPrefs
@@ -49,6 +50,7 @@ class PreferencesFragment : PreferenceFragment() {
     @Inject lateinit var mLoadMoviesListenerHelper: LoadMoviesListenerHelper
 
     private var mLoadMoviesStarted: Boolean = false
+    private lateinit var mProgressSubscription: Disposable
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -81,39 +83,32 @@ class PreferencesFragment : PreferenceFragment() {
             true
         }
 
-        mLoadMoviesListenerHelper.addListener(mLoadMoviesListener)
+        mProgressSubscription = mLoadMoviesListenerHelper.progressInfo.observeOn(AndroidSchedulers.mainThread()).subscribe {
+            when (it) {
+                is LoadMoviesListenerHelper.ProgressInfo.Idle -> {
+                    mLoadMoviesStarted = false
+                    setLastUpdateDateSummary()
+                }
+
+                is LoadMoviesListenerHelper.ProgressInfo.PreLoading -> {
+                    mLoadMoviesStarted = true
+                    val refreshPref = findPreference("refresh")
+                    refreshPref.isEnabled = false
+                }
+
+                is LoadMoviesListenerHelper.ProgressInfo.Loading -> {
+                    mLoadMoviesStarted = true
+                    val refreshPref = findPreference("refresh")
+                    refreshPref.isEnabled = false
+                    refreshPref.summary = getString(R.string.preference_refresh_summary_ongoing, it.currentMovieIndex, it.totalMovies)
+                }
+            }
+        }
     }
 
     override fun onDestroy() {
-        mLoadMoviesListenerHelper.removeListener(mLoadMoviesListener)
+        mProgressSubscription.dispose()
         super.onDestroy()
-    }
-
-    private val mLoadMoviesListener = object : LoadMoviesListener {
-        override fun onLoadMoviesStarted() {
-            mLoadMoviesStarted = true
-            val refreshPref = findPreference("refresh")
-            refreshPref.isEnabled = false
-        }
-
-        override fun onLoadMoviesProgress(currentMovie: Int, totalMovies: Int, movieName: String) {
-            findPreference("refresh").summary = getString(R.string.preference_refresh_summary_ongoing, currentMovie, totalMovies)
-        }
-
-        override fun onLoadMoviesInterrupted() {
-            mLoadMoviesStarted = false
-            setLastUpdateDateSummary()
-        }
-
-        override fun onLoadMoviesSuccess() {
-            mLoadMoviesStarted = false
-            setLastUpdateDateSummary()
-        }
-
-        override fun onLoadMoviesError(error: Throwable) {
-            mLoadMoviesStarted = false
-            setLastUpdateDateSummary()
-        }
     }
 
     private fun setLastUpdateDateSummary() {
