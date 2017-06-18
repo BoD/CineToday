@@ -118,7 +118,7 @@ class LoadMoviesHelper(
     @Throws(Exception::class)
     internal fun loadMovies() {
         mWantStop = false
-        mLoadMoviesListenerHelper.onLoadMoviesStarted()
+        mLoadMoviesListenerHelper.setPreloading()
 
         // 0/ Try to connect to a fast network
         val highBandwidthNetworkSuccess = requestHighBandwidthNetwork(10, TimeUnit.SECONDS)
@@ -134,18 +134,18 @@ class LoadMoviesHelper(
                     mApi.getMovieList(movies, theaterId, Date())
 
                     if (mWantStop) {
-                        mLoadMoviesListenerHelper.onLoadMoviesInterrupted()
+                        mLoadMoviesListenerHelper.setIdle()
                         return
                     }
                 }
             } catch (e: Exception) {
                 Log.e(e, "Could not load movies")
-                mLoadMoviesListenerHelper.onLoadMoviesError(e)
+                mLoadMoviesListenerHelper.pushError(e)
                 throw e
             }
 
             if (mWantStop) {
-                mLoadMoviesListenerHelper.onLoadMoviesInterrupted()
+                mLoadMoviesListenerHelper.setIdle()
                 return
             }
 
@@ -153,7 +153,10 @@ class LoadMoviesHelper(
             val size = movies.size
             var i = 0
             for (movieFromApi in movies) {
-                mLoadMoviesListenerHelper.onLoadMoviesProgress(i, size, movieFromApi.localTitle)
+                mLoadMoviesListenerHelper.setLoading(
+                        totalMovies = size,
+                        currentMovieIndex = i,
+                        currentMovieTitle = movieFromApi.localTitle)
 
                 // Check if we already have this movie in the db
                 val movieFromDb = allMoviesFromDb[movieFromApi.id]
@@ -170,13 +173,13 @@ class LoadMoviesHelper(
                         Log.d(movieFromApi.toString())
                     } catch (e: Exception) {
                         Log.e(e, "Could not load movie info: movie = %s", movieFromApi)
-                        mLoadMoviesListenerHelper.onLoadMoviesError(e)
+                        mLoadMoviesListenerHelper.pushError(e)
                         throw e
                     }
                 }
 
                 if (mWantStop) {
-                    mLoadMoviesListenerHelper.onLoadMoviesInterrupted()
+                    mLoadMoviesListenerHelper.setIdle()
                     return
                 }
 
@@ -184,7 +187,10 @@ class LoadMoviesHelper(
                 downloadPoster(movieFromApi)
 
                 i++
-                mLoadMoviesListenerHelper.onLoadMoviesProgress(i, size, movieFromApi.localTitle)
+                mLoadMoviesListenerHelper.setLoading(
+                        totalMovies = size,
+                        currentMovieIndex = i,
+                        currentMovieTitle = movieFromApi.localTitle)
             }
 
         } finally {
@@ -205,8 +211,7 @@ class LoadMoviesHelper(
         persist(movies)
 
         mMainPrefs.putLastUpdateDate(System.currentTimeMillis())
-        mLoadMoviesListenerHelper.resetError()
-        mLoadMoviesListenerHelper.onLoadMoviesSuccess()
+        mLoadMoviesListenerHelper.setIdle()
 
         // 4/ Show a notification
         val newMovieTitles = movies

@@ -38,8 +38,9 @@ import android.util.SparseIntArray
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
 import org.jraf.android.cinetoday.R
-import org.jraf.android.cinetoday.app.loadmovies.LoadMoviesListener
 import org.jraf.android.cinetoday.app.loadmovies.LoadMoviesListenerHelper
 import org.jraf.android.cinetoday.dagger.Components
 import org.jraf.android.cinetoday.database.AppDatabase
@@ -66,6 +67,8 @@ class MovieListFragment : BaseFragment<MovieListCallbacks>(), PaletteListener {
     private var mScrolling: Boolean = false
     private var mLoadMoviesStarted: Boolean = false
 
+    private lateinit var mProgressSubscription: Disposable
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Components.application.inject(this)
@@ -73,7 +76,7 @@ class MovieListFragment : BaseFragment<MovieListCallbacks>(), PaletteListener {
     }
 
     override fun onDestroy() {
-        mLoadMoviesListenerHelper.removeListener(mLoadMoviesListener)
+        mProgressSubscription.dispose()
         super.onDestroy()
     }
 
@@ -85,7 +88,34 @@ class MovieListFragment : BaseFragment<MovieListCallbacks>(), PaletteListener {
         snapHelper.attachToRecyclerView(mBinding.rclList)
         mBinding.rclList.addOnScrollListener(mOnScrollListener)
 
-        mLoadMoviesListenerHelper.addListener(mLoadMoviesListener)
+        mProgressSubscription = mLoadMoviesListenerHelper.progressInfo.observeOn(AndroidSchedulers.mainThread()).subscribe {
+            when (it) {
+                is LoadMoviesListenerHelper.ProgressInfo.Idle -> {
+                    mLoadMoviesStarted = false
+                    mBinding.conMoviesLoading.visibility = View.GONE
+                }
+
+                is LoadMoviesListenerHelper.ProgressInfo.PreLoading -> {
+                    if (mAdapter == null || mAdapter?.itemCount ?: 0 == 0) {
+                        mLoadMoviesStarted = true
+                        mBinding.conMoviesLoading.visibility = View.VISIBLE
+                        mBinding.txtEmpty.visibility = View.GONE
+                        mBinding.txtMoviesLoadingInfo.text = null
+                    }
+                }
+
+                is LoadMoviesListenerHelper.ProgressInfo.Loading -> {
+                    if (mAdapter == null || mAdapter?.itemCount ?: 0 == 0) {
+                        mLoadMoviesStarted = true
+                        mBinding.conMoviesLoading.visibility = View.VISIBLE
+                        mBinding.txtEmpty.visibility = View.GONE
+                        mBinding.txtMoviesLoadingInfo.text = getString(R.string.movie_list_loadingMovies_progress, it.currentMovieIndex, it.totalMovies)
+                    }
+                }
+            }
+        }
+
+        // TODO Also observe errors
 
         return mBinding.root
     }
@@ -174,36 +204,4 @@ class MovieListFragment : BaseFragment<MovieListCallbacks>(), PaletteListener {
             mBinding.conRoot.setBackgroundColor(resultColor)
         }
     }
-
-    //--------------------------------------------------------------------------
-    // region Movie loading.
-    //--------------------------------------------------------------------------
-
-    private val mLoadMoviesListener = object : LoadMoviesListener {
-        override fun onLoadMoviesStarted() {
-            if (mAdapter == null || mAdapter?.itemCount ?: 0 == 0) {
-                mLoadMoviesStarted = true
-                mBinding.conMoviesLoading.visibility = View.VISIBLE
-                mBinding.txtEmpty.visibility = View.GONE
-            }
-        }
-
-        override fun onLoadMoviesProgress(currentMovie: Int, totalMovies: Int, movieName: String) {
-            mBinding.txtMoviesLoadingInfo.text = getString(R.string.movie_list_loadingMovies_progress, currentMovie, totalMovies)
-        }
-
-        override fun onLoadMoviesInterrupted() {}
-
-        override fun onLoadMoviesSuccess() {
-            mLoadMoviesStarted = false
-            mBinding.conMoviesLoading.visibility = View.GONE
-        }
-
-        override fun onLoadMoviesError(error: Throwable) {
-            mLoadMoviesStarted = false
-            mBinding.conMoviesLoading.visibility = View.GONE
-        }
-    }
-
-    // endregion
 }

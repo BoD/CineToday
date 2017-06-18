@@ -39,6 +39,8 @@ buildscript {
         glideOkHttp = '1.5.0'
         jsr250 = '1.0'
         arch = '1.0.0-alpha3'
+        rxAndroid = '2.0.1'
+        rxJava = '2.1.0'
     }
 
     repositories {

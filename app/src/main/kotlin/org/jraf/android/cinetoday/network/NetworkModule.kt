@@ -29,11 +29,14 @@ import dagger.Module
 import dagger.Provides
 import okhttp3.Cache
 import okhttp3.OkHttpClient
+import org.jraf.android.cinetoday.BuildConfig
 import org.jraf.android.cinetoday.network.api.Api
 import org.jraf.android.cinetoday.network.api.codec.movie.MovieCodec
 import org.jraf.android.cinetoday.network.api.codec.showtime.ShowtimeCodec
 import org.jraf.android.cinetoday.network.api.codec.theater.TheaterCodec
 import java.io.File
+import java.net.InetSocketAddress
+import java.net.Proxy
 import java.util.concurrent.TimeUnit
 import javax.inject.Named
 import javax.inject.Singleton
@@ -77,9 +80,9 @@ class NetworkModule {
         val httpCacheDir = File(context.cacheDir, CACHE_DIRECTORY_NAME)
         builder.cache(Cache(httpCacheDir, CACHE_SIZE_B))
 
-//        if (BuildConfig.DEBUG) {
-//            builder.proxy(Proxy(Proxy.Type.HTTP, InetSocketAddress("192.168.1.2", 8888)))
-//        }
+        if (BuildConfig.DEBUG) {
+            builder.proxy(Proxy(Proxy.Type.HTTP, InetSocketAddress("192.168.1.2", 8888)))
+        }
 
         return builder.build()
     }
@@ -93,9 +96,9 @@ class NetworkModule {
         builder.readTimeout(TIMEOUT_S.toLong(), TimeUnit.SECONDS)
         builder.writeTimeout(TIMEOUT_S.toLong(), TimeUnit.SECONDS)
 
-//        if (BuildConfig.DEBUG) {
-//            builder.proxy(Proxy(Proxy.Type.HTTP, InetSocketAddress("192.168.1.2", 8888)))
-//        }
+        if (BuildConfig.DEBUG) {
+            builder.proxy(Proxy(Proxy.Type.HTTP, InetSocketAddress("192.168.1.2", 8888)))
+        }
 
         return builder.build()
     }

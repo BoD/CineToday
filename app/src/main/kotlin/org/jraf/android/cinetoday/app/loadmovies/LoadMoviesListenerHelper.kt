@@ -24,77 +24,42 @@
  */
 package org.jraf.android.cinetoday.app.loadmovies
 
-import org.jraf.android.util.listeners.Listeners
+import io.reactivex.subjects.BehaviorSubject
+import io.reactivex.subjects.PublishSubject
 
-class LoadMoviesListenerHelper : LoadMoviesListener {
+class LoadMoviesListenerHelper {
 
-    private var mStarted: Boolean = false
-    private val mListeners = Listeners<LoadMoviesListener>()
-    private var mError: Throwable? = null
-    private var mCurrentMovieIndex: Int? = null
-    private var mCurrentMovieName: String? = null
-    private var mTotalMovie: Int? = null
+    private val mProgressInfo = BehaviorSubject.create<ProgressInfo>()
+    private val mError = PublishSubject.create<Exception>()
 
-    init {
-        mListeners.setNewListenerDispatcher { listener ->
-            if (mStarted) {
-                listener.onLoadMoviesStarted()
-            } else {
-                listener.onLoadMoviesSuccess()
-            }
-            mError?.let { listener.onLoadMoviesError(it) }
-            if (mCurrentMovieIndex != null && mTotalMovie != null && mCurrentMovieName != null) {
-                listener.onLoadMoviesProgress(mCurrentMovieIndex!!, mTotalMovie!!, mCurrentMovieName!!)
-            }
-        }
+    val progressInfo get() = mProgressInfo.hide()
+    val error get() = mError.hide()
+
+    sealed class ProgressInfo {
+        class Idle : ProgressInfo()
+        class PreLoading : ProgressInfo()
+        data class Loading(
+                val totalMovies: Int,
+                val currentMovieIndex: Int,
+                val currentMovieTitle: String
+        ) : ProgressInfo()
     }
 
-    fun addListener(listener: LoadMoviesListener) {
-        mListeners.add(listener)
+    fun setPreloading() {
+        mProgressInfo.onNext(ProgressInfo.PreLoading())
     }
 
-    fun removeListener(listener: LoadMoviesListener) {
-        mListeners.remove(listener)
+    fun setIdle() {
+        mProgressInfo.onNext(ProgressInfo.Idle())
     }
 
-    override fun onLoadMoviesStarted() {
-        mStarted = true
-        mListeners.dispatch { it.onLoadMoviesStarted() }
+    fun setLoading(totalMovies: Int, currentMovieIndex: Int, currentMovieTitle: String) {
+        mProgressInfo.onNext(ProgressInfo.Loading(totalMovies, currentMovieIndex, currentMovieTitle))
     }
 
-    override fun onLoadMoviesProgress(currentMovie: Int, totalMovies: Int, movieName: String) {
-        mCurrentMovieIndex = currentMovie
-        mTotalMovie = totalMovies
-        mCurrentMovieName = movieName
-        mListeners.dispatch { listener -> listener.onLoadMoviesProgress(currentMovie, totalMovies, movieName) }
+    fun pushError(error: Exception) {
+        mError.onNext(error)
+        setIdle()
     }
 
-    override fun onLoadMoviesInterrupted() {
-        mStarted = false
-        mTotalMovie = null
-        mCurrentMovieIndex = mTotalMovie
-        mCurrentMovieName = null
-        mListeners.dispatch { it.onLoadMoviesInterrupted() }
-    }
-
-    override fun onLoadMoviesSuccess() {
-        mStarted = false
-        mTotalMovie = null
-        mCurrentMovieIndex = mTotalMovie
-        mCurrentMovieName = null
-        mListeners.dispatch { it.onLoadMoviesSuccess() }
-    }
-
-    override fun onLoadMoviesError(error: Throwable) {
-        mError = error
-        mStarted = false
-        mTotalMovie = null
-        mCurrentMovieIndex = mTotalMovie
-        mCurrentMovieName = null
-        mListeners.dispatch { listener -> listener.onLoadMoviesError(error) }
-    }
-
-    fun resetError() {
-        mError = null
-    }
 }
