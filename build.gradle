@@ -38,7 +38,7 @@ buildscript {
         glide = '3.8.0'
         glideOkHttp = '1.5.0'
         jsr250 = '1.0'
-        arch = '1.0.0-alpha2'
+        arch = '1.0.0-alpha3'
     }
 
     repositories {

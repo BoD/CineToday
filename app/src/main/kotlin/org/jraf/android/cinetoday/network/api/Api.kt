@@ -31,7 +31,6 @@ import okhttp3.CacheControl
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import org.jraf.android.cinetoday.model.ParseException
 import org.jraf.android.cinetoday.model.movie.Movie
 import org.jraf.android.cinetoday.model.theater.Theater
 import org.jraf.android.cinetoday.network.api.codec.movie.MovieCodec

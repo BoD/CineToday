@@ -130,8 +130,8 @@ dependencies {
     // JRAF
     kapt "org.jraf:prefs-compiler:$versions.prefs"
     compile "org.jraf:prefs:$versions.prefs"
-//    compile 'com.github.BoD:jraf-android-util:-SNAPSHOT'
-    compile 'org.jraf:jraf-android-util:1.0.0'
+    compile 'com.github.BoD:jraf-android-util:-SNAPSHOT'
+//    compile 'org.jraf:jraf-android-util:1.0.0'
 
     // OkHttp
     compile "com.squareup.okhttp3:okhttp:$versions.okHttp"
@@ -156,9 +156,6 @@ dependencies {
     // Room
     compile "android.arch.persistence.room:runtime:$versions.arch"
     kapt "android.arch.persistence.room:compiler:$versions.arch"
-}
-repositories {
-    mavenCentral()
 }
 
 // Necessary for Prefs to work (see https://kotlinlang.org/docs/reference/kapt.html)

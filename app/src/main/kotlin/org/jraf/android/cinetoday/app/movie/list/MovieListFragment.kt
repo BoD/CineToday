@@ -181,7 +181,7 @@ class MovieListFragment : BaseFragment<MovieListCallbacks>(), PaletteListener {
 
     private val mLoadMoviesListener = object : LoadMoviesListener {
         override fun onLoadMoviesStarted() {
-            if (mAdapter == null || mAdapter!!.itemCount == 0) {
+            if (mAdapter == null || mAdapter?.itemCount ?: 0 == 0) {
                 mLoadMoviesStarted = true
                 mBinding.conMoviesLoading.visibility = View.VISIBLE
                 mBinding.txtEmpty.visibility = View.GONE
