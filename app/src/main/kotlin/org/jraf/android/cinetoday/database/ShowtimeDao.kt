@@ -40,11 +40,9 @@ interface ShowtimeDao {
     @Query("DELETE FROM showtime")
     fun deleteAll()
 
-    // TODO "p0" is named "p0" because of this issue: https://youtrack.jetbrains.com/issue/KT-17959
-    @Query("SELECT * FROM showtime WHERE movieId = :p0")
+    @Query("SELECT * FROM showtime WHERE movieId = :movieId")
     fun showtimesByMovieIdLive(movieId: String): LiveData<Array<Showtime>>
 
-    // TODO "p0" is named "p0" because of this issue: https://youtrack.jetbrains.com/issue/KT-17959
     @Query("SELECT "
             + "showtime.theaterId, "
             + "showtime.movieId, "
@@ -54,7 +52,7 @@ interface ShowtimeDao {
             + "FROM "
             + "showtime JOIN theater ON showtime.theaterId = theater.id "
             + "WHERE "
-            + "movieId = :p0 "
+            + "movieId = :movieId "
             + "ORDER BY "
             + "showtime.theaterId, "
             + "showtime.time")

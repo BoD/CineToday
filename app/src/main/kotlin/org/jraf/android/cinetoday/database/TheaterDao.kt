@@ -44,7 +44,6 @@ interface TheaterDao {
     @Insert
     fun insert(theater: Theater)
 
-    // TODO "p0" is named "p0" because of this issue: https://youtrack.jetbrains.com/issue/KT-17959
-    @Query("DELETE from THEATER where id=:p0")
+    @Query("DELETE from THEATER where id=:id")
     fun delete(id: String)
 }
