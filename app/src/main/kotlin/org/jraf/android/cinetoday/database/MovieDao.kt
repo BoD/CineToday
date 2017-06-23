@@ -41,12 +41,10 @@ interface MovieDao {
     @Query("SELECT * FROM movie ORDER BY releaseDate DESC")
     fun allMovies(): Array<Movie>
 
-    // TODO "p0" is named "p0" because of this issue: https://youtrack.jetbrains.com/issue/KT-17959
-    @Query("SELECT * FROM movie where id = :p0")
+    @Query("SELECT * FROM movie where id = :id")
     fun movieById(id: String): Movie?
 
-    // TODO "p0" is named "p0" because of this issue: https://youtrack.jetbrains.com/issue/KT-17959
-    @Query("SELECT * FROM movie where id = :p0")
+    @Query("SELECT * FROM movie where id = :id")
     fun movieByIdLive(id: String): LiveData<Movie?>
 
     @Query("DELETE FROM movie")
@@ -57,7 +55,6 @@ interface MovieDao {
             + " = 0")
     fun deleteWithNoShowtimes()
 
-    // TODO "p0" is named "p0" because of this issue: https://youtrack.jetbrains.com/issue/KT-17959
-    @Query("UPDATE movie SET color = :p1 WHERE id = :p0")
+    @Query("UPDATE movie SET color = :color WHERE id = :id")
     fun updateColor(id: String, color: Int)
 }
