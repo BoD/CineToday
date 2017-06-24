@@ -25,8 +25,8 @@
 package org.jraf.android.cinetoday.network.api;
 
 import java.io.IOException;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.fest.assertions.api.Assertions;
 import org.json.JSONException;
@@ -56,7 +56,7 @@ public class ApiTest {
 
     private void testParseMovieListFile(String filename, int movieCount) throws IOException, JSONException, ParseException, java.text.ParseException {
         String json = TestUtil.readTestResource(filename);
-        SortedSet<Movie> movies = new TreeSet<>();
+        Set<Movie> movies = new HashSet<>();
         Api api = new Api(new OkHttpClient.Builder().build(), new MovieCodec(), new ShowtimeCodec(), new TheaterCodec());
         api.parseMovieList(movies, json, "Test", Api.Companion.getSIMPLE_DATE_FORMAT().parse("2016-04-10"));
         Assertions.assertThat(movies).hasSize(movieCount);
