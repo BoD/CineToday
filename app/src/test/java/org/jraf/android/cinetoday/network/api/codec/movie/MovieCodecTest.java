@@ -40,7 +40,8 @@ import org.jraf.android.cinetoday.model.movie.MovieAssert;
 import org.jraf.android.cinetoday.network.api.ParseException;
 
 @RunWith(RobolectricTestRunner.class)
-@Config(constants = BuildConfig.class, sdk = 21)
+// XXX I have no idea why 'manifest = ""' is necessary, but without it I get resource not found exceptions
+@Config(constants = BuildConfig.class, sdk = 21, manifest = "")
 public class MovieCodecTest {
 
     @Test

@@ -46,7 +46,8 @@ import org.jraf.android.cinetoday.network.api.codec.showtime.ShowtimeCodec;
 import org.jraf.android.cinetoday.network.api.codec.theater.TheaterCodec;
 
 @RunWith(RobolectricTestRunner.class)
-@Config(constants = BuildConfig.class, sdk = 21)
+// XXX I have no idea why 'manifest = ""' is necessary, but without it I get resource not found exceptions
+@Config(constants = BuildConfig.class, sdk = 21, manifest = "")
 public class ApiTest {
 
     @Test
