@@ -79,7 +79,7 @@ android.applicationVariants.all { variant ->
     // Create new copy tasks, for release builds
     if (variant.buildType.name == 'release') {
         variant.outputs.each { output ->
-            def outputFile = file("build/outputs/apk/release/$output.outputFileName")
+            def outputFile = file("build/outputs/apk/${variant.flavorName}/release/$output.outputFileName")
             def apkName = "${globalProjectName}-${project.name}-${android.defaultConfig.versionCode}-${variant.flavorName}-signed.apk"
 
             // Copy the apk to the 'etc' folder
@@ -147,7 +147,7 @@ dependencies {
     provided "javax.annotation:jsr250-api:$versions.jsr250"
 
     // Necessary to have Kotlin and dataBinding at the same time
-    kapt "com.android.databinding:compiler:$versions.androidGradlePlugin"
+    kapt "com.android.databinding:compiler:$versions.androidGradlePlugin"  // <- Ici
 
     // Architecture components
     implementation "android.arch.lifecycle:runtime:$versions.arch"

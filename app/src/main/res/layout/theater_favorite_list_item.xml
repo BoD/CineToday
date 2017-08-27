@@ -5,8 +5,6 @@
 
     <data>
 
-        <import type="org.jraf.android.cinetoday.R" />
-
         <variable
             name="theater"
             type="org.jraf.android.cinetoday.model.theater.Theater" />
@@ -40,7 +38,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
                 android:shadowColor="@android:color/black"
-                android:shadowRadius="@{context.resources.getDimensionPixelSize(R.dimen.shadow_radius)}"
+                android:shadowRadius="@{@dimen/shadow_radius}"
                 android:text="@{theater.name}"
                 tools:text="MK2 Bibliothèque" />
 
@@ -53,7 +51,7 @@
                 android:gravity="center_horizontal"
                 android:maxLines="4"
                 android:shadowColor="@android:color/black"
-                android:shadowRadius="@{context.resources.getDimensionPixelSize(R.dimen.shadow_radius)}"
+                android:shadowRadius="@{@dimen/shadow_radius}"
                 android:text="@{theater.address}"
                 tools:text="23 rue Nationale\n75013 PARIS" />
         </LinearLayout>
