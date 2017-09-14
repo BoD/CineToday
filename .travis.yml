@@ -27,11 +27,8 @@ install:
   # Install or update Android SDK components (will not do anything if already up to date thanks to the cache mechanism)
   - echo y | $HOME/android-sdk/tools/bin/sdkmanager 'tools'
   - echo y | $HOME/android-sdk/tools/bin/sdkmanager 'platform-tools'
-  - echo y | $HOME/android-sdk/tools/bin/sdkmanager 'build-tools;25.0.2'
-  - echo y | $HOME/android-sdk/tools/bin/sdkmanager 'platforms;android-25'
-  - echo y | $HOME/android-sdk/tools/bin/sdkmanager 'extras;android;m2repository'
-  - echo y | $HOME/android-sdk/tools/bin/sdkmanager 'extras;google;google_play_services'
-  - echo y | $HOME/android-sdk/tools/bin/sdkmanager 'extras;google;m2repository'
+  - echo y | $HOME/android-sdk/tools/bin/sdkmanager 'build-tools;26.0.1'
+  - echo y | $HOME/android-sdk/tools/bin/sdkmanager 'platforms;android-26'
 
 env:
   - ANDROID_HOME=$HOME/android-sdk
