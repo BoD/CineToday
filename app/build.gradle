@@ -117,6 +117,7 @@ dependencies {
     implementation "com.android.support:support-annotations:$versions.supportLibrary"
     implementation "com.android.support:percent:$versions.supportLibrary"
     implementation "com.android.support:palette-v7:$versions.supportLibrary"
+    implementation "com.android.support:wear:$versions.supportLibrary"
 
     //  Wear
     implementation "com.google.android.support:wearable:$versions.androidWearable"
@@ -131,8 +132,8 @@ dependencies {
     // JRAF
     kapt "org.jraf:prefs-compiler:$versions.prefs"
     implementation "org.jraf:prefs:$versions.prefs"
-    implementation 'com.github.BoD:jraf-android-util:-SNAPSHOT'
-//    implementation 'org.jraf:jraf-android-util:1.0.0'
+//    implementation 'com.github.BoD:jraf-android-util:-SNAPSHOT'
+    implementation 'org.jraf:jraf-android-util:1.0.0'
 
     // OkHttp
     implementation "com.squareup.okhttp3:okhttp:$versions.okHttp"
@@ -150,7 +151,7 @@ dependencies {
     kapt "com.android.databinding:compiler:$versions.androidGradlePlugin"  // <- Ici
 
     // Architecture components
-    implementation "android.arch.lifecycle:runtime:$versions.arch"
+    implementation "android.arch.lifecycle:runtime:$versions.arch_rt"
     implementation "android.arch.lifecycle:extensions:$versions.arch"
     kapt "android.arch.lifecycle:compiler:$versions.arch"
 
