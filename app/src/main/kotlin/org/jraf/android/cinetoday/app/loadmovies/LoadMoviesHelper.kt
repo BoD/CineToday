@@ -210,7 +210,7 @@ class LoadMoviesHelper(
         // 3/ Save everything to the local db
         persist(movies)
 
-        mMainPrefs.putLastUpdateDate(System.currentTimeMillis())
+        mMainPrefs.lastUpdateDate = System.currentTimeMillis()
         mLoadMoviesListenerHelper.setIdle()
 
         // 4/ Show a notification

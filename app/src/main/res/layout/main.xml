@@ -2,27 +2,30 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <android.support.wearable.view.drawer.WearableDrawerLayout
+    <!-- Drawer layout -->
+    <android.support.wear.widget.drawer.WearableDrawerLayout
         android:id="@+id/drawerLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:deviceIds="wear">
 
+        <!-- Fragment -->
         <FrameLayout
             android:id="@+id/conFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
-        <android.support.wearable.view.drawer.WearableNavigationDrawer
+        <!-- Navigation drawer -->
+        <android.support.wear.widget.drawer.WearableNavigationDrawerView
             android:id="@+id/navigationDrawer"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
-        <android.support.wearable.view.drawer.WearableActionDrawer
+        <!-- Action drawer -->
+        <android.support.wear.widget.drawer.WearableActionDrawerView
             android:id="@+id/actionDrawer"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
-        <!--android:theme="@style/Theme.CineToday.ActionDrawer"-->
 
-    </android.support.wearable.view.drawer.WearableDrawerLayout>
+    </android.support.wear.widget.drawer.WearableDrawerLayout>
 </layout>
