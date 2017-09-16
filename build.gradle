@@ -10,7 +10,7 @@ buildscript {
     // Versions used across modules
     ext.versions = [:]
     ext.versions.with {
-        androidGradlePlugin = '3.0.0-beta5'
+        androidGradlePlugin = '3.0.0-beta6'
         gradleVersionsPlugin = '0.15.0'
         fabricPlugin = '1.24.1'
         dexCountPlugin = '0.7.3'

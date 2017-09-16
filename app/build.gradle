@@ -132,8 +132,8 @@ dependencies {
     // JRAF
     kapt "org.jraf:prefs-compiler:$versions.prefs"
     implementation "org.jraf:prefs:$versions.prefs"
-//    implementation 'com.github.BoD:jraf-android-util:-SNAPSHOT'
-    implementation 'org.jraf:jraf-android-util:1.0.0'
+    implementation 'com.github.BoD:jraf-android-util:-SNAPSHOT'
+//    implementation 'org.jraf:jraf-android-util:1.0.0'
 
     // OkHttp
     implementation "com.squareup.okhttp3:okhttp:$versions.okHttp"
