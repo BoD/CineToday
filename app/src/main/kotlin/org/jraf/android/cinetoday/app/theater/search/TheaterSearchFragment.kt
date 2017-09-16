@@ -28,8 +28,9 @@ import android.arch.lifecycle.Observer
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v7.widget.LinearSnapHelper
-import android.support.wearable.view.DefaultOffsettingHelper
-import android.support.wearable.view.WearableRecyclerView
+import android.support.v7.widget.RecyclerView
+import android.support.wear.widget.CurvingLayoutCallback
+import android.support.wear.widget.WearableLinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -47,15 +48,15 @@ class TheaterSearchFragment : BaseFragment<TheaterSearchCallbacks>() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         mBinding = DataBindingUtil.inflate<TheaterSearchListBinding>(inflater, R.layout.theater_search_list, container, false)
         mBinding.rclList.setHasFixedSize(true)
-        mBinding.rclList.centerEdgeItems = true
+        mBinding.rclList.isEdgeItemsCenteringEnabled = true
 
         // Apply an offset + scale on the items depending on their distance from the center (only for Round screens)
         if (ScreenShapeHelper.get(context).isRound) {
-            mBinding.rclList.offsettingHelper = object : DefaultOffsettingHelper() {
+            mBinding.rclList.layoutManager = WearableLinearLayoutManager(context, object : CurvingLayoutCallback(context) {
                 private val FACTOR = .75f
 
-                override fun updateChild(child: View, parent: WearableRecyclerView) {
-                    super.updateChild(child, parent)
+                override fun onLayoutFinished(child: View, parent: RecyclerView) {
+                    super.onLayoutFinished(child, parent)
 
                     val childTop = child.y + child.height / 2f
                     val childOffsetFromCenter = childTop - parent.height / 2f
@@ -65,11 +66,14 @@ class TheaterSearchFragment : BaseFragment<TheaterSearchCallbacks>() {
                     child.scaleX = 1 - childOffsetFromCenterRatioNormalized
                     child.scaleY = 1 - childOffsetFromCenterRatioNormalized
                 }
-            }
+            })
 
             // Also snaps
             val snapHelper = LinearSnapHelper()
             snapHelper.attachToRecyclerView(mBinding.rclList)
+        } else {
+            // Square screen: no scale effect and no snapping
+            mBinding.rclList.layoutManager = WearableLinearLayoutManager(context)
         }
         return mBinding.root
     }
