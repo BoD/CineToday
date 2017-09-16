@@ -81,11 +81,12 @@ class MovieListFragment : BaseFragment<MovieListCallbacks>(), PaletteListener {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        mBinding = DataBindingUtil.inflate<MovieListBinding>(inflater, R.layout.movie_list, container, false)
+        mBinding = DataBindingUtil.inflate(inflater, R.layout.movie_list, container, false)
         mBinding.callbacks = callbacks
+
         mBinding.rclList.setHasFixedSize(true)
-        val snapHelper = PagerSnapHelper()
-        snapHelper.attachToRecyclerView(mBinding.rclList)
+        mBinding.rclList.layoutManager = LinearLayoutManager(context)
+        PagerSnapHelper().attachToRecyclerView(mBinding.rclList)
         mBinding.rclList.addOnScrollListener(mOnScrollListener)
 
         mProgressSubscription = mLoadMoviesListenerHelper.progressInfo.observeOn(AndroidSchedulers.mainThread()).subscribe {
@@ -167,32 +168,33 @@ class MovieListFragment : BaseFragment<MovieListCallbacks>(), PaletteListener {
 
     private fun updateBackgroundColor(position: Int) {
         if (mPalette.indexOfKey(position) >= 0) {
-            if (mColorAnimation != null) mColorAnimation!!.cancel()
+            mColorAnimation?.cancel()
 
             val colorFrom = (mBinding.conRoot.background as ColorDrawable).color
             val colorTo = mPalette.get(position)
-            mColorAnimation = ValueAnimator.ofObject(ArgbEvaluator(), colorFrom, colorTo)
-            mColorAnimation!!.duration = 200
-            mColorAnimation!!.addUpdateListener { animator -> mBinding.conRoot.setBackgroundColor(animator.animatedValue as Int) }
-            mColorAnimation!!.start()
+            mColorAnimation = ValueAnimator.ofObject(ArgbEvaluator(), colorFrom, colorTo).apply {
+                duration = 200
+                addUpdateListener { animator -> mBinding.conRoot.setBackgroundColor(animator.animatedValue as Int) }
+                start()
+            }
         }
     }
 
     private val mOnScrollListener = object : RecyclerView.OnScrollListener() {
         internal var mArgbEvaluator = ArgbEvaluator()
 
-        override fun onScrollStateChanged(recyclerView: RecyclerView?, newState: Int) {
+        override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
             mScrolling = newState != RecyclerView.SCROLL_STATE_IDLE
         }
 
-        override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
-            val firstItemPosition = (recyclerView!!.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
+        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+            val firstItemPosition = (recyclerView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
             val firstItem = recyclerView.layoutManager.findViewByPosition(firstItemPosition)
             val firstItemTop = firstItem.y
             val firstItemRatio = Math.abs(firstItemTop / recyclerView.height)
 
             val nextItemPosition = firstItemPosition + 1
-            if (nextItemPosition >= mAdapter!!.itemCount) return
+            if (nextItemPosition >= mAdapter?.itemCount ?: 0) return
 
             val firstItemColor = mPalette.get(firstItemPosition, -1)
             if (firstItemColor == -1) return
