@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    >
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
 
@@ -22,7 +21,7 @@
             android:layout_gravity="center" />
 
         <!-- List -->
-        <android.support.wearable.view.WearableRecyclerView
+        <android.support.wear.widget.WearableRecyclerView
             android:id="@+id/rclList"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
