@@ -46,7 +46,7 @@ class TheaterSearchFragment : BaseFragment<TheaterSearchCallbacks>() {
     private val mTheaterSearchLiveData: TheaterSearchLiveData by lazy { TheaterSearchLiveData() }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        mBinding = DataBindingUtil.inflate<TheaterSearchListBinding>(inflater, R.layout.theater_search_list, container, false)
+        mBinding = DataBindingUtil.inflate(inflater, R.layout.theater_search_list, container, false)
         mBinding.rclList.setHasFixedSize(true)
         mBinding.rclList.isEdgeItemsCenteringEnabled = true
 
@@ -69,8 +69,7 @@ class TheaterSearchFragment : BaseFragment<TheaterSearchCallbacks>() {
             })
 
             // Also snaps
-            val snapHelper = LinearSnapHelper()
-            snapHelper.attachToRecyclerView(mBinding.rclList)
+            LinearSnapHelper().attachToRecyclerView(mBinding.rclList)
         } else {
             // Square screen: no scale effect and no snapping
             mBinding.rclList.layoutManager = WearableLinearLayoutManager(context)

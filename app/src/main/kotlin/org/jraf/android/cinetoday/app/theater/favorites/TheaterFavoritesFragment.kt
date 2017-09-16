@@ -61,12 +61,12 @@ class TheaterFavoritesFragment : BaseFragment<TheaterFavoritesCallbacks>() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        mBinding = DataBindingUtil.inflate<TheaterFavoritesBinding>(inflater, R.layout.theater_favorites, container, false)
+        mBinding = DataBindingUtil.inflate(inflater, R.layout.theater_favorites, container, false)
         mBinding.callbacks = callbacks
 
         mBinding.rclList.setHasFixedSize(true)
-        val snapHelper = PagerSnapHelper()
-        snapHelper.attachToRecyclerView(mBinding.rclList)
+        mBinding.rclList.layoutManager = LinearLayoutManager(context)
+        PagerSnapHelper().attachToRecyclerView(mBinding.rclList)
 
         mBinding.rclList.addOnScrollListener(mOnScrollListener)
 
