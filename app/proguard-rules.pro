@@ -10,3 +10,6 @@
 
 # Jraf Util
 -dontwarn org.jraf.android.util.databinding.UtilAboutWearBinding
+
+# Glide
+-keep public class * implements com.bumptech.glide.module.GlideModule
