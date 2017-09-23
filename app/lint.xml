@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+    <!-- Ignore some android incompatible packages included in Okio -->
+    <issue id="InvalidPackage">
+        <ignore regexp="java.nio.*" />
+    </issue>
+
+    <!-- Because of this issue: https://issuetracker.google.com/issues/62318360 -->
+    <issue id="GradleCompatible" severity="warning" />
+</lint>

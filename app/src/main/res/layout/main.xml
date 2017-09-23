@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Drawer layout -->
+    <android.support.wear.widget.drawer.WearableDrawerLayout
+        android:id="@+id/drawerLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:deviceIds="wear">
+
+        <!-- Fragment -->
+        <FrameLayout
+            android:id="@+id/conFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <!-- Navigation drawer -->
+        <android.support.wear.widget.drawer.WearableNavigationDrawerView
+            android:id="@+id/navigationDrawer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <!-- Action drawer -->
+        <android.support.wear.widget.drawer.WearableActionDrawerView
+            android:id="@+id/actionDrawer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </android.support.wear.widget.drawer.WearableDrawerLayout>
+</layout>

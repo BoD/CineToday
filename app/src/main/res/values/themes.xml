@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.CineToday" parent="@android:style/Theme.DeviceDefault">
+        <item name="android:colorPrimary">@color/primary</item>
+        <item name="android:colorAccent">@color/accent</item>
+        <item name="android:colorPrimaryDark">@color/primary_dark</item>
+        <item name="android:colorBackground">@color/background</item>
+        <item name="android:colorBackgroundFloating">@color/primary_dark</item>
+        <item name="android:textColorLink">@color/accent</item>
+        <item name="android:buttonStyle">@style/Widget.CineToday.Button.Colored</item>
+        <item name="android:alertDialogTheme">@style/Theme.CineToday.Dialog.Alert</item>
+    </style>
+
+    <style name="Theme.CineToday.Dialog.Alert" parent="@android:style/Theme.DeviceDefault.Dialog.Alert">
+        <item name="android:colorPrimary">@color/primary</item>
+        <item name="android:colorAccent">@color/accent</item>
+        <item name="android:colorPrimaryDark">@color/primary_dark</item>
+        <item name="android:colorBackground">@color/background</item>
+        <item name="android:colorBackgroundFloating">@color/primary_dark</item>
+    </style>
+
+    <style name="Theme.CineToday.ActionDrawer">
+        <item name="android:colorBackground">?android:colorBackgroundFloating</item>
+    </style>
+
+
+</resources>

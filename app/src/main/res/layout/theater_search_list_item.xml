@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="callbacks"
+            type="org.jraf.android.cinetoday.app.theater.search.TheaterSearchCallbacks" />
+
+        <variable
+            name="theater"
+            type="org.jraf.android.cinetoday.model.theater.Theater" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?android:attr/selectableItemBackground"
+        android:onClick="@{() -> callbacks.onTheaterClicked(theater)}"
+        android:orientation="vertical"
+        android:paddingBottom="4dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:paddingTop="4dp">
+
+        <!-- Name -->
+        <TextView
+            android:id="@+id/txtName"
+            style="@style/Widget.CineToday.TextView.TheaterName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{theater.name}"
+            tools:text="MK2 Bibliothèque" />
+
+        <!-- Address -->
+        <TextView
+            android:id="@+id/txtAddress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="marquee"
+            android:maxLines="4"
+            android:text="@{theater.address}"
+            tools:text="23 rue Nationale\n75013 PARIS" />
+
+    </LinearLayout>
+</layout>

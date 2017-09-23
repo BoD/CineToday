@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="callbacks"
+            type="org.jraf.android.cinetoday.app.movie.list.MovieListCallbacks" />
+    </data>
+
+    <FrameLayout
+        android:id="@+id/conRoot"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/movie_list_bg">
+
+        <!-- Cursor loading indicator -->
+        <ProgressBar
+            android:id="@+id/pgbLoading"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
+
+        <!-- Movies loading indicator -->
+        <LinearLayout
+            android:id="@+id/conMoviesLoading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <ProgressBar
+                style="?android:attr/progressBarStyleLarge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center" />
+
+            <TextView
+                android:id="@+id/txtMoviesLoadingInfo"
+                style="@style/Widget.CineToday.TextView.Empty"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="8dp"
+                android:text="@string/movie_list_loadingMovies" />
+
+        </LinearLayout>
+
+        <!-- Empty -->
+        <TextView
+            android:id="@+id/txtEmpty"
+            style="@style/Widget.CineToday.TextView.Empty"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/movie_list_empty"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+        <!-- List -->
+        <android.support.wear.widget.WearableRecyclerView
+            android:id="@+id/rclList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipChildren="false"
+            android:scrollbars="vertical" />
+
+    </FrameLayout>
+</layout>

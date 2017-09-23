@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="org.jraf.android.util.ui.screenshape.ScreenShapeHelper" />
+
+        <variable
+            name="movie"
+            type="org.jraf.android.cinetoday.app.movie.details.MovieViewModel" />
+
+    </data>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!-- Loading indicator -->
+        <ProgressBar
+            android:id="@+id/pgbLoading"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
+
+        <!-- Movie details -->
+        <ScrollView
+            android:id="@+id/conMovie"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fillViewport="true"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <LinearLayout
+                android:id="@+id/conMovieDetails"
+                style="@style/Widget.CineToday.LinearLayout.Movie.Details"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingBottom="@{ScreenShapeHelper.get(context).safeMargin * 1.5F + @dimen/movie_details_padding_vertical}"
+                android:paddingLeft="@{ScreenShapeHelper.get(context).safeMargin / 2F + @dimen/movie_details_padding_horizontal}"
+                android:paddingRight="@{ScreenShapeHelper.get(context).safeMargin / 2F + @dimen/movie_details_padding_horizontal}"
+                android:paddingTop="@{ScreenShapeHelper.get(context).safeMargin * 1.5F + @dimen/movie_details_padding_vertical}"
+                tools:paddingBottom="40dp"
+                tools:paddingTop="40dp">
+
+                <!-- Title -->
+                <TextView
+                    style="@style/Widget.CineToday.TextView.Movie.Details.Title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{movie.localTitle}"
+                    tools:text="Star Wars Episode VII: The Force Awakens" />
+
+                <!-- Directors -->
+                <TextView
+                    style="@style/Widget.CineToday.TextView.Movie.Details.Field"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    app:textHtml="@{@string/movie_card_directors(movie.directors)}"
+                    app:visible="@{movie.directors}"
+                    tools:text="By JJ Abrahms" />
+
+                <!-- Genres -->
+                <TextView
+                    style="@style/Widget.CineToday.TextView.Movie.Details.Field"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="@{movie.genresFormatted}"
+                    android:textStyle="italic"
+                    app:visible="@{movie.genres.length > 0}"
+                    tools:text="Thriller" />
+
+                <!-- Actors -->
+                <TextView
+                    style="@style/Widget.CineToday.TextView.Movie.Details.Field"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    app:textHtml="@{@string/movie_card_actors(movie.actors)}"
+                    app:visible="@{movie.actors}"
+                    tools:text="With Daisy Railey, John Boyega, Mark Hamill" />
+
+                <!-- Synopsis -->
+                <TextView
+                    style="@style/Widget.CineToday.TextView.Movie.Details.Synopsis"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:text="@{movie.synopsis}"
+                    tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean in augue eu sem feugiat rutrum. Nam volutpat dolor arcu, sit amet ornare augue rutrum sit amet. Vestibulum congue, nisi non placerat dictum, justo neque fringilla nibh, eu sagittis lacus sapien sit amet lectus. Morbi sed ullamcorper est. Aliquam tempus, sem at cursus molestie, turpis lectus ultricies felis, non condimentum urna quam ac lectus. Vestibulum turpis tellus, commodo cursus tempor a, venenatis at ligula" />
+
+                <!-- Duration -->
+                <TextView
+                    style="@style/Widget.CineToday.TextView.Movie.Details.Field"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    app:textHtml="@{@string/movie_card_duration(movie.durationFormatted)}"
+                    tools:text="Duration: 1h43" />
+
+                <!-- Original title -->
+                <TextView
+                    style="@style/Widget.CineToday.TextView.Movie.Details.Field"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:textColor="?android:textColorSecondary"
+                    app:textHtml="@{@string/movie_card_originalTitle(movie.originalTitle)}"
+                    app:visible="@{!movie.localTitle.equals(movie.originalTitle)}"
+                    tools:text="Original title: Star Wars Episode VII: The Force Awakens" />
+
+                <LinearLayout
+                    android:id="@+id/conShowtimes"
+                    style="@style/Widget.CineToday.LinearLayout.Movie.Details"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
+
+            </LinearLayout>
+
+        </ScrollView>
+
+        <!-- Theater name container -->
+        <LinearLayout
+            android:id="@+id/conTheaterName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="32dp"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <!-- Theater name (invisible) -->
+            <TextView
+                android:id="@+id/txtTheaterNameInvisible"
+                style="@style/Widget.CineToday.TextView.Movie.Details.TheaterName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="marquee"
+                android:singleLine="true"
+                android:paddingLeft="@{ScreenShapeHelper.get(context).safeMargin / 2F + @dimen/movie_details_padding_horizontal}"
+                android:paddingRight="@{ScreenShapeHelper.get(context).safeMargin / 2F + @dimen/movie_details_padding_horizontal}"
+                android:paddingTop="@{ScreenShapeHelper.get(context).safeMargin + @dimen/movie_details_padding_vertical}"
+                android:textColor="@android:color/transparent"
+                tools:text="MK2 Bibliothèque" />
+
+            <!-- Gradient -->
+            <View
+                android:id="@+id/vieTheaterNameGradient"
+                android:layout_width="match_parent"
+                android:layout_height="4dp" />
+        </LinearLayout>
+
+        <!-- Theater name -->
+        <TextView
+            android:id="@+id/txtTheaterName"
+            style="@style/Widget.CineToday.TextView.Movie.Details.TheaterName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="marquee"
+            android:singleLine="true"
+            android:paddingLeft="@{ScreenShapeHelper.get(context).safeMargin / 2F + @dimen/movie_details_padding_horizontal}"
+            android:paddingRight="@{ScreenShapeHelper.get(context).safeMargin / 2F + @dimen/movie_details_padding_horizontal}"
+            android:paddingTop="@{ScreenShapeHelper.get(context).safeMargin + @dimen/movie_details_padding_vertical}"
+            android:visibility="invisible"
+            tools:text="MK2 Bibliothèque" />
+
+    </FrameLayout>
+</layout>

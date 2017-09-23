@@ -1,25 +1,37 @@
 language: android
 jdk: oraclejdk8
 
-android:
-  components:
-    - tools
-    - tools # Yes this needs to be there twice, see https://github.com/travis-ci/travis-ci/issues/6040
-    - platform-tools
-    - build-tools-25.0.2
-    - android-25
-    - extra-android-m2repository
-    - extra-android-support
-    - extra-google-google_play_services
-    - extra-google-m2repository
-
 before_cache:
+  # Do not cache a few Gradle files/directories (see https://docs.travis-ci.com/user/languages/java/#Caching)
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
 
 cache:
   directories:
+    # Android SDK
+    - $HOME/android-sdk-dl
+    - $HOME/android-sdk
+
+    # Gradle dependencies
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/
 
-script: ./gradlew lintDebug testDebug
+    # Android build cache (see http://tools.android.com/tech-docs/build-cache)
+    - $HOME/.android/build-cache
+
+install:
+  # Download and unzip the Android SDK tools (if not already there thanks to the cache mechanism)
+  - if test ! -e $HOME/android-sdk-dl/tools_r25.2.5-linux.zip ; then curl https://dl.google.com/android/repository/tools_r25.2.5-linux.zip > $HOME/android-sdk-dl/tools_r25.2.5-linux.zip ; fi
+  - unzip -n $HOME/android-sdk-dl/tools_r25.2.5-linux.zip -d $HOME/android-sdk
+
+  # Install or update Android SDK components (will not do anything if already up to date thanks to the cache mechanism)
+  - echo y | $HOME/android-sdk/tools/bin/sdkmanager 'tools'
+  - echo y | $HOME/android-sdk/tools/bin/sdkmanager 'platform-tools'
+  - echo y | $HOME/android-sdk/tools/bin/sdkmanager 'build-tools;26.0.1'
+  - echo y | $HOME/android-sdk/tools/bin/sdkmanager 'platforms;android-26'
+  - echo y | $HOME/android-sdk/tools/bin/sdkmanager 'extras;google;m2repository'
+
+env:
+  - ANDROID_HOME=$HOME/android-sdk
+
+script: ./gradlew --no-daemon --parallel lintDebug testDebug

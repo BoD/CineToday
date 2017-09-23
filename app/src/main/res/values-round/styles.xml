@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Widget.CineToday.LinearLayout.Movie.Details" parent="">
+        <item name="android:gravity">center_horizontal</item>
+    </style>
+
+    <style name="Widget.CineToday.TextView.Movie.Details.Title" parent="Base.Widget.CineToday.TextView.Movie.Details.Title">
+        <item name="android:gravity">center_horizontal</item>
+    </style>
+
+    <style name="Widget.CineToday.TextView.Movie.Details.Field" parent="Base.Widget.CineToday.TextView.Movie.Details.Field">
+        <item name="android:gravity">center_horizontal</item>
+    </style>
+
+    <style name="Widget.CineToday.TextView.Movie.Details.TheaterName" parent="Base.Widget.CineToday.TextView.Movie.Details.TheaterName">
+        <item name="android:gravity">center_horizontal</item>
+    </style>
+
+</resources>
