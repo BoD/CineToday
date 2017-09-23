@@ -68,7 +68,7 @@ class Api(private val mCachingOkHttpClient: OkHttpClient, private val mMovieCode
             val jsonTheaterShowtime = jsonTheaterShowtimes.getJSONObject(0)
             val jsonMovieShowtimes = jsonTheaterShowtime.optJSONArray("movieShowtimes") ?: return
             val len = jsonMovieShowtimes.length()
-            for (i in 0..len - 1) {
+            for (i in 0 until len) {
                 val jsonMovieShowtime = jsonMovieShowtimes.getJSONObject(i)
                 val jsonOnShow = jsonMovieShowtime.getJSONObject("onShow")
                 val jsonMovie = jsonOnShow.getJSONObject("movie")

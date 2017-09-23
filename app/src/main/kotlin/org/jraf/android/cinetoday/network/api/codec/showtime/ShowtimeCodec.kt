@@ -31,10 +31,10 @@ import org.jraf.android.util.log.Log
 import org.json.JSONException
 import org.json.JSONObject
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 import java.util.TreeSet
-import java.util.concurrent.TimeUnit
 
 class ShowtimeCodec {
 
@@ -87,13 +87,12 @@ class ShowtimeCodec {
             // Make a set and merge it with the previous one if any
             val todayShowtimesSet = TreeSet<Showtime>()
             for (timeStr in todayShowtimesStrElem) {
-                val showtime = Showtime(
+                todayShowtimesSet += Showtime(
                         id = 0,
                         theaterId = theaterId,
                         movieId = movie.id,
                         time = stringTimeToDate(timeStr),
                         is3d = is3d)
-                todayShowtimesSet.add(showtime)
             }
             val showTimesForThisTheater = movie.todayShowtimes[theaterId]
             if (showTimesForThisTheater != null) {
@@ -116,7 +115,12 @@ class ShowtimeCodec {
             val split = time.split(":")
             val hour = split[0].toInt()
             val minute = split[1].toInt()
-            return Date(TimeUnit.HOURS.toMillis(hour.toLong()) + TimeUnit.MINUTES.toMillis(minute.toLong()))
+            val cal = Calendar.getInstance();
+            cal[Calendar.HOUR_OF_DAY] = hour
+            cal[Calendar.MINUTE] = minute
+            cal[Calendar.SECOND] = 0
+            cal[Calendar.MILLISECOND] = 0
+            return cal.time
         }
     }
 }
