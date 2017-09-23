@@ -68,6 +68,9 @@ class MovieDetailsActivity : BaseActivity() {
     private fun onMovieResult(movie: Movie) {
         mBinding.pgbLoading.visibility = View.GONE
         mBinding.conMovie.visibility = View.VISIBLE
+        // Needed for the rotary input to work
+        mBinding.conMovie.requestFocus()
+
         val movieViewModel = MovieViewModel(movie, this)
         mBinding.movie = movieViewModel
 
