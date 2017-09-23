@@ -213,11 +213,13 @@ class LoadMoviesHelper(
         mMainPrefs.lastUpdateDate = System.currentTimeMillis()
         mLoadMoviesListenerHelper.setIdle()
 
-        // 4/ Show a notification
-        val newMovieTitles = movies
-                .filter { it.isNew }
-                .map { it.localTitle }
-        if (!newMovieTitles.isEmpty()) showNotification(newMovieTitles)
+        // 4/ Show a notification (if prefs say so)
+        if (mMainPrefs.isShowNewReleasesNotification) {
+            val newMovieTitles = movies
+                    .filter { it.isNew }
+                    .map { it.localTitle }
+            if (!newMovieTitles.isEmpty()) showNotification(newMovieTitles)
+        }
     }
 
     private fun downloadPoster(movie: Movie) {
