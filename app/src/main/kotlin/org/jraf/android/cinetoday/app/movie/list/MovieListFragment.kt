@@ -138,7 +138,8 @@ class MovieListFragment : BaseFragment<MovieListCallbacks>(), PaletteListener {
             mBinding.conMoviesLoading.visibility = View.GONE
             mBinding.txtEmpty.visibility = View.GONE
             mBinding.rclList.visibility = View.VISIBLE
-
+            // Needed for the rotary input to work
+            mBinding.rclList.requestFocus()
 
             var adapter: MovieListAdapter? = mAdapter
             if (adapter == null) {

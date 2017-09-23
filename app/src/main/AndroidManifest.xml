@@ -53,7 +53,8 @@
 
         <!-- Main -->
         <activity
-            android:name=".app.main.MainActivity">
+            android:name=".app.main.MainActivity"
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
