@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:title="@string/main_menu_settings">
+    <SwitchPreference
+        android:defaultValue="true"
+        android:key="showNewReleasesNotification"
+        android:title="@string/preference_showNewReleasesNotification_title" />
+
+    <Preference
+        android:icon="@drawable/ic_settings_refresh_white_24dp"
+        android:key="refresh"
+        android:persistent="false"
+        android:title="@string/preference_refresh_title" />
+
+    <Preference
+        android:icon="@drawable/ic_settings_info_white_24dp"
+        android:key="about"
+        android:persistent="false"
+        android:title="@string/preference_about_title" />
+
+</PreferenceScreen>

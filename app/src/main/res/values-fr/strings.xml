@@ -1,0 +1,74 @@
+<resources>
+    <!-- Common -->
+    <string name="common_cancel">Annuler</string>
+
+    <!-- Main -->
+    <string name="main_empty_intro">Aucun cinéma choisi</string>
+    <string name="theater_favorites_empty_pickTheater">Choisir un cinéma</string>
+
+    <!-- Movie card -->
+    <string name="movie_card_directors"><![CDATA[De <i>%1$s</i>]]></string>
+    <string name="movie_card_actors"><![CDATA[Avec <i>%1$s</i>]]></string>
+    <string name="movie_card_duration"><![CDATA[Durée : <i>%1$s</i>]]></string>
+    <string name="movie_card_originalTitle"><![CDATA[Titre original : <i>%1$s</i>]]></string>
+
+    <!-- Notif -->
+    <string name="notif_title">Nouvelles sorties !</string>
+    <string name="notif_channel_main_name">Principal</string>
+    <string name="notif_channel_main_description">Le canal principal</string>
+
+    <!-- Configure -->
+    <string name="configure_openedOnPhone">Ouvert sur téléphone</string>
+    <string name="movie_card_showtimes_3d">3D</string>
+
+    <!-- Duration -->
+    <string name="durationMinutes">%1$d minutes</string>
+    <string name="durationHoursMinutes">%1$dh%2$02d</string>
+    <plurals name="durationHours">
+        <item quantity="one">%1$d heure</item>
+        <item quantity="other">%1$d heures</item>
+    </plurals>
+
+    <!-- Main -->
+    <string name="main_menu_settings">Paramètres</string>
+    <string name="main_action_directions">Itinéraire</string>
+    <string name="main_action_webSite">Site web</string>
+    <string name="main_action_delete">Supprimer</string>
+    <string name="main_theater_delete_confirm_title">Supprimer</string>
+    <string name="main_theater_delete_confirm_message">Voulez-vous supprimer ce cinéma ?</string>
+    <string name="main_page_add_btnAdd_empty">Choisir un cinéma</string>
+    <string name="main_action_addFavorite">Ajouter un cinéma</string>
+    <string name="main_page_add_intro_empty">Bienvenue !\nClickez sur le bouton pour choisir un cinéma</string>
+    <string name="main_page_add_intro_additional">Choissez plusieurs cinémas !</string>
+    <string name="main_menu_movies">Films</string>
+    <string name="main_menu_theaters">Cinémas</string>
+    <string name="main_confirmation_openedOnPhone">Ouvert sur téléphone</string>
+
+    <!-- Movie list -->
+    <string name="movie_list_empty">Aucun film</string>
+    <string name="movie_list_loadingMovies">Chargement…</string>
+    <string name="movie_list_loadingMovies_progress">Chargement (%1$d/%2$d)…</string>
+
+
+    <!-- Theater search -->
+    <string name="theater_search_edtSearch_hint">Cinéma</string>
+    <string name="theater_search_noResults">Aucun résultat</string>
+    <string name="theater_search_title">Choisissez votre cinéma</string>
+
+    <!-- Preferences -->
+    <string name="preference_showNewReleasesNotification_title">Notifications de nouvelles sorties</string>
+    <string name="preference_about_title">À propos</string>
+    <string name="preference_refresh_title">Mettre à jour</string>
+    <string name="preference_refresh_summary_none">Jamais mis à jour</string>
+    <string name="preference_refresh_summary_date">Dernière mise à jour : %1$s</string>
+    <string name="preference_refresh_summary_ongoing">Mise à jour en cours (%1$d/%2$d)…</string>
+
+    <!-- About -->
+    <string name="about_shareText_subject">Une super app !</string>
+    <string name="about_shareText_body">Cette app affiche sur smart watch les films à l\'affiche dans votre cinéma préféré !\nRendez-vous ici:\nhttp://play.google.com/store/apps/details?id=%s</string>
+    <string name="about_email_text">Contacter l\'auteur</string>
+    <string name="about_web_text">Site de l\'auteur</string>
+    <string name="about_sources_text">Code source sur Github</string>
+    <string name="about_artwork_text">Contacter David Rodriguez</string>
+
+</resources>

@@ -1,0 +1,91 @@
+{
+  "documentation": "A movie.",
+  "fields": [
+    {
+      "documentation": "Public id.",
+      "name": "public_id",
+      "type": "String",
+      "nullable": false,
+      "index": true
+    },
+    {
+      "documentation": "Original title.",
+      "name": "title_original",
+      "type": "String",
+      "nullable": false
+    },
+    {
+      "documentation": "Local (translated) title.",
+      "name": "title_local",
+      "type": "String",
+      "nullable": false
+    },
+    {
+      "documentation": "Director(s).",
+      "name": "directors",
+      "type": "String",
+      "nullable": true
+    },
+    {
+      "documentation": "Actors.",
+      "name": "actors",
+      "type": "String",
+      "nullable": true
+    },
+    {
+      "documentation": "Release date",
+      "name": "release_date",
+      "type": "Date",
+      "nullable": true
+    },
+    {
+      "documentation": "Duration in seconds.",
+      "name": "duration",
+      "type": "Integer",
+      "nullable": true
+    },
+    {
+      "documentation": "List of genres, separated by '|'.",
+      "name": "genres",
+      "type": "String",
+      "nullable": true
+    },
+    {
+      "documentation": "Uri of a poster",
+      "name": "poster_uri",
+      "type": "String",
+      "nullable": true
+    },
+    {
+      "documentation": "Uri of a trailer",
+      "name": "trailer_uri",
+      "type": "String",
+      "nullable": true
+    },
+    {
+      "documentation": "Uri of web page",
+      "name": "web_uri",
+      "type": "String",
+      "nullable": false
+    },
+    {
+      "documentation": "Synopsis.",
+      "name": "synopsis",
+      "type": "String",
+      "nullable": false
+    },
+    {
+      "documentation": "Color (based on the poster).",
+      "name": "color",
+      "type": "Integer",
+      "nullable": true
+    }
+  ],
+  "constraints": [
+    {
+      "name": "unique_public_id",
+      "definition": "UNIQUE (movie__public_id) ON CONFLICT IGNORE"
+    }
+  ],
+  "defaultOrder": "release_date DESC"
+}

@@ -1,0 +1,9 @@
+<resources>
+    <dimen name="shadow_radius">4dp</dimen>
+    <dimen name="theater_favorite_list_item_buttons_paddingBottom">8dp</dimen>
+    <dimen name="theater_favorite_list_item_buttons_bg_height">40dp</dimen>
+    <dimen name="movie_details_padding_vertical">8dp</dimen>
+    <dimen name="movie_details_padding_horizontal">8dp</dimen>
+    <dimen name="movie_list_item_posterBorder_leftRight">2dp</dimen>
+    <dimen name="movie_list_item_posterBorder_topBottom">2dp</dimen>
+</resources>

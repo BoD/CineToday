@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="theater"
+            type="org.jraf.android.cinetoday.model.theater.Theater" />
+    </data>
+
+    <android.support.wearable.view.BoxInsetLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!-- Picture -->
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:foreground="@color/theater_favorite_list_item_overlay"
+            app:uri="@{theater.pictureUri}"
+            tools:src="#00F" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:orientation="vertical"
+            app:layout_box="all">
+
+            <!-- Name -->
+            <TextView
+                android:id="@+id/txtName"
+                style="@style/Widget.CineToday.TextView.TheaterName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:shadowColor="@android:color/black"
+                android:shadowRadius="@{@dimen/shadow_radius}"
+                android:text="@{theater.name}"
+                android:textColor="@android:color/white"
+                tools:text="MK2 Bibliothèque" />
+
+            <!-- Address -->
+            <TextView
+                android:id="@+id/txtAddress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="marquee"
+                android:gravity="center_horizontal"
+                android:maxLines="4"
+                android:shadowColor="@android:color/black"
+                android:shadowRadius="@{@dimen/shadow_radius}"
+                android:text="@{theater.address}"
+                android:textColor="@android:color/white"
+                tools:text="23 rue Nationale\n75013 PARIS" />
+        </LinearLayout>
+    </android.support.wearable.view.BoxInsetLayout>
+</layout>

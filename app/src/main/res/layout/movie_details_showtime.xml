@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:clipToPadding="false"
+    android:orientation="horizontal"
+    android:paddingBottom="6dp">
+
+    <!-- Showtime -->
+    <TextView
+        android:id="@+id/txtShowtime"
+        style="@style/Widget.CineToday.TextView.ShowTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="19:30" />
+
+    <!-- 3D indicator -->
+    <TextView
+        android:id="@+id/txtIs3d"
+        style="@style/Widget.CineToday.TextView.ShowTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:background="@drawable/shape_showtime_bg_3d"
+        android:shadowColor="#000"
+        android:shadowRadius="2"
+        android:text="@string/movie_card_showtimes_3d"
+        android:textColor="@android:color/white"
+        android:textStyle="bold" />
+
+</LinearLayout>
