@@ -32,7 +32,6 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.support.annotation.ColorInt
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.PagerSnapHelper
 import android.support.v7.widget.RecyclerView
 import android.util.SparseIntArray
 import android.view.LayoutInflater
@@ -48,7 +47,9 @@ import org.jraf.android.cinetoday.databinding.MovieListBinding
 import org.jraf.android.cinetoday.model.movie.Movie
 import org.jraf.android.cinetoday.util.async.doAsync
 import org.jraf.android.cinetoday.util.base.BaseFragment
+import org.jraf.android.cinetoday.widget.RotaryPagerSnapHelper
 import javax.inject.Inject
+
 
 class MovieListFragment : BaseFragment<MovieListCallbacks>(), PaletteListener {
     companion object {
@@ -86,7 +87,7 @@ class MovieListFragment : BaseFragment<MovieListCallbacks>(), PaletteListener {
 
         mBinding.rclList.setHasFixedSize(true)
         mBinding.rclList.layoutManager = LinearLayoutManager(context)
-        PagerSnapHelper().attachToRecyclerView(mBinding.rclList)
+        RotaryPagerSnapHelper().attachToRecyclerView(mBinding.rclList)
         mBinding.rclList.addOnScrollListener(mOnScrollListener)
 
         mProgressSubscription = mLoadMoviesListenerHelper.progressInfo.observeOn(AndroidSchedulers.mainThread()).subscribe {

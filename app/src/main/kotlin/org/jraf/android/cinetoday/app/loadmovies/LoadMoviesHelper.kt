@@ -282,6 +282,9 @@ class LoadMoviesHelper(
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) createNotificationChannel()
         val mainNotifBuilder = NotificationCompat.Builder(mContext, NOTIFICATION_CHANNEL_MAIN)
 
+        // Let's face it
+        mainNotifBuilder.priority = NotificationCompat.PRIORITY_MIN
+
         // Small icon
         mainNotifBuilder.setSmallIcon(R.drawable.ic_notif)
 
@@ -300,6 +303,7 @@ class LoadMoviesHelper(
         mainActivityIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         val mainActivityPendingIntent = PendingIntent.getActivity(mContext, 0, mainActivityIntent, 0)
         mainNotifBuilder.setContentIntent(mainActivityPendingIntent)
+        mainNotifBuilder.setAutoCancel(true)
 
         // Wear specifics
         val wearableExtender = NotificationCompat.WearableExtender()
@@ -316,7 +320,7 @@ class LoadMoviesHelper(
         val name = mContext.getString(R.string.notif_channel_main_name)
         val description = mContext.getString(R.string.notif_channel_main_description)
         // Let's face it
-        val importance = NotificationManager.IMPORTANCE_LOW
+        val importance = NotificationManager.IMPORTANCE_MIN
         val channel = NotificationChannel(NOTIFICATION_CHANNEL_MAIN, name, importance)
         channel.description = description
         val notificationManager = mContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
