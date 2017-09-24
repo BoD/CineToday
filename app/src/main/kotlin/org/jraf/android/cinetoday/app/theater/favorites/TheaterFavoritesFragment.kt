@@ -28,7 +28,6 @@ import android.arch.lifecycle.Observer
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.PagerSnapHelper
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -39,6 +38,7 @@ import org.jraf.android.cinetoday.database.AppDatabase
 import org.jraf.android.cinetoday.databinding.TheaterFavoritesBinding
 import org.jraf.android.cinetoday.model.theater.Theater
 import org.jraf.android.cinetoday.util.base.BaseFragment
+import org.jraf.android.cinetoday.widget.RotaryPagerSnapHelper
 import javax.inject.Inject
 
 class TheaterFavoritesFragment : BaseFragment<TheaterFavoritesCallbacks>() {
@@ -66,8 +66,7 @@ class TheaterFavoritesFragment : BaseFragment<TheaterFavoritesCallbacks>() {
 
         mBinding.rclList.setHasFixedSize(true)
         mBinding.rclList.layoutManager = LinearLayoutManager(context)
-        PagerSnapHelper().attachToRecyclerView(mBinding.rclList)
-
+        RotaryPagerSnapHelper().attachToRecyclerView(mBinding.rclList)
         mBinding.rclList.addOnScrollListener(mOnScrollListener)
 
         return mBinding.root
