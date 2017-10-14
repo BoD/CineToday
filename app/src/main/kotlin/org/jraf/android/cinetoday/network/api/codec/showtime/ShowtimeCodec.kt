@@ -50,14 +50,7 @@ class ShowtimeCodec {
 
             // Find today's date in the list
             val todayFormatted = DAY_DATE_FORMAT.format(date)
-            var todayShowtimesStr: String? = null
-            for (showtimesDay in showtimesDays) {
-                if (showtimesDay.contains(todayFormatted)) {
-                    // Found
-                    todayShowtimesStr = showtimesDay
-                    break
-                }
-            }
+            var todayShowtimesStr = showtimesDays.firstOrNull { it.contains(todayFormatted) }
             if (todayShowtimesStr == null) {
                 Log.w("Could not find today in showtime days")
                 return
@@ -115,7 +108,7 @@ class ShowtimeCodec {
             val split = time.split(":")
             val hour = split[0].toInt()
             val minute = split[1].toInt()
-            val cal = Calendar.getInstance();
+            val cal = Calendar.getInstance()
             cal[Calendar.HOUR_OF_DAY] = hour
             cal[Calendar.MINUTE] = minute
             cal[Calendar.SECOND] = 0

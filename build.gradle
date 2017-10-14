@@ -10,29 +10,29 @@ buildscript {
     // Versions used across modules
     ext.versions = [:]
     ext.versions.with {
-        androidGradlePlugin = '3.0.0-beta6'
+        androidGradlePlugin = '3.0.0-rc1'
         gradleVersionsPlugin = '0.15.0'
         fabricPlugin = '1.24.2'
         dexCountPlugin = '0.8.1'
-        libFrc = '1.7.1'
+        libFrc = '1.8.0'
 
         compileSdk = 26
         targetSdk = 26
 
-        buildTools = '26.0.1'
+        buildTools = '26.0.2'
         kotlin = '1.1.51'
         supportLibrary = '26.1.0'
-        arch = '1.0.0-beta1'
+        arch = '1.0.0-beta2'
         constraintLayout = '1.0.2'
-        playServices = '11.4.0'
+        playServices = '11.4.2'
         espresso = '3.0.1'
         junit = '4.12'
         robolectric = '3.4.2'
         fest = '2.0M10'
-        rxJava = '2.1.4'
+        rxJava = '2.1.5'
         rxAndroid = '2.0.1'
-        crashlytics = '2.6.8'
-        dagger = '2.11'
+        crashlytics = '2.7.0'
+        dagger = '2.12'
         androidWearable = '2.0.5'
         prefs = '1.2.2'
         okHttp = '3.9.0'

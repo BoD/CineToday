@@ -117,11 +117,11 @@ dependencies {
     implementation "com.android.support:support-annotations:$versions.supportLibrary"
     implementation "com.android.support:percent:$versions.supportLibrary"
     implementation "com.android.support:palette-v7:$versions.supportLibrary"
-    implementation "com.android.support:wear:$versions.supportLibrary"
 
     //  Wear
     implementation "com.google.android.support:wearable:$versions.androidWearable"
     implementation "com.google.android.wearable:wearable:$versions.androidWearable"
+    implementation "com.android.support:wear:$versions.supportLibrary"
 
     // Play Services
     implementation "com.google.android.gms:play-services-gcm:$versions.playServices"
@@ -153,8 +153,6 @@ dependencies {
     // Architecture components
     implementation "android.arch.lifecycle:extensions:$versions.arch"
     implementation "android.arch.lifecycle:common-java8:$versions.arch"
-    // TODO: Remove this (see https://developer.android.com/topic/libraries/architecture/release-notes.html)
-    implementation "android.arch.lifecycle:common:1.0.1"
 
     // Room
     implementation "android.arch.persistence.room:runtime:$versions.arch"

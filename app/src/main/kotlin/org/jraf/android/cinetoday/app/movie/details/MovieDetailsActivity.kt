@@ -41,7 +41,7 @@ import org.jraf.android.cinetoday.util.base.BaseActivity
 import org.jraf.android.cinetoday.util.uri.contentId
 import org.jraf.android.util.ui.animation.AnimationUtil
 import java.text.DateFormat
-import java.util.Calendar
+import java.util.Date
 import javax.inject.Inject
 
 class MovieDetailsActivity : BaseActivity() {
@@ -88,7 +88,7 @@ class MovieDetailsActivity : BaseActivity() {
         mBinding.conShowtimes.removeAllViews()
 
         var theaterId: String? = null
-        val now = Calendar.getInstance()
+        val now = Date()
         val inflater = LayoutInflater.from(this)
         for (showtime in showtimes) {
             // Theater name
@@ -102,7 +102,7 @@ class MovieDetailsActivity : BaseActivity() {
             }
 
             // Time
-            val isTooLate = getTimeAsCalendar(showtime.time.time).before(now)
+            val isTooLate = showtime.time.before(now)
             val conShowtimeItem = inflater.inflate(R.layout.movie_details_showtime, mBinding.conShowtimes, false)
             val txtShowtime = conShowtimeItem.findViewById<TextView>(R.id.txtShowtime)
             txtShowtime.text = mTimeFormat.format(showtime.time)
@@ -131,18 +131,6 @@ class MovieDetailsActivity : BaseActivity() {
                     textView.visibility = View.VISIBLE
                 }
             }
-        }
-    }
-
-    companion object {
-        private fun getTimeAsCalendar(time: Long): Calendar {
-            val res = Calendar.getInstance()
-            res.set(Calendar.HOUR_OF_DAY, 0)
-            res.set(Calendar.MINUTE, 0)
-            res.set(Calendar.SECOND, 0)
-            res.set(Calendar.MILLISECOND, 0)
-            res.add(Calendar.MILLISECOND, time.toInt())
-            return res
         }
     }
 }
