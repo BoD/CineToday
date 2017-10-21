@@ -41,7 +41,7 @@ class RotaryPagerSnapHelper : PagerSnapHelper() {
         // Handle snap with the rotary input
         recyclerView?.setOnGenericMotionListener(View.OnGenericMotionListener { v, motionEvent ->
             if (motionEvent.action == MotionEvent.ACTION_SCROLL && RotaryEncoder.isFromRotaryEncoder(motionEvent)) {
-                val delta = -RotaryEncoder.getRotaryAxisValue(motionEvent) * RotaryEncoder.getScaledScrollFactor(v.context)
+                val delta = -RotaryEncoder.getRotaryAxisValue(motionEvent) * RotaryEncoder.getScaledScrollFactor(v.context) * 1.5f
                 v.scrollBy(0, Math.round(delta))
 
                 // Snap

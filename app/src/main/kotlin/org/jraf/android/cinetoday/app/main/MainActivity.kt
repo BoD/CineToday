@@ -62,9 +62,16 @@ import org.jraf.android.util.log.Log
 import org.jraf.android.util.ui.screenshape.ScreenShapeHelper
 import java.io.UnsupportedEncodingException
 import java.net.URLEncoder
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class MainActivity : BaseActivity(), MovieListCallbacks, TheaterFavoritesCallbacks, MenuItem.OnMenuItemClickListener, AlertDialogListener {
+
+    companion object {
+        private const val REQUEST_ADD_THEATER = 0
+        private const val DIALOG_THEATER_DELETE_CONFIRM = 0
+        private const val DELAY_HIDE_ACTION_DRAWER_MS = 1000L
+    }
 
     @Inject lateinit var mDatabase: AppDatabase
     @Inject lateinit var mLoadMoviesHelper: LoadMoviesHelper
@@ -72,12 +79,6 @@ class MainActivity : BaseActivity(), MovieListCallbacks, TheaterFavoritesCallbac
     private lateinit var mBinding: MainBinding
     private var mAtLeastOneFavorite: Boolean = false
     private var mPeekAndHideActionDrawer: Boolean = false
-
-    companion object {
-        private const val REQUEST_ADD_THEATER = 0
-        private const val DIALOG_THEATER_DELETE_CONFIRM = 0
-        private const val DELAY_HIDE_ACTION_DRAWER_MS = 1000L
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -124,7 +125,18 @@ class MainActivity : BaseActivity(), MovieListCallbacks, TheaterFavoritesCallbac
                 }
             }
         })
+
+        // Load movies now if last update is too old
+        loadingMoviesIfLastUpdateTooOld()
     }
+
+    private fun loadingMoviesIfLastUpdateTooOld() {
+        val lastUpdateDate = Components.application.mainPrefs.lastUpdateDate
+        if (lastUpdateDate != null && System.currentTimeMillis() - lastUpdateDate > TimeUnit.DAYS.toMillis(1)) {
+            mLoadMoviesHelper.startLoadMoviesIntentService()
+        }
+    }
+
 
     private fun scheduleHideActionDrawer() {
         HandlerUtil.getMainHandler().removeCallbacks(mHideActionDrawerRunnable)
