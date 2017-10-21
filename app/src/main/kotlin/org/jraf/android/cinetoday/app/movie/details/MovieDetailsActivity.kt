@@ -41,6 +41,7 @@ import org.jraf.android.cinetoday.util.base.BaseActivity
 import org.jraf.android.cinetoday.util.uri.contentId
 import org.jraf.android.util.ui.animation.AnimationUtil
 import java.text.DateFormat
+import java.util.Calendar
 import java.util.Date
 import javax.inject.Inject
 
@@ -102,7 +103,7 @@ class MovieDetailsActivity : BaseActivity() {
             }
 
             // Time
-            val isTooLate = showtime.time.before(now)
+            val isTooLate = showtime.time.resetDate().before(now.resetDate())
             val conShowtimeItem = inflater.inflate(R.layout.movie_details_showtime, mBinding.conShowtimes, false)
             val txtShowtime = conShowtimeItem.findViewById<TextView>(R.id.txtShowtime)
             txtShowtime.text = mTimeFormat.format(showtime.time)
@@ -133,4 +134,11 @@ class MovieDetailsActivity : BaseActivity() {
             }
         }
     }
+}
+
+private fun Date.resetDate(): Date {
+    val cal = Calendar.getInstance()
+    cal.time = this
+    cal.set(1970, Calendar.JANUARY, 1)
+    return cal.time
 }

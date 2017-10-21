@@ -35,6 +35,7 @@ import org.jraf.android.cinetoday.app.preferences.PreferencesFragment
 import org.jraf.android.cinetoday.app.theater.favorites.TheaterFavoritesFragment
 import org.jraf.android.cinetoday.app.theater.search.TheaterSearchLiveData
 import org.jraf.android.cinetoday.network.NetworkModule
+import org.jraf.android.cinetoday.prefs.MainPrefs
 import javax.inject.Named
 import javax.inject.Singleton
 
@@ -45,6 +46,8 @@ interface ApplicationComponent {
 
     @get:Named("NotCachingOkHttpClient")
     val notCachingOkHttpClient: OkHttpClient
+
+    val mainPrefs: MainPrefs
 
     fun inject(mainActivity: MainActivity)
 
