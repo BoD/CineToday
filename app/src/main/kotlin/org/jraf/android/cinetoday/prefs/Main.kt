@@ -25,7 +25,6 @@
 package org.jraf.android.cinetoday.prefs
 
 import org.jraf.android.prefs.DefaultBoolean
-import org.jraf.android.prefs.DefaultStringSet
 import org.jraf.android.prefs.Prefs
 
 @Prefs
@@ -40,10 +39,4 @@ class Main {
      */
     @DefaultBoolean(true)
     var showNewReleasesNotification: Boolean? = null
-
-    /**
-     * List of movies that have been used in 'new release' notifications.
-     */
-    @DefaultStringSet("")
-    var notifiedMovieIds: Set<String>? = null
 }

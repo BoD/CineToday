@@ -67,43 +67,45 @@ class PreferencesFragment : PreferenceFragment() {
         // About
         findPreference("about").setOnPreferenceClickListener { _ ->
             val builder = AboutActivityIntentBuilder()
-            builder.setAppName(getString(R.string.app_name))
-            builder.setBuildDate(BuildConfig.BUILD_DATE)
-            builder.setGitSha1(BuildConfig.GIT_SHA1)
-            builder.setAuthorCopyright(getString(R.string.about_authorCopyright))
-            builder.setLicense(getString(R.string.about_License))
-            builder.setShareTextSubject(getString(R.string.about_shareText_subject))
-            builder.setShareTextBody(getString(R.string.about_shareText_body))
-            builder.setBackgroundResId(R.drawable.about_bg)
-            builder.addLink(getString(R.string.about_email_uri), getString(R.string.about_email_text))
-            builder.addLink(getString(R.string.about_web_uri), getString(R.string.about_web_text))
-            builder.addLink(getString(R.string.about_artwork_uri), getString(R.string.about_artwork_text))
-            builder.addLink(getString(R.string.about_sources_uri), getString(R.string.about_sources_text))
+                    .setAppName(getString(R.string.app_name))
+                    .setBuildDate(BuildConfig.BUILD_DATE)
+                    .setGitSha1(BuildConfig.GIT_SHA1)
+                    .setAuthorCopyright(getString(R.string.about_authorCopyright))
+                    .setLicense(getString(R.string.about_License))
+                    .setShareTextSubject(getString(R.string.about_shareText_subject))
+                    .setShareTextBody(getString(R.string.about_shareText_body))
+                    .setBackgroundResId(R.drawable.about_bg)
+                    .addLink(getString(R.string.about_email_uri), getString(R.string.about_email_text))
+                    .addLink(getString(R.string.about_web_uri), getString(R.string.about_web_text))
+                    .addLink(getString(R.string.about_artwork_uri), getString(R.string.about_artwork_text))
+                    .addLink(getString(R.string.about_sources_uri), getString(R.string.about_sources_text))
             startActivity(builder.build(context))
             true
         }
 
-        mProgressSubscription = mLoadMoviesListenerHelper.progressInfo.observeOn(AndroidSchedulers.mainThread()).subscribe {
-            when (it) {
-                is LoadMoviesListenerHelper.ProgressInfo.Idle -> {
-                    mLoadMoviesStarted = false
-                    setLastUpdateDateSummary()
-                }
+        mProgressSubscription = mLoadMoviesListenerHelper.progressInfo
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    when (it) {
+                        is LoadMoviesListenerHelper.ProgressInfo.Idle -> {
+                            mLoadMoviesStarted = false
+                            setLastUpdateDateSummary()
+                        }
 
-                is LoadMoviesListenerHelper.ProgressInfo.PreLoading -> {
-                    mLoadMoviesStarted = true
-                    val refreshPref = findPreference("refresh")
-                    refreshPref.isEnabled = false
-                }
+                        is LoadMoviesListenerHelper.ProgressInfo.PreLoading -> {
+                            mLoadMoviesStarted = true
+                            findPreference("refresh").isEnabled = false
+                        }
 
-                is LoadMoviesListenerHelper.ProgressInfo.Loading -> {
-                    mLoadMoviesStarted = true
-                    val refreshPref = findPreference("refresh")
-                    refreshPref.isEnabled = false
-                    refreshPref.summary = getString(R.string.preference_refresh_summary_ongoing, it.currentMovieIndex, it.totalMovies)
+                        is LoadMoviesListenerHelper.ProgressInfo.Loading -> {
+                            mLoadMoviesStarted = true
+                            with(findPreference("refresh")) {
+                                isEnabled = false
+                                summary = getString(R.string.preference_refresh_summary_ongoing, it.currentMovieIndex, it.totalMovies)
+                            }
+                        }
+                    }
                 }
-            }
-        }
     }
 
     override fun onDestroy() {
