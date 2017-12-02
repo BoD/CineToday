@@ -24,6 +24,7 @@
  */
 package org.jraf.android.cinetoday.app.loadmovies
 
+import io.reactivex.Observable
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
 
@@ -32,8 +33,8 @@ class LoadMoviesListenerHelper {
     private val mProgressInfo = BehaviorSubject.create<ProgressInfo>()
     private val mError = PublishSubject.create<Exception>()
 
-    val progressInfo get() = mProgressInfo.hide()
-    val error get() = mError.hide()
+    val progressInfo: Observable<ProgressInfo> get() = mProgressInfo.hide()
+    val error: Observable<Exception> get() = mError.hide()
 
     sealed class ProgressInfo {
         class Idle : ProgressInfo()
