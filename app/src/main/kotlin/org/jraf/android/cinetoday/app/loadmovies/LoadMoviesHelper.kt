@@ -29,6 +29,8 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
@@ -39,15 +41,15 @@ import android.support.annotation.WorkerThread
 import android.support.v4.app.NotificationCompat
 import android.support.v7.graphics.Palette
 import android.text.TextUtils
-import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.load.resource.bitmap.GlideBitmapDrawable
-import com.bumptech.glide.load.resource.drawable.GlideDrawable
+import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import org.jraf.android.cinetoday.R
 import org.jraf.android.cinetoday.app.main.MainActivity
 import org.jraf.android.cinetoday.database.AppDatabase
+import org.jraf.android.cinetoday.glide.GlideApp
 import org.jraf.android.cinetoday.model.movie.Movie
 import org.jraf.android.cinetoday.network.api.Api
 import org.jraf.android.cinetoday.prefs.MainPrefs
@@ -73,6 +75,9 @@ class LoadMoviesHelper(
     }
 
     @Volatile private var mWantStop: Boolean = false
+
+    private val mObjectsToKeep = mutableListOf<Any>()
+
 
     fun setWantStop(wantStop: Boolean) {
         mWantStop = wantStop
@@ -239,21 +244,25 @@ class LoadMoviesHelper(
         }
         // Glide insists this is done on the main thread
         HandlerUtil.runOnUiThread {
-            Glide.with(mContext)
+            GlideApp.with(mContext)
                     .load(movie.posterUri)
                     .centerCrop()
-                    .diskCacheStrategy(DiskCacheStrategy.RESULT)
-                    .listener(object : RequestListener<String, GlideDrawable> {
-                        override fun onException(e: Exception, model: String, target: Target<GlideDrawable>, isFirstResource: Boolean): Boolean {
+                    .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                    .listener(object : RequestListener<Drawable> {
+                        override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
                             return false
                         }
 
-                        override fun onResourceReady(resource: GlideDrawable, model: String, target: Target<GlideDrawable>,
-                                                     isFromMemoryCache: Boolean,
-                                                     isFirstResource: Boolean): Boolean {
-                            if (resource !is GlideBitmapDrawable) return false
-                            Palette.from(resource.bitmap)
-                                    .generate { palette -> movie.color = palette.getDarkVibrantColor(mContext.getColor(R.color.movie_list_bg)) }
+                        override fun onResourceReady(resource: Drawable, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+                            var bitmap = (resource as BitmapDrawable).bitmap
+                            // Bitmaps from Glide are pooled, and Palette calls recycle() on them... That can't be good, so make a copy
+                            bitmap = bitmap.copy(bitmap.config, false)
+                            // We need to prevent the bitmap from being garbage collected while the palette is computed
+                            keep(bitmap)
+                            Palette.from(bitmap).generate { palette ->
+                                movie.color = palette.getDarkVibrantColor(mContext.getColor(R.color.movie_list_bg))
+                                discard(bitmap)
+                            }
                             return false
                         }
                     })
@@ -332,4 +341,7 @@ class LoadMoviesHelper(
         intent.action = LoadMoviesIntentService.ACTION_LOAD_MOVIES
         mContext.startService(intent)
     }
+
+    private fun keep(obj: Any) = mObjectsToKeep.add(obj)
+    private fun discard(obj: Any) = mObjectsToKeep.remove(obj)
 }

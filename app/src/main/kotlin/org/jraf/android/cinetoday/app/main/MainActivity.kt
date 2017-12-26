@@ -85,7 +85,7 @@ class MainActivity : BaseActivity(), MovieListCallbacks, TheaterFavoritesCallbac
         Components.application.inject(this)
 
         // Navigation drawer
-        mBinding = DataBindingUtil.setContentView(this, R.layout.main)
+        mBinding = DataBindingUtil.setContentView(this, R.layout.main)!!
         mBinding.navigationDrawer.setAdapter(NavigationDrawerAdapter())
         mBinding.navigationDrawer.addOnItemSelectedListener { position ->
             when (position) {

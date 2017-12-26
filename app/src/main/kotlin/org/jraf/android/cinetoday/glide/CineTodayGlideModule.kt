@@ -28,44 +28,56 @@ import android.content.Context
 import android.net.Uri
 import com.bumptech.glide.Glide
 import com.bumptech.glide.GlideBuilder
+import com.bumptech.glide.Registry
+import com.bumptech.glide.annotation.GlideModule
 import com.bumptech.glide.integration.okhttp3.OkHttpUrlLoader
 import com.bumptech.glide.load.DecodeFormat
-import com.bumptech.glide.load.data.DataFetcher
+import com.bumptech.glide.load.Options
 import com.bumptech.glide.load.engine.bitmap_recycle.LruBitmapPool
 import com.bumptech.glide.load.engine.cache.InternalCacheDiskCacheFactory
 import com.bumptech.glide.load.engine.cache.LruResourceCache
 import com.bumptech.glide.load.engine.cache.MemorySizeCalculator
-import com.bumptech.glide.load.model.GenericLoaderFactory
 import com.bumptech.glide.load.model.GlideUrl
 import com.bumptech.glide.load.model.ModelLoader
 import com.bumptech.glide.load.model.ModelLoaderFactory
-import com.bumptech.glide.module.GlideModule
+import com.bumptech.glide.load.model.MultiModelLoaderFactory
+import com.bumptech.glide.module.AppGlideModule
+import com.bumptech.glide.request.RequestOptions
 import okhttp3.OkHttpClient
 import org.jraf.android.cinetoday.dagger.Components
 import java.io.InputStream
 
-class CineTodayGlideModule : GlideModule {
+@GlideModule
+class CineTodayGlideModule : AppGlideModule() {
     companion object {
-        private const val CACHE_SIZE_B = 5 * 1024 * 1024
+        private const val CACHE_SIZE_B = 5 * 1024 * 1024L
         private const val CACHE_DIRECTORY_NAME = "images"
     }
 
     override fun applyOptions(context: Context, builder: GlideBuilder) {
-        // Disk cache
-        builder.setDiskCache(InternalCacheDiskCacheFactory(context, CACHE_DIRECTORY_NAME, CACHE_SIZE_B))
+        val memorySizeCalculator = MemorySizeCalculator.Builder(context).build()
 
-        // Memory cache / bitmap pool
-        val memorySizeCalculator = MemorySizeCalculator(context)
-        builder.setMemoryCache(LruResourceCache(memorySizeCalculator.memoryCacheSize))
-        builder.setBitmapPool(LruBitmapPool(memorySizeCalculator.bitmapPoolSize))
+        builder
+                // Disk cache
+                .setDiskCache(InternalCacheDiskCacheFactory(context, CACHE_DIRECTORY_NAME, CACHE_SIZE_B))
 
-        // Decode format - RGB565 is enough
-        builder.setDecodeFormat(DecodeFormat.PREFER_RGB_565)
+                // Memory cache / bitmap pool
+                .setMemoryCache(LruResourceCache(memorySizeCalculator.memoryCacheSize.toLong()))
+                .setBitmapPool(LruBitmapPool(memorySizeCalculator.bitmapPoolSize.toLong()))
+
+                .setDefaultRequestOptions(RequestOptions()
+                        // Decode format - RGB565 is enough
+                        .format(DecodeFormat.PREFER_RGB_565)
+                        // Disable this optimization because we need to access pixels (because we use Palette on them)
+                        .disallowHardwareConfig()
+                )
     }
 
-    override fun registerComponents(context: Context, glide: Glide) {
+    override fun isManifestParsingEnabled() = false
+
+    override fun registerComponents(context: Context, glide: Glide, registry: Registry) {
         val okHttpClient = Components.application.notCachingOkHttpClient
-        glide.register(GlideUrl::class.java, InputStream::class.java, OkHttpUrlResizeModelLoaderFactory(okHttpClient))
+        registry.append(GlideUrl::class.java, InputStream::class.java, OkHttpUrlResizeModelLoaderFactory(okHttpClient))
     }
 
 
@@ -74,9 +86,9 @@ class CineTodayGlideModule : GlideModule {
      */
     private class OkHttpUrlResizeModelLoaderFactory(private val mOkHttpClient: OkHttpClient) : ModelLoaderFactory<GlideUrl, InputStream> {
 
-        override fun build(context: Context, factories: GenericLoaderFactory): ModelLoader<GlideUrl, InputStream> {
+        override fun build(factories: MultiModelLoaderFactory): ModelLoader<GlideUrl, InputStream> {
             return object : OkHttpUrlLoader(mOkHttpClient) {
-                override fun getResourceFetcher(model: GlideUrl?, width: Int, height: Int): DataFetcher<InputStream> {
+                override fun buildLoadData(model: GlideUrl?, width: Int, height: Int, options: Options): ModelLoader.LoadData<InputStream>? {
                     val zimageModel = model?.let {
                         val uriStr = model.toStringUrl()
                         var uri = Uri.parse("http://edge.zimage.io")
@@ -90,7 +102,7 @@ class CineTodayGlideModule : GlideModule {
                                 .build()
                         GlideUrl(uri.toString())
                     }
-                    return super.getResourceFetcher(zimageModel, width, height)
+                    return super.buildLoadData(zimageModel, width, height, options)
                 }
             }
         }

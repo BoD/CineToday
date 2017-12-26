@@ -58,7 +58,7 @@ class MovieDetailsActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Components.application.inject(this)
-        mBinding = DataBindingUtil.setContentView<MovieDetailsBinding>(this, R.layout.movie_details)
+        mBinding = DataBindingUtil.setContentView(this, R.layout.movie_details)!!
         mBinding.conMovie.setOnScrollChangeListener(mOnScrollChangeListener)
 
         val movieId = intent.data.contentId
