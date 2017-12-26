@@ -10,34 +10,33 @@ buildscript {
     // Versions used across modules
     ext.versions = [:]
     ext.versions.with {
-        androidGradlePlugin = '3.1.0-alpha04'
+        androidGradlePlugin = '3.1.0-alpha06'
         gradleVersionsPlugin = '0.17.0'
-        fabricPlugin = '1.25.0'
+        fabricPlugin = '1.25.1'
         dexCountPlugin = '0.8.2'
         libFrc = '1.8.0'
 
-        compileSdk = 27
-        targetSdk = 27
+        compileSdk = 26
+        targetSdk = 26
 
-        buildTools = '27.0.1'
-        kotlin = '1.2.0'
+        buildTools = '27.0.2'
+        kotlin = '1.2.10'
         supportLibrary = '27.0.2'
         arch = '1.0.0'
         constraintLayout = '1.0.2'
-        playServices = '11.6.2'
-        espresso = '3.0.1'
+        playServices = '11.8.0'
+        espresso = '3.0.2-alpha1'
         junit = '4.12'
-        robolectric = '3.5.1'
+        robolectric = '3.6.1'
         fest = '2.0M10'
         rxJava = '2.1.7'
         rxAndroid = '2.0.1'
         crashlytics = '2.8.0'
-        dagger = '2.13'
+        dagger = '2.14.1'
         androidWearable = '2.1.0'
         prefs = '1.2.2'
         okHttp = '3.9.1'
-        glide = '3.8.0'
-        glideOkHttp = '1.5.0'
+        glide = '4.4.0'
         jsr250 = '1.0'
     }
 
@@ -93,7 +92,7 @@ task clean(type: Delete) {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '4.2'
+    gradleVersion = '4.4.1'
     distributionType = Wrapper.DistributionType.ALL
 }
 

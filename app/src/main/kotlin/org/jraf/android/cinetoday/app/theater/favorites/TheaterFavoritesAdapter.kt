@@ -45,7 +45,7 @@ class TheaterFavoritesAdapter(context: Context) : RecyclerView.Adapter<TheaterFa
     class ViewHolder(val itemBinding: TheaterFavoriteListItemBinding) : RecyclerView.ViewHolder(itemBinding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TheaterFavoritesAdapter.ViewHolder {
-        val binding = DataBindingUtil.inflate<TheaterFavoriteListItemBinding>(mLayoutInflater, R.layout.theater_favorite_list_item, parent, false)
+        val binding = DataBindingUtil.inflate<TheaterFavoriteListItemBinding>(mLayoutInflater, R.layout.theater_favorite_list_item, parent, false)!!
         return ViewHolder(binding)
     }
 

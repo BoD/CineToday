@@ -24,30 +24,28 @@
  */
 package org.jraf.android.cinetoday.glide
 
+import android.graphics.drawable.Drawable
 import android.widget.ImageView
-
-import com.bumptech.glide.DrawableRequestBuilder
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.drawable.GlideDrawable
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
-
 import org.jraf.android.util.log.Log
 
 object GlideHelper {
-    private val sRequestListener = object : RequestListener<String, GlideDrawable> {
-        override fun onException(e: Exception, model: String, target: Target<GlideDrawable>, isFirstResource: Boolean): Boolean {
-            Log.w(e, "Could not load image " + model)
+    private val sRequestListener = object : RequestListener<Drawable> {
+        override fun onResourceReady(resource: Drawable, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
             return false
         }
 
-        override fun onResourceReady(resource: GlideDrawable, model: String, target: Target<GlideDrawable>, isFromMemoryCache: Boolean, isFirstResource: Boolean): Boolean {
+        override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
+            Log.w(e, "Could not load image " + model)
             return false
         }
     }
 
-    private fun getRequestBuilder(path: String?, imageView: ImageView): DrawableRequestBuilder<String> {
-        return Glide.with(imageView.context)
+    private fun getRequestBuilder(path: String?, imageView: ImageView): GlideRequest<Drawable> {
+        return GlideApp.with(imageView.context)
                 .load(path)
                 .centerCrop()
     }
@@ -58,18 +56,17 @@ object GlideHelper {
                 .into(imageView)
     }
 
-    fun load(path: String?, imageView: ImageView, listener: RequestListener<in String, GlideDrawable>) {
+    fun load(path: String?, imageView: ImageView, listener: RequestListener<Drawable>) {
         getRequestBuilder(path, imageView)
-                .listener(object : RequestListener<String, GlideDrawable> {
-                    override fun onException(e: Exception, model: String, target: Target<GlideDrawable>, isFirstResource: Boolean): Boolean {
-                        sRequestListener.onException(e, model, target, isFirstResource)
-                        return listener.onException(e, model, target, isFirstResource)
+                .listener(object : RequestListener<Drawable> {
+                    override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
+                        sRequestListener.onLoadFailed(e, model, target, isFirstResource)
+                        return listener.onLoadFailed(e, model, target, isFirstResource)
                     }
 
-                    override fun onResourceReady(resource: GlideDrawable, model: String, target: Target<GlideDrawable>, isFromMemoryCache: Boolean,
-                                                 isFirstResource: Boolean): Boolean {
-                        sRequestListener.onResourceReady(resource, model, target, isFromMemoryCache, isFirstResource)
-                        return listener.onResourceReady(resource, model, target, isFromMemoryCache, isFirstResource)
+                    override fun onResourceReady(resource: Drawable, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+                        sRequestListener.onResourceReady(resource, model, target, dataSource, isFirstResource)
+                        return listener.onResourceReady(resource, model, target, dataSource, isFirstResource)
                     }
                 })
                 .into(imageView)

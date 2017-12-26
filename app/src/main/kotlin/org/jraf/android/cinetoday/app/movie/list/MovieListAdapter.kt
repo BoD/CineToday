@@ -26,19 +26,22 @@ package org.jraf.android.cinetoday.app.movie.list
 
 import android.content.Context
 import android.databinding.DataBindingUtil
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.support.v7.graphics.Palette
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.bitmap.GlideBitmapDrawable
-import com.bumptech.glide.load.resource.drawable.GlideDrawable
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import org.jraf.android.cinetoday.R
 import org.jraf.android.cinetoday.databinding.MovieListItemBinding
+import org.jraf.android.cinetoday.glide.GlideApp
 import org.jraf.android.cinetoday.glide.GlideHelper
 import org.jraf.android.cinetoday.model.movie.Movie
+import org.jraf.android.util.log.Log
 
 class MovieListAdapter(private val mContext: Context, private val mMovieListCallbacks: MovieListCallbacks, private val mPaletteListener: PaletteListener) : RecyclerView.Adapter<MovieListAdapter.ViewHolder>() {
     private val mLayoutInflater: LayoutInflater = LayoutInflater.from(mContext)
@@ -52,7 +55,7 @@ class MovieListAdapter(private val mContext: Context, private val mMovieListCall
     class ViewHolder(val itemBinding: MovieListItemBinding) : RecyclerView.ViewHolder(itemBinding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieListAdapter.ViewHolder {
-        val binding = DataBindingUtil.inflate<MovieListItemBinding>(mLayoutInflater, R.layout.movie_list_item, parent, false)
+        val binding = DataBindingUtil.inflate<MovieListItemBinding>(mLayoutInflater, R.layout.movie_list_item, parent, false)!!
         return ViewHolder(binding)
     }
 
@@ -66,26 +69,26 @@ class MovieListAdapter(private val mContext: Context, private val mMovieListCall
 
         holder.itemBinding.executePendingBindings()
 
-        GlideHelper.load(movie.posterUri, holder.itemBinding.imgPoster, object : RequestListener<String, GlideDrawable> {
-            override fun onException(e: Exception, model: String, target: Target<GlideDrawable>, isFirstResource: Boolean): Boolean {
+        GlideHelper.load(movie.posterUri, holder.itemBinding.imgPoster, object : RequestListener<Drawable> {
+            override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
                 return false
             }
 
-            override fun onResourceReady(resource: GlideDrawable, model: String, target: Target<GlideDrawable>, isFromMemoryCache: Boolean,
-                                         isFirstResource: Boolean): Boolean {
+            override fun onResourceReady(resource: Drawable, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
                 if (movie.color == null) {
+                    Log.d("2")
                     // Generate the color
-                    val glideBitmapDrawable = resource as GlideBitmapDrawable
-                    Palette.from(glideBitmapDrawable.bitmap).generate { palette ->
+                    Palette.from((resource as BitmapDrawable).bitmap).generate { palette ->
                         val color = palette.getDarkVibrantColor(mContext.getColor(R.color.movie_list_bg))
                         mPaletteListener.onPaletteAvailable(position, color, false, movie.id)
                     }
+                    Log.d("3")
                 }
 
                 // Preload the next image
                 if (position + 1 in data.indices) {
                     val nextMovie = data[position + 1]
-                    Glide.with(mContext).load(nextMovie.posterUri).centerCrop()
+                    GlideApp.with(mContext).load(nextMovie.posterUri).centerCrop()
                             .preload(holder.itemBinding.imgPoster.width, holder.itemBinding.imgPoster.height)
                 }
 

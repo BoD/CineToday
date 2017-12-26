@@ -132,20 +132,21 @@ dependencies {
     // JRAF
     kapt "org.jraf:prefs-compiler:$versions.prefs"
     implementation "org.jraf:prefs:$versions.prefs"
-    implementation 'com.github.BoD:jraf-android-util:-SNAPSHOT'
-//    implementation 'org.jraf:jraf-android-util:1.0.0'
+//    implementation 'com.github.BoD:jraf-android-util:-SNAPSHOT'
+    implementation 'org.jraf:jraf-android-util:1.0.0'
 
     // OkHttp
     implementation "com.squareup.okhttp3:okhttp:$versions.okHttp"
 
     // Glide
     implementation "com.github.bumptech.glide:glide:$versions.glide"
-    implementation "com.github.bumptech.glide:okhttp3-integration:$versions.glideOkHttp@jar"
+    kapt "com.github.bumptech.glide:compiler:$versions.glide"
+    implementation "com.github.bumptech.glide:okhttp3-integration:$versions.glide"
 
     // Dagger
     implementation "com.google.dagger:dagger:$versions.dagger"
     kapt "com.google.dagger:dagger-compiler:$versions.dagger"
-    provided "javax.annotation:jsr250-api:$versions.jsr250"
+    compileOnly "javax.annotation:jsr250-api:$versions.jsr250"
 
     // Necessary to have Kotlin and dataBinding at the same time
     kapt "com.android.databinding:compiler:$versions.androidGradlePlugin"  // <- Ici
@@ -166,4 +167,9 @@ dependencies {
 // Necessary for Prefs to work (see https://kotlinlang.org/docs/reference/kapt.html)
 kapt {
     correctErrorTypes = true
+}
+
+// XXX Workaround for https://issuetracker.google.com/issues/70915745 - to be removed when the issue is fixed
+afterEvaluate {
+    tasks['kaptDebugKotlin'].dependsOn('transformDataBindingWithDataBindingMergeArtifactsForDebug')
 }
