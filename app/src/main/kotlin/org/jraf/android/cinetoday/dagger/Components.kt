@@ -34,8 +34,8 @@ object Components {
 
     fun init(context: Context) {
         application = DaggerApplicationComponent.builder()
-                .applicationModule(ApplicationModule(context))
-                .networkModule(NetworkModule())
-                .build()
+            .applicationModule(ApplicationModule(context))
+            .networkModule(NetworkModule())
+            .build()
     }
 }

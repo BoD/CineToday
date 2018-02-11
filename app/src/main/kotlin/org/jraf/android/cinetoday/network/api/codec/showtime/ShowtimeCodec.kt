@@ -65,7 +65,8 @@ class ShowtimeCodec {
             todayShowtimesStr = todayShowtimesStr.substring(todayShowtimesStr.indexOf(':') + 2)
 
             // Split times
-            val todayShowtimesStrElem = todayShowtimesStr.split(", ".toRegex()).dropLastWhile({ it.isEmpty() }).toTypedArray()
+            val todayShowtimesStrElem =
+                todayShowtimesStr.split(", ".toRegex()).dropLastWhile({ it.isEmpty() }).toTypedArray()
 
             // Clean up
             for (i in todayShowtimesStrElem.indices) {
@@ -81,11 +82,12 @@ class ShowtimeCodec {
             val todayShowtimesSet = TreeSet<Showtime>()
             for (timeStr in todayShowtimesStrElem) {
                 todayShowtimesSet += Showtime(
-                        id = 0,
-                        theaterId = theaterId,
-                        movieId = movie.id,
-                        time = stringTimeToDate(timeStr),
-                        is3d = is3d)
+                    id = 0,
+                    theaterId = theaterId,
+                    movieId = movie.id,
+                    time = stringTimeToDate(timeStr),
+                    is3d = is3d
+                )
             }
             val showTimesForThisTheater = movie.todayShowtimes[theaterId]
             if (showTimesForThisTheater != null) {

@@ -65,7 +65,8 @@ import java.net.URLEncoder
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-class MainActivity : BaseActivity(), MovieListCallbacks, TheaterFavoritesCallbacks, MenuItem.OnMenuItemClickListener, AlertDialogListener {
+class MainActivity : BaseActivity(), MovieListCallbacks, TheaterFavoritesCallbacks, MenuItem.OnMenuItemClickListener,
+    AlertDialogListener {
 
     companion object {
         private const val REQUEST_ADD_THEATER = 0
@@ -73,21 +74,23 @@ class MainActivity : BaseActivity(), MovieListCallbacks, TheaterFavoritesCallbac
         private const val DELAY_HIDE_ACTION_DRAWER_MS = 1000L
     }
 
-    @Inject lateinit var mDatabase: AppDatabase
-    @Inject lateinit var mLoadMoviesHelper: LoadMoviesHelper
+    @Inject
+    lateinit var database: AppDatabase
+    @Inject
+    lateinit var loadMoviesHelper: LoadMoviesHelper
 
-    private lateinit var mBinding: MainBinding
-    private var mAtLeastOneFavorite: Boolean = false
-    private var mPeekAndHideActionDrawer: Boolean = false
+    private lateinit var binding: MainBinding
+    private var atLeastOneFavorite: Boolean = false
+    private var peekAndHideActionDrawer: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Components.application.inject(this)
 
         // Navigation drawer
-        mBinding = DataBindingUtil.setContentView(this, R.layout.main)
-        mBinding.navigationDrawer.setAdapter(NavigationDrawerAdapter())
-        mBinding.navigationDrawer.addOnItemSelectedListener { position ->
+        binding = DataBindingUtil.setContentView(this, R.layout.main)
+        binding.navigationDrawer.setAdapter(NavigationDrawerAdapter())
+        binding.navigationDrawer.addOnItemSelectedListener { position ->
             when (position) {
                 0 -> showMovieListFragment()
                 1 -> showTheaterFavoritesFragment()
@@ -96,32 +99,34 @@ class MainActivity : BaseActivity(), MovieListCallbacks, TheaterFavoritesCallbac
         }
 
         // Action drawer
-        mBinding.actionDrawer.setOnMenuItemClickListener(this)
-        mBinding.actionDrawer.isPeekOnScrollDownEnabled = true
-        menuInflater.inflate(R.menu.main, mBinding.actionDrawer.menu)
+        binding.actionDrawer.setOnMenuItemClickListener(this)
+        binding.actionDrawer.isPeekOnScrollDownEnabled = true
+        menuInflater.inflate(R.menu.main, binding.actionDrawer.menu)
 
         // Workaround for http://stackoverflow.com/questions/42141631
         // XXX If the screen is round, we consider the height *must* be the same as the width
-        if (ScreenShapeHelper.get(this).isRound) mBinding.conFragment.layoutParams.height = ScreenShapeHelper.get(this).width
+        if (ScreenShapeHelper.get(this).isRound) binding.conFragment.layoutParams.height =
+                ScreenShapeHelper.get(this).width
 
         showMovieListFragment()
         ensureFavoriteTheaters()
 
         // Peek navigation drawer when app starts
-        mBinding.drawerLayout.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+        binding.drawerLayout.viewTreeObserver.addOnGlobalLayoutListener(object :
+            ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
-                mBinding.navigationDrawer.controller.peekDrawer()
-                mBinding.drawerLayout.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                binding.navigationDrawer.controller.peekDrawer()
+                binding.drawerLayout.viewTreeObserver.removeOnGlobalLayoutListener(this)
             }
         })
 
         // Peek action drawer when on the theaters section
-        mBinding.drawerLayout.setDrawerStateCallback(object : WearableDrawerLayout.DrawerStateCallback() {
+        binding.drawerLayout.setDrawerStateCallback(object : WearableDrawerLayout.DrawerStateCallback() {
             override fun onDrawerClosed(layout: WearableDrawerLayout, drawerView: WearableDrawerView) {
-                if (drawerView === mBinding.navigationDrawer && mPeekAndHideActionDrawer) {
-                    mBinding.actionDrawer.controller.peekDrawer()
+                if (drawerView === binding.navigationDrawer && peekAndHideActionDrawer) {
+                    binding.actionDrawer.controller.peekDrawer()
                     scheduleHideActionDrawer()
-                    mPeekAndHideActionDrawer = false
+                    peekAndHideActionDrawer = false
                 }
             }
         })
@@ -133,7 +138,7 @@ class MainActivity : BaseActivity(), MovieListCallbacks, TheaterFavoritesCallbac
     private fun loadingMoviesIfLastUpdateTooOld() {
         val lastUpdateDate = Components.application.mainPrefs.lastUpdateDate
         if (lastUpdateDate != null && System.currentTimeMillis() - lastUpdateDate > TimeUnit.DAYS.toMillis(1)) {
-            mLoadMoviesHelper.startLoadMoviesIntentService()
+            loadMoviesHelper.startLoadMoviesIntentService()
         }
     }
 
@@ -144,8 +149,8 @@ class MainActivity : BaseActivity(), MovieListCallbacks, TheaterFavoritesCallbac
     }
 
     private val mHideActionDrawerRunnable = Runnable {
-        if (mBinding.actionDrawer.isPeeking) {
-            mBinding.actionDrawer.controller.closeDrawer()
+        if (binding.actionDrawer.isPeeking) {
+            binding.actionDrawer.controller.closeDrawer()
         }
     }
 
@@ -182,7 +187,7 @@ class MainActivity : BaseActivity(), MovieListCallbacks, TheaterFavoritesCallbac
 
             R.id.main_action_delete -> confirmDeleteTheater(mTheaterFavoritesFragment.currentVisibleTheater!!.id)
         }
-        mBinding.actionDrawer.controller.closeDrawer()
+        binding.actionDrawer.controller.closeDrawer()
         return false
     }
 
@@ -215,11 +220,11 @@ class MainActivity : BaseActivity(), MovieListCallbacks, TheaterFavoritesCallbac
     private fun confirmDeleteTheater(theaterId: String) {
         Log.d()
         FrameworkAlertDialogFragment.newInstance(DIALOG_THEATER_DELETE_CONFIRM)
-                .message(R.string.main_theater_delete_confirm_message)
-                .positiveButton(R.string.main_action_delete)
-                .negativeButton(R.string.common_cancel)
-                .payload(theaterId)
-                .show(this)
+            .message(R.string.main_theater_delete_confirm_message)
+            .positiveButton(R.string.main_action_delete)
+            .negativeButton(R.string.common_cancel)
+            .payload(theaterId)
+            .show(this)
     }
 
     // endregion
@@ -233,7 +238,10 @@ class MainActivity : BaseActivity(), MovieListCallbacks, TheaterFavoritesCallbac
         MovieListFragment.newInstance()
     }
 
-    private val mTheaterFavoritesFragment: TheaterFavoritesFragment by FragmentDelegate(R.id.conFragment, "TheaterFavorites") {
+    private val mTheaterFavoritesFragment: TheaterFavoritesFragment by FragmentDelegate(
+        R.id.conFragment,
+        "TheaterFavorites"
+    ) {
         TheaterFavoritesFragment.newInstance()
     }
 
@@ -243,35 +251,35 @@ class MainActivity : BaseActivity(), MovieListCallbacks, TheaterFavoritesCallbac
 
     private fun showMovieListFragment() {
         supportFragmentManager.beginTransaction()
-                .hide(mTheaterFavoritesFragment)
-                .hide(mPreferencesFragment)
-                .show(mMovieListFragment)
-                .commit()
+            .hide(mTheaterFavoritesFragment)
+            .hide(mPreferencesFragment)
+            .show(mMovieListFragment)
+            .commit()
 
-        mBinding.actionDrawer.controller.closeDrawer()
-        mBinding.actionDrawer.setIsLocked(true)
+        binding.actionDrawer.controller.closeDrawer()
+        binding.actionDrawer.setIsLocked(true)
     }
 
     private fun showTheaterFavoritesFragment() {
         supportFragmentManager.beginTransaction()
-                .hide(mMovieListFragment)
-                .hide(mPreferencesFragment)
-                .show(mTheaterFavoritesFragment)
-                .commit()
+            .hide(mMovieListFragment)
+            .hide(mPreferencesFragment)
+            .show(mTheaterFavoritesFragment)
+            .commit()
 
-        mBinding.actionDrawer.setIsLocked(false)
-        mPeekAndHideActionDrawer = true
+        binding.actionDrawer.setIsLocked(false)
+        peekAndHideActionDrawer = true
     }
 
     private fun showPreferencesFragment() {
         supportFragmentManager.beginTransaction()
-                .hide(mMovieListFragment)
-                .hide(mTheaterFavoritesFragment)
-                .show(mPreferencesFragment)
-                .commit()
+            .hide(mMovieListFragment)
+            .hide(mTheaterFavoritesFragment)
+            .show(mPreferencesFragment)
+            .commit()
 
-        mBinding.actionDrawer.controller.closeDrawer()
-        mBinding.actionDrawer.setIsLocked(true)
+        binding.actionDrawer.controller.closeDrawer()
+        binding.actionDrawer.setIsLocked(true)
     }
 
     // endregion
@@ -287,8 +295,10 @@ class MainActivity : BaseActivity(), MovieListCallbacks, TheaterFavoritesCallbac
 
     override fun onMovieClick(movie: Movie) {
         Log.d()
-        startActivity(Intent(this, MovieDetailsActivity::class.java)
-                .setData(movie))
+        startActivity(
+            Intent(this, MovieDetailsActivity::class.java)
+                .setData(movie)
+        )
     }
 
     // endregion
@@ -300,9 +310,9 @@ class MainActivity : BaseActivity(), MovieListCallbacks, TheaterFavoritesCallbac
 
         // 'Open on phone' confirmation overlay
         ConfirmationOverlay()
-                .setType(ConfirmationOverlay.OPEN_ON_PHONE_ANIMATION)
-                .setMessage(getString(R.string.main_confirmation_openedOnPhone))
-                .showOn(this)
+            .setType(ConfirmationOverlay.OPEN_ON_PHONE_ANIMATION)
+            .setMessage(getString(R.string.main_confirmation_openedOnPhone))
+            .showOn(this)
     }
 
 
@@ -312,7 +322,7 @@ class MainActivity : BaseActivity(), MovieListCallbacks, TheaterFavoritesCallbac
         when (requestCode) {
             REQUEST_ADD_THEATER -> {
                 if (resultCode != Activity.RESULT_OK) {
-                    if (!mAtLeastOneFavorite) {
+                    if (!atLeastOneFavorite) {
                         // There are no favorites and the user canceled? Exit the app!
                         finish()
                     }
@@ -326,18 +336,18 @@ class MainActivity : BaseActivity(), MovieListCallbacks, TheaterFavoritesCallbac
 
     private fun addToFavorites(theater: Theater) {
         doAsync {
-            mDatabase.theaterDao.insert(theater)
-            mAtLeastOneFavorite = true
-            mLoadMoviesHelper.startLoadMoviesIntentService()
+            database.theaterDao.insert(theater)
+            atLeastOneFavorite = true
+            loadMoviesHelper.startLoadMoviesIntentService()
         }
     }
 
     private fun ensureFavoriteTheaters() {
         doAsync({
-            mDatabase.theaterDao.countTheaters() > 0
+            database.theaterDao.countTheaters() > 0
         }, { result ->
-            mAtLeastOneFavorite = result
-            if (!mAtLeastOneFavorite) startTheaterSearchActivity()
+            atLeastOneFavorite = result
+            if (!atLeastOneFavorite) startTheaterSearchActivity()
         })
     }
 
@@ -352,10 +362,10 @@ class MainActivity : BaseActivity(), MovieListCallbacks, TheaterFavoritesCallbac
                 val theaterId = payload as String
                 doAsync {
                     // Delete theater
-                    mDatabase.theaterDao.delete(theaterId)
+                    database.theaterDao.delete(theaterId)
 
                     // Delete movies that have no show times
-                    mDatabase.movieDao.deleteWithNoShowtimes()
+                    database.movieDao.deleteWithNoShowtimes()
 
                     ensureFavoriteTheaters()
                 }

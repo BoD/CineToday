@@ -36,30 +36,30 @@ import java.util.TreeMap
 
 @Entity
 data class Movie(
-        @PrimaryKey
-        override var id: String,
+    @PrimaryKey
+    override var id: String,
 
-        var originalTitle: String,
-        var localTitle: String,
+    var originalTitle: String,
+    var localTitle: String,
 
-        var directors: String?,
-        var actors: String?,
+    var directors: String?,
+    var actors: String?,
 
-        @field:TypeConverters(Converters.DateConverter::class)
-        var releaseDate: Date?,
-        var durationSeconds: Int?,
+    @field:TypeConverters(Converters.DateConverter::class)
+    var releaseDate: Date?,
+    var durationSeconds: Int?,
 
-        @field:TypeConverters(Converters.ListConverter::class)
-        var genres: Array<String>,
+    @field:TypeConverters(Converters.ListConverter::class)
+    var genres: Array<String>,
 
-        var posterUri: String?,
-        var trailerUri: String?,
+    var posterUri: String?,
+    var trailerUri: String?,
 
-        var webUri: String,
-        var synopsis: String?,
+    var webUri: String,
+    var synopsis: String?,
 
-        var isNew: Boolean,
-        var color: Int?
+    var isNew: Boolean,
+    var color: Int?
 ) : HasId {
 
     @Ignore

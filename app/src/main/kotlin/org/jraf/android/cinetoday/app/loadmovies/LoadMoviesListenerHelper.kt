@@ -30,36 +30,36 @@ import io.reactivex.subjects.PublishSubject
 
 class LoadMoviesListenerHelper {
 
-    private val mProgressInfo = BehaviorSubject.create<ProgressInfo>()
-    private val mError = PublishSubject.create<Exception>()
+    private val _progressInfo = BehaviorSubject.create<ProgressInfo>().toSerialized()
+    private val _error = PublishSubject.create<Exception>().toSerialized()
 
-    val progressInfo: Observable<ProgressInfo> get() = mProgressInfo.hide()
-    val error: Observable<Exception> get() = mError.hide()
+    val progressInfo: Observable<ProgressInfo> get() = _progressInfo.hide()
+    val error: Observable<Exception> get() = _error.hide()
 
     sealed class ProgressInfo {
         class Idle : ProgressInfo()
         class PreLoading : ProgressInfo()
         data class Loading(
-                val totalMovies: Int,
-                val currentMovieIndex: Int,
-                val currentMovieTitle: String
+            val totalMovies: Int,
+            val currentMovieIndex: Int,
+            val currentMovieTitle: String
         ) : ProgressInfo()
     }
 
     fun setPreloading() {
-        mProgressInfo.onNext(ProgressInfo.PreLoading())
+        _progressInfo.onNext(ProgressInfo.PreLoading())
     }
 
     fun setIdle() {
-        mProgressInfo.onNext(ProgressInfo.Idle())
+        _progressInfo.onNext(ProgressInfo.Idle())
     }
 
     fun setLoading(totalMovies: Int, currentMovieIndex: Int, currentMovieTitle: String) {
-        mProgressInfo.onNext(ProgressInfo.Loading(totalMovies, currentMovieIndex, currentMovieTitle))
+        _progressInfo.onNext(ProgressInfo.Loading(totalMovies, currentMovieIndex, currentMovieTitle))
     }
 
     fun pushError(error: Exception) {
-        mError.onNext(error)
+        _error.onNext(error)
         setIdle()
     }
 

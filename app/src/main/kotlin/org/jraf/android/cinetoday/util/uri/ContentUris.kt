@@ -37,4 +37,4 @@ object ContentUris {
 
 fun Intent.setData(hasId: HasId): Intent = setData(hasId.uri)
 
-val Uri.contentId get() = ContentUris.idFromUri(this)
+val Uri.contentId: String get() = ContentUris.idFromUri(this)

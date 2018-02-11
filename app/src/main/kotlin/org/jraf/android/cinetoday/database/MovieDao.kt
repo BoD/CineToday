@@ -50,9 +50,11 @@ interface MovieDao {
     @Query("DELETE FROM movie")
     fun deleteAll()
 
-    @Query("DELETE FROM movie WHERE"
-            + " ( SELECT COUNT(*) FROM showtime WHERE showtime.movieId = movie.id ) "
-            + " = 0")
+    @Query(
+        "DELETE FROM movie WHERE"
+                + " ( SELECT COUNT(*) FROM showtime WHERE showtime.movieId = movie.id ) "
+                + " = 0"
+    )
     fun deleteWithNoShowtimes()
 
     @Query("UPDATE movie SET color = :color WHERE id = :id")

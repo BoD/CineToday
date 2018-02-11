@@ -45,12 +45,15 @@ class PreferencesFragment : PreferenceFragmentCompat() {
         }
     }
 
-    @Inject lateinit var mLoadMoviesHelper: LoadMoviesHelper
-    @Inject lateinit var mMainPrefs: MainPrefs
-    @Inject lateinit var mLoadMoviesListenerHelper: LoadMoviesListenerHelper
+    @Inject
+    lateinit var loadMoviesHelper: LoadMoviesHelper
+    @Inject
+    lateinit var mainPrefs: MainPrefs
+    @Inject
+    lateinit var loadMoviesListenerHelper: LoadMoviesListenerHelper
 
-    private var mLoadMoviesStarted: Boolean = false
-    private lateinit var mProgressSubscription: Disposable
+    private var loadMoviesStarted: Boolean = false
+    private lateinit var progressSubscription: Disposable
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         Components.application.inject(this)
@@ -58,7 +61,7 @@ class PreferencesFragment : PreferenceFragmentCompat() {
 
         // Refresh
         findPreference("refresh").setOnPreferenceClickListener { _ ->
-            if (!mLoadMoviesStarted) mLoadMoviesHelper.startLoadMoviesIntentService()
+            if (!loadMoviesStarted) loadMoviesHelper.startLoadMoviesIntentService()
             true
         }
         setLastUpdateDateSummary()
@@ -66,59 +69,67 @@ class PreferencesFragment : PreferenceFragmentCompat() {
         // About
         findPreference("about").setOnPreferenceClickListener { _ ->
             val builder = AboutActivityIntentBuilder()
-                    .setAppName(getString(R.string.app_name))
-                    .setBuildDate(BuildConfig.BUILD_DATE)
-                    .setGitSha1(BuildConfig.GIT_SHA1)
-                    .setAuthorCopyright(getString(R.string.about_authorCopyright))
-                    .setLicense(getString(R.string.about_License))
-                    .setShareTextSubject(getString(R.string.about_shareText_subject))
-                    .setShareTextBody(getString(R.string.about_shareText_body))
-                    .setBackgroundResId(R.drawable.about_bg)
-                    .addLink(getString(R.string.about_email_uri), getString(R.string.about_email_text))
-                    .addLink(getString(R.string.about_web_uri), getString(R.string.about_web_text))
-                    .addLink(getString(R.string.about_artwork_uri), getString(R.string.about_artwork_text))
-                    .addLink(getString(R.string.about_sources_uri), getString(R.string.about_sources_text))
+                .setAppName(getString(R.string.app_name))
+                .setBuildDate(BuildConfig.BUILD_DATE)
+                .setGitSha1(BuildConfig.GIT_SHA1)
+                .setAuthorCopyright(getString(R.string.about_authorCopyright))
+                .setLicense(getString(R.string.about_License))
+                .setShareTextSubject(getString(R.string.about_shareText_subject))
+                .setShareTextBody(getString(R.string.about_shareText_body))
+                .setBackgroundResId(R.drawable.about_bg)
+                .addLink(getString(R.string.about_email_uri), getString(R.string.about_email_text))
+                .addLink(getString(R.string.about_web_uri), getString(R.string.about_web_text))
+                .addLink(getString(R.string.about_artwork_uri), getString(R.string.about_artwork_text))
+                .addLink(getString(R.string.about_sources_uri), getString(R.string.about_sources_text))
             startActivity(builder.build(context))
             true
         }
 
-        mProgressSubscription = mLoadMoviesListenerHelper.progressInfo
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
-                    when (it) {
-                        is LoadMoviesListenerHelper.ProgressInfo.Idle -> {
-                            mLoadMoviesStarted = false
-                            setLastUpdateDateSummary()
-                        }
+        progressSubscription = loadMoviesListenerHelper.progressInfo
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                when (it) {
+                    is LoadMoviesListenerHelper.ProgressInfo.Idle -> {
+                        loadMoviesStarted = false
+                        setLastUpdateDateSummary()
+                    }
 
-                        is LoadMoviesListenerHelper.ProgressInfo.PreLoading -> {
-                            mLoadMoviesStarted = true
-                            findPreference("refresh").isEnabled = false
-                        }
+                    is LoadMoviesListenerHelper.ProgressInfo.PreLoading -> {
+                        loadMoviesStarted = true
+                        findPreference("refresh").isEnabled = false
+                    }
 
-                        is LoadMoviesListenerHelper.ProgressInfo.Loading -> {
-                            mLoadMoviesStarted = true
-                            with(findPreference("refresh")) {
-                                isEnabled = false
-                                summary = getString(R.string.preference_refresh_summary_ongoing, it.currentMovieIndex, it.totalMovies)
-                            }
+                    is LoadMoviesListenerHelper.ProgressInfo.Loading -> {
+                        loadMoviesStarted = true
+                        with(findPreference("refresh")) {
+                            isEnabled = false
+                            summary = getString(
+                                R.string.preference_refresh_summary_ongoing,
+                                it.currentMovieIndex,
+                                it.totalMovies
+                            )
                         }
                     }
                 }
+            }
     }
 
     override fun onDestroy() {
-        mProgressSubscription.dispose()
+        progressSubscription.dispose()
         super.onDestroy()
     }
 
     private fun setLastUpdateDateSummary() {
-        val lastUpdateDate = mMainPrefs.lastUpdateDate
+        val lastUpdateDate = mainPrefs.lastUpdateDate
         val refreshPref = findPreference("refresh")
         if (lastUpdateDate == null) {
             refreshPref.setSummary(R.string.preference_refresh_summary_none)
         } else {
-            val lastUpdateDateStr = DateUtils.formatDateTime(context, lastUpdateDate, DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_SHOW_TIME)
+            val lastUpdateDateStr = DateUtils.formatDateTime(
+                context,
+                lastUpdateDate,
+                DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_SHOW_TIME
+            )
             refreshPref.summary = getString(R.string.preference_refresh_summary_date, lastUpdateDateStr)
         }
         refreshPref.isEnabled = true

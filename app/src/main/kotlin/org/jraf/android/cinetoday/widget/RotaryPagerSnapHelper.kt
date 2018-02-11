@@ -32,8 +32,8 @@ import android.view.MotionEvent
 import android.view.View
 
 class RotaryPagerSnapHelper : PagerSnapHelper() {
-    private var mSnapHandler = Handler()
-    private var mSnapRunnable: Runnable? = null
+    private var snapHandler = Handler()
+    private var snapRunnable: Runnable? = null
 
     override fun attachToRecyclerView(recyclerView: RecyclerView?) {
         super.attachToRecyclerView(recyclerView)
@@ -41,12 +41,13 @@ class RotaryPagerSnapHelper : PagerSnapHelper() {
         // Handle snap with the rotary input
         recyclerView?.setOnGenericMotionListener(View.OnGenericMotionListener { v, motionEvent ->
             if (motionEvent.action == MotionEvent.ACTION_SCROLL && RotaryEncoder.isFromRotaryEncoder(motionEvent)) {
-                val delta = -RotaryEncoder.getRotaryAxisValue(motionEvent) * RotaryEncoder.getScaledScrollFactor(v.context) * 1.5f
+                val delta =
+                    -RotaryEncoder.getRotaryAxisValue(motionEvent) * RotaryEncoder.getScaledScrollFactor(v.context) * 1.5f
                 v.scrollBy(0, Math.round(delta))
 
                 // Snap
-                mSnapRunnable?.let { mSnapHandler.removeCallbacks(it) }
-                mSnapRunnable = Runnable {
+                snapRunnable?.let { snapHandler.removeCallbacks(it) }
+                snapRunnable = Runnable {
                     val snapView = findSnapView(recyclerView.layoutManager)
                     if (snapView != null) {
                         val snapDistance = calculateDistanceToFinalSnap(recyclerView.layoutManager, snapView)!!
@@ -55,7 +56,7 @@ class RotaryPagerSnapHelper : PagerSnapHelper() {
                         }
                     }
                 }
-                mSnapHandler.postDelayed(mSnapRunnable, 100)
+                snapHandler.postDelayed(snapRunnable, 100)
 
                 return@OnGenericMotionListener true
             }

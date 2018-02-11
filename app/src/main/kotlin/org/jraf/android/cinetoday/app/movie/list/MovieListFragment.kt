@@ -58,135 +58,142 @@ class MovieListFragment : BaseFragment<MovieListCallbacks>(), PaletteListener {
         }
     }
 
-    @Inject lateinit var mDatabase: AppDatabase
-    @Inject lateinit var mLoadMoviesListenerHelper: LoadMoviesListenerHelper
+    @Inject
+    lateinit var database: AppDatabase
+    @Inject
+    lateinit var loadMoviesListenerHelper: LoadMoviesListenerHelper
 
-    private lateinit var mBinding: MovieListBinding
-    private var mAdapter: MovieListAdapter? = null
-    private val mPalette = SparseIntArray()
-    private var mColorAnimation: ValueAnimator? = null
-    private var mScrolling: Boolean = false
-    private var mLoadMoviesStarted: Boolean = false
+    private lateinit var binding: MovieListBinding
+    private var adapter: MovieListAdapter? = null
+    private val palette = SparseIntArray()
+    private var colorAnimation: ValueAnimator? = null
+    private var scrolling: Boolean = false
+    private var loadMoviesStarted: Boolean = false
 
-    private lateinit var mProgressSubscription: Disposable
+    private lateinit var progressSubscription: Disposable
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Components.application.inject(this)
-        mDatabase.movieDao.allMoviesLive().observe(this, Observer { if (it != null) onMoviesResult(it) })
+        database.movieDao.allMoviesLive().observe(this, Observer { if (it != null) onMoviesResult(it) })
     }
 
     override fun onDestroy() {
-        mProgressSubscription.dispose()
+        progressSubscription.dispose()
         super.onDestroy()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        mBinding = DataBindingUtil.inflate(inflater, R.layout.movie_list, container, false)
-        mBinding.callbacks = callbacks
+        binding = DataBindingUtil.inflate(inflater, R.layout.movie_list, container, false)
+        binding.callbacks = callbacks
 
-        mBinding.rclList.setHasFixedSize(true)
-        mBinding.rclList.layoutManager = LinearLayoutManager(context)
-        RotaryPagerSnapHelper().attachToRecyclerView(mBinding.rclList)
-        mBinding.rclList.addOnScrollListener(mOnScrollListener)
+        binding.rclList.setHasFixedSize(true)
+        binding.rclList.layoutManager = LinearLayoutManager(context)
+        RotaryPagerSnapHelper().attachToRecyclerView(binding.rclList)
+        binding.rclList.addOnScrollListener(onScrollListener)
 
-        mProgressSubscription = mLoadMoviesListenerHelper.progressInfo.observeOn(AndroidSchedulers.mainThread()).subscribe {
-            when (it) {
-                is LoadMoviesListenerHelper.ProgressInfo.Idle -> {
-                    mLoadMoviesStarted = false
-                    mBinding.conMoviesLoading.visibility = View.GONE
-                }
+        progressSubscription =
+                loadMoviesListenerHelper.progressInfo.observeOn(AndroidSchedulers.mainThread()).subscribe {
+                    when (it) {
+                        is LoadMoviesListenerHelper.ProgressInfo.Idle -> {
+                            loadMoviesStarted = false
+                            binding.conMoviesLoading.visibility = View.GONE
+                        }
 
-                is LoadMoviesListenerHelper.ProgressInfo.PreLoading -> {
-                    if (mAdapter == null || mAdapter?.itemCount ?: 0 == 0) {
-                        mLoadMoviesStarted = true
-                        mBinding.conMoviesLoading.visibility = View.VISIBLE
-                        mBinding.txtEmpty.visibility = View.GONE
-                        mBinding.txtMoviesLoadingInfo.text = null
+                        is LoadMoviesListenerHelper.ProgressInfo.PreLoading -> {
+                            if (adapter == null || adapter?.itemCount ?: 0 == 0) {
+                                loadMoviesStarted = true
+                                binding.conMoviesLoading.visibility = View.VISIBLE
+                                binding.txtEmpty.visibility = View.GONE
+                                binding.txtMoviesLoadingInfo.text = null
+                            }
+                        }
+
+                        is LoadMoviesListenerHelper.ProgressInfo.Loading -> {
+                            if (adapter == null || adapter?.itemCount ?: 0 == 0) {
+                                loadMoviesStarted = true
+                                binding.conMoviesLoading.visibility = View.VISIBLE
+                                binding.txtEmpty.visibility = View.GONE
+                                binding.txtMoviesLoadingInfo.text = getString(
+                                    R.string.movie_list_loadingMovies_progress,
+                                    it.currentMovieIndex,
+                                    it.totalMovies
+                                )
+                            }
+                        }
                     }
                 }
-
-                is LoadMoviesListenerHelper.ProgressInfo.Loading -> {
-                    if (mAdapter == null || mAdapter?.itemCount ?: 0 == 0) {
-                        mLoadMoviesStarted = true
-                        mBinding.conMoviesLoading.visibility = View.VISIBLE
-                        mBinding.txtEmpty.visibility = View.GONE
-                        mBinding.txtMoviesLoadingInfo.text = getString(R.string.movie_list_loadingMovies_progress, it.currentMovieIndex, it.totalMovies)
-                    }
-                }
-            }
-        }
 
         // TODO Also observe errors
 
-        return mBinding.root
+        return binding.root
     }
 
     private fun onMoviesResult(movies: Array<Movie>) {
-        mBinding.pgbLoading.visibility = View.GONE
+        binding.pgbLoading.visibility = View.GONE
         if (movies.isEmpty()) {
             // No movies
-            if (mLoadMoviesStarted) {
+            if (loadMoviesStarted) {
                 // Loading
-                mBinding.conMoviesLoading.visibility = View.VISIBLE
-                mBinding.txtEmpty.visibility = View.GONE
+                binding.conMoviesLoading.visibility = View.VISIBLE
+                binding.txtEmpty.visibility = View.GONE
             } else {
-                mBinding.conMoviesLoading.visibility = View.GONE
-                mBinding.txtEmpty.visibility = View.VISIBLE
+                binding.conMoviesLoading.visibility = View.GONE
+                binding.txtEmpty.visibility = View.VISIBLE
             }
-            mBinding.rclList.visibility = View.GONE
+            binding.rclList.visibility = View.GONE
         } else {
-            mBinding.conMoviesLoading.visibility = View.GONE
-            mBinding.txtEmpty.visibility = View.GONE
-            mBinding.rclList.visibility = View.VISIBLE
+            binding.conMoviesLoading.visibility = View.GONE
+            binding.txtEmpty.visibility = View.GONE
+            binding.rclList.visibility = View.VISIBLE
             // Needed for the rotary input to work
-            mBinding.rclList.requestFocus()
+            binding.rclList.requestFocus()
 
-            var adapter: MovieListAdapter? = mAdapter
+            var adapter: MovieListAdapter? = adapter
             if (adapter == null) {
                 adapter = MovieListAdapter(context!!, callbacks, this)
-                mAdapter = adapter
-                mBinding.rclList.adapter = adapter
+                this.adapter = adapter
+                binding.rclList.adapter = adapter
             }
             adapter.data = movies
         }
     }
 
     override fun onPaletteAvailable(position: Int, @ColorInt color: Int, cached: Boolean, id: String) {
-        if (mPalette.indexOfKey(position) >= 0 && position > 0) return
-        mPalette.put(position, color)
-        var firstItemPosition = (mBinding.rclList.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
+        if (palette.indexOfKey(position) >= 0 && position > 0) return
+        palette.put(position, color)
+        var firstItemPosition = (binding.rclList.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
         if (firstItemPosition == RecyclerView.NO_POSITION) firstItemPosition = 0
-        if (firstItemPosition == position && !mScrolling) {
+        if (firstItemPosition == position && !scrolling) {
             updateBackgroundColor(position)
         }
         if (!cached) {
             // Save the value
             doAsync {
-                mDatabase.movieDao.updateColor(id, color)
+                database.movieDao.updateColor(id, color)
             }
         }
     }
 
     private fun updateBackgroundColor(position: Int) {
-        if (mPalette.indexOfKey(position) >= 0) {
-            mColorAnimation?.cancel()
+        if (palette.indexOfKey(position) >= 0) {
+            colorAnimation?.cancel()
 
-            val colorFrom = (mBinding.conRoot.background as ColorDrawable).color
-            val colorTo = mPalette.get(position)
-            mColorAnimation = ValueAnimator.ofObject(ArgbEvaluator(), colorFrom, colorTo).apply {
+            val colorFrom = (binding.conRoot.background as ColorDrawable).color
+            val colorTo = palette.get(position)
+            colorAnimation = ValueAnimator.ofObject(ArgbEvaluator(), colorFrom, colorTo).apply {
                 duration = 200
-                addUpdateListener { animator -> mBinding.conRoot.setBackgroundColor(animator.animatedValue as Int) }
+                addUpdateListener { animator -> binding.conRoot.setBackgroundColor(animator.animatedValue as Int) }
                 start()
             }
         }
     }
 
-    private val mOnScrollListener = object : RecyclerView.OnScrollListener() {
-        internal var mArgbEvaluator = ArgbEvaluator()
+    private val onScrollListener = object : RecyclerView.OnScrollListener() {
+        internal var argbEvaluator = ArgbEvaluator()
 
         override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-            mScrolling = newState != RecyclerView.SCROLL_STATE_IDLE
+            scrolling = newState != RecyclerView.SCROLL_STATE_IDLE
         }
 
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -196,16 +203,16 @@ class MovieListFragment : BaseFragment<MovieListCallbacks>(), PaletteListener {
             val firstItemRatio = Math.abs(firstItemTop / recyclerView.height)
 
             val nextItemPosition = firstItemPosition + 1
-            if (nextItemPosition >= mAdapter?.itemCount ?: 0) return
+            if (nextItemPosition >= adapter?.itemCount ?: 0) return
 
-            val firstItemColor = mPalette.get(firstItemPosition, -1)
+            val firstItemColor = palette.get(firstItemPosition, -1)
             if (firstItemColor == -1) return
 
-            val nextItemColor = mPalette.get(nextItemPosition, -1)
+            val nextItemColor = palette.get(nextItemPosition, -1)
             if (nextItemColor == -1) return
 
-            val resultColor = mArgbEvaluator.evaluate(firstItemRatio, firstItemColor, nextItemColor) as Int
-            mBinding.conRoot.setBackgroundColor(resultColor)
+            val resultColor = argbEvaluator.evaluate(firstItemRatio, firstItemColor, nextItemColor) as Int
+            binding.conRoot.setBackgroundColor(resultColor)
         }
     }
 }

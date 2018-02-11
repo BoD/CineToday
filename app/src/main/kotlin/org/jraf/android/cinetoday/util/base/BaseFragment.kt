@@ -29,14 +29,14 @@ import android.support.v4.app.Fragment
 
 abstract class BaseFragment<out C> : Fragment() {
 
-    private var mCallbacks: C? = null
+    private var _callbacks: C? = null
 
-    protected val callbacks get() = mCallbacks!!
+    protected val callbacks get() = _callbacks!!
 
     @Suppress("UNCHECKED_CAST")
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        mCallbacks = if (parentFragment != null) {
+        _callbacks = if (parentFragment != null) {
             // This Fragment is nested in another Fragment
             parentFragment as C
         } else {
@@ -46,7 +46,7 @@ abstract class BaseFragment<out C> : Fragment() {
     }
 
     override fun onDetach() {
-        mCallbacks = null
+        _callbacks = null
         super.onDetach()
     }
 }

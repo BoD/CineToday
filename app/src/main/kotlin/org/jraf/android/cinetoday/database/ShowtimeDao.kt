@@ -43,31 +43,33 @@ interface ShowtimeDao {
     @Query("SELECT * FROM showtime WHERE movieId = :movieId")
     fun showtimesByMovieIdLive(movieId: String): LiveData<Array<Showtime>>
 
-    @Query("SELECT "
-            + "showtime.theaterId, "
-            + "showtime.movieId, "
-            + "showtime.time, "
-            + "showtime.is3d, "
-            + "theater.name as theaterName "
-            + "FROM "
-            + "showtime JOIN theater ON showtime.theaterId = theater.id "
-            + "WHERE "
-            + "movieId = :movieId "
-            + "ORDER BY "
-            + "showtime.theaterId, "
-            + "showtime.time")
+    @Query(
+        "SELECT "
+                + "showtime.theaterId, "
+                + "showtime.movieId, "
+                + "showtime.time, "
+                + "showtime.is3d, "
+                + "theater.name as theaterName "
+                + "FROM "
+                + "showtime JOIN theater ON showtime.theaterId = theater.id "
+                + "WHERE "
+                + "movieId = :movieId "
+                + "ORDER BY "
+                + "showtime.theaterId, "
+                + "showtime.time"
+    )
     fun showtimesWithTheaterByMovieIdLive(movieId: String): LiveData<Array<ShowtimeWithTheater>>
 }
 
 data class ShowtimeWithTheater(
-        // Showtime
-        val theaterId: String,
-        val movieId: String,
+    // Showtime
+    val theaterId: String,
+    val movieId: String,
 
-        @field:TypeConverters(Converters.DateConverter::class)
-        val time: Date,
-        val is3d: Boolean,
+    @field:TypeConverters(Converters.DateConverter::class)
+    val time: Date,
+    val is3d: Boolean,
 
-        // Theater
-        val theaterName: String
+    // Theater
+    val theaterName: String
 )

@@ -34,7 +34,7 @@ import org.jraf.android.cinetoday.databinding.TheaterFavoriteListItemBinding
 import org.jraf.android.cinetoday.model.theater.Theater
 
 class TheaterFavoritesAdapter(context: Context) : RecyclerView.Adapter<TheaterFavoritesAdapter.ViewHolder>() {
-    private val mLayoutInflater: LayoutInflater = LayoutInflater.from(context)
+    private val layoutInflater: LayoutInflater = LayoutInflater.from(context)
 
     var data: Array<Theater> = emptyArray()
         set(value) {
@@ -46,7 +46,7 @@ class TheaterFavoritesAdapter(context: Context) : RecyclerView.Adapter<TheaterFa
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TheaterFavoritesAdapter.ViewHolder {
         val binding = DataBindingUtil.inflate<TheaterFavoriteListItemBinding>(
-            mLayoutInflater,
+            layoutInflater,
             R.layout.theater_favorite_list_item,
             parent,
             false
@@ -61,5 +61,6 @@ class TheaterFavoritesAdapter(context: Context) : RecyclerView.Adapter<TheaterFa
 
     override fun getItemCount() = data.size
 
-    override fun getItemId(position: Int) = if (data.isEmpty()) RecyclerView.NO_ID else data[position].id.hashCode().toLong()
+    override fun getItemId(position: Int) =
+        if (data.isEmpty()) RecyclerView.NO_ID else data[position].id.hashCode().toLong()
 }

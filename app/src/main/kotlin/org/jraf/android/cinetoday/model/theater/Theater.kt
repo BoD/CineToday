@@ -32,11 +32,11 @@ import org.jraf.android.cinetoday.util.uri.HasId
 
 @Entity
 data class Theater(
-        @PrimaryKey
-        override var id: String,
-        var name: String,
-        var address: String,
-        var pictureUri: String?
+    @PrimaryKey
+    override var id: String,
+    var name: String,
+    var address: String,
+    var pictureUri: String?
 ) : HasId, Parcelable {
 
     override fun equals(other: Any?) = (other as? Theater)?.id == id
@@ -74,10 +74,10 @@ data class Theater(
     }
 
     private constructor(input: Parcel) : this(
-            id = input.readString(),
-            name = input.readString(),
-            address = input.readString(),
-            pictureUri = input.readString()
+        id = input.readString(),
+        name = input.readString(),
+        address = input.readString(),
+        pictureUri = input.readString()
     )
 
     // endregion

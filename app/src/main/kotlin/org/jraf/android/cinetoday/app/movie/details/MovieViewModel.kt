@@ -28,7 +28,7 @@ import android.content.Context
 import org.jraf.android.cinetoday.R
 import org.jraf.android.cinetoday.model.movie.Movie
 
-class MovieViewModel(movie: Movie, private val mContext: Context) {
+class MovieViewModel(movie: Movie, private val context: Context) {
 
     val originalTitle = movie.originalTitle
     val localTitle = movie.localTitle
@@ -40,10 +40,10 @@ class MovieViewModel(movie: Movie, private val mContext: Context) {
     val genresFormatted = movie.genres.joinToString(" · ")
 
     private fun formatDuration(durationSeconds: Int): String {
-        if (durationSeconds < 60 * 60) return mContext.getString(R.string.durationMinutes, durationSeconds / 60)
+        if (durationSeconds < 60 * 60) return context.getString(R.string.durationMinutes, durationSeconds / 60)
         val hours = durationSeconds / (60 * 60)
         val minutes = durationSeconds % (60 * 60) / 60
-        if (minutes == 0) return mContext.resources.getQuantityString(R.plurals.durationHours, hours, hours)
-        return mContext.getString(R.string.durationHoursMinutes, hours, minutes)
+        if (minutes == 0) return context.resources.getQuantityString(R.plurals.durationHours, hours, hours)
+        return context.getString(R.string.durationHoursMinutes, hours, minutes)
     }
 }

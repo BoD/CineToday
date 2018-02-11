@@ -43,8 +43,12 @@ import org.jraf.android.cinetoday.glide.GlideHelper
 import org.jraf.android.cinetoday.model.movie.Movie
 import org.jraf.android.util.log.Log
 
-class MovieListAdapter(private val mContext: Context, private val mMovieListCallbacks: MovieListCallbacks, private val mPaletteListener: PaletteListener) : RecyclerView.Adapter<MovieListAdapter.ViewHolder>() {
-    private val mLayoutInflater: LayoutInflater = LayoutInflater.from(mContext)
+class MovieListAdapter(
+    private val context: Context,
+    private val movieListCallbacks: MovieListCallbacks,
+    private val paletteListener: PaletteListener
+) : RecyclerView.Adapter<MovieListAdapter.ViewHolder>() {
+    private val layoutInflater: LayoutInflater = LayoutInflater.from(context)
 
     var data: Array<Movie> = emptyArray()
         set(value) {
@@ -56,32 +60,43 @@ class MovieListAdapter(private val mContext: Context, private val mMovieListCall
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieListAdapter.ViewHolder {
         val binding =
-            DataBindingUtil.inflate<MovieListItemBinding>(mLayoutInflater, R.layout.movie_list_item, parent, false)
+            DataBindingUtil.inflate<MovieListItemBinding>(layoutInflater, R.layout.movie_list_item, parent, false)
         return ViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: MovieListAdapter.ViewHolder, position: Int) {
         val movie = data[position]
         holder.itemBinding.movie = movie
-        holder.itemBinding.callbacks = mMovieListCallbacks
+        holder.itemBinding.callbacks = movieListCallbacks
         movie.color?.let {
-            mPaletteListener.onPaletteAvailable(position, it, true, movie.id)
+            paletteListener.onPaletteAvailable(position, it, true, movie.id)
         }
 
         holder.itemBinding.executePendingBindings()
 
         GlideHelper.load(movie.posterUri, holder.itemBinding.imgPoster, object : RequestListener<Drawable> {
-            override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
+            override fun onLoadFailed(
+                e: GlideException?,
+                model: Any?,
+                target: Target<Drawable>?,
+                isFirstResource: Boolean
+            ): Boolean {
                 return false
             }
 
-            override fun onResourceReady(resource: Drawable, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+            override fun onResourceReady(
+                resource: Drawable,
+                model: Any?,
+                target: Target<Drawable>?,
+                dataSource: DataSource?,
+                isFirstResource: Boolean
+            ): Boolean {
                 if (movie.color == null) {
                     Log.d("2")
                     // Generate the color
                     Palette.from((resource as BitmapDrawable).bitmap).generate { palette ->
-                        val color = palette.getDarkVibrantColor(mContext.getColor(R.color.movie_list_bg))
-                        mPaletteListener.onPaletteAvailable(position, color, false, movie.id)
+                        val color = palette.getDarkVibrantColor(context.getColor(R.color.movie_list_bg))
+                        paletteListener.onPaletteAvailable(position, color, false, movie.id)
                     }
                     Log.d("3")
                 }
@@ -89,8 +104,8 @@ class MovieListAdapter(private val mContext: Context, private val mMovieListCall
                 // Preload the next image
                 if (position + 1 in data.indices) {
                     val nextMovie = data[position + 1]
-                    GlideApp.with(mContext).load(nextMovie.posterUri).centerCrop()
-                            .preload(holder.itemBinding.imgPoster.width, holder.itemBinding.imgPoster.height)
+                    GlideApp.with(context).load(nextMovie.posterUri).centerCrop()
+                        .preload(holder.itemBinding.imgPoster.width, holder.itemBinding.imgPoster.height)
                 }
 
                 return false
@@ -100,5 +115,6 @@ class MovieListAdapter(private val mContext: Context, private val mMovieListCall
 
     override fun getItemCount() = data.size
 
-    override fun getItemId(position: Int) = if (data.isEmpty()) RecyclerView.NO_ID else data[position].id.hashCode().toLong()
+    override fun getItemId(position: Int) =
+        if (data.isEmpty()) RecyclerView.NO_ID else data[position].id.hashCode().toLong()
 }

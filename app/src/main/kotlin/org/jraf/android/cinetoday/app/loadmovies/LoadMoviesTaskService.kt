@@ -55,12 +55,12 @@ class LoadMoviesTaskService : GcmTaskService() {
             val flexSecs = TimeUnit.HOURS.toSeconds(1)
             val tag = "dailyLoadMovies"
             val periodicTask = PeriodicTask.Builder()
-                    .setTag(tag)
-                    .setService(LoadMoviesTaskService::class.java)
-                    .setPeriod(periodSecs)
-                    .setFlex(flexSecs)
-                    .setPersisted(true)
-                    .build()
+                .setTag(tag)
+                .setService(LoadMoviesTaskService::class.java)
+                .setPeriod(periodSecs)
+                .setFlex(flexSecs)
+                .setPersisted(true)
+                .build()
             GcmNetworkManager.getInstance(context).schedule(periodicTask)
         }
     }
