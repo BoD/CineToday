@@ -79,13 +79,27 @@ class TheaterSearchAdapter(context: Context, private val mCallbacks: TheaterSear
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TheaterSearchAdapter.ViewHolder {
         return when (viewType) {
-            TYPE_SEARCH -> ViewHolder.SearchViewHolder(DataBindingUtil.inflate(mLayoutInflater, R.layout.theater_search_list_item_search, parent, false)!!)
+            TYPE_SEARCH -> ViewHolder.SearchViewHolder(
+                DataBindingUtil.inflate(
+                    mLayoutInflater,
+                    R.layout.theater_search_list_item_search,
+                    parent,
+                    false
+                )
+            )
 
             TYPE_LOADING -> ViewHolder.GenericViewHolder(mLayoutInflater.inflate(R.layout.theater_search_list_item_loading, parent, false))
 
             TYPE_EMPTY -> ViewHolder.GenericViewHolder(mLayoutInflater.inflate(R.layout.theater_search_list_item_empty, parent, false))
 
-            TYPE_ITEM -> ViewHolder.ItemViewHolder(DataBindingUtil.inflate(mLayoutInflater, R.layout.theater_search_list_item, parent, false)!!)
+            TYPE_ITEM -> ViewHolder.ItemViewHolder(
+                DataBindingUtil.inflate(
+                    mLayoutInflater,
+                    R.layout.theater_search_list_item,
+                    parent,
+                    false
+                )
+            )
 
             else -> throw IllegalStateException()
         }

@@ -117,6 +117,7 @@ dependencies {
     implementation "com.android.support:support-annotations:$versions.supportLibrary"
     implementation "com.android.support:percent:$versions.supportLibrary"
     implementation "com.android.support:palette-v7:$versions.supportLibrary"
+    implementation "com.android.support:preference-v14:$versions.supportLibrary"
 
     //  Wear
     implementation "com.google.android.support:wearable:$versions.androidWearable"
@@ -148,16 +149,13 @@ dependencies {
     kapt "com.google.dagger:dagger-compiler:$versions.dagger"
     compileOnly "javax.annotation:jsr250-api:$versions.jsr250"
 
-    // Necessary to have Kotlin and dataBinding at the same time
-    kapt "com.android.databinding:compiler:$versions.androidGradlePlugin"  // <- Ici
-
     // Architecture components
-    implementation "android.arch.lifecycle:extensions:$versions.arch"
-    implementation "android.arch.lifecycle:common-java8:$versions.arch"
+    implementation "android.arch.lifecycle:extensions:$versions.archLifecycle"
+    implementation "android.arch.lifecycle:common-java8:$versions.archLifecycle"
 
     // Room
-    implementation "android.arch.persistence.room:runtime:$versions.arch"
-    kapt "android.arch.persistence.room:compiler:$versions.arch"
+    implementation "android.arch.persistence.room:runtime:$versions.archRoom"
+    kapt "android.arch.persistence.room:compiler:$versions.archRoom"
 
     // Rx
     implementation "io.reactivex.rxjava2:rxandroid:$versions.rxAndroid"
@@ -167,9 +165,4 @@ dependencies {
 // Necessary for Prefs to work (see https://kotlinlang.org/docs/reference/kapt.html)
 kapt {
     correctErrorTypes = true
-}
-
-// XXX Workaround for https://issuetracker.google.com/issues/70915745 - to be removed when the issue is fixed
-afterEvaluate {
-    tasks['kaptDebugKotlin'].dependsOn('transformDataBindingWithDataBindingMergeArtifactsForDebug')
 }

@@ -30,11 +30,15 @@ import org.jraf.android.cinetoday.model.movie.Movie
 import org.jraf.android.cinetoday.model.showtime.Showtime
 import org.jraf.android.cinetoday.model.theater.Theater
 
-@Database(entities = arrayOf(
+@Database(
+    entities = [
         Theater::class,
         Movie::class,
         Showtime::class
-), version = 1)
+    ],
+    version = 1,
+    exportSchema = false
+)
 abstract class AppDatabase : RoomDatabase() {
     companion object {
         const val DATABASE_NAME = "cinetoday.db"

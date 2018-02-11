@@ -85,7 +85,7 @@ class MainActivity : BaseActivity(), MovieListCallbacks, TheaterFavoritesCallbac
         Components.application.inject(this)
 
         // Navigation drawer
-        mBinding = DataBindingUtil.setContentView(this, R.layout.main)!!
+        mBinding = DataBindingUtil.setContentView(this, R.layout.main)
         mBinding.navigationDrawer.setAdapter(NavigationDrawerAdapter())
         mBinding.navigationDrawer.addOnItemSelectedListener { position ->
             when (position) {
@@ -242,7 +242,7 @@ class MainActivity : BaseActivity(), MovieListCallbacks, TheaterFavoritesCallbac
     }
 
     private fun showMovieListFragment() {
-        fragmentManager.beginTransaction()
+        supportFragmentManager.beginTransaction()
                 .hide(mTheaterFavoritesFragment)
                 .hide(mPreferencesFragment)
                 .show(mMovieListFragment)
@@ -253,7 +253,7 @@ class MainActivity : BaseActivity(), MovieListCallbacks, TheaterFavoritesCallbac
     }
 
     private fun showTheaterFavoritesFragment() {
-        fragmentManager.beginTransaction()
+        supportFragmentManager.beginTransaction()
                 .hide(mMovieListFragment)
                 .hide(mPreferencesFragment)
                 .show(mTheaterFavoritesFragment)
@@ -264,7 +264,7 @@ class MainActivity : BaseActivity(), MovieListCallbacks, TheaterFavoritesCallbac
     }
 
     private fun showPreferencesFragment() {
-        fragmentManager.beginTransaction()
+        supportFragmentManager.beginTransaction()
                 .hide(mMovieListFragment)
                 .hide(mTheaterFavoritesFragment)
                 .show(mPreferencesFragment)

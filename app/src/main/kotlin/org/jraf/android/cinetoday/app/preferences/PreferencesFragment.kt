@@ -25,7 +25,7 @@
 package org.jraf.android.cinetoday.app.preferences
 
 import android.os.Bundle
-import android.preference.PreferenceFragment
+import android.support.v7.preference.PreferenceFragmentCompat
 import android.text.format.DateUtils
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
@@ -38,7 +38,7 @@ import org.jraf.android.cinetoday.prefs.MainPrefs
 import org.jraf.android.util.about.AboutActivityIntentBuilder
 import javax.inject.Inject
 
-class PreferencesFragment : PreferenceFragment() {
+class PreferencesFragment : PreferenceFragmentCompat() {
     companion object {
         fun newInstance(): PreferencesFragment {
             return PreferencesFragment()
@@ -52,8 +52,7 @@ class PreferencesFragment : PreferenceFragment() {
     private var mLoadMoviesStarted: Boolean = false
     private lateinit var mProgressSubscription: Disposable
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         Components.application.inject(this)
         addPreferencesFromResource(R.xml.preferences)
 
