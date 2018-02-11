@@ -55,7 +55,8 @@ class MovieListAdapter(private val mContext: Context, private val mMovieListCall
     class ViewHolder(val itemBinding: MovieListItemBinding) : RecyclerView.ViewHolder(itemBinding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieListAdapter.ViewHolder {
-        val binding = DataBindingUtil.inflate<MovieListItemBinding>(mLayoutInflater, R.layout.movie_list_item, parent, false)!!
+        val binding =
+            DataBindingUtil.inflate<MovieListItemBinding>(mLayoutInflater, R.layout.movie_list_item, parent, false)
         return ViewHolder(binding)
     }
 

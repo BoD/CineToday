@@ -34,30 +34,35 @@ import org.jraf.android.cinetoday.model.movie.Movie
 import org.jraf.android.cinetoday.model.theater.Theater
 import java.util.Date
 
-@Entity(foreignKeys = arrayOf(
+@Entity(
+    foreignKeys = [
         ForeignKey(
-                entity = Theater::class,
-                parentColumns = arrayOf("id"),
-                childColumns = arrayOf("theaterId"),
-                onDelete = ForeignKey.CASCADE),
+            entity = Theater::class,
+            parentColumns = ["id"],
+            childColumns = ["theaterId"],
+            onDelete = ForeignKey.CASCADE
+        ),
         ForeignKey(
-                entity = Movie::class,
-                parentColumns = arrayOf("id"),
-                childColumns = arrayOf("movieId"),
-                onDelete = ForeignKey.CASCADE)
-),
-        indices = arrayOf(
-                Index("theaterId"),
-                Index("movieId")))
+            entity = Movie::class,
+            parentColumns = ["id"],
+            childColumns = ["movieId"],
+            onDelete = ForeignKey.CASCADE
+        )
+    ],
+    indices = [
+        Index("theaterId"),
+        Index("movieId")
+    ]
+)
 data class Showtime(
-        @PrimaryKey(autoGenerate = true)
-        val id: Long,
-        val theaterId: String,
-        val movieId: String,
+    @PrimaryKey(autoGenerate = true)
+    val id: Long,
+    val theaterId: String,
+    val movieId: String,
 
-        @field:TypeConverters(Converters.DateConverter::class)
-        val time: Date,
-        val is3d: Boolean
+    @field:TypeConverters(Converters.DateConverter::class)
+    val time: Date,
+    val is3d: Boolean
 ) : Comparable<Showtime> {
 
     override fun compareTo(other: Showtime): Int {

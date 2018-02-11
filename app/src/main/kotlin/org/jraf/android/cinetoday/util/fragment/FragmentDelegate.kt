@@ -24,21 +24,25 @@
  */
 package org.jraf.android.cinetoday.util.fragment
 
-import android.app.Activity
-import android.app.Fragment
 import android.support.annotation.IdRes
+import android.support.v4.app.Fragment
+import android.support.v4.app.FragmentActivity
 import kotlin.reflect.KProperty
 
-class FragmentDelegate<F : Fragment>(@IdRes val containerResId: Int, val tag: String, val provideFragmentInstance: () -> F) {
-    var mCached: F? = null
+class FragmentDelegate<out F : Fragment>(
+    @IdRes private val containerResId: Int,
+    private val tag: String,
+    private val provideFragmentInstance: () -> F
+) {
+    private var mCached: F? = null
 
-    operator fun getValue(thisRef: Activity, property: KProperty<*>): F {
+    operator fun getValue(thisRef: FragmentActivity, property: KProperty<*>): F {
         if (mCached == null) {
             @Suppress("UNCHECKED_CAST")
-            mCached = thisRef.fragmentManager.findFragmentByTag(tag) as F?
+            mCached = thisRef.supportFragmentManager.findFragmentByTag(tag) as F?
             if (mCached == null) {
                 mCached = provideFragmentInstance()
-                thisRef.fragmentManager.beginTransaction()
+                thisRef.supportFragmentManager.beginTransaction()
                         .add(containerResId, mCached, tag)
                         .commit()
             }

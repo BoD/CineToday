@@ -82,7 +82,7 @@ class MovieListFragment : BaseFragment<MovieListCallbacks>(), PaletteListener {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        mBinding = DataBindingUtil.inflate(inflater, R.layout.movie_list, container, false)!!
+        mBinding = DataBindingUtil.inflate(inflater, R.layout.movie_list, container, false)
         mBinding.callbacks = callbacks
 
         mBinding.rclList.setHasFixedSize(true)
@@ -144,7 +144,7 @@ class MovieListFragment : BaseFragment<MovieListCallbacks>(), PaletteListener {
 
             var adapter: MovieListAdapter? = mAdapter
             if (adapter == null) {
-                adapter = MovieListAdapter(context, callbacks, this)
+                adapter = MovieListAdapter(context!!, callbacks, this)
                 mAdapter = adapter
                 mBinding.rclList.adapter = adapter
             }

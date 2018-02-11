@@ -88,8 +88,13 @@ class CineTodayGlideModule : AppGlideModule() {
 
         override fun build(factories: MultiModelLoaderFactory): ModelLoader<GlideUrl, InputStream> {
             return object : OkHttpUrlLoader(mOkHttpClient) {
-                override fun buildLoadData(model: GlideUrl?, width: Int, height: Int, options: Options): ModelLoader.LoadData<InputStream>? {
-                    val zimageModel = model?.let {
+                override fun buildLoadData(
+                    model: GlideUrl,
+                    width: Int,
+                    height: Int,
+                    options: Options
+                ): ModelLoader.LoadData<InputStream>? {
+                    val zimageModel = model.let {
                         val uriStr = model.toStringUrl()
                         var uri = Uri.parse("http://edge.zimage.io")
                         uri = uri.buildUpon()

@@ -33,9 +33,10 @@ import android.os.Handler
 import org.jraf.android.cinetoday.R
 import org.jraf.android.cinetoday.databinding.TheaterSearchBinding
 import org.jraf.android.cinetoday.model.theater.Theater
+import org.jraf.android.cinetoday.util.base.BaseActivity
 import org.jraf.android.util.log.Log
 
-class TheaterSearchActivity : Activity(), TheaterSearchCallbacks {
+class TheaterSearchActivity : BaseActivity(), TheaterSearchCallbacks {
 
     companion object {
         val EXTRA_RESULT = "${TheaterSearchActivity::class.java.name}.EXTRA_RESULT"
@@ -45,12 +46,12 @@ class TheaterSearchActivity : Activity(), TheaterSearchCallbacks {
     private val mHandler = Handler()
     private var mQuery: String? = null
     private val mTheaterSearchFragment: TheaterSearchFragment by lazy {
-        fragmentManager.findFragmentById(R.id.fraTheaterSearch) as TheaterSearchFragment
+        supportFragmentManager.findFragmentById(R.id.fraTheaterSearch) as TheaterSearchFragment
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mBinding = DataBindingUtil.setContentView<TheaterSearchBinding>(this, R.layout.theater_search)
+        mBinding = DataBindingUtil.setContentView(this, R.layout.theater_search)
     }
 
     override fun onTheaterClicked(theater: Theater) {

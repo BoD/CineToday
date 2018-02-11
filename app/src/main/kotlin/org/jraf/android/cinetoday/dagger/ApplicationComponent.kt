@@ -40,7 +40,7 @@ import javax.inject.Named
 import javax.inject.Singleton
 
 @Singleton
-@Component(modules = arrayOf(ApplicationModule::class, NetworkModule::class))
+@Component(modules = [ApplicationModule::class, NetworkModule::class])
 interface ApplicationComponent {
     val loadMoviesHelper: LoadMoviesHelper
 
