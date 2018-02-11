@@ -58,19 +58,20 @@ class CineTodayGlideModule : AppGlideModule() {
         val memorySizeCalculator = MemorySizeCalculator.Builder(context).build()
 
         builder
-                // Disk cache
-                .setDiskCache(InternalCacheDiskCacheFactory(context, CACHE_DIRECTORY_NAME, CACHE_SIZE_B))
+            // Disk cache
+            .setDiskCache(InternalCacheDiskCacheFactory(context, CACHE_DIRECTORY_NAME, CACHE_SIZE_B))
 
-                // Memory cache / bitmap pool
-                .setMemoryCache(LruResourceCache(memorySizeCalculator.memoryCacheSize.toLong()))
-                .setBitmapPool(LruBitmapPool(memorySizeCalculator.bitmapPoolSize.toLong()))
+            // Memory cache / bitmap pool
+            .setMemoryCache(LruResourceCache(memorySizeCalculator.memoryCacheSize.toLong()))
+            .setBitmapPool(LruBitmapPool(memorySizeCalculator.bitmapPoolSize.toLong()))
 
-                .setDefaultRequestOptions(RequestOptions()
-                        // Decode format - RGB565 is enough
-                        .format(DecodeFormat.PREFER_RGB_565)
-                        // Disable this optimization because we need to access pixels (because we use Palette on them)
-                        .disallowHardwareConfig()
-                )
+            .setDefaultRequestOptions(
+                RequestOptions()
+                    // Decode format - RGB565 is enough
+                    .format(DecodeFormat.PREFER_RGB_565)
+                    // Disable this optimization because we need to access pixels (because we use Palette on them)
+                    .disallowHardwareConfig()
+            )
     }
 
     override fun isManifestParsingEnabled() = false
@@ -84,10 +85,11 @@ class CineTodayGlideModule : AppGlideModule() {
     /**
      * Manipulate image uris to use the 'zimage.io' service that serves resized images.
      */
-    private class OkHttpUrlResizeModelLoaderFactory(private val mOkHttpClient: OkHttpClient) : ModelLoaderFactory<GlideUrl, InputStream> {
+    private class OkHttpUrlResizeModelLoaderFactory(private val okHttpClient: OkHttpClient) :
+        ModelLoaderFactory<GlideUrl, InputStream> {
 
         override fun build(factories: MultiModelLoaderFactory): ModelLoader<GlideUrl, InputStream> {
-            return object : OkHttpUrlLoader(mOkHttpClient) {
+            return object : OkHttpUrlLoader(okHttpClient) {
                 override fun buildLoadData(
                     model: GlideUrl,
                     width: Int,
@@ -98,13 +100,13 @@ class CineTodayGlideModule : AppGlideModule() {
                         val uriStr = model.toStringUrl()
                         var uri = Uri.parse("http://edge.zimage.io")
                         uri = uri.buildUpon()
-                                .appendQueryParameter("url", uriStr)
-                                .appendQueryParameter("w", width.toString())
-                                .appendQueryParameter("h", height.toString())
-                                .appendQueryParameter("mode", "crop")
-                                // Webp should work but doesn't :(
-                                // .appendQueryParameter("format", "webp")
-                                .build()
+                            .appendQueryParameter("url", uriStr)
+                            .appendQueryParameter("w", width.toString())
+                            .appendQueryParameter("h", height.toString())
+                            .appendQueryParameter("mode", "crop")
+                            // Webp should work but doesn't :(
+                            // .appendQueryParameter("format", "webp")
+                            .build()
                         GlideUrl(uri.toString())
                     }
                     return super.buildLoadData(zimageModel, width, height, options)

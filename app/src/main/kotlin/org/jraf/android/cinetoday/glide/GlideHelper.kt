@@ -33,12 +33,23 @@ import com.bumptech.glide.request.target.Target
 import org.jraf.android.util.log.Log
 
 object GlideHelper {
-    private val sRequestListener = object : RequestListener<Drawable> {
-        override fun onResourceReady(resource: Drawable, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+    private val requestListener = object : RequestListener<Drawable> {
+        override fun onResourceReady(
+            resource: Drawable,
+            model: Any?,
+            target: Target<Drawable>?,
+            dataSource: DataSource?,
+            isFirstResource: Boolean
+        ): Boolean {
             return false
         }
 
-        override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
+        override fun onLoadFailed(
+            e: GlideException?,
+            model: Any?,
+            target: Target<Drawable>?,
+            isFirstResource: Boolean
+        ): Boolean {
             Log.w(e, "Could not load image " + model)
             return false
         }
@@ -46,29 +57,40 @@ object GlideHelper {
 
     private fun getRequestBuilder(path: String?, imageView: ImageView): GlideRequest<Drawable> {
         return GlideApp.with(imageView.context)
-                .load(path)
-                .centerCrop()
+            .load(path)
+            .centerCrop()
     }
 
     fun load(path: String, imageView: ImageView) {
         getRequestBuilder(path, imageView)
-                .listener(sRequestListener)
-                .into(imageView)
+            .listener(requestListener)
+            .into(imageView)
     }
 
     fun load(path: String?, imageView: ImageView, listener: RequestListener<Drawable>) {
         getRequestBuilder(path, imageView)
-                .listener(object : RequestListener<Drawable> {
-                    override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
-                        sRequestListener.onLoadFailed(e, model, target, isFirstResource)
-                        return listener.onLoadFailed(e, model, target, isFirstResource)
-                    }
+            .listener(object : RequestListener<Drawable> {
+                override fun onLoadFailed(
+                    e: GlideException?,
+                    model: Any?,
+                    target: Target<Drawable>?,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    requestListener.onLoadFailed(e, model, target, isFirstResource)
+                    return listener.onLoadFailed(e, model, target, isFirstResource)
+                }
 
-                    override fun onResourceReady(resource: Drawable, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
-                        sRequestListener.onResourceReady(resource, model, target, dataSource, isFirstResource)
-                        return listener.onResourceReady(resource, model, target, dataSource, isFirstResource)
-                    }
-                })
-                .into(imageView)
+                override fun onResourceReady(
+                    resource: Drawable,
+                    model: Any?,
+                    target: Target<Drawable>?,
+                    dataSource: DataSource?,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    requestListener.onResourceReady(resource, model, target, dataSource, isFirstResource)
+                    return listener.onResourceReady(resource, model, target, dataSource, isFirstResource)
+                }
+            })
+            .into(imageView)
     }
 }

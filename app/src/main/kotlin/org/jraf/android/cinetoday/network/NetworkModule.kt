@@ -43,8 +43,11 @@ class NetworkModule {
 
     @Singleton
     @Provides
-    fun provideApi(@Named("CachingOkHttpClient") cachingOkHttpClient: OkHttpClient, movieCodec: MovieCodec, showtimeCodec: ShowtimeCodec,
-                   theaterCodec: TheaterCodec): Api {
+    fun provideApi(
+        @Named("CachingOkHttpClient") cachingOkHttpClient: OkHttpClient, movieCodec: MovieCodec,
+        showtimeCodec: ShowtimeCodec,
+        theaterCodec: TheaterCodec
+    ): Api {
         return Api(cachingOkHttpClient, movieCodec, showtimeCodec, theaterCodec)
     }
 
@@ -101,8 +104,8 @@ class NetworkModule {
     }
 
     companion object {
-        private val CACHE_DIRECTORY_NAME = "http"
-        private val CACHE_SIZE_B = (2 * 1024 * 1024).toLong()
-        private val TIMEOUT_S = 30
+        private const val CACHE_DIRECTORY_NAME = "http"
+        private const val CACHE_SIZE_B = (2 * 1024 * 1024).toLong()
+        private const val TIMEOUT_S = 30
     }
 }

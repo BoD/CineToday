@@ -45,15 +45,20 @@ import java.util.ArrayList
 import java.util.Date
 import java.util.Locale
 
-class Api(private val mCachingOkHttpClient: OkHttpClient, private val mMovieCodec: MovieCodec, private val mShowTimeCodec: ShowtimeCodec, private val mTheaterCodec: TheaterCodec) {
+class Api(
+    private val cachingOkHttpClient: OkHttpClient,
+    private val movieCodec: MovieCodec,
+    private val showTimeCodec: ShowtimeCodec,
+    private val theaterCodec: TheaterCodec
+) {
 
     @WorkerThread
     @Throws(IOException::class, ParseException::class)
     fun getMovieList(movies: MutableSet<Movie>, theaterId: String, date: Date) {
         val url = getBaseBuilder(PATH_SHOWTIMELIST)
-                .addQueryParameter(QUERY_THEATERS_KEY, theaterId)
-                .addQueryParameter(QUERY_DATE_KEY, SIMPLE_DATE_FORMAT.format(date))
-                .build()
+            .addQueryParameter(QUERY_THEATERS_KEY, theaterId)
+            .addQueryParameter(QUERY_DATE_KEY, SIMPLE_DATE_FORMAT.format(date))
+            .build()
         val jsonStr = call(url, false)
         parseMovieList(movies, jsonStr, theaterId, date)
     }
@@ -75,7 +80,7 @@ class Api(private val mCachingOkHttpClient: OkHttpClient, private val mMovieCode
                 var movie = Movie()
 
                 // Movie (does not include showtimes, only the movie details)
-                mMovieCodec.fill(movie, jsonMovie)
+                movieCodec.fill(movie, jsonMovie)
                 // See if the movie was already in the set, if yes use this one, so the showtimes are merged
                 if (movies.contains(movie)) {
                     // Already in the set: find it
@@ -89,7 +94,7 @@ class Api(private val mCachingOkHttpClient: OkHttpClient, private val mMovieCode
                 }
 
                 // Showtimes
-                mShowTimeCodec.fill(movie, jsonMovieShowtime, theaterId, date)
+                showTimeCodec.fill(movie, jsonMovieShowtime, theaterId, date)
 
                 // If there is no showtimes for today, skip the movie
                 if (movie.todayShowtimes.size == 0) {
@@ -108,14 +113,14 @@ class Api(private val mCachingOkHttpClient: OkHttpClient, private val mMovieCode
     @Throws(IOException::class, ParseException::class)
     fun getMovieInfo(movie: Movie) {
         val url = getBaseBuilder(PATH_MOVIE)
-                .addQueryParameter(QUERY_STRIPTAGS_KEY, QUERY_STRIPTAGS_VALUE)
-                .addQueryParameter(QUERY_CODE_KEY, movie.id)
-                .build()
+            .addQueryParameter(QUERY_STRIPTAGS_KEY, QUERY_STRIPTAGS_VALUE)
+            .addQueryParameter(QUERY_CODE_KEY, movie.id)
+            .build()
         val jsonStr = call(url, true)
         try {
             val jsonRoot = JSONObject(jsonStr)
             val jsonMovie = jsonRoot.getJSONObject("movie")
-            mMovieCodec.fill(movie, jsonMovie)
+            movieCodec.fill(movie, jsonMovie)
         } catch (e: JSONException) {
             throw ParseException(e)
         }
@@ -128,10 +133,10 @@ class Api(private val mCachingOkHttpClient: OkHttpClient, private val mMovieCode
         if (query.length < 3) return ArrayList()
 
         val url = getBaseBuilder(PATH_SEARCH)
-                .addQueryParameter(QUERY_COUNT_KEY, QUERY_COUNT_VALUE)
-                .addQueryParameter(QUERY_FILTER_KEY, QUERY_FILTER_VALUE)
-                .addQueryParameter(QUERY_QUERY_KEY, query)
-                .build()
+            .addQueryParameter(QUERY_COUNT_KEY, QUERY_COUNT_VALUE)
+            .addQueryParameter(QUERY_FILTER_KEY, QUERY_FILTER_VALUE)
+            .addQueryParameter(QUERY_QUERY_KEY, query)
+            .build()
         val jsonStr = call(url, true)
         try {
             val jsonRoot = JSONObject(jsonStr)
@@ -145,13 +150,14 @@ class Api(private val mCachingOkHttpClient: OkHttpClient, private val mMovieCode
             for (i in 0..len - 1) {
                 val jsonTheater = jsonTheaters.getJSONObject(i)
                 val theater = Theater(
-                        id = "",
-                        name = "",
-                        address = "",
-                        pictureUri = null)
+                    id = "",
+                    name = "",
+                    address = "",
+                    pictureUri = null
+                )
 
                 // Theater
-                mTheaterCodec.fill(theater, jsonTheater)
+                theaterCodec.fill(theater, jsonTheater)
                 res.add(theater)
             }
             return res
@@ -167,44 +173,44 @@ class Api(private val mCachingOkHttpClient: OkHttpClient, private val mMovieCode
         val urlBuilder = Request.Builder().url(url)
         if (!useCache) urlBuilder.cacheControl(CacheControl.FORCE_NETWORK)
         val request = urlBuilder.build()
-        val response = mCachingOkHttpClient.newCall(request).execute()
+        val response = cachingOkHttpClient.newCall(request).execute()
         return response.body()?.string() ?: ""
     }
 
     private fun getBaseBuilder(path: String): HttpUrl.Builder {
         return HttpUrl.Builder()
-                .scheme(SCHEME)
-                .host(HOST)
-                .addPathSegment(PATH_REST)
-                .addPathSegment(PATH_V3)
-                .addPathSegment(path)
-                .addQueryParameter(QUERY_PARTNER_KEY, QUERY_PARTNER_VALUE)
-                .addQueryParameter(QUERY_FORMAT_KEY, QUERY_FORMAT_VALUE)
+            .scheme(SCHEME)
+            .host(HOST)
+            .addPathSegment(PATH_REST)
+            .addPathSegment(PATH_V3)
+            .addPathSegment(path)
+            .addQueryParameter(QUERY_PARTNER_KEY, QUERY_PARTNER_VALUE)
+            .addQueryParameter(QUERY_FORMAT_KEY, QUERY_FORMAT_VALUE)
     }
 
     companion object {
         val SIMPLE_DATE_FORMAT = SimpleDateFormat("yyyy-MM-dd", Locale.US)
 
-        private val SCHEME = "http"
-        private val HOST = "api.allocine.fr"
-        private val PATH_REST = "rest"
-        private val PATH_V3 = "v3"
-        private val QUERY_PARTNER_KEY = "partner"
-        private val QUERY_PARTNER_VALUE = "YW5kcm9pZC12M3M"
-        private val QUERY_FORMAT_KEY = "format"
-        private val QUERY_FORMAT_VALUE = "json"
-        private val PATH_SHOWTIMELIST = "showtimelist"
-        private val QUERY_THEATERS_KEY = "theaters"
-        private val QUERY_DATE_KEY = "date"
-        private val PATH_MOVIE = "movie"
-        private val QUERY_CODE_KEY = "code"
-        private val QUERY_STRIPTAGS_KEY = "striptags"
-        private val QUERY_STRIPTAGS_VALUE = "true"
-        private val PATH_SEARCH = "search"
-        private val QUERY_COUNT_KEY = "count"
-        private val QUERY_COUNT_VALUE = "15"
-        private val QUERY_QUERY_KEY = "q"
-        private val QUERY_FILTER_KEY = "filter"
-        private val QUERY_FILTER_VALUE = "theater"
+        private const val SCHEME = "http"
+        private const val HOST = "api.allocine.fr"
+        private const val PATH_REST = "rest"
+        private const val PATH_V3 = "v3"
+        private const val QUERY_PARTNER_KEY = "partner"
+        private const val QUERY_PARTNER_VALUE = "YW5kcm9pZC12M3M"
+        private const val QUERY_FORMAT_KEY = "format"
+        private const val QUERY_FORMAT_VALUE = "json"
+        private const val PATH_SHOWTIMELIST = "showtimelist"
+        private const val QUERY_THEATERS_KEY = "theaters"
+        private const val QUERY_DATE_KEY = "date"
+        private const val PATH_MOVIE = "movie"
+        private const val QUERY_CODE_KEY = "code"
+        private const val QUERY_STRIPTAGS_KEY = "striptags"
+        private const val QUERY_STRIPTAGS_VALUE = "true"
+        private const val PATH_SEARCH = "search"
+        private const val QUERY_COUNT_KEY = "count"
+        private const val QUERY_COUNT_VALUE = "15"
+        private const val QUERY_QUERY_KEY = "q"
+        private const val QUERY_FILTER_KEY = "filter"
+        private const val QUERY_FILTER_VALUE = "theater"
     }
 }

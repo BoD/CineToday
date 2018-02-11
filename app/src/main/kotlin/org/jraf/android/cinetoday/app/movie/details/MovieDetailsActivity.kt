@@ -47,46 +47,48 @@ import javax.inject.Inject
 
 class MovieDetailsActivity : BaseActivity() {
 
-    @Inject lateinit var mDatabase: AppDatabase
+    @Inject
+    lateinit var database: AppDatabase
 
-    private lateinit var mBinding: MovieDetailsBinding
-    private val mTxtTheaterNameList = ArrayList<TextView>(3)
-    private val mTimeFormat: DateFormat by lazy {
+    private lateinit var binding: MovieDetailsBinding
+    private val txtTheaterNameList = ArrayList<TextView>(3)
+    private val timeFormat: DateFormat by lazy {
         android.text.format.DateFormat.getTimeFormat(this)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Components.application.inject(this)
-        mBinding = DataBindingUtil.setContentView(this, R.layout.movie_details)
-        mBinding.conMovie.setOnScrollChangeListener(mOnScrollChangeListener)
+        binding = DataBindingUtil.setContentView(this, R.layout.movie_details)
+        binding.conMovie.setOnScrollChangeListener(mOnScrollChangeListener)
 
         val movieId = intent.data.contentId
-        mDatabase.movieDao.movieByIdLive(movieId).observe(this, Observer { if (it != null) onMovieResult(it) })
-        mDatabase.showtimeDao.showtimesWithTheaterByMovieIdLive(movieId).observe(this, Observer { if (it != null) onShowtimesResult(it) })
+        database.movieDao.movieByIdLive(movieId).observe(this, Observer { if (it != null) onMovieResult(it) })
+        database.showtimeDao.showtimesWithTheaterByMovieIdLive(movieId)
+            .observe(this, Observer { if (it != null) onShowtimesResult(it) })
     }
 
     private fun onMovieResult(movie: Movie) {
-        mBinding.pgbLoading.visibility = View.GONE
-        mBinding.conMovie.visibility = View.VISIBLE
+        binding.pgbLoading.visibility = View.GONE
+        binding.conMovie.visibility = View.VISIBLE
         // Needed for the rotary input to work
-        mBinding.conMovie.requestFocus()
+        binding.conMovie.requestFocus()
 
         val movieViewModel = MovieViewModel(movie, this)
-        mBinding.movie = movieViewModel
+        binding.movie = movieViewModel
 
         // Use the movie color in certain elements
         val color = movie.color ?: getColor(R.color.background)
-        mBinding.root.setBackgroundColor(color)
-        mBinding.txtTheaterNameInvisible.setBackgroundColor(color)
+        binding.root.setBackgroundColor(color)
+        binding.txtTheaterNameInvisible.setBackgroundColor(color)
         val gradientColors = intArrayOf(color, 0)
         val gradientDrawable = GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, gradientColors)
-        mBinding.vieTheaterNameGradient.background = gradientDrawable
+        binding.vieTheaterNameGradient.background = gradientDrawable
     }
 
     private fun onShowtimesResult(showtimes: Array<ShowtimeWithTheater>) {
-        mTxtTheaterNameList.clear()
-        mBinding.conShowtimes.removeAllViews()
+        txtTheaterNameList.clear()
+        binding.conShowtimes.removeAllViews()
 
         var theaterId: String? = null
         val now = Date()
@@ -95,38 +97,39 @@ class MovieDetailsActivity : BaseActivity() {
             // Theater name
             if (showtime.theaterId != theaterId) {
                 theaterId = showtime.theaterId
-                val txtTheaterName = inflater.inflate(R.layout.movie_details_theater_name, mBinding.conShowtimes, false) as TextView
+                val txtTheaterName =
+                    inflater.inflate(R.layout.movie_details_theater_name, binding.conShowtimes, false) as TextView
                 txtTheaterName.text = showtime.theaterName
-                mBinding.conShowtimes.addView(txtTheaterName)
+                binding.conShowtimes.addView(txtTheaterName)
 
-                mTxtTheaterNameList.add(txtTheaterName)
+                txtTheaterNameList.add(txtTheaterName)
             }
 
             // Time
             val isTooLate = showtime.time.resetDate().before(now.resetDate())
-            val conShowtimeItem = inflater.inflate(R.layout.movie_details_showtime, mBinding.conShowtimes, false)
+            val conShowtimeItem = inflater.inflate(R.layout.movie_details_showtime, binding.conShowtimes, false)
             val txtShowtime = conShowtimeItem.findViewById<TextView>(R.id.txtShowtime)
-            txtShowtime.text = mTimeFormat.format(showtime.time)
+            txtShowtime.text = timeFormat.format(showtime.time)
             val txtIs3d = conShowtimeItem.findViewById<TextView>(R.id.txtIs3d)
             txtIs3d.visibility = if (showtime.is3d) View.VISIBLE else View.GONE
             if (isTooLate) conShowtimeItem.alpha = .33f
-            mBinding.conShowtimes.addView(conShowtimeItem)
+            binding.conShowtimes.addView(conShowtimeItem)
         }
     }
 
 
     private val mOnScrollChangeListener = View.OnScrollChangeListener { _, _, scrollY, _, _ ->
-        if (scrollY < mBinding.conShowtimes.y + mTxtTheaterNameList[0].y - mBinding.txtTheaterName.paddingTop) {
-            mBinding.txtTheaterName.visibility = View.GONE
-            mBinding.conTheaterName.visibility = View.GONE
-            mTxtTheaterNameList[0].visibility = View.VISIBLE
+        if (scrollY < binding.conShowtimes.y + txtTheaterNameList[0].y - binding.txtTheaterName.paddingTop) {
+            binding.txtTheaterName.visibility = View.GONE
+            binding.conTheaterName.visibility = View.GONE
+            txtTheaterNameList[0].visibility = View.VISIBLE
         } else {
-            mBinding.txtTheaterName.visibility = View.VISIBLE
-            AnimationUtil.animateVisible(mBinding.conTheaterName)
-            for (textView in mTxtTheaterNameList) {
-                if (scrollY >= textView.y - mBinding.txtTheaterName.paddingTop + mBinding.conShowtimes.y) {
-                    mBinding.txtTheaterName.text = textView.text
-                    mBinding.txtTheaterNameInvisible.text = textView.text
+            binding.txtTheaterName.visibility = View.VISIBLE
+            AnimationUtil.animateVisible(binding.conTheaterName)
+            for (textView in txtTheaterNameList) {
+                if (scrollY >= textView.y - binding.txtTheaterName.paddingTop + binding.conShowtimes.y) {
+                    binding.txtTheaterName.text = textView.text
+                    binding.txtTheaterNameInvisible.text = textView.text
                     textView.visibility = View.INVISIBLE
                 } else {
                     textView.visibility = View.VISIBLE

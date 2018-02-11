@@ -34,19 +34,19 @@ class FragmentDelegate<out F : Fragment>(
     private val tag: String,
     private val provideFragmentInstance: () -> F
 ) {
-    private var mCached: F? = null
+    private var cached: F? = null
 
     operator fun getValue(thisRef: FragmentActivity, property: KProperty<*>): F {
-        if (mCached == null) {
+        if (cached == null) {
             @Suppress("UNCHECKED_CAST")
-            mCached = thisRef.supportFragmentManager.findFragmentByTag(tag) as F?
-            if (mCached == null) {
-                mCached = provideFragmentInstance()
+            cached = thisRef.supportFragmentManager.findFragmentByTag(tag) as F?
+            if (cached == null) {
+                cached = provideFragmentInstance()
                 thisRef.supportFragmentManager.beginTransaction()
-                        .add(containerResId, mCached, tag)
-                        .commit()
+                    .add(containerResId, cached, tag)
+                    .commit()
             }
         }
-        return mCached!!
+        return cached!!
     }
 }

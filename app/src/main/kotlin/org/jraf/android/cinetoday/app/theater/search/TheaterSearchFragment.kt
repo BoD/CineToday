@@ -40,56 +40,57 @@ import org.jraf.android.cinetoday.util.base.BaseFragment
 import org.jraf.android.util.ui.screenshape.ScreenShapeHelper
 
 class TheaterSearchFragment : BaseFragment<TheaterSearchCallbacks>() {
-    private lateinit var mAdapter: TheaterSearchAdapter
-    private lateinit var mBinding: TheaterSearchListBinding
+    private lateinit var adapter: TheaterSearchAdapter
+    private lateinit var binding: TheaterSearchListBinding
 
-    private val mTheaterSearchLiveData: TheaterSearchLiveData by lazy { TheaterSearchLiveData() }
+    private val theaterSearchLiveData: TheaterSearchLiveData by lazy { TheaterSearchLiveData() }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        mBinding = DataBindingUtil.inflate(inflater, R.layout.theater_search_list, container, false)
-        mBinding.rclList.setHasFixedSize(true)
-        mBinding.rclList.isEdgeItemsCenteringEnabled = true
+        binding = DataBindingUtil.inflate(inflater, R.layout.theater_search_list, container, false)
+        binding.rclList.setHasFixedSize(true)
+        binding.rclList.isEdgeItemsCenteringEnabled = true
 
         // Apply an offset + scale on the items depending on their distance from the center (only for Round screens)
         if (ScreenShapeHelper.get(context).isRound) {
-            mBinding.rclList.layoutManager = WearableLinearLayoutManager(context, object : CurvingLayoutCallback(context) {
-                private val FACTOR = .75f
+            binding.rclList.layoutManager =
+                    WearableLinearLayoutManager(context, object : CurvingLayoutCallback(context) {
+                        private val FACTOR = .75f
 
-                override fun onLayoutFinished(child: View, parent: RecyclerView) {
-                    super.onLayoutFinished(child, parent)
+                        override fun onLayoutFinished(child: View, parent: RecyclerView) {
+                            super.onLayoutFinished(child, parent)
 
-                    val childTop = child.y + child.height / 2f
-                    val childOffsetFromCenter = childTop - parent.height / 2f
-                    val childOffsetFromCenterRatio = Math.abs(childOffsetFromCenter / parent.height)
-                    val childOffsetFromCenterRatioNormalized = childOffsetFromCenterRatio * FACTOR
+                            val childTop = child.y + child.height / 2f
+                            val childOffsetFromCenter = childTop - parent.height / 2f
+                            val childOffsetFromCenterRatio = Math.abs(childOffsetFromCenter / parent.height)
+                            val childOffsetFromCenterRatioNormalized = childOffsetFromCenterRatio * FACTOR
 
-                    child.scaleX = 1 - childOffsetFromCenterRatioNormalized
-                    child.scaleY = 1 - childOffsetFromCenterRatioNormalized
-                }
-            })
+                            child.scaleX = 1 - childOffsetFromCenterRatioNormalized
+                            child.scaleY = 1 - childOffsetFromCenterRatioNormalized
+                        }
+                    })
 
             // Also snaps
-            LinearSnapHelper().attachToRecyclerView(mBinding.rclList)
+            LinearSnapHelper().attachToRecyclerView(binding.rclList)
         } else {
             // Square screen: no scale effect and no snapping
-            mBinding.rclList.layoutManager = WearableLinearLayoutManager(context)
+            binding.rclList.layoutManager = WearableLinearLayoutManager(context)
         }
-        return mBinding.root
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        mAdapter = TheaterSearchAdapter(activity!!, callbacks)
-        mBinding.rclList.adapter = mAdapter
+        adapter = TheaterSearchAdapter(activity!!, callbacks)
+        binding.rclList.adapter = adapter
     }
 
     fun search(query: String) {
-        mAdapter.setLoading(true)
+        adapter.setLoading(true)
         val args = Bundle()
         args.putString("query", query)
-        mTheaterSearchLiveData.query = query
-        mTheaterSearchLiveData.observe(this, Observer {
-            mAdapter.setLoading(false)
-            mAdapter.setResults(it)
+        theaterSearchLiveData.query = query
+        theaterSearchLiveData.observe(this, Observer {
+            adapter.setLoading(false)
+            adapter.setResults(it)
         })
     }
 

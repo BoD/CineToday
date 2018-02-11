@@ -48,50 +48,52 @@ class TheaterFavoritesFragment : BaseFragment<TheaterFavoritesCallbacks>() {
         }
     }
 
-    @Inject lateinit var mDatabase: AppDatabase
+    @Inject
+    lateinit var database: AppDatabase
 
-    private lateinit var mBinding: TheaterFavoritesBinding
+    private lateinit var binding: TheaterFavoritesBinding
 
-    private var mAdapter: TheaterFavoritesAdapter? = null
+    private var adapter: TheaterFavoritesAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Components.application.inject(this)
-        mDatabase.theaterDao.allTheatersLive().observe(this, Observer { if (it != null) onTheatersResult(it) })
+        database.theaterDao.allTheatersLive().observe(this, Observer { if (it != null) onTheatersResult(it) })
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        mBinding = DataBindingUtil.inflate(inflater, R.layout.theater_favorites, container, false)
-        mBinding.callbacks = callbacks
+        binding = DataBindingUtil.inflate(inflater, R.layout.theater_favorites, container, false)
+        binding.callbacks = callbacks
 
-        mBinding.rclList.setHasFixedSize(true)
-        mBinding.rclList.layoutManager = LinearLayoutManager(context)
-        RotaryPagerSnapHelper().attachToRecyclerView(mBinding.rclList)
-        mBinding.rclList.addOnScrollListener(mOnScrollListener)
+        binding.rclList.setHasFixedSize(true)
+        binding.rclList.layoutManager = LinearLayoutManager(context)
+        RotaryPagerSnapHelper().attachToRecyclerView(binding.rclList)
+        binding.rclList.addOnScrollListener(onScrollListener)
 
-        return mBinding.root
+        return binding.root
     }
 
     private fun onTheatersResult(theaters: Array<Theater>) {
-        mBinding.pgbLoading.visibility = View.GONE
-        var adapter: TheaterFavoritesAdapter? = mAdapter
+        binding.pgbLoading.visibility = View.GONE
+        var adapter: TheaterFavoritesAdapter? = adapter
         if (adapter == null) {
             adapter = TheaterFavoritesAdapter(context!!)
-            mAdapter = adapter
-            mBinding.rclList.adapter = adapter
+            this.adapter = adapter
+            binding.rclList.adapter = adapter
         }
         adapter.data = theaters
     }
 
-    private val mOnScrollListener = object : RecyclerView.OnScrollListener() {
+    private val onScrollListener = object : RecyclerView.OnScrollListener() {
         override fun onScrollStateChanged(recyclerView: RecyclerView?, newState: Int) {
             if (newState != RecyclerView.SCROLL_STATE_IDLE) callbacks.onTheaterListScrolled()
         }
     }
 
     val currentVisibleTheater: Theater?
-        get() = mAdapter?.let {
-            val firstItemPosition = (mBinding.rclList.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
+        get() = adapter?.let {
+            val firstItemPosition =
+                (binding.rclList.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
             if (firstItemPosition == RecyclerView.NO_POSITION) return null
             it.data[firstItemPosition]
         }

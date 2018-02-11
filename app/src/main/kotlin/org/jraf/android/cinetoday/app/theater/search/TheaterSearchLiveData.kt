@@ -40,8 +40,10 @@ class TheaterSearchLiveData : LiveData<List<Theater>>() {
             load()
         }
 
-    @Inject lateinit var mApi: Api
-    @Inject lateinit var mDatabase: AppDatabase
+    @Inject
+    lateinit var api: Api
+    @Inject
+    lateinit var database: AppDatabase
 
     init {
         Components.application.inject(this)
@@ -52,11 +54,11 @@ class TheaterSearchLiveData : LiveData<List<Theater>>() {
 
         doAsync {
             // Get the list of favorite theaters, so we can filter them out from the search results
-            val favoriteTheaters = mDatabase.theaterDao.allTheaters()
+            val favoriteTheaters = database.theaterDao.allTheaters()
 
             try {
                 // API call (blocking)
-                val res = mApi.searchTheaters(query ?: "").toMutableList()
+                val res = api.searchTheaters(query ?: "").toMutableList()
 
                 // Filter out favorite theaters
                 res.removeAll { favoriteTheaters.contains(it) }

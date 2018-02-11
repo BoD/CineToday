@@ -42,7 +42,8 @@ import org.jraf.android.util.log.Log
 import java.util.ArrayList
 
 
-class TheaterSearchAdapter(context: Context, private val mCallbacks: TheaterSearchCallbacks) : RecyclerView.Adapter<TheaterSearchAdapter.ViewHolder>(), TextWatcher {
+class TheaterSearchAdapter(context: Context, private val callbacks: TheaterSearchCallbacks) :
+    RecyclerView.Adapter<TheaterSearchAdapter.ViewHolder>(), TextWatcher {
     companion object {
         private const val TYPE_SEARCH = 0
         private const val TYPE_LOADING = 1
@@ -50,10 +51,10 @@ class TheaterSearchAdapter(context: Context, private val mCallbacks: TheaterSear
         private const val TYPE_EMPTY = 3
     }
 
-    private val mLayoutInflater: LayoutInflater = LayoutInflater.from(context)
-    private var mTheaters: MutableList<Theater>? = null
-    private var mLoading: Boolean = false
-    private var mSearchQuery: String? = null
+    private val layoutInflater: LayoutInflater = LayoutInflater.from(context)
+    private var theaters: MutableList<Theater>? = null
+    private var loading: Boolean = false
+    private var searchQuery: String? = null
 
     sealed class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         class SearchViewHolder(val searchBinding: TheaterSearchListItemSearchBinding) : ViewHolder(searchBinding.root)
@@ -68,8 +69,8 @@ class TheaterSearchAdapter(context: Context, private val mCallbacks: TheaterSear
             0 -> return TYPE_SEARCH
 
             1 -> {
-                if (mLoading) return TYPE_LOADING
-                if (mTheaters!!.isEmpty()) return TYPE_EMPTY
+                if (loading) return TYPE_LOADING
+                if (theaters!!.isEmpty()) return TYPE_EMPTY
                 return TYPE_ITEM
             }
 
@@ -81,20 +82,32 @@ class TheaterSearchAdapter(context: Context, private val mCallbacks: TheaterSear
         return when (viewType) {
             TYPE_SEARCH -> ViewHolder.SearchViewHolder(
                 DataBindingUtil.inflate(
-                    mLayoutInflater,
+                    layoutInflater,
                     R.layout.theater_search_list_item_search,
                     parent,
                     false
                 )
             )
 
-            TYPE_LOADING -> ViewHolder.GenericViewHolder(mLayoutInflater.inflate(R.layout.theater_search_list_item_loading, parent, false))
+            TYPE_LOADING -> ViewHolder.GenericViewHolder(
+                layoutInflater.inflate(
+                    R.layout.theater_search_list_item_loading,
+                    parent,
+                    false
+                )
+            )
 
-            TYPE_EMPTY -> ViewHolder.GenericViewHolder(mLayoutInflater.inflate(R.layout.theater_search_list_item_empty, parent, false))
+            TYPE_EMPTY -> ViewHolder.GenericViewHolder(
+                layoutInflater.inflate(
+                    R.layout.theater_search_list_item_empty,
+                    parent,
+                    false
+                )
+            )
 
             TYPE_ITEM -> ViewHolder.ItemViewHolder(
                 DataBindingUtil.inflate(
-                    mLayoutInflater,
+                    layoutInflater,
                     R.layout.theater_search_list_item,
                     parent,
                     false
@@ -110,18 +123,18 @@ class TheaterSearchAdapter(context: Context, private val mCallbacks: TheaterSear
         when (viewType) {
             TYPE_SEARCH -> {
                 holder as ViewHolder.SearchViewHolder
-                holder.searchBinding.searchQuery = mSearchQuery
+                holder.searchBinding.searchQuery = searchQuery
                 holder.searchBinding.executePendingBindings()
                 holder.searchBinding.edtSearch.removeTextChangedListener(this)
                 holder.searchBinding.edtSearch.addTextChangedListener(this)
-                holder.searchBinding.edtSearch.setOnEditorActionListener(mOnEditorActionListener)
+                holder.searchBinding.edtSearch.setOnEditorActionListener(onEditorActionListener)
             }
 
             TYPE_ITEM -> {
                 holder as ViewHolder.ItemViewHolder
-                val theater = mTheaters!![position - 1]
+                val theater = theaters!![position - 1]
                 holder.itemBinding.theater = theater
-                holder.itemBinding.callbacks = mCallbacks
+                holder.itemBinding.callbacks = callbacks
                 holder.itemBinding.executePendingBindings()
             }
         }
@@ -132,11 +145,11 @@ class TheaterSearchAdapter(context: Context, private val mCallbacks: TheaterSear
     override fun afterTextChanged(s: Editable) {}
 
     override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-        mSearchQuery = s.toString()
-        mCallbacks.onSearch(s.toString())
+        searchQuery = s.toString()
+        callbacks.onSearch(s.toString())
     }
 
-    private val mOnEditorActionListener = TextView.OnEditorActionListener { textView, _, _ ->
+    private val onEditorActionListener = TextView.OnEditorActionListener { textView, _, _ ->
         Log.d()
         // Close keyboard
         val inputMethodManager = textView.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -145,34 +158,33 @@ class TheaterSearchAdapter(context: Context, private val mCallbacks: TheaterSear
     }
 
     override fun getItemCount(): Int {
-        if (mLoading) {
+        if (loading) {
             // Search + loading
             return 2
-        } else if (mTheaters == null) {
+        } else if (theaters == null) {
             // Search
             return 1
-        } else if (mTheaters!!.isEmpty()) {
+        } else if (theaters!!.isEmpty()) {
             // Search + empty
             return 2
         } else {
             // Search + items
-            return mTheaters!!.size + 1
+            return theaters!!.size + 1
         }
     }
 
     fun setResults(theaters: List<Theater>?) {
-        if (mTheaters == null) {
-            mTheaters = ArrayList<Theater>()
+        if (this.theaters == null) {
+            this.theaters = ArrayList<Theater>()
         } else {
-            mTheaters!!.clear()
+            this.theaters!!.clear()
         }
-        if (theaters != null) mTheaters!!.addAll(theaters)
+        if (theaters != null) this.theaters!!.addAll(theaters)
         notifyDataSetChanged()
     }
 
     fun setLoading(loading: Boolean) {
-        mLoading = loading
-        //        if (loading && mTheaters != null) mTheaters.clear();
+        this.loading = loading
         notifyDataSetChanged()
     }
 }

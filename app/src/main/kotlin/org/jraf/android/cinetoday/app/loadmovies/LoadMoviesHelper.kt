@@ -62,11 +62,12 @@ import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
 
 class LoadMoviesHelper(
-        private val mContext: Context,
-        private val mMainPrefs: MainPrefs,
-        private val mApi: Api,
-        private val mAppDatabase: AppDatabase,
-        private val mLoadMoviesListenerHelper: LoadMoviesListenerHelper) {
+    private val context: Context,
+    private val mainPrefs: MainPrefs,
+    private val api: Api,
+    private val appDatabase: AppDatabase,
+    private val loadMoviesListenerHelper: LoadMoviesListenerHelper
+) {
 
     companion object {
         private const val NOTIFICATION_CHANNEL_MAIN = "NOTIFICATION_CHANNEL_MAIN"
@@ -74,18 +75,19 @@ class LoadMoviesHelper(
         private const val MIN_BANDWIDTH_KBPS = 320
     }
 
-    @Volatile private var mWantStop: Boolean = false
+    @Volatile
+    private var wantStop: Boolean = false
 
-    private val mObjectsToKeep = mutableListOf<Any>()
+    private val objectsToKeep = mutableListOf<Any>()
 
 
     fun setWantStop(wantStop: Boolean) {
-        mWantStop = wantStop
+        this.wantStop = wantStop
     }
 
     @WorkerThread
     private fun requestHighBandwidthNetwork(timeout: Long, unit: TimeUnit): Boolean {
-        val connectivityManager = mContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val activeNetwork = connectivityManager.activeNetwork
         if (activeNetwork == null || connectivityManager.getNetworkCapabilities(activeNetwork).linkDownstreamBandwidthKbps < MIN_BANDWIDTH_KBPS) {
             val res = AtomicBoolean(false)
@@ -100,10 +102,10 @@ class LoadMoviesHelper(
                 }
             }
             val request = NetworkRequest.Builder()
-                    .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
-                    .addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR)
-                    .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
-                    .build()
+                .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
+                .addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR)
+                .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+                .build()
 
             Log.d("Requesting a high-bandwidth network")
             connectivityManager.requestNetwork(request, networkCallback)
@@ -122,8 +124,8 @@ class LoadMoviesHelper(
     @WorkerThread
     @Throws(Exception::class)
     internal fun loadMovies() {
-        mWantStop = false
-        mLoadMoviesListenerHelper.setPreloading()
+        wantStop = false
+        loadMoviesListenerHelper.setPreloading()
 
         // 0/ Try to connect to a fast network
         val highBandwidthNetworkSuccess = requestHighBandwidthNetwork(10, TimeUnit.SECONDS)
@@ -131,26 +133,26 @@ class LoadMoviesHelper(
 
         val movies = hashSetOf<Movie>()
         val moviesFromDbToKeep = mutableListOf<Movie>()
-        val allMoviesFromDb = mAppDatabase.movieDao.allMovies().associateBy { it.id }
+        val allMoviesFromDb = appDatabase.movieDao.allMovies().associateBy { it.id }
         try {
             // 1/ Retrieve list of movies (including showtimes), for all the theaters
             try {
-                mAppDatabase.theaterDao.allTheaters().forEach { (theaterId) ->
-                    mApi.getMovieList(movies, theaterId, Date())
+                appDatabase.theaterDao.allTheaters().forEach { (theaterId) ->
+                    api.getMovieList(movies, theaterId, Date())
 
-                    if (mWantStop) {
-                        mLoadMoviesListenerHelper.setIdle()
+                    if (wantStop) {
+                        loadMoviesListenerHelper.setIdle()
                         return
                     }
                 }
             } catch (e: Exception) {
                 Log.e(e, "Could not load movies")
-                mLoadMoviesListenerHelper.pushError(e)
+                loadMoviesListenerHelper.pushError(e)
                 throw e
             }
 
-            if (mWantStop) {
-                mLoadMoviesListenerHelper.setIdle()
+            if (wantStop) {
+                loadMoviesListenerHelper.setIdle()
                 return
             }
 
@@ -158,10 +160,11 @@ class LoadMoviesHelper(
             val size = movies.size
             var i = 0
             for (movieFromApi in movies) {
-                mLoadMoviesListenerHelper.setLoading(
-                        totalMovies = size,
-                        currentMovieIndex = i,
-                        currentMovieTitle = movieFromApi.localTitle)
+                loadMoviesListenerHelper.setLoading(
+                    totalMovies = size,
+                    currentMovieIndex = i,
+                    currentMovieTitle = movieFromApi.localTitle
+                )
 
                 // Check if we already have this movie in the db
                 val movieFromDb = allMoviesFromDb[movieFromApi.id]
@@ -174,17 +177,17 @@ class LoadMoviesHelper(
                     // Not in db: get movie info
                     movieFromApi.isNew = true
                     try {
-                        mApi.getMovieInfo(movieFromApi)
+                        api.getMovieInfo(movieFromApi)
                         Log.d(movieFromApi.toString())
                     } catch (e: Exception) {
                         Log.e(e, "Could not load movie info: movie = %s", movieFromApi)
-                        mLoadMoviesListenerHelper.pushError(e)
+                        loadMoviesListenerHelper.pushError(e)
                         throw e
                     }
                 }
 
-                if (mWantStop) {
-                    mLoadMoviesListenerHelper.setIdle()
+                if (wantStop) {
+                    loadMoviesListenerHelper.setIdle()
                     return
                 }
 
@@ -192,16 +195,17 @@ class LoadMoviesHelper(
                 downloadPoster(movieFromApi)
 
                 i++
-                mLoadMoviesListenerHelper.setLoading(
-                        totalMovies = size,
-                        currentMovieIndex = i,
-                        currentMovieTitle = movieFromApi.localTitle)
+                loadMoviesListenerHelper.setLoading(
+                    totalMovies = size,
+                    currentMovieIndex = i,
+                    currentMovieTitle = movieFromApi.localTitle
+                )
             }
 
         } finally {
             // Release the high-bandwidth network
             if (highBandwidthNetworkSuccess) {
-                val connectivityManager = mContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+                val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
                 connectivityManager.bindProcessToNetwork(null)
             }
         }
@@ -215,14 +219,14 @@ class LoadMoviesHelper(
         // 3/ Save everything to the local db
         persist(movies)
 
-        mMainPrefs.lastUpdateDate = System.currentTimeMillis()
-        mLoadMoviesListenerHelper.setIdle()
+        mainPrefs.lastUpdateDate = System.currentTimeMillis()
+        loadMoviesListenerHelper.setIdle()
 
         // 4/ Show a notification (if prefs say so)
-        if (mMainPrefs.isShowNewReleasesNotification) {
+        if (mainPrefs.isShowNewReleasesNotification) {
             val newMovieTitles = movies
-                    .filter { it.isNew }
-                    .map { it.localTitle }
+                .filter { it.isNew }
+                .map { it.localTitle }
             if (!newMovieTitles.isEmpty()) showNotification(newMovieTitles)
         }
     }
@@ -230,58 +234,69 @@ class LoadMoviesHelper(
     private fun downloadPoster(movie: Movie) {
         val width: Int
         var height: Int
-        val screenShapeHelper = ScreenShapeHelper.get(mContext)
+        val screenShapeHelper = ScreenShapeHelper.get(context)
         if (screenShapeHelper.isRound) {
             // Round
             height = screenShapeHelper.height + screenShapeHelper.chinHeight
-            width = (mContext.resources.getFraction(R.fraction.movie_list_item_poster, height, 1) + .5f).toInt()
+            width = (context.resources.getFraction(R.fraction.movie_list_item_poster, height, 1) + .5f).toInt()
         } else {
             // Square
             height = screenShapeHelper.height
-            val border = mContext.resources.getDimensionPixelSize(R.dimen.movie_list_item_posterBorder_topBottom)
+            val border = context.resources.getDimensionPixelSize(R.dimen.movie_list_item_posterBorder_topBottom)
             height -= border * 2
-            width = (mContext.resources.getFraction(R.fraction.movie_list_item_poster, height, 1) + .5f).toInt()
+            width = (context.resources.getFraction(R.fraction.movie_list_item_poster, height, 1) + .5f).toInt()
         }
         // Glide insists this is done on the main thread
         HandlerUtil.runOnUiThread {
-            GlideApp.with(mContext)
-                    .load(movie.posterUri)
-                    .centerCrop()
-                    .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
-                    .listener(object : RequestListener<Drawable> {
-                        override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
-                            return false
-                        }
+            GlideApp.with(context)
+                .load(movie.posterUri)
+                .centerCrop()
+                .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                .listener(object : RequestListener<Drawable> {
+                    override fun onLoadFailed(
+                        e: GlideException?,
+                        model: Any?,
+                        target: Target<Drawable>?,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        return false
+                    }
 
-                        override fun onResourceReady(resource: Drawable, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
-                            var bitmap = (resource as BitmapDrawable).bitmap
-                            // Bitmaps from Glide are pooled, and Palette calls recycle() on them... That can't be good, so make a copy
-                            bitmap = bitmap.copy(bitmap.config, false)
-                            // We need to prevent the bitmap from being garbage collected while the palette is computed
-                            keep(bitmap)
-                            Palette.from(bitmap).generate { palette ->
-                                movie.color = palette.getDarkVibrantColor(mContext.getColor(R.color.movie_list_bg))
-                                discard(bitmap)
-                            }
-                            return false
+                    override fun onResourceReady(
+                        resource: Drawable,
+                        model: Any?,
+                        target: Target<Drawable>?,
+                        dataSource: DataSource?,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        var bitmap = (resource as BitmapDrawable).bitmap
+                        // Bitmaps from Glide are pooled, and Palette calls recycle() on them... That can't be good, so make a copy
+                        bitmap = bitmap.copy(bitmap.config, false)
+                        // We need to prevent the bitmap from being garbage collected while the palette is computed
+                        keep(bitmap)
+                        Palette.from(bitmap).generate { palette ->
+                            movie.color = palette.getDarkVibrantColor(context.getColor(R.color.movie_list_bg))
+                            discard(bitmap)
                         }
-                    })
-                    .preload(width, height)
+                        return false
+                    }
+                })
+                .preload(width, height)
         }
     }
 
     private fun persist(movies: Set<Movie>) {
         // Delete all showtimes and movies
-        mAppDatabase.showtimeDao.deleteAll()
-        mAppDatabase.movieDao.deleteAll()
+        appDatabase.showtimeDao.deleteAll()
+        appDatabase.movieDao.deleteAll()
 
         // Insert (only new) movies
-        mAppDatabase.movieDao.insert(movies.toList())
+        appDatabase.movieDao.insert(movies.toList())
 
         // Insert showtimes
         for (movie in movies) {
             for (entry in movie.todayShowtimes) {
-                mAppDatabase.showtimeDao.insert(entry.value)
+                appDatabase.showtimeDao.insert(entry.value)
             }
         }
     }
@@ -289,7 +304,7 @@ class LoadMoviesHelper(
     private fun showNotification(newMovieTitles: List<String>) {
         Log.d()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) createNotificationChannel()
-        val mainNotifBuilder = NotificationCompat.Builder(mContext, NOTIFICATION_CHANNEL_MAIN)
+        val mainNotifBuilder = NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_MAIN)
 
         // Let's face it
         mainNotifBuilder.priority = NotificationCompat.PRIORITY_MIN
@@ -298,7 +313,7 @@ class LoadMoviesHelper(
         mainNotifBuilder.setSmallIcon(R.drawable.ic_notif)
 
         // Title
-        val title = mContext.getString(R.string.notif_title)
+        val title = context.getString(R.string.notif_title)
         mainNotifBuilder.setContentTitle(title)
 
         // Text
@@ -308,9 +323,9 @@ class LoadMoviesHelper(
         mainNotifBuilder.setStyle(bigTextStyle)
 
         // Content intent
-        val mainActivityIntent = Intent(mContext, MainActivity::class.java)
+        val mainActivityIntent = Intent(context, MainActivity::class.java)
         mainActivityIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-        val mainActivityPendingIntent = PendingIntent.getActivity(mContext, 0, mainActivityIntent, 0)
+        val mainActivityPendingIntent = PendingIntent.getActivity(context, 0, mainActivityIntent, 0)
         mainNotifBuilder.setContentIntent(mainActivityPendingIntent)
         mainNotifBuilder.setAutoCancel(true)
 
@@ -320,28 +335,28 @@ class LoadMoviesHelper(
         val wearableNotifBuilder = wearableExtender.extend(mainNotifBuilder)
         val notification = wearableNotifBuilder.build()
 
-        val notificationManager = mContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.notify(NOTIFICATION_ID, notification)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun createNotificationChannel() {
-        val name = mContext.getString(R.string.notif_channel_main_name)
-        val description = mContext.getString(R.string.notif_channel_main_description)
+        val name = context.getString(R.string.notif_channel_main_name)
+        val description = context.getString(R.string.notif_channel_main_description)
         // Let's face it
         val importance = NotificationManager.IMPORTANCE_MIN
         val channel = NotificationChannel(NOTIFICATION_CHANNEL_MAIN, name, importance)
         channel.description = description
-        val notificationManager = mContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.createNotificationChannel(channel)
     }
 
     fun startLoadMoviesIntentService() {
-        val intent = Intent(mContext, LoadMoviesIntentService::class.java)
+        val intent = Intent(context, LoadMoviesIntentService::class.java)
         intent.action = LoadMoviesIntentService.ACTION_LOAD_MOVIES
-        mContext.startService(intent)
+        context.startService(intent)
     }
 
-    private fun keep(obj: Any) = mObjectsToKeep.add(obj)
-    private fun discard(obj: Any) = mObjectsToKeep.remove(obj)
+    private fun keep(obj: Any) = objectsToKeep.add(obj)
+    private fun discard(obj: Any) = objectsToKeep.remove(obj)
 }
