@@ -8,3 +8,16 @@ build.number
 build.properties
 etc/apk
 etc/proguard
+
+.idea/inspectionProfiles
+.idea/libraries
+.idea/misc.xml
+.idea/modules.xml
+.idea/runConfigurations.xml
+.idea/compiler.xml
+.idea/encodings.xml
+.idea/gradle.xml
+.idea/caches
+.idea/kotlinc.xml
+.idea/vcs.xml
+.idea/workspace.xml
