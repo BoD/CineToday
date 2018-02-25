@@ -50,7 +50,7 @@ class TheaterFavoritesAdapter(context: Context) : RecyclerView.Adapter<TheaterFa
             R.layout.theater_favorite_list_item,
             parent,
             false
-        )
+        )!!
         return ViewHolder(binding)
     }
 
