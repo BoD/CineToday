@@ -86,7 +86,7 @@ class TheaterSearchAdapter(context: Context, private val callbacks: TheaterSearc
                     R.layout.theater_search_list_item_search,
                     parent,
                     false
-                )!!
+                )
             )
 
             TYPE_LOADING -> ViewHolder.GenericViewHolder(
@@ -111,7 +111,7 @@ class TheaterSearchAdapter(context: Context, private val callbacks: TheaterSearc
                     R.layout.theater_search_list_item,
                     parent,
                     false
-                )!!
+                )
             )
 
             else -> throw IllegalStateException()

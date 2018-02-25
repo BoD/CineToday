@@ -83,7 +83,7 @@ class MovieListFragment : BaseFragment<MovieListCallbacks>(), PaletteListener {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = DataBindingUtil.inflate(inflater, R.layout.movie_list, container, false)!!
+        binding = DataBindingUtil.inflate(inflater, R.layout.movie_list, container, false)
         binding.callbacks = callbacks
 
         binding.rclList.setHasFixedSize(true)
