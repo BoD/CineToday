@@ -62,7 +62,7 @@ class TheaterFavoritesFragment : BaseFragment<TheaterFavoritesCallbacks>() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = DataBindingUtil.inflate(inflater, R.layout.theater_favorites, container, false)!!
+        binding = DataBindingUtil.inflate(inflater, R.layout.theater_favorites, container, false)
         binding.callbacks = callbacks
 
         binding.rclList.setHasFixedSize(true)
