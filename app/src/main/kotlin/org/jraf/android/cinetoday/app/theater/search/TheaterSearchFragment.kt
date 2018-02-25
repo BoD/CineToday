@@ -46,7 +46,7 @@ class TheaterSearchFragment : BaseFragment<TheaterSearchCallbacks>() {
     private val theaterSearchLiveData: TheaterSearchLiveData by lazy { TheaterSearchLiveData() }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = DataBindingUtil.inflate(inflater, R.layout.theater_search_list, container, false)
+        binding = DataBindingUtil.inflate(inflater, R.layout.theater_search_list, container, false)!!
         binding.rclList.setHasFixedSize(true)
         binding.rclList.isEdgeItemsCenteringEnabled = true
 
