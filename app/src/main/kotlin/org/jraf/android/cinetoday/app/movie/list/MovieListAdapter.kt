@@ -24,6 +24,7 @@
  */
 package org.jraf.android.cinetoday.app.movie.list
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.databinding.DataBindingUtil
 import android.graphics.drawable.BitmapDrawable
@@ -41,7 +42,6 @@ import org.jraf.android.cinetoday.databinding.MovieListItemBinding
 import org.jraf.android.cinetoday.glide.GlideApp
 import org.jraf.android.cinetoday.glide.GlideHelper
 import org.jraf.android.cinetoday.model.movie.Movie
-import org.jraf.android.util.log.Log
 
 class MovieListAdapter(
     private val context: Context,
@@ -64,12 +64,12 @@ class MovieListAdapter(
         return ViewHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: MovieListAdapter.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: MovieListAdapter.ViewHolder, @SuppressLint("RecyclerView") position: Int) {
         val movie = data[position]
         holder.itemBinding.movie = movie
         holder.itemBinding.callbacks = movieListCallbacks
         movie.color?.let {
-            paletteListener.onPaletteAvailable(position, it, true, movie.id)
+            paletteListener.onPaletteAvailable(movie.id, it, true)
         }
 
         holder.itemBinding.executePendingBindings()
@@ -92,13 +92,11 @@ class MovieListAdapter(
                 isFirstResource: Boolean
             ): Boolean {
                 if (movie.color == null) {
-                    Log.d("2")
                     // Generate the color
                     Palette.from((resource as BitmapDrawable).bitmap).generate { palette ->
                         val color = palette.getDarkVibrantColor(context.getColor(R.color.movie_list_bg))
-                        paletteListener.onPaletteAvailable(position, color, false, movie.id)
+                        paletteListener.onPaletteAvailable(movie.id, color, false)
                     }
-                    Log.d("3")
                 }
 
                 // Preload the next image

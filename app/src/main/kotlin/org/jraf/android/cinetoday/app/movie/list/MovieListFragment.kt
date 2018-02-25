@@ -33,7 +33,6 @@ import android.os.Bundle
 import android.support.annotation.ColorInt
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.util.SparseIntArray
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -65,7 +64,7 @@ class MovieListFragment : BaseFragment<MovieListCallbacks>(), PaletteListener {
 
     private lateinit var binding: MovieListBinding
     private var adapter: MovieListAdapter? = null
-    private val palette = SparseIntArray()
+    private val palette = HashMap<String, Int>()
     private var colorAnimation: ValueAnimator? = null
     private var scrolling: Boolean = false
     private var loadMoviesStarted: Boolean = false
@@ -159,13 +158,14 @@ class MovieListFragment : BaseFragment<MovieListCallbacks>(), PaletteListener {
         }
     }
 
-    override fun onPaletteAvailable(position: Int, @ColorInt color: Int, cached: Boolean, id: String) {
-        if (palette.indexOfKey(position) >= 0 && position > 0) return
-        palette.put(position, color)
+    override fun onPaletteAvailable(id: String, @ColorInt color: Int, cached: Boolean) {
+        if (palette.containsKey(id)) return
+        palette[id] = color
         var firstItemPosition = (binding.rclList.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
         if (firstItemPosition == RecyclerView.NO_POSITION) firstItemPosition = 0
-        if (firstItemPosition == position && !scrolling) {
-            updateBackgroundColor(position)
+        val firstItemId = adapter!!.data[firstItemPosition].id
+        if (firstItemId == id && !scrolling) {
+            updateBackgroundColor(id)
         }
         if (!cached) {
             // Save the value
@@ -175,12 +175,12 @@ class MovieListFragment : BaseFragment<MovieListCallbacks>(), PaletteListener {
         }
     }
 
-    private fun updateBackgroundColor(position: Int) {
-        if (palette.indexOfKey(position) >= 0) {
+    private fun updateBackgroundColor(id: String) {
+        if (palette.containsKey(id)) {
             colorAnimation?.cancel()
 
             val colorFrom = (binding.conRoot.background as ColorDrawable).color
-            val colorTo = palette.get(position)
+            val colorTo = palette[id]
             colorAnimation = ValueAnimator.ofObject(ArgbEvaluator(), colorFrom, colorTo).apply {
                 duration = 200
                 addUpdateListener { animator -> binding.conRoot.setBackgroundColor(animator.animatedValue as Int) }
@@ -202,14 +202,16 @@ class MovieListFragment : BaseFragment<MovieListCallbacks>(), PaletteListener {
             val firstItemTop = firstItem.y
             val firstItemRatio = Math.abs(firstItemTop / recyclerView.height)
 
+            val adapter = this@MovieListFragment.adapter!!
+
             val nextItemPosition = firstItemPosition + 1
-            if (nextItemPosition >= adapter?.itemCount ?: 0) return
+            if (nextItemPosition >= adapter.itemCount) return
 
-            val firstItemColor = palette.get(firstItemPosition, -1)
-            if (firstItemColor == -1) return
+            val firstItemId = adapter.data[firstItemPosition].id
+            val firstItemColor = palette[firstItemId] ?: return
 
-            val nextItemColor = palette.get(nextItemPosition, -1)
-            if (nextItemColor == -1) return
+            val nextItemId = adapter.data[nextItemPosition].id
+            val nextItemColor = palette[nextItemId] ?: return
 
             val resultColor = argbEvaluator.evaluate(firstItemRatio, firstItemColor, nextItemColor) as Int
             binding.conRoot.setBackgroundColor(resultColor)
