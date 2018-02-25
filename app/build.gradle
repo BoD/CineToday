@@ -160,9 +160,6 @@ dependencies {
     // Rx
     implementation "io.reactivex.rxjava2:rxandroid:$versions.rxAndroid"
     implementation "io.reactivex.rxjava2:rxjava:$versions.rxJava"
-
-//    // Necessary to have Kotlin and dataBinding at the same time
-//    kapt "com.android.databinding:compiler:$versions.androidGradlePlugin"  // <- Ici
 }
 
 // Necessary for Prefs to work (see https://kotlinlang.org/docs/reference/kapt.html)

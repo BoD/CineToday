@@ -56,6 +56,7 @@ import org.jraf.android.cinetoday.prefs.MainPrefs
 import org.jraf.android.util.handler.HandlerUtil
 import org.jraf.android.util.log.Log
 import org.jraf.android.util.ui.screenshape.ScreenShapeHelper
+import java.util.Date
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
@@ -123,8 +124,8 @@ class LoadMoviesHelper(
     @WorkerThread
     @Throws(Exception::class)
     internal fun loadMovies() {
-//        wantStop = false
-//        loadMoviesListenerHelper.setPreloading()
+        wantStop = false
+        loadMoviesListenerHelper.setPreloading()
 
         // 0/ Try to connect to a fast network
         val highBandwidthNetworkSuccess = requestHighBandwidthNetwork(10, TimeUnit.SECONDS)
@@ -132,104 +133,102 @@ class LoadMoviesHelper(
 
         val movies = hashSetOf<Movie>()
         val moviesFromDbToKeep = mutableListOf<Movie>()
-//        val allMoviesFromDb = appDatabase.movieDao.allMovies().associateBy { it.id }
-        val allMoviesFromDb = appDatabase.movieDao.allMovies()
-        val allMoviewFromDbById = allMoviesFromDb.associateBy { it.id }
+        val allMoviesFromDb = appDatabase.movieDao.allMovies().associateBy { it.id }
         try {
             // 1/ Retrieve list of movies (including showtimes), for all the theaters
-//            try {
-//                appDatabase.theaterDao.allTheaters().forEach { (theaterId) ->
-//                    api.getMovieList(movies, theaterId, Date())
-//
-//                    if (wantStop) {
-//                        loadMoviesListenerHelper.setIdle()
-//                        return
-//                    }
-//                }
-//            } catch (e: Exception) {
-//                Log.e(e, "Could not load movies")
-//                loadMoviesListenerHelper.pushError(e)
-//                throw e
-//            }
+            try {
+                appDatabase.theaterDao.allTheaters().forEach { (theaterId) ->
+                    api.getMovieList(movies, theaterId, Date())
 
-//            if (wantStop) {
-//                loadMoviesListenerHelper.setIdle()
-//                return
-//            }
-//
-//            // 2/ Retrieve more details about each movie
-//            val size = movies.size
-//            var i = 0
-//            for (movieFromApi in movies) {
-//                loadMoviesListenerHelper.setLoading(
-//                    totalMovies = size,
-//                    currentMovieIndex = i,
-//                    currentMovieTitle = movieFromApi.localTitle
-//                )
-//
-//                // Check if we already have this movie in the db
-//                val movieFromDb = allMoviesFromDb[movieFromApi.id]
-//                if (movieFromDb != null) {
-//                    // Already in db: keep it (with updated showtimes)
-//                    movieFromDb.isNew = false
-//                    movieFromDb.todayShowtimes.putAll(movieFromApi.todayShowtimes)
-//                    moviesFromDbToKeep += movieFromDb
-//                } else {
-//                    // Not in db: get movie info
-//                    movieFromApi.isNew = true
-//                    try {
-//                        api.getMovieInfo(movieFromApi)
-//                        Log.d(movieFromApi.toString())
-//                    } catch (e: Exception) {
-//                        Log.e(e, "Could not load movie info: movie = %s", movieFromApi)
-//                        loadMoviesListenerHelper.pushError(e)
-//                        throw e
-//                    }
-//                }
-//
-//                if (wantStop) {
-//                    loadMoviesListenerHelper.setIdle()
-//                    return
-//                }
-//
-//                // Download the poster now
-//                downloadPoster(movieFromApi)
-//
-//                i++
-//                loadMoviesListenerHelper.setLoading(
-//                    totalMovies = size,
-//                    currentMovieIndex = i,
-//                    currentMovieTitle = movieFromApi.localTitle
-//                )
-//            }
-//
+                    if (wantStop) {
+                        loadMoviesListenerHelper.setIdle()
+                        return
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e(e, "Could not load movies")
+                loadMoviesListenerHelper.pushError(e)
+                throw e
+            }
+
+            if (wantStop) {
+                loadMoviesListenerHelper.setIdle()
+                return
+            }
+
+            // 2/ Retrieve more details about each movie
+            val size = movies.size
+            var i = 0
+            for (movieFromApi in movies) {
+                loadMoviesListenerHelper.setLoading(
+                    totalMovies = size,
+                    currentMovieIndex = i,
+                    currentMovieTitle = movieFromApi.localTitle
+                )
+
+                // Check if we already have this movie in the db
+                val movieFromDb = allMoviesFromDb[movieFromApi.id]
+                if (movieFromDb != null) {
+                    // Already in db: keep it (with updated showtimes)
+                    movieFromDb.isNew = false
+                    movieFromDb.todayShowtimes.putAll(movieFromApi.todayShowtimes)
+                    moviesFromDbToKeep += movieFromDb
+                } else {
+                    // Not in db: get movie info
+                    movieFromApi.isNew = true
+                    try {
+                        api.getMovieInfo(movieFromApi)
+                        Log.d(movieFromApi.toString())
+                    } catch (e: Exception) {
+                        Log.e(e, "Could not load movie info: movie = %s", movieFromApi)
+                        loadMoviesListenerHelper.pushError(e)
+                        throw e
+                    }
+                }
+
+                if (wantStop) {
+                    loadMoviesListenerHelper.setIdle()
+                    return
+                }
+
+                // Download the poster now
+                downloadPoster(movieFromApi)
+
+                i++
+                loadMoviesListenerHelper.setLoading(
+                    totalMovies = size,
+                    currentMovieIndex = i,
+                    currentMovieTitle = movieFromApi.localTitle
+                )
+            }
+
         } finally {
-//            // Release the high-bandwidth network
-//            if (highBandwidthNetworkSuccess) {
-//                val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-//                connectivityManager.bindProcessToNetwork(null)
-//            }
+            // Release the high-bandwidth network
+            if (highBandwidthNetworkSuccess) {
+                val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+                connectivityManager.bindProcessToNetwork(null)
+            }
         }
-//
-//        // Remove from the list the incomplete movies for which we already have complete info in the db
-//        movies.removeAll(moviesFromDbToKeep)
-//
-//        // Add to the list the complete movies that were in the db
-//        movies.addAll(moviesFromDbToKeep)
-//
-//        // 3/ Save everything to the local db
-//        persist(movies)
-//
-//        mainPrefs.lastUpdateDate = System.currentTimeMillis()
-//        loadMoviesListenerHelper.setIdle()
-//
-//        // 4/ Show a notification (if prefs say so)
-//        if (mainPrefs.isShowNewReleasesNotification) {
-//            val newMovieTitles = movies
-//                .filter { it.isNew }
-//                .map { it.localTitle }
-//            if (!newMovieTitles.isEmpty()) showNotification(newMovieTitles)
-//        }
+
+        // Remove from the list the incomplete movies for which we already have complete info in the db
+        movies.removeAll(moviesFromDbToKeep)
+
+        // Add to the list the complete movies that were in the db
+        movies.addAll(moviesFromDbToKeep)
+
+        // 3/ Save everything to the local db
+        persist(movies)
+
+        mainPrefs.lastUpdateDate = System.currentTimeMillis()
+        loadMoviesListenerHelper.setIdle()
+
+        // 4/ Show a notification (if prefs say so)
+        if (mainPrefs.isShowNewReleasesNotification) {
+            val newMovieTitles = movies
+                .filter { it.isNew }
+                .map { it.localTitle }
+            if (!newMovieTitles.isEmpty()) showNotification(newMovieTitles)
+        }
     }
 
     private fun downloadPoster(movie: Movie) {
