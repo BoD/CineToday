@@ -197,8 +197,9 @@ class MovieListFragment : BaseFragment<MovieListCallbacks>(), PaletteListener {
         }
 
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-            val firstItemPosition = (recyclerView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
-            val firstItem = recyclerView.layoutManager.findViewByPosition(firstItemPosition)
+            val linearLayoutManager = recyclerView.layoutManager as LinearLayoutManager
+            val firstItemPosition = linearLayoutManager.findFirstVisibleItemPosition()
+            val firstItem = linearLayoutManager.findViewByPosition(firstItemPosition)
             val firstItemTop = firstItem.y
             val firstItemRatio = Math.abs(firstItemTop / recyclerView.height)
 

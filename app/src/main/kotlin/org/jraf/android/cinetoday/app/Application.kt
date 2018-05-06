@@ -25,6 +25,7 @@
 package org.jraf.android.cinetoday.app
 
 import android.annotation.SuppressLint
+import android.os.Build
 import android.os.Handler
 import android.os.StrictMode
 import com.crashlytics.android.Crashlytics
@@ -32,7 +33,6 @@ import io.fabric.sdk.android.Fabric
 import org.jraf.android.cinetoday.BuildConfig
 import org.jraf.android.cinetoday.dagger.Components
 import org.jraf.android.util.log.Log
-
 
 class Application : android.app.Application() {
 
@@ -54,8 +54,8 @@ class Application : android.app.Application() {
         // Dagger
         Components.init(this)
 
-        // Sqlite debug logs
-        if (BuildConfig.DEBUG_LOGS) enableSqliteDebugLogs(false)
+        // Sqlite debug logs (don't do it for >= P because it uses reflection, which shows a nasty dialog)
+        if (BuildConfig.DEBUG_LOGS && Build.VERSION.SDK_INT <= Build.VERSION_CODES.O_MR1) enableSqliteDebugLogs(false)
     }
 
     private fun setupStrictMode() {

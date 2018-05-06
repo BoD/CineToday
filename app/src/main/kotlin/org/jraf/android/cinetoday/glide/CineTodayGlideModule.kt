@@ -44,7 +44,9 @@ import com.bumptech.glide.load.model.MultiModelLoaderFactory
 import com.bumptech.glide.module.AppGlideModule
 import com.bumptech.glide.request.RequestOptions
 import okhttp3.OkHttpClient
+import org.jraf.android.cinetoday.BuildConfig
 import org.jraf.android.cinetoday.dagger.Components
+import org.jraf.android.util.log.Log
 import java.io.InputStream
 
 @GlideModule
@@ -52,6 +54,7 @@ class CineTodayGlideModule : AppGlideModule() {
     companion object {
         private const val CACHE_SIZE_B = 5 * 1024 * 1024L
         private const val CACHE_DIRECTORY_NAME = "images"
+        private const val CLOUD_IMG_URL = "https://ce8eb4b9c.cloudimg.io/crop"
     }
 
     override fun applyOptions(context: Context, builder: GlideBuilder) {
@@ -72,13 +75,16 @@ class CineTodayGlideModule : AppGlideModule() {
                     // Disable this optimization because we need to access pixels (because we use Palette on them)
                     .disallowHardwareConfig()
             )
+
+            // Logs
+            .setLogLevel(if (BuildConfig.DEBUG_LOGS) android.util.Log.VERBOSE else android.util.Log.WARN)
     }
 
     override fun isManifestParsingEnabled() = false
 
     override fun registerComponents(context: Context, glide: Glide, registry: Registry) {
         val okHttpClient = Components.application.notCachingOkHttpClient
-        registry.append(GlideUrl::class.java, InputStream::class.java, OkHttpUrlResizeModelLoaderFactory(okHttpClient))
+        registry.replace(GlideUrl::class.java, InputStream::class.java, OkHttpUrlResizeModelLoaderFactory(okHttpClient))
     }
 
 
@@ -96,20 +102,15 @@ class CineTodayGlideModule : AppGlideModule() {
                     height: Int,
                     options: Options
                 ): ModelLoader.LoadData<InputStream>? {
-                    val zimageModel = model.let {
-                        val uriStr = model.toStringUrl()
-                        var uri = Uri.parse("http://edge.zimage.io")
-                        uri = uri.buildUpon()
-                            .appendQueryParameter("url", uriStr)
-                            .appendQueryParameter("w", width.toString())
-                            .appendQueryParameter("h", height.toString())
-                            .appendQueryParameter("mode", "crop")
-                            // Webp should work but doesn't :(
-                            // .appendQueryParameter("format", "webp")
-                            .build()
-                        GlideUrl(uri.toString())
-                    }
-                    return super.buildLoadData(zimageModel, width, height, options)
+                    var uri = Uri.parse(CLOUD_IMG_URL)
+                    uri = uri.buildUpon()
+                        .appendPath("${width}x$height")
+                        .appendPath("webp")
+                        .appendPath(model.toStringUrl())
+                        .build()
+                    val cloudImgUrl = GlideUrl(uri.toString())
+                    Log.d("cloudImgUrl=$cloudImgUrl")
+                    return super.buildLoadData(cloudImgUrl, width, height, options)
                 }
             }
         }

@@ -29,17 +29,28 @@ import dagger.Module
 import dagger.Provides
 import okhttp3.Cache
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
+import org.jraf.android.cinetoday.BuildConfig
 import org.jraf.android.cinetoday.network.api.Api
 import org.jraf.android.cinetoday.network.api.codec.movie.MovieCodec
 import org.jraf.android.cinetoday.network.api.codec.showtime.ShowtimeCodec
 import org.jraf.android.cinetoday.network.api.codec.theater.TheaterCodec
+import org.jraf.android.util.log.Log
 import java.io.File
 import java.util.concurrent.TimeUnit
 import javax.inject.Named
 import javax.inject.Singleton
 
+
 @Module
 class NetworkModule {
+
+    companion object {
+        private const val CACHE_DIRECTORY_NAME = "http"
+        private const val CACHE_SIZE_B = (2 * 1024 * 1024).toLong()
+        private const val TIMEOUT_S = 30
+        private const val HEADER_USER_AGENT = "User-Agent"
+    }
 
     @Singleton
     @Provides
@@ -74,15 +85,14 @@ class NetworkModule {
     @Named("CachingOkHttpClient")
     fun provideCachingOkHttpClient(context: Context): OkHttpClient {
         val builder = OkHttpClient.Builder()
-        builder.connectTimeout(TIMEOUT_S.toLong(), TimeUnit.SECONDS)
-        builder.readTimeout(TIMEOUT_S.toLong(), TimeUnit.SECONDS)
-        builder.writeTimeout(TIMEOUT_S.toLong(), TimeUnit.SECONDS)
+            .connectTimeout(TIMEOUT_S.toLong(), TimeUnit.SECONDS)
+            .readTimeout(TIMEOUT_S.toLong(), TimeUnit.SECONDS)
+            .writeTimeout(TIMEOUT_S.toLong(), TimeUnit.SECONDS)
         val httpCacheDir = File(context.cacheDir, CACHE_DIRECTORY_NAME)
         builder.cache(Cache(httpCacheDir, CACHE_SIZE_B))
 
-//        if (BuildConfig.DEBUG) {
-//            builder.proxy(Proxy(Proxy.Type.HTTP, InetSocketAddress("192.168.1.2", 8888)))
-//        }
+        // Proxy
+//        if (BuildConfig.DEBUG) builder.proxy(Proxy(Proxy.Type.HTTP, InetSocketAddress("192.168.3.20", 8888)))
 
         return builder.build()
     }
@@ -92,20 +102,38 @@ class NetworkModule {
     @Named("NotCachingOkHttpClient")
     fun provideNotCachingOkHttpClient(): OkHttpClient {
         val builder = OkHttpClient.Builder()
-        builder.connectTimeout(TIMEOUT_S.toLong(), TimeUnit.SECONDS)
-        builder.readTimeout(TIMEOUT_S.toLong(), TimeUnit.SECONDS)
-        builder.writeTimeout(TIMEOUT_S.toLong(), TimeUnit.SECONDS)
+            .connectTimeout(TIMEOUT_S.toLong(), TimeUnit.SECONDS)
+            .readTimeout(TIMEOUT_S.toLong(), TimeUnit.SECONDS)
+            .writeTimeout(TIMEOUT_S.toLong(), TimeUnit.SECONDS)
 
-//        if (BuildConfig.DEBUG) {
-//            builder.proxy(Proxy(Proxy.Type.HTTP, InetSocketAddress("192.168.1.2", 8888)))
-//        }
+        // Proxy
+//        if (BuildConfig.DEBUG) builder.proxy(Proxy(Proxy.Type.HTTP, InetSocketAddress("192.168.3.20", 8888)))
+
+        // Headers
+        builder.addInterceptor { chain ->
+            val request = chain.request()
+            chain.proceed(
+                request.newBuilder().apply {
+                    // User agent
+                    header(
+                        HEADER_USER_AGENT,
+                        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3402.0 Safari/537.36"
+                    )
+
+                    // Accept
+                    header("Accept", "image/webp")
+                }.build()
+            )
+        }
+
+        // Logs
+        if (BuildConfig.DEBUG_LOGS) builder.addInterceptor(
+            HttpLoggingInterceptor(HttpLoggingInterceptor.Logger { message ->
+                Log.d(message)
+            }).setLevel(HttpLoggingInterceptor.Level.HEADERS)
+        )
+
 
         return builder.build()
-    }
-
-    companion object {
-        private const val CACHE_DIRECTORY_NAME = "http"
-        private const val CACHE_SIZE_B = (2 * 1024 * 1024).toLong()
-        private const val TIMEOUT_S = 30
     }
 }

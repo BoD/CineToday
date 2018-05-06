@@ -32,7 +32,7 @@ import org.jraf.android.cinetoday.glide.GlideHelper
 object ImageViewBindingAdapter {
     @JvmStatic
     @BindingAdapter("uri")
-    fun loadImage(view: ImageView, uri: String) {
+    fun loadImage(view: ImageView, uri: String?) {
         GlideHelper.load(uri, view)
     }
 }

@@ -10,34 +10,36 @@ buildscript {
     // Versions used across modules
     ext.versions = [:]
     ext.versions.with {
-        androidGradlePlugin = '3.2.0-alpha04'
+        androidGradlePlugin = '3.2.0-alpha13'
         gradleVersionsPlugin = '0.17.0'
-        fabricPlugin = '1.25.1'
+        fabricPlugin = '1.25.3'
         dexCountPlugin = '0.8.2'
+        gmsStrictVersionMatcherPlugin = '1.0.0'
+
         libFrc = '1.8.0'
 
-        compileSdk = 26
-        targetSdk = 26
+        compileSdk = 27
+        targetSdk = 27
 
         buildTools = '27.0.3'
-        kotlin = '1.2.21'
-        supportLibrary = '27.0.2'
-        archLifecycle = '1.1.0'
-        archRoom = '1.0.0'
-        constraintLayout = '1.0.2'
-        playServices = '11.8.0'
-        espresso = '3.0.2-alpha1'
+        kotlin = '1.2.41'
+        supportLibrary = '27.1.1'
+        archLifecycle = '1.1.1'
+        archRoom = '1.1.0-rc1'
+        constraintLayout = '1.1.0'
+        playServices = '15.0.1'
+        espresso = '3.0.2'
         junit = '4.12'
-        robolectric = '3.7.1'
+        robolectric = '3.8'
         fest = '2.0M10'
-        rxJava = '2.1.10'
+        rxJava = '2.1.13'
         rxAndroid = '2.0.2'
-        crashlytics = '2.9.0'
-        dagger = '2.14.1'
-        androidWearable = '2.2.0'
+        crashlytics = '2.9.2'
+        dagger = '2.15'
+        androidWearable = '2.3.0'
         prefs = '1.2.2'
         okHttp = '3.10.0'
-        glide = '4.6.1'
+        glide = '4.7.1'
         jsr250 = '1.0'
     }
 
@@ -55,6 +57,8 @@ buildscript {
         classpath "io.fabric.tools:gradle:$versions.fabricPlugin"
         classpath "com.getkeepsafe.dexcount:dexcount-gradle-plugin:$versions.dexCountPlugin"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$versions.kotlin"
+        // See https://android-developers.googleblog.com/2018/05/announcing-new-sdk-versioning.html
+        classpath "com.google.android.gms:strict-version-matcher-plugin:$versions.gmsStrictVersionMatcherPlugin"
     }
 }
 
@@ -93,7 +97,7 @@ task clean(type: Delete) {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '4.5'
+    gradleVersion = '4.7'
     distributionType = Wrapper.DistributionType.ALL
 }
 

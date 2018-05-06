@@ -3,10 +3,14 @@
 -keepattributes SourceFile, LineNumberTable
 -dontoptimize
 
-# OkHttp (Okio)
+# OkHttp
+# See https://github.com/square/okhttp#proguard
+-dontwarn okhttp3.**
 -dontwarn okio.**
--dontwarn javax.annotation.Nullable
--dontwarn javax.annotation.ParametersAreNonnullByDefault
+-dontwarn javax.annotation.**
+-dontwarn org.conscrypt.**
+# A resource is loaded with a relative path so the package of this class must be preserved.
+-keepnames class okhttp3.internal.publicsuffix.PublicSuffixDatabase
 
 # Jraf Util
 -dontwarn org.jraf.android.util.databinding.UtilAboutWearBinding
