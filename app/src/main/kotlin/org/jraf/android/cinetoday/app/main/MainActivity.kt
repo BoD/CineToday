@@ -202,7 +202,7 @@ class MainActivity : BaseActivity(), MovieListCallbacks, TheaterFavoritesCallbac
         } catch (ignored: UnsupportedEncodingException) {
         }
 
-        val uri = Uri.parse("http://maps.google.com/maps?f=d&daddr=" + theaterAddressEncoded)
+        val uri = Uri.parse("https://maps.google.com/maps?f=d&daddr=" + theaterAddressEncoded)
         openOnPhone(uri)
     }
 

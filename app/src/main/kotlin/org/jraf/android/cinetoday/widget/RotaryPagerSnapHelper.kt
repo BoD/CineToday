@@ -50,7 +50,7 @@ class RotaryPagerSnapHelper : PagerSnapHelper() {
                 snapRunnable = Runnable {
                     val snapView = findSnapView(recyclerView.layoutManager)
                     if (snapView != null) {
-                        val snapDistance = calculateDistanceToFinalSnap(recyclerView.layoutManager, snapView)!!
+                        val snapDistance = calculateDistanceToFinalSnap(recyclerView.layoutManager!!, snapView)!!
                         if (snapDistance[1] != 0) {
                             recyclerView.smoothScrollBy(0, snapDistance[1])
                         }

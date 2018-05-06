@@ -50,7 +50,7 @@ object GlideHelper {
             target: Target<Drawable>?,
             isFirstResource: Boolean
         ): Boolean {
-            Log.w(e, "Could not load image " + model)
+            Log.w(e, "Could not load image $model")
             return false
         }
     }
@@ -61,7 +61,7 @@ object GlideHelper {
             .centerCrop()
     }
 
-    fun load(path: String, imageView: ImageView) {
+    fun load(path: String?, imageView: ImageView) {
         getRequestBuilder(path, imageView)
             .listener(requestListener)
             .into(imageView)
