@@ -49,7 +49,7 @@ class NetworkModule {
         private const val CACHE_DIRECTORY_NAME = "http"
         private const val CACHE_SIZE_B = (2 * 1024 * 1024).toLong()
         private const val TIMEOUT_S = 30
-        private const val HEADER_USER_AGENT = "User-Agent"
+        private const val HEADER_ACCEPT = "Accept"
     }
 
     @Singleton
@@ -113,16 +113,10 @@ class NetworkModule {
         builder.addInterceptor { chain ->
             val request = chain.request()
             chain.proceed(
-                request.newBuilder().apply {
-                    // User agent
-                    header(
-                        HEADER_USER_AGENT,
-                        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3402.0 Safari/537.36"
-                    )
-
+                request.newBuilder()
                     // Accept
-                    header("Accept", "image/webp")
-                }.build()
+                    .header(HEADER_ACCEPT, "image/webp")
+                    .build()
             )
         }
 
