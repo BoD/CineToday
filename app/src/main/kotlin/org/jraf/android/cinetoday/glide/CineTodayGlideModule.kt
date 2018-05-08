@@ -55,6 +55,7 @@ class CineTodayGlideModule : AppGlideModule() {
         private const val CACHE_SIZE_B = 5 * 1024 * 1024L
         private const val CACHE_DIRECTORY_NAME = "images"
         private const val CLOUD_IMG_URL = "https://ce8eb4b9c.cloudimg.io/crop"
+        private const val CLOUD_IMG_FORMAT = "twebp"
     }
 
     override fun applyOptions(context: Context, builder: GlideBuilder) {
@@ -105,7 +106,7 @@ class CineTodayGlideModule : AppGlideModule() {
                     var uri = Uri.parse(CLOUD_IMG_URL)
                     uri = uri.buildUpon()
                         .appendPath("${width}x$height")
-                        .appendPath("webp")
+                        .appendPath(CLOUD_IMG_FORMAT)
                         .appendPath(model.toStringUrl())
                         .build()
                     val cloudImgUrl = GlideUrl(uri.toString())
