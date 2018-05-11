@@ -1,0 +1,10 @@
+// Repositories used across modules
+RepositoryHandler.metaClass.addRepos = {
+    delegate.with {
+        mavenLocal()
+        google()
+        jcenter()
+        maven { url 'https://maven.fabric.io/public' }
+        maven { url 'https://jitpack.io' }
+    }
+}
