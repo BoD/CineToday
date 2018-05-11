@@ -60,14 +60,14 @@ class PreferencesFragment : PreferenceFragmentCompat() {
         addPreferencesFromResource(R.xml.preferences)
 
         // Refresh
-        findPreference("refresh").setOnPreferenceClickListener { _ ->
+        findPreference("refresh").setOnPreferenceClickListener {
             if (!loadMoviesStarted) loadMoviesHelper.startLoadMoviesIntentService()
             true
         }
         setLastUpdateDateSummary()
 
         // About
-        findPreference("about").setOnPreferenceClickListener { _ ->
+        findPreference("about").setOnPreferenceClickListener {
             val builder = AboutActivityIntentBuilder()
                 .setAppName(getString(R.string.app_name))
                 .setBuildDate(BuildConfig.BUILD_DATE)

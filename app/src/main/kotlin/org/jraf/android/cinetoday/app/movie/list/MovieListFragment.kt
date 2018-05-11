@@ -92,7 +92,9 @@ class MovieListFragment : BaseFragment<MovieListCallbacks>(), PaletteListener {
         binding.rclList.addOnScrollListener(onScrollListener)
 
         progressSubscription =
-                loadMoviesListenerHelper.progressInfo.observeOn(AndroidSchedulers.mainThread()).subscribe {
+                loadMoviesListenerHelper.progressInfo
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe {
                     when (it) {
                         is LoadMoviesListenerHelper.ProgressInfo.Idle -> {
                             loadMoviesStarted = false
