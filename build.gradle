@@ -8,7 +8,6 @@ buildscript {
     repositories.addRepos()
 
     dependencies {
-        classpath "ca.rmen:lib-french-revolutionary-calendar:$versions.libs.frc"
         classpath "com.android.tools.build:gradle:$versions.plugins.androidGradle"
         classpath "com.github.ben-manes:gradle-versions-plugin:$versions.plugins.gradleVersions"
         classpath "io.fabric.tools:gradle:$versions.plugins.fabric"
