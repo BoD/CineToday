@@ -66,7 +66,7 @@
     <string name="preference_refresh_summary_ongoing">Loading (%1$d/%2$d)…</string>
 
     <!-- About -->
-    <string name="about_authorCopyright" translatable="false">Copyright (C) 2015-2017 Benoit \'BoD\' Lubek.\nLogo and artwork by David Rodriguez.\nAdditional code by Carmen Alvarez.</string>
+    <string name="about_authorCopyright" translatable="false">Copyright (C) 2015-2018 Benoit \'BoD\' Lubek.\nLogo and artwork by David Rodriguez.\nAdditional code by Carmen Alvarez.</string>
     <string name="about_License" translatable="false">Licensed under the terms of the GNU General Public License.</string>
     <string name="about_email_uri" translatable="false">mailto:BoD@JRAF.org</string>
     <string name="about_email_text">Contact the author</string>
