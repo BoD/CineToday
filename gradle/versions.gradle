@@ -4,29 +4,29 @@ def versions = [:]
 // Plugins
 def plugins = [:]
 plugins.with {
-    androidGradle = '3.2.0-alpha14'
-    gradleVersions = '0.17.0'
-    fabric = '1.25.3'
-    dexCount = '0.8.2'
-    gmsStrictVersionMatcher = '1.0.0'
+    androidGradle = '3.3.0-alpha10'
+    gradleVersions = '0.20.0'
+    fabric = '1.25.4'
+    dexCount = '0.8.3'
+    gmsStrictVersionMatcher = '1.0.3'
 }
 versions.plugins = plugins
 
 // Libs used for building
-def libs = [:]
-libs.with {
+def buildLibs = [:]
+buildLibs.with {
     frc = '1.8.0'
 }
-versions.libs = libs
+versions.buildLibs = buildLibs
 
 // Build parameters
 def build = [:]
 build.with {
-    gradle = '4.7'
-    compileSdk = 27
-    targetSdk = 27
+    gradle = '4.10.1'
+    compileSdk = 28
+    targetSdk = 28
     minSdk = 25
-    tools = '27.0.3'
+    tools = '28.0.2'
 }
 versions.build = build
 
@@ -42,20 +42,20 @@ versions.testing = testing
 
 // Other dependencies
 versions.with {
-    kotlin = '1.2.41'
+    kotlin = '1.2.70'
     supportLibrary = '27.1.1'
     archLifecycle = '1.1.1'
-    archRoom = '1.1.0-rc1'
+    archRoom = '1.1.1'
     constraintLayout = '1.1.0'
     playServices = '15.0.1'
-    rxJava = '2.1.13'
-    rxAndroid = '2.0.2'
-    crashlytics = '2.9.2'
-    dagger = '2.15'
+    rxJava = '2.2.2'
+    rxAndroid = '2.1.0'
+    crashlytics = '2.9.5'
+    dagger = '2.17'
     androidWearable = '2.3.0'
     prefs = '1.2.2'
-    okHttp = '3.10.0'
-    glide = '4.7.1'
+    okHttp = '3.11.0'
+    glide = '4.8.0'
     jsr250 = '1.0'
 }
 

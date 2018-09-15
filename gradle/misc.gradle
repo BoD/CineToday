@@ -3,13 +3,28 @@ import ca.rmen.lfrc.FrenchRevolutionaryCalendar
 import java.text.SimpleDateFormat
 
 buildscript {
-    apply from: 'versions.gradle'
-    apply from: 'repos.gradle'
+    apply from: 'gradle/versions.gradle'
+    apply from: 'gradle/repos.gradle'
 
     repositories.addRepos()
 
     dependencies {
-        classpath "ca.rmen:lib-french-revolutionary-calendar:$versions.libs.frc"
+        classpath "ca.rmen:lib-french-revolutionary-calendar:$versions.buildLibs.frc"
+    }
+}
+
+// Run './gradlew dependencyUpdates' to see new versions of dependencies
+apply plugin: 'com.github.ben-manes.versions'
+dependencyUpdates.resolutionStrategy = {
+    componentSelection { rules ->
+        rules.all { selection ->
+            boolean rejected = [/*'alpha', 'beta', 'rc',*/ '20050927'].any { qualifier ->
+                selection.candidate.version.toLowerCase() ==~ /.*-${qualifier}.*/
+            }
+            if (rejected) {
+                selection.reject('Release candidate')
+            }
+        }
     }
 }
 
