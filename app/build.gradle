@@ -1,8 +1,11 @@
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-kapt'
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'kotlin-kapt'
+    id 'io.fabric' apply false
+    id 'com.getkeepsafe.dexcount'
+}
 if (buildProperties.enableFabric.toBoolean()) apply plugin: 'io.fabric'
-apply plugin: 'com.getkeepsafe.dexcount'
 // Commented for now because of https://issuetracker.google.com/issues/79122163
 //apply plugin: 'com.google.android.gms.strict-version-matcher-plugin'
 
