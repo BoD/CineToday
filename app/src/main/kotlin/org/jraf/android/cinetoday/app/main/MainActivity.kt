@@ -30,10 +30,10 @@ import android.databinding.DataBindingUtil
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
+import android.support.wear.widget.ConfirmationOverlay
 import android.support.wear.widget.drawer.WearableDrawerLayout
 import android.support.wear.widget.drawer.WearableDrawerView
 import android.support.wear.widget.drawer.WearableNavigationDrawerView
-import android.support.wearable.view.ConfirmationOverlay
 import android.view.MenuItem
 import android.view.ViewTreeObserver
 import com.google.android.wearable.intent.RemoteIntent
@@ -142,7 +142,6 @@ class MainActivity : BaseActivity(), MovieListCallbacks, TheaterFavoritesCallbac
         }
     }
 
-
     private fun scheduleHideActionDrawer() {
         HandlerUtil.getMainHandler().removeCallbacks(mHideActionDrawerRunnable)
         HandlerUtil.getMainHandler().postDelayed(mHideActionDrawerRunnable, DELAY_HIDE_ACTION_DRAWER_MS)
@@ -155,19 +154,19 @@ class MainActivity : BaseActivity(), MovieListCallbacks, TheaterFavoritesCallbac
     }
 
     private inner class NavigationDrawerAdapter : WearableNavigationDrawerView.WearableNavigationDrawerAdapter() {
-        private val mTexts = resources.getStringArray(R.array.main_navigationDrawer_text)
-        private val mDrawables = resources.obtainTypedArray(R.array.main_navigationDrawer_drawable)
+        private val texts = resources.getStringArray(R.array.main_navigationDrawer_text)
+        private val drawables = resources.obtainTypedArray(R.array.main_navigationDrawer_drawable)
 
         override fun getItemText(position: Int): String {
-            return mTexts[position]
+            return texts[position]
         }
 
         override fun getItemDrawable(position: Int): Drawable {
-            return mDrawables.getDrawable(position)
+            return drawables.getDrawable(position)!!
         }
 
         override fun getCount(): Int {
-            return mTexts.size
+            return texts.size
         }
     }
 
@@ -202,7 +201,7 @@ class MainActivity : BaseActivity(), MovieListCallbacks, TheaterFavoritesCallbac
         } catch (ignored: UnsupportedEncodingException) {
         }
 
-        val uri = Uri.parse("https://maps.google.com/maps?f=d&daddr=" + theaterAddressEncoded)
+        val uri = Uri.parse("https://maps.google.com/maps?f=d&daddr=$theaterAddressEncoded")
         openOnPhone(uri)
     }
 
@@ -213,7 +212,7 @@ class MainActivity : BaseActivity(), MovieListCallbacks, TheaterFavoritesCallbac
         } catch (ignored: UnsupportedEncodingException) {
         }
 
-        val uri = Uri.parse("https://www.google.com/search?sourceid=navclient&btnI=I&q=" + theaterNameEncoded)
+        val uri = Uri.parse("https://www.google.com/search?sourceid=navclient&btnI=I&q=$theaterNameEncoded")
         openOnPhone(uri)
     }
 
@@ -328,7 +327,7 @@ class MainActivity : BaseActivity(), MovieListCallbacks, TheaterFavoritesCallbac
                     }
                     return
                 }
-                val theater = data.extras.getParcelable<Theater>(TheaterSearchActivity.EXTRA_RESULT)
+                val theater = data.extras!!.getParcelable<Theater>(TheaterSearchActivity.EXTRA_RESULT)!!
                 addToFavorites(theater)
             }
         }

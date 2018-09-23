@@ -4,9 +4,9 @@ def versions = [:]
 // Plugins
 def plugins = [:]
 plugins.with {
-    androidGradle = '3.3.0-alpha10'
+    androidGradle = '3.3.0-alpha11'
     gradleVersions = '0.20.0'
-    fabric = '1.25.4'
+    fabric = '1.26.0'
     dexCount = '0.8.3'
     gmsStrictVersionMatcher = '1.0.3'
 }
@@ -22,7 +22,7 @@ versions.buildLibs = buildLibs
 // Build parameters
 def build = [:]
 build.with {
-    gradle = '4.10.1'
+    gradle = '4.10.2'
     compileSdk = 28
     targetSdk = 28
     minSdk = 25
@@ -43,7 +43,7 @@ versions.testing = testing
 // Other dependencies
 versions.with {
     kotlin = '1.2.70'
-    supportLibrary = '27.1.1'
+    supportLibrary = '28.0.0'
     archLifecycle = '1.1.1'
     archRoom = '1.1.1'
     constraintLayout = '1.1.0'

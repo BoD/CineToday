@@ -42,6 +42,7 @@ import org.jraf.android.cinetoday.databinding.MovieListItemBinding
 import org.jraf.android.cinetoday.glide.GlideApp
 import org.jraf.android.cinetoday.glide.GlideHelper
 import org.jraf.android.cinetoday.model.movie.Movie
+import org.jraf.android.util.log.Log
 
 class MovieListAdapter(
     private val context: Context,
@@ -94,6 +95,10 @@ class MovieListAdapter(
                 if (movie.color == null) {
                     // Generate the color
                     Palette.from((resource as BitmapDrawable).bitmap).generate { palette ->
+                        if (palette == null) {
+                            Log.w("Could not generate palette")
+                            return@generate
+                        }
                         val color = palette.getDarkVibrantColor(context.getColor(R.color.movie_list_bg))
                         paletteListener.onPaletteAvailable(movie.id, color, false)
                     }

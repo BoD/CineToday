@@ -62,7 +62,7 @@ class MovieDetailsActivity : BaseActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.movie_details)
         binding.conMovie.setOnScrollChangeListener(mOnScrollChangeListener)
 
-        val movieId = intent.data.contentId
+        val movieId = intent.data!!.contentId
         database.movieDao.movieByIdLive(movieId).observe(this, Observer { if (it != null) onMovieResult(it) })
         database.showtimeDao.showtimesWithTheaterByMovieIdLive(movieId)
             .observe(this, Observer { if (it != null) onShowtimesResult(it) })

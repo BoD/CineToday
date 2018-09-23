@@ -42,6 +42,7 @@ class MovieCodec {
             movie.originalTitle = jsonMovie.optString("originalTitle", null) ?: movie.localTitle
             movie.synopsis = jsonMovie.optString("synopsis", null)?.let {
                 // Strip html
+                @Suppress("DEPRECATION")
                 Html.fromHtml(it).toString().trim()
             }
 

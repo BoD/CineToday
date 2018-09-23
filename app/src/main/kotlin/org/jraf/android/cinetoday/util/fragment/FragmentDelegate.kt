@@ -41,9 +41,10 @@ class FragmentDelegate<out F : Fragment>(
             @Suppress("UNCHECKED_CAST")
             cached = thisRef.supportFragmentManager.findFragmentByTag(tag) as F?
             if (cached == null) {
-                cached = provideFragmentInstance()
+                val fragmentInstance = provideFragmentInstance()
+                cached = fragmentInstance
                 thisRef.supportFragmentManager.beginTransaction()
-                    .add(containerResId, cached, tag)
+                    .add(containerResId, fragmentInstance, tag)
                     .commit()
             }
         }

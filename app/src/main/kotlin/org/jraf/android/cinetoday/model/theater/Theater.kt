@@ -74,9 +74,9 @@ data class Theater(
     }
 
     private constructor(input: Parcel) : this(
-        id = input.readString(),
-        name = input.readString(),
-        address = input.readString(),
+        id = input.readString()!!,
+        name = input.readString()!!,
+        address = input.readString()!!,
         pictureUri = input.readString()
     )
 

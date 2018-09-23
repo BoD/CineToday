@@ -192,7 +192,7 @@ class MovieListFragment : BaseFragment<MovieListCallbacks>(), PaletteListener {
     }
 
     private val onScrollListener = object : RecyclerView.OnScrollListener() {
-        internal var argbEvaluator = ArgbEvaluator()
+        private var argbEvaluator = ArgbEvaluator()
 
         override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
             scrolling = newState != RecyclerView.SCROLL_STATE_IDLE
@@ -201,7 +201,7 @@ class MovieListFragment : BaseFragment<MovieListCallbacks>(), PaletteListener {
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
             val linearLayoutManager = recyclerView.layoutManager as LinearLayoutManager
             val firstItemPosition = linearLayoutManager.findFirstVisibleItemPosition()
-            val firstItem = linearLayoutManager.findViewByPosition(firstItemPosition)
+            val firstItem = linearLayoutManager.findViewByPosition(firstItemPosition)!!
             val firstItemTop = firstItem.y
             val firstItemRatio = Math.abs(firstItemTop / recyclerView.height)
 

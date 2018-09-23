@@ -275,6 +275,10 @@ class LoadMoviesHelper(
                         // We need to prevent the bitmap from being garbage collected while the palette is computed
                         keep(bitmap)
                         Palette.from(bitmap).generate { palette ->
+                            if (palette == null) {
+                                Log.w("Could not generate palette")
+                                return@generate
+                            }
                             movie.color = palette.getDarkVibrantColor(context.getColor(R.color.movie_list_bg))
                             discard(bitmap)
                         }
