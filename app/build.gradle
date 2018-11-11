@@ -9,7 +9,6 @@ apply plugin: 'com.getkeepsafe.dexcount'
 
 android {
     compileSdkVersion versions.build.compileSdk
-    buildToolsVersion versions.build.tools
 
     defaultConfig {
         applicationId 'org.jraf.android.cinetoday'

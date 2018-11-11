@@ -24,8 +24,10 @@
  */
 package org.jraf.android.cinetoday.network.api.codec.movie;
 
-import java.io.IOException;
-
+import org.jraf.android.cinetoday.mobile.TestUtil;
+import org.jraf.android.cinetoday.model.movie.Movie;
+import org.jraf.android.cinetoday.model.movie.MovieAssert;
+import org.jraf.android.cinetoday.network.api.ParseException;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Test;
@@ -33,15 +35,10 @@ import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
-import org.jraf.android.cinetoday.BuildConfig;
-import org.jraf.android.cinetoday.mobile.TestUtil;
-import org.jraf.android.cinetoday.model.movie.Movie;
-import org.jraf.android.cinetoday.model.movie.MovieAssert;
-import org.jraf.android.cinetoday.network.api.ParseException;
+import java.io.IOException;
 
 @RunWith(RobolectricTestRunner.class)
-// XXX I have no idea why 'manifest = ""' is necessary, but without it I get resource not found exceptions
-@Config(constants = BuildConfig.class, sdk = 21, manifest = "")
+@Config(sdk = 21)
 public class MovieCodecTest {
 
     @Test

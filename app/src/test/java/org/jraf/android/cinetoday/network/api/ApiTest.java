@@ -24,30 +24,26 @@
  */
 package org.jraf.android.cinetoday.network.api;
 
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
-
-import org.fest.assertions.api.Assertions;
-import org.json.JSONException;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.robolectric.RobolectricTestRunner;
-import org.robolectric.annotation.Config;
-
 import okhttp3.OkHttpClient;
-
-import org.jraf.android.cinetoday.BuildConfig;
+import org.fest.assertions.api.Assertions;
 import org.jraf.android.cinetoday.mobile.TestUtil;
 import org.jraf.android.cinetoday.model.movie.Movie;
 import org.jraf.android.cinetoday.model.movie.MovieAssert;
 import org.jraf.android.cinetoday.network.api.codec.movie.MovieCodec;
 import org.jraf.android.cinetoday.network.api.codec.showtime.ShowtimeCodec;
 import org.jraf.android.cinetoday.network.api.codec.theater.TheaterCodec;
+import org.json.JSONException;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.Config;
+
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 @RunWith(RobolectricTestRunner.class)
-// XXX I have no idea why 'manifest = ""' is necessary, but without it I get resource not found exceptions
-@Config(constants = BuildConfig.class, sdk = 21, manifest = "")
+@Config(sdk = 21)
 public class ApiTest {
 
     @Test
