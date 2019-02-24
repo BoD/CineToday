@@ -24,6 +24,6 @@
  */
 package org.jraf.android.cinetoday.util.base
 
-import android.support.v4.app.FragmentActivity
+import androidx.fragment.app.FragmentActivity
 
 abstract class BaseActivity : FragmentActivity()

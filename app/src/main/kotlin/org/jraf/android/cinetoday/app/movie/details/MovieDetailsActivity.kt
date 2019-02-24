@@ -24,13 +24,13 @@
  */
 package org.jraf.android.cinetoday.app.movie.details
 
-import android.arch.lifecycle.Observer
-import android.databinding.DataBindingUtil
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.TextView
+import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
 import org.jraf.android.cinetoday.R
 import org.jraf.android.cinetoday.dagger.Components
 import org.jraf.android.cinetoday.database.AppDatabase

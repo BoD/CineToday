@@ -25,8 +25,6 @@
 package org.jraf.android.cinetoday.app.theater.search
 
 import android.content.Context
-import android.databinding.DataBindingUtil
-import android.support.v7.widget.RecyclerView
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -34,13 +32,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
+import androidx.databinding.DataBindingUtil
+import androidx.recyclerview.widget.RecyclerView
 import org.jraf.android.cinetoday.R
 import org.jraf.android.cinetoday.databinding.TheaterSearchListItemBinding
 import org.jraf.android.cinetoday.databinding.TheaterSearchListItemSearchBinding
 import org.jraf.android.cinetoday.model.theater.Theater
 import org.jraf.android.util.log.Log
 import java.util.ArrayList
-
 
 class TheaterSearchAdapter(context: Context, private val callbacks: TheaterSearchCallbacks) :
     RecyclerView.Adapter<TheaterSearchAdapter.ViewHolder>(), TextWatcher {

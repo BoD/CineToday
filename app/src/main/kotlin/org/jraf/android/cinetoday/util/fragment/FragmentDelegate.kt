@@ -24,9 +24,8 @@
  */
 package org.jraf.android.cinetoday.util.fragment
 
-import android.support.annotation.IdRes
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentActivity
+import androidx.annotation.IdRes
+import androidx.fragment.app.Fragment
 import kotlin.reflect.KProperty
 
 class FragmentDelegate<out F : Fragment>(
@@ -36,7 +35,7 @@ class FragmentDelegate<out F : Fragment>(
 ) {
     private var cached: F? = null
 
-    operator fun getValue(thisRef: FragmentActivity, property: KProperty<*>): F {
+    operator fun getValue(thisRef: androidx.fragment.app.FragmentActivity, property: KProperty<*>): F {
         if (cached == null) {
             @Suppress("UNCHECKED_CAST")
             cached = thisRef.supportFragmentManager.findFragmentByTag(tag) as F?

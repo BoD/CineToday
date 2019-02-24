@@ -24,9 +24,9 @@
  */
 package org.jraf.android.cinetoday.network.api
 
-import android.support.annotation.VisibleForTesting
-import android.support.annotation.VisibleForTesting.PRIVATE
-import android.support.annotation.WorkerThread
+import androidx.annotation.VisibleForTesting
+import androidx.annotation.VisibleForTesting.PRIVATE
+import androidx.annotation.WorkerThread
 import okhttp3.CacheControl
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient

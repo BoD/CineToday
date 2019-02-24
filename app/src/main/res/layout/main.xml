@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Drawer layout -->
-    <android.support.wear.widget.drawer.WearableDrawerLayout
+    <androidx.wear.widget.drawer.WearableDrawerLayout
         android:id="@+id/drawerLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -16,16 +16,16 @@
             android:layout_height="match_parent" />
 
         <!-- Navigation drawer -->
-        <android.support.wear.widget.drawer.WearableNavigationDrawerView
+        <androidx.wear.widget.drawer.WearableNavigationDrawerView
             android:id="@+id/navigationDrawer"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
         <!-- Action drawer -->
-        <android.support.wear.widget.drawer.WearableActionDrawerView
+        <androidx.wear.widget.drawer.WearableActionDrawerView
             android:id="@+id/actionDrawer"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
-    </android.support.wear.widget.drawer.WearableDrawerLayout>
+    </androidx.wear.widget.drawer.WearableDrawerLayout>
 </layout>

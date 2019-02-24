@@ -26,13 +26,13 @@ package org.jraf.android.cinetoday.app.movie.list
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.databinding.DataBindingUtil
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
-import android.support.v7.graphics.Palette
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
+import androidx.palette.graphics.Palette
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener

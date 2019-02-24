@@ -27,7 +27,7 @@ package org.jraf.android.cinetoday.prefs
 import org.jraf.android.prefs.DefaultBoolean
 import org.jraf.android.prefs.Prefs
 
-@Prefs
+@Prefs(useAndroidX = true)
 class Main {
     /**
      * Last time an update was successfully called.

@@ -26,16 +26,16 @@ package org.jraf.android.cinetoday.app.movie.list
 
 import android.animation.ArgbEvaluator
 import android.animation.ValueAnimator
-import android.arch.lifecycle.Observer
-import android.databinding.DataBindingUtil
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.support.annotation.ColorInt
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.ColorInt
+import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import org.jraf.android.cinetoday.R

@@ -22,7 +22,7 @@
         android:layout_height="match_parent"
         android:clipToPadding="false">
 
-        <android.support.percent.PercentFrameLayout
+        <androidx.percentlayout.widget.PercentFrameLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="center_horizontal"
@@ -57,7 +57,7 @@
                 app:layout_aspectRatio="@fraction/movie_list_item_poster"
                 app:layout_heightPercent="100%" />
 
-        </android.support.percent.PercentFrameLayout>
+        </androidx.percentlayout.widget.PercentFrameLayout>
 
     </FrameLayout>
 </layout>

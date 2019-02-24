@@ -18,7 +18,7 @@ apply plugin: 'com.github.ben-manes.versions'
 dependencyUpdates.resolutionStrategy = {
     componentSelection { rules ->
         rules.all { selection ->
-            boolean rejected = [/*'alpha', 'beta', 'rc',*/ '20050927'].any { qualifier ->
+            boolean rejected = ['alpha', 'beta', 'rc', '20050927'].any { qualifier ->
                 selection.candidate.version.toLowerCase() ==~ /.*-${qualifier}.*/
             }
             if (rejected) {

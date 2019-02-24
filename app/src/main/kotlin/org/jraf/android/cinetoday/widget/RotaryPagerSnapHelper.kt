@@ -25,11 +25,11 @@
 package org.jraf.android.cinetoday.widget
 
 import android.os.Handler
-import android.support.v7.widget.PagerSnapHelper
-import android.support.v7.widget.RecyclerView
 import android.support.wearable.input.RotaryEncoder
 import android.view.MotionEvent
 import android.view.View
+import androidx.recyclerview.widget.PagerSnapHelper
+import androidx.recyclerview.widget.RecyclerView
 
 class RotaryPagerSnapHelper : PagerSnapHelper() {
     private var snapHandler = Handler()

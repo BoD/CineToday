@@ -17,7 +17,7 @@ android {
         versionCode buildNumber
         versionName buildProperties.versionName
 
-        testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
 
         // For now we enable strict mode for all the configs
         buildConfigField 'boolean', 'STRICT_MODE', 'true'
@@ -110,7 +110,7 @@ android.applicationVariants.all { variant ->
 
 dependencies {
     // Tests
-    androidTestImplementation("com.android.support.test.espresso:espresso-core:$versions.testing.espresso", {
+    androidTestImplementation("androidx.test.espresso:espresso-core:$versions.testing.espresso", {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     testImplementation "junit:junit:$versions.testing.junit"
@@ -120,17 +120,21 @@ dependencies {
     // Kotlin
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$versions.kotlin"
 
-    // Support library
-    implementation "com.android.support:support-fragment:$versions.supportLibrary"
-    implementation "com.android.support:support-annotations:$versions.supportLibrary"
-    implementation "com.android.support:percent:$versions.supportLibrary"
-    implementation "com.android.support:palette-v7:$versions.supportLibrary"
-    implementation "com.android.support:preference-v14:$versions.supportLibrary"
+    // AndroidX
+    implementation "androidx.fragment:fragment:$versions.androidxFragment"
+    implementation "androidx.annotation:annotation:$versions.androidxAnnotation"
+    implementation "androidx.percentlayout:percentlayout:$versions.androidxPercentLayout"
+    implementation "androidx.palette:palette:$versions.androidxPalette"
+    implementation "androidx.legacy:legacy-preference-v14:$versions.androidxLegacyPreference"
+    implementation "androidx.lifecycle:lifecycle-extensions:$versions.androidxLifecycle"
+    implementation "androidx.lifecycle:lifecycle-common-java8:$versions.androidxLifecycle"
+    implementation "androidx.room:room-runtime:$versions.androidxRoom"
+    kapt "androidx.room:room-compiler:$versions.androidxRoom"
 
     //  Wear
     implementation "com.google.android.support:wearable:$versions.androidWearable"
     implementation "com.google.android.wearable:wearable:$versions.androidWearable"
-    implementation "com.android.support:wear:$versions.supportLibrary"
+    implementation "androidx.wear:wear:$versions.androidxWear"
 
     // Play Services
     implementation "com.google.android.gms:play-services-gcm:$versions.playServices"
@@ -157,14 +161,6 @@ dependencies {
     implementation "com.google.dagger:dagger:$versions.dagger"
     kapt "com.google.dagger:dagger-compiler:$versions.dagger"
     compileOnly "javax.annotation:jsr250-api:$versions.jsr250"
-
-    // Architecture components
-    implementation "android.arch.lifecycle:extensions:$versions.archLifecycle"
-    implementation "android.arch.lifecycle:common-java8:$versions.archLifecycle"
-
-    // Room
-    implementation "android.arch.persistence.room:runtime:$versions.archRoom"
-    kapt "android.arch.persistence.room:compiler:$versions.archRoom"
 
     // Rx
     implementation "io.reactivex.rxjava2:rxandroid:$versions.rxAndroid"

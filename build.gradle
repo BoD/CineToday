@@ -25,18 +25,19 @@ buildscript {
 allprojects {
     repositories.addRepos()
 
-    // Force using our version of the support libraries, even for those we don't depend on directly (transitive dependencies)
-    configurations.all {
-        resolutionStrategy {
-            eachDependency { details ->
-                if (details.requested.group == 'com.android.support'
-                        && details.requested.name != 'multidex'
-                        && details.requested.name != 'multidex-instrumentation') {
-                    details.useVersion versions.supportLibrary
-                }
-            }
-        }
-    }
+//  Not needed with AndroidX ?
+//    // Force using our version of the support libraries, even for those we don't depend on directly (transitive dependencies)
+//    configurations.all {
+//        resolutionStrategy {
+//            eachDependency { details ->
+//                if (details.requested.group == 'com.android.support'
+//                        && details.requested.name != 'multidex'
+//                        && details.requested.name != 'multidex-instrumentation') {
+//                    details.useVersion versions.supportLibrary
+//                }
+//            }
+//        }
+//    }
 
     // Show a report in the log when running tests
     tasks.withType(Test) {

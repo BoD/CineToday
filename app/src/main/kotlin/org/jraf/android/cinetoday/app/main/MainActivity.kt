@@ -26,16 +26,16 @@ package org.jraf.android.cinetoday.app.main
 
 import android.app.Activity
 import android.content.Intent
-import android.databinding.DataBindingUtil
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
-import android.support.wear.widget.ConfirmationOverlay
-import android.support.wear.widget.drawer.WearableDrawerLayout
-import android.support.wear.widget.drawer.WearableDrawerView
-import android.support.wear.widget.drawer.WearableNavigationDrawerView
 import android.view.MenuItem
 import android.view.ViewTreeObserver
+import androidx.databinding.DataBindingUtil
+import androidx.wear.widget.ConfirmationOverlay
+import androidx.wear.widget.drawer.WearableDrawerLayout
+import androidx.wear.widget.drawer.WearableDrawerView
+import androidx.wear.widget.drawer.WearableNavigationDrawerView
 import com.google.android.wearable.intent.RemoteIntent
 import org.jraf.android.cinetoday.R
 import org.jraf.android.cinetoday.app.loadmovies.LoadMoviesHelper

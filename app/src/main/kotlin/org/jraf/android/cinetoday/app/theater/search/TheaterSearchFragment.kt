@@ -24,16 +24,16 @@
  */
 package org.jraf.android.cinetoday.app.theater.search
 
-import android.arch.lifecycle.Observer
-import android.databinding.DataBindingUtil
 import android.os.Bundle
-import android.support.v7.widget.LinearSnapHelper
-import android.support.v7.widget.RecyclerView
-import android.support.wear.widget.CurvingLayoutCallback
-import android.support.wear.widget.WearableLinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.LinearSnapHelper
+import androidx.recyclerview.widget.RecyclerView
+import androidx.wear.widget.CurvingLayoutCallback
+import androidx.wear.widget.WearableLinearLayoutManager
 import org.jraf.android.cinetoday.R
 import org.jraf.android.cinetoday.databinding.TheaterSearchListBinding
 import org.jraf.android.cinetoday.util.base.BaseFragment

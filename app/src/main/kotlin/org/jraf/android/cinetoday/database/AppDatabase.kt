@@ -24,8 +24,8 @@
  */
 package org.jraf.android.cinetoday.database
 
-import android.arch.persistence.room.Database
-import android.arch.persistence.room.RoomDatabase
+import androidx.room.Database
+import androidx.room.RoomDatabase
 import org.jraf.android.cinetoday.model.knownmovie.KnownMovie
 import org.jraf.android.cinetoday.model.movie.Movie
 import org.jraf.android.cinetoday.model.showtime.Showtime

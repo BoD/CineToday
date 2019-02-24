@@ -24,8 +24,8 @@
  */
 package org.jraf.android.cinetoday.database
 
-import android.arch.persistence.db.SupportSQLiteDatabase
-import android.arch.persistence.room.migration.Migration
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 
 class V1ToV2Migration : Migration(1, 2) {
     override fun migrate(database: SupportSQLiteDatabase) {

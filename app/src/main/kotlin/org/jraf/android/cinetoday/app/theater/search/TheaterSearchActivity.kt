@@ -26,10 +26,9 @@ package org.jraf.android.cinetoday.app.theater.search
 
 import android.app.Activity
 import android.content.Intent
-import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.os.Handler
-
+import androidx.databinding.DataBindingUtil
 import org.jraf.android.cinetoday.R
 import org.jraf.android.cinetoday.databinding.TheaterSearchBinding
 import org.jraf.android.cinetoday.model.theater.Theater

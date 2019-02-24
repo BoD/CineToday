@@ -24,7 +24,7 @@
  */
 package org.jraf.android.cinetoday.app.theater.search
 
-import android.arch.lifecycle.LiveData
+import androidx.lifecycle.LiveData
 import org.jraf.android.cinetoday.dagger.Components
 import org.jraf.android.cinetoday.database.AppDatabase
 import org.jraf.android.cinetoday.model.theater.Theater

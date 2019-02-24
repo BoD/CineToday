@@ -25,7 +25,7 @@
 package org.jraf.android.cinetoday.util.base
 
 import android.content.Context
-import android.support.v4.app.Fragment
+import androidx.fragment.app.Fragment
 
 abstract class BaseFragment<out C> : Fragment() {
 

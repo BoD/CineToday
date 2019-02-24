@@ -62,7 +62,7 @@
             tools:visibility="visible" />
 
         <!-- List -->
-        <android.support.wear.widget.WearableRecyclerView
+        <androidx.wear.widget.WearableRecyclerView
             android:id="@+id/rclList"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

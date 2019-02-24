@@ -24,8 +24,8 @@
  */
 package org.jraf.android.cinetoday.app
 
-import android.arch.persistence.room.Room
 import android.content.Context
+import androidx.room.Room
 import dagger.Module
 import dagger.Provides
 import org.jraf.android.cinetoday.app.loadmovies.LoadMoviesHelper

@@ -24,10 +24,10 @@
  */
 package org.jraf.android.cinetoday.model.theater
 
-import android.arch.persistence.room.Entity
-import android.arch.persistence.room.PrimaryKey
 import android.os.Parcel
 import android.os.Parcelable
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import org.jraf.android.cinetoday.util.uri.HasId
 
 @Entity

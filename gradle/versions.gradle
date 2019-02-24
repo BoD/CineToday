@@ -32,7 +32,7 @@ versions.build = build
 // Testing dependencies
 def testing = [:]
 testing.with {
-    espresso = '3.0.2'
+    espresso = '3.1.0'
     junit = '4.12'
     robolectric = '4.2'
     fest = '2.0M10'
@@ -42,9 +42,14 @@ versions.testing = testing
 // Other dependencies
 versions.with {
     kotlin = '1.3.21'
-    supportLibrary = '28.0.0'
-    archLifecycle = '1.1.1'
-    archRoom = '1.1.1'
+    androidxFragment = '1.0.0'
+    androidxAnnotation = '1.0.1'
+    androidxPercentLayout = '1.0.0'
+    androidxPalette = '1.0.0'
+    androidxLegacyPreference = '1.0.0'
+    androidxWear = '1.0.0'
+    androidxLifecycle = '2.0.0'
+    androidxRoom = '2.0.0'
     constraintLayout = '1.1.0'
     playServices = '16.1.0'
     rxJava = '2.2.7'

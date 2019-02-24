@@ -25,8 +25,8 @@
 package org.jraf.android.cinetoday.app.preferences
 
 import android.os.Bundle
-import android.support.v7.preference.PreferenceFragmentCompat
 import android.text.format.DateUtils
+import androidx.preference.PreferenceFragmentCompat
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import org.jraf.android.cinetoday.BuildConfig

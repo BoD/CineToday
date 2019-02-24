@@ -36,11 +36,10 @@ import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
 import android.os.Build
-import android.support.annotation.RequiresApi
-import android.support.annotation.WorkerThread
-import android.support.v4.app.NotificationCompat
-import android.support.v7.graphics.Palette
 import android.text.TextUtils
+import androidx.annotation.RequiresApi
+import androidx.annotation.WorkerThread
+import androidx.core.app.NotificationCompat
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
@@ -275,7 +274,7 @@ class LoadMoviesHelper(
                         bitmap = bitmap.copy(bitmap.config, false)
                         // We need to prevent the bitmap from being garbage collected while the palette is computed
                         keep(bitmap)
-                        Palette.from(bitmap).generate { palette ->
+                        androidx.palette.graphics.Palette.from(bitmap).generate { palette ->
                             if (palette == null) {
                                 Log.w("Could not generate palette")
                                 return@generate

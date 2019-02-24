@@ -24,9 +24,8 @@
  */
 package org.jraf.android.cinetoday.databinding.adapters
 
-import android.databinding.BindingAdapter
 import android.widget.ImageView
-
+import androidx.databinding.BindingAdapter
 import org.jraf.android.cinetoday.glide.GlideHelper
 
 object ImageViewBindingAdapter {

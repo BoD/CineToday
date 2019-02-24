@@ -24,8 +24,8 @@
  */
 package org.jraf.android.cinetoday.databinding.adapters
 
-import android.databinding.BindingAdapter
 import android.view.View
+import androidx.databinding.BindingAdapter
 
 object ViewBindingAdapter {
     @JvmStatic
