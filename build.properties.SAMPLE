@@ -1,3 +1,4 @@
+# Edit and save this file to a file named build.properties.
 versionName=1.0.0
 signingStoreFile=/home/jsmith/devkeys/android_release_key.keystore
 signingStorePassword=changeme
