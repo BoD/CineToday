@@ -75,6 +75,11 @@ android {
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
     }
+
+    compileOptions {
+        sourceCompatibility 1.8
+        targetCompatibility 1.8
+    }
 }
 
 android.applicationVariants.all { variant ->
@@ -91,13 +96,14 @@ android.applicationVariants.all { variant ->
             copyApkToEtc.rename output.outputFileName, apkName
 
             // Copy the apk to the deploy folder
+            def deployFolder = "${buildProperties.deployFolder}/$globalProjectName/x"
             def copyApkToDeploy = tasks.create("copy${variant.name.capitalize()}ApkToDeploy", Copy)
             copyApkToDeploy.from(outputFile)
-            copyApkToDeploy.into(buildProperties.deployFolder)
+            copyApkToDeploy.into(deployFolder)
             copyApkToDeploy.rename output.outputFileName, apkName
 
             // Make the copy tasks run after the assemble tasks of the variant
-            variant.assemble.finalizedBy(copyApkToEtc, copyApkToDeploy)
+            variant.assembleProvider.get().finalizedBy(copyApkToEtc, copyApkToDeploy)
         }
     }
 }
@@ -163,6 +169,11 @@ dependencies {
     // Rx
     implementation "io.reactivex.rxjava2:rxandroid:$versions.rxAndroid"
     implementation "io.reactivex.rxjava2:rxjava:$versions.rxJava"
+}
+
+// Run './gradlew countReleaseDexMethods' to see dex methods count
+dexcount {
+    runOnEachPackage = false
 }
 
 // Necessary for Prefs to work (see https://kotlinlang.org/docs/reference/kapt.html)
