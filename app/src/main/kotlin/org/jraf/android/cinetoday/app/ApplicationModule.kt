@@ -31,6 +31,7 @@ import dagger.Provides
 import org.jraf.android.cinetoday.app.loadmovies.LoadMoviesHelper
 import org.jraf.android.cinetoday.app.loadmovies.LoadMoviesListenerHelper
 import org.jraf.android.cinetoday.database.AppDatabase
+import org.jraf.android.cinetoday.database.V1ToV2Migration
 import org.jraf.android.cinetoday.network.api.Api
 import org.jraf.android.cinetoday.prefs.MainPrefs
 import javax.inject.Singleton
@@ -59,7 +60,9 @@ class ApplicationModule(private val mContext: Context) {
     @Singleton
     @Provides
     fun provideDatabase(context: Context): AppDatabase {
-        return Room.databaseBuilder(context, AppDatabase::class.java, AppDatabase.DATABASE_NAME).build();
+        return Room.databaseBuilder(context, AppDatabase::class.java, AppDatabase.DATABASE_NAME)
+            .addMigrations(V1ToV2Migration())
+            .build()
     }
 
     @Singleton

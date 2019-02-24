@@ -7,7 +7,7 @@
  *                              /___/
  * repository.
  *
- * Copyright (C) 2017 Benoit 'BoD' Lubek (BoD@JRAF.org)
+ * Copyright (C) 2019-present Benoit 'BoD' Lubek (BoD@JRAF.org)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,26 +24,11 @@
  */
 package org.jraf.android.cinetoday.database
 
-import android.arch.lifecycle.LiveData
-import android.arch.persistence.room.Dao
-import android.arch.persistence.room.Insert
-import android.arch.persistence.room.Query
-import org.jraf.android.cinetoday.model.theater.Theater
+import android.arch.persistence.db.SupportSQLiteDatabase
+import android.arch.persistence.room.migration.Migration
 
-@Dao
-interface TheaterDao {
-    @Query("SELECT * FROM Theater")
-    fun allTheatersLive(): LiveData<Array<Theater>>
-
-    @Query("SELECT * FROM Theater")
-    fun allTheaters(): Array<Theater>
-
-    @Query("SELECT count(*) FROM Theater")
-    fun countTheaters(): Int
-
-    @Insert
-    fun insert(theater: Theater)
-
-    @Query("DELETE from Theater where id=:id")
-    fun delete(id: String)
+class V1ToV2Migration : Migration(1, 2) {
+    override fun migrate(database: SupportSQLiteDatabase) {
+        database.execSQL("CREATE TABLE `KnownMovie` (`id` TEXT NOT NULL, PRIMARY KEY(`id`))")
+    }
 }

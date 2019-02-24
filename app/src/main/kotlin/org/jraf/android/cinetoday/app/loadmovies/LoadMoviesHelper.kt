@@ -50,6 +50,7 @@ import org.jraf.android.cinetoday.R
 import org.jraf.android.cinetoday.app.main.MainActivity
 import org.jraf.android.cinetoday.database.AppDatabase
 import org.jraf.android.cinetoday.glide.GlideApp
+import org.jraf.android.cinetoday.model.knownmovie.KnownMovie
 import org.jraf.android.cinetoday.model.movie.Movie
 import org.jraf.android.cinetoday.network.api.Api
 import org.jraf.android.cinetoday.prefs.MainPrefs
@@ -175,7 +176,7 @@ class LoadMoviesHelper(
                     moviesFromDbToKeep += movieFromDb
                 } else {
                     // Not in db: get movie info
-                    movieFromApi.isNew = true
+                    movieFromApi.isNew = appDatabase.knownMovieDao.knownMovieById(movieFromApi.id) == null
                     try {
                         api.getMovieInfo(movieFromApi)
                         Log.d(movieFromApi.toString())
@@ -210,10 +211,10 @@ class LoadMoviesHelper(
             }
         }
 
-        // Remove from the list the incomplete movies for which we already have complete info in the db
+        // Remove from the list the outdated movies for which we already have updated info in the db
         movies.removeAll(moviesFromDbToKeep)
 
-        // Add to the list the complete movies that were in the db
+        // Add to the list the updated movies that were in the db
         movies.addAll(moviesFromDbToKeep)
 
         // 3/ Save everything to the local db
@@ -297,6 +298,9 @@ class LoadMoviesHelper(
         // Insert (only new) movies
         appDatabase.movieDao.insert(movies.toList())
 
+        // Remember the movies
+        appDatabase.knownMovieDao.insert(movies.map { KnownMovie(it.id) })
+
         // Insert showtimes
         for (movie in movies) {
             for (entry in movie.todayShowtimes) {
@@ -306,7 +310,7 @@ class LoadMoviesHelper(
     }
 
     private fun showNotification(newMovieTitles: List<String>) {
-        Log.d()
+        Log.d("newMovieTitles=$newMovieTitles")
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) createNotificationChannel()
         val mainNotifBuilder = NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_MAIN)
 

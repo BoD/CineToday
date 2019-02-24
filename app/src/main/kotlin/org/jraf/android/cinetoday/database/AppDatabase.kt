@@ -26,6 +26,7 @@ package org.jraf.android.cinetoday.database
 
 import android.arch.persistence.room.Database
 import android.arch.persistence.room.RoomDatabase
+import org.jraf.android.cinetoday.model.knownmovie.KnownMovie
 import org.jraf.android.cinetoday.model.movie.Movie
 import org.jraf.android.cinetoday.model.showtime.Showtime
 import org.jraf.android.cinetoday.model.theater.Theater
@@ -34,9 +35,10 @@ import org.jraf.android.cinetoday.model.theater.Theater
     entities = [
         Theater::class,
         Movie::class,
+        KnownMovie::class,
         Showtime::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -46,6 +48,7 @@ abstract class AppDatabase : RoomDatabase() {
 
     abstract val theaterDao: TheaterDao
     abstract val movieDao: MovieDao
+    abstract val knownMovieDao: KnownMovieDao
     abstract val showtimeDao: ShowtimeDao
 }
 

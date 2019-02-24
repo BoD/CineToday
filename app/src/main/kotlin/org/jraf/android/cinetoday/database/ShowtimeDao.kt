@@ -37,26 +37,26 @@ interface ShowtimeDao {
     @Insert
     fun insert(movies: List<Showtime>)
 
-    @Query("DELETE FROM showtime")
+    @Query("DELETE FROM Showtime")
     fun deleteAll()
 
-    @Query("SELECT * FROM showtime WHERE movieId = :movieId")
+    @Query("SELECT * FROM Showtime WHERE movieId = :movieId")
     fun showtimesByMovieIdLive(movieId: String): LiveData<Array<Showtime>>
 
     @Query(
         "SELECT "
-                + "showtime.theaterId, "
-                + "showtime.movieId, "
-                + "showtime.time, "
-                + "showtime.is3d, "
-                + "theater.name as theaterName "
+                + "Showtime.theaterId, "
+                + "Showtime.movieId, "
+                + "Showtime.time, "
+                + "Showtime.is3d, "
+                + "Theater.name as theaterName "
                 + "FROM "
-                + "showtime JOIN theater ON showtime.theaterId = theater.id "
+                + "Showtime JOIN Theater ON Showtime.theaterId = theater.id "
                 + "WHERE "
                 + "movieId = :movieId "
                 + "ORDER BY "
-                + "showtime.theaterId, "
-                + "showtime.time"
+                + "Showtime.theaterId, "
+                + "Showtime.time"
     )
     fun showtimesWithTheaterByMovieIdLive(movieId: String): LiveData<Array<ShowtimeWithTheater>>
 }

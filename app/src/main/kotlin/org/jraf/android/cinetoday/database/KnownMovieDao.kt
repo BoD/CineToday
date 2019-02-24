@@ -7,7 +7,7 @@
  *                              /___/
  * repository.
  *
- * Copyright (C) 2017 Benoit 'BoD' Lubek (BoD@JRAF.org)
+ * Copyright (C) 2019 Benoit 'BoD' Lubek (BoD@JRAF.org)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,39 +24,17 @@
  */
 package org.jraf.android.cinetoday.database
 
-import android.arch.lifecycle.LiveData
 import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Insert
+import android.arch.persistence.room.OnConflictStrategy
 import android.arch.persistence.room.Query
-import org.jraf.android.cinetoday.model.movie.Movie
+import org.jraf.android.cinetoday.model.knownmovie.KnownMovie
 
 @Dao
-interface MovieDao {
-    @Insert
-    fun insert(movies: List<Movie>)
+interface KnownMovieDao {
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    fun insert(movies: List<KnownMovie>)
 
-    @Query("SELECT * FROM Movie ORDER BY releaseDate DESC")
-    fun allMoviesLive(): LiveData<Array<Movie>>
-
-    @Query("SELECT * FROM Movie ORDER BY releaseDate DESC")
-    fun allMovies(): Array<Movie>
-
-    @Query("SELECT * FROM Movie where id = :id")
-    fun movieById(id: String): Movie?
-
-    @Query("SELECT * FROM Movie where id = :id")
-    fun movieByIdLive(id: String): LiveData<Movie?>
-
-    @Query("DELETE FROM Movie")
-    fun deleteAll()
-
-    @Query(
-        "DELETE FROM Movie WHERE"
-                + " ( SELECT COUNT(*) FROM showtime WHERE showtime.movieId = movie.id ) "
-                + " = 0"
-    )
-    fun deleteWithNoShowtimes()
-
-    @Query("UPDATE Movie SET color = :color WHERE id = :id")
-    fun updateColor(id: String, color: Int)
+    @Query("SELECT * FROM KnownMovie where id = :id")
+    fun knownMovieById(id: String): KnownMovie?
 }

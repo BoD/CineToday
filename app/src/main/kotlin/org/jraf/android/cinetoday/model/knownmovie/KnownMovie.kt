@@ -7,7 +7,7 @@
  *                              /___/
  * repository.
  *
- * Copyright (C) 2017 Benoit 'BoD' Lubek (BoD@JRAF.org)
+ * Copyright (C) 2019 Benoit 'BoD' Lubek (BoD@JRAF.org)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,28 +22,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jraf.android.cinetoday.database
+package org.jraf.android.cinetoday.model.knownmovie
 
-import android.arch.lifecycle.LiveData
-import android.arch.persistence.room.Dao
-import android.arch.persistence.room.Insert
-import android.arch.persistence.room.Query
-import org.jraf.android.cinetoday.model.theater.Theater
+import android.arch.persistence.room.Entity
+import android.arch.persistence.room.Ignore
+import android.arch.persistence.room.PrimaryKey
+import org.jraf.android.cinetoday.util.uri.HasId
 
-@Dao
-interface TheaterDao {
-    @Query("SELECT * FROM Theater")
-    fun allTheatersLive(): LiveData<Array<Theater>>
+@Entity
+data class KnownMovie(
+    @PrimaryKey
+    override var id: String
+) : HasId {
 
-    @Query("SELECT * FROM Theater")
-    fun allTheaters(): Array<Theater>
+    @Ignore
+    constructor() : this("")
 
-    @Query("SELECT count(*) FROM Theater")
-    fun countTheaters(): Int
+    override fun equals(other: Any?) = (other as? KnownMovie)?.id == id
 
-    @Insert
-    fun insert(theater: Theater)
-
-    @Query("DELETE from Theater where id=:id")
-    fun delete(id: String)
+    override fun hashCode() = id.hashCode()
 }
