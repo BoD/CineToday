@@ -10,7 +10,6 @@ buildscript {
     dependencies {
         classpath "com.android.tools.build:gradle:$versions.plugins.androidGradle"
         classpath "com.github.ben-manes:gradle-versions-plugin:$versions.plugins.gradleVersions"
-        classpath "io.fabric.tools:gradle:$versions.plugins.fabric"
         classpath "com.getkeepsafe.dexcount:dexcount-gradle-plugin:$versions.plugins.dexCount"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$versions.kotlin"
         // See https://android-developers.googleblog.com/2018/05/announcing-new-sdk-versioning.html

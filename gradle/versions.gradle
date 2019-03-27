@@ -4,9 +4,8 @@ def versions = [:]
 // Plugins
 def plugins = [:]
 plugins.with {
-    androidGradle = '3.5.0-alpha05'
+    androidGradle = '3.5.0-alpha08'
     gradleVersions = '0.20.0'
-    fabric = '1.27.1'
     dexCount = '0.8.6'
     gmsStrictVersionMatcher = '1.1.0'
 }
@@ -22,7 +21,7 @@ versions.buildLibs = buildLibs
 // Build parameters
 def build = [:]
 build.with {
-    gradle = '5.2.1'
+    gradle = '5.3'
     compileSdk = 28
     targetSdk = 28
     minSdk = 25
@@ -54,7 +53,6 @@ versions.with {
     playServices = '16.1.0'
     rxJava = '2.2.7'
     rxAndroid = '2.1.1'
-    crashlytics = '2.9.9'
     dagger = '2.21'
     androidWearable = '2.4.0'
     prefs = '1.4.0'

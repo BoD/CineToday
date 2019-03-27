@@ -28,8 +28,6 @@ import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Handler
 import android.os.StrictMode
-import com.crashlytics.android.Crashlytics
-import io.fabric.sdk.android.Fabric
 import org.jraf.android.cinetoday.BuildConfig
 import org.jraf.android.cinetoday.dagger.Components
 import org.jraf.android.util.log.Log
@@ -47,9 +45,6 @@ class Application : android.app.Application() {
 
         // Strict mode
         if (BuildConfig.STRICT_MODE) setupStrictMode()
-
-        // Crashlytics
-        if (BuildConfig.CRASH_REPORT) Fabric.with(this, Crashlytics())
 
         // Dagger
         Components.init(this)

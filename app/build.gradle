@@ -1,7 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
-if (buildProperties.enableFabric.toBoolean()) apply plugin: 'io.fabric'
 apply plugin: 'com.getkeepsafe.dexcount'
 // Commented for now because of https://issuetracker.google.com/issues/79122163
 //apply plugin: 'com.google.android.gms.strict-version-matcher-plugin'
@@ -47,13 +46,11 @@ android {
         debug {
             buildConfigField 'String', 'GIT_SHA1', "\"dev\""
             buildConfigField 'String', 'BUILD_DATE', "\"dev\""
-            buildConfigField 'boolean', 'CRASH_REPORT', 'false'
         }
 
         release {
             buildConfigField 'String', 'GIT_SHA1', "\"${gitSha1}\""
             buildConfigField 'String', 'BUILD_DATE', "\"${buildDate}\""
-            buildConfigField 'boolean', 'CRASH_REPORT', 'true'
 
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
@@ -138,9 +135,6 @@ dependencies {
 
     // Play Services
     implementation "com.google.android.gms:play-services-gcm:$versions.playServices"
-
-    // Fabric / Crashlytics
-    implementation("com.crashlytics.sdk.android:crashlytics:$versions.crashlytics@aar") { transitive = true }
 
     // JRAF
     kapt "org.jraf:prefs-compiler:$versions.prefs"
