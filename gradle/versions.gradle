@@ -4,8 +4,8 @@ def versions = [:]
 // Plugins
 def plugins = [:]
 plugins.with {
-    androidGradle = '3.5.0-alpha08'
-    gradleVersions = '0.20.0'
+    androidGradle = '3.5.0-alpha09'
+    gradleVersions = '0.21.0'
     dexCount = '0.8.6'
     gmsStrictVersionMatcher = '1.1.0'
 }
@@ -21,7 +21,7 @@ versions.buildLibs = buildLibs
 // Build parameters
 def build = [:]
 build.with {
-    gradle = '5.3'
+    gradle = '5.3.1'
     compileSdk = 28
     targetSdk = 28
     minSdk = 25
@@ -31,9 +31,9 @@ versions.build = build
 // Testing dependencies
 def testing = [:]
 testing.with {
-    espresso = '3.1.0'
+    espresso = '3.1.1'
     junit = '4.12'
-    robolectric = '4.2'
+    robolectric = '4.2.1'
     fest = '2.0M10'
 }
 versions.testing = testing
@@ -42,7 +42,7 @@ versions.testing = testing
 versions.with {
     kotlin = '1.3.21'
     androidxFragment = '1.0.0'
-    androidxAnnotation = '1.0.1'
+    androidxAnnotation = '1.0.2'
     androidxPercentLayout = '1.0.0'
     androidxPalette = '1.0.0'
     androidxLegacyPreference = '1.0.0'
@@ -51,12 +51,12 @@ versions.with {
     androidxRoom = '2.0.0'
     constraintLayout = '1.1.0'
     playServices = '16.1.0'
-    rxJava = '2.2.7'
+    rxJava = '2.2.8'
     rxAndroid = '2.1.1'
     dagger = '2.21'
     androidWearable = '2.4.0'
     prefs = '1.4.0'
-    okHttp = '3.13.1'
+    okHttp = '3.14.0'
     glide = '4.9.0'
     jsr250 = '1.0'
 }
