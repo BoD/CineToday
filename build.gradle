@@ -17,26 +17,12 @@ buildscript {
 
         // XXX Needed temporarily because of https://issuetracker.google.com/issues/119776863
         // XXX REMOVE when fixed
-        classpath 'com.android.tools.build.jetifier:jetifier-processor:1.0.0-beta03'
+        classpath 'com.android.tools.build.jetifier:jetifier-processor:1.0.0-beta04'
     }
 }
 
 allprojects {
     repositories.addRepos()
-
-//  Not needed with AndroidX ?
-//    // Force using our version of the support libraries, even for those we don't depend on directly (transitive dependencies)
-//    configurations.all {
-//        resolutionStrategy {
-//            eachDependency { details ->
-//                if (details.requested.group == 'com.android.support'
-//                        && details.requested.name != 'multidex'
-//                        && details.requested.name != 'multidex-instrumentation') {
-//                    details.useVersion versions.supportLibrary
-//                }
-//            }
-//        }
-//    }
 
     // Show a report in the log when running tests
     tasks.withType(Test) {

@@ -7,7 +7,7 @@
  *                              /___/
  * repository.
  *
- * Copyright (C) 2016 Carmen Alvarez (c@rmen.ca)
+ * Copyright (C) 2016-present Carmen Alvarez (c@rmen.ca)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,11 +24,11 @@
  */
 package org.jraf.android.cinetoday.mobile;
 
+import org.jraf.android.util.io.IoUtil;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-
-import org.jraf.android.util.io.IoUtil;
 
 public class TestUtil {
 

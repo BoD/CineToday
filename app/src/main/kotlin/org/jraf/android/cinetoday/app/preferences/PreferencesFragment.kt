@@ -7,7 +7,7 @@
  *                              /___/
  * repository.
  *
- * Copyright (C) 2017 Benoit 'BoD' Lubek (BoD@JRAF.org)
+ * Copyright (C) 2017-present Benoit 'BoD' Lubek (BoD@JRAF.org)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@ package org.jraf.android.cinetoday.app.preferences
 
 import android.os.Bundle
 import android.text.format.DateUtils
+import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
@@ -60,14 +61,14 @@ class PreferencesFragment : PreferenceFragmentCompat() {
         addPreferencesFromResource(R.xml.preferences)
 
         // Refresh
-        findPreference("refresh").setOnPreferenceClickListener {
+        findPreference<Preference>("refresh")!!.setOnPreferenceClickListener {
             if (!loadMoviesStarted) loadMoviesHelper.startLoadMoviesIntentService()
             true
         }
         setLastUpdateDateSummary()
 
         // About
-        findPreference("about").setOnPreferenceClickListener {
+        findPreference<Preference>("about")!!.setOnPreferenceClickListener {
             val builder = AboutActivityIntentBuilder()
                 .setAppName(getString(R.string.app_name))
                 .setBuildDate(BuildConfig.BUILD_DATE)
@@ -96,12 +97,12 @@ class PreferencesFragment : PreferenceFragmentCompat() {
 
                     is LoadMoviesListenerHelper.ProgressInfo.PreLoading -> {
                         loadMoviesStarted = true
-                        findPreference("refresh").isEnabled = false
+                        findPreference<Preference>("refresh")!!.isEnabled = false
                     }
 
                     is LoadMoviesListenerHelper.ProgressInfo.Loading -> {
                         loadMoviesStarted = true
-                        with(findPreference("refresh")) {
+                        with(findPreference<Preference>("refresh")!!) {
                             isEnabled = false
                             summary = getString(
                                 R.string.preference_refresh_summary_ongoing,
@@ -121,7 +122,7 @@ class PreferencesFragment : PreferenceFragmentCompat() {
 
     private fun setLastUpdateDateSummary() {
         val lastUpdateDate = mainPrefs.lastUpdateDate
-        val refreshPref = findPreference("refresh")
+        val refreshPref = findPreference<Preference>("refresh")!!
         if (lastUpdateDate == null) {
             refreshPref.setSummary(R.string.preference_refresh_summary_none)
         } else {

@@ -7,7 +7,7 @@
  *                              /___/
  * repository.
  *
- * Copyright (C) 2017 Benoit 'BoD' Lubek (BoD@JRAF.org)
+ * Copyright (C) 2017-present Benoit 'BoD' Lubek (BoD@JRAF.org)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,15 +24,15 @@
  */
 package org.jraf.android.cinetoday.model.movie;
 
+import org.fest.assertions.api.AbstractAssert;
+import org.fest.assertions.api.Assertions;
+import org.fest.util.Sets;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.Set;
 import java.util.TreeSet;
-
-import org.fest.assertions.api.AbstractAssert;
-import org.fest.assertions.api.Assertions;
-import org.fest.util.Sets;
 
 public class MovieAssert extends AbstractAssert<MovieAssert, Movie> {
 

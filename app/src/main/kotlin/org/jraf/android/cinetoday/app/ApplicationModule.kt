@@ -7,7 +7,7 @@
  *                              /___/
  * repository.
  *
- * Copyright (C) 2017 Benoit 'BoD' Lubek (BoD@JRAF.org)
+ * Copyright (C) 2017-present Benoit 'BoD' Lubek (BoD@JRAF.org)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,14 +47,20 @@ class ApplicationModule(private val mContext: Context) {
 
     @Singleton
     @Provides
-    fun provideLoadMoviesHelper(context: Context, mainPrefs: MainPrefs, api: Api, appDatabase: AppDatabase, loadMoviesListenerHelper: LoadMoviesListenerHelper): LoadMoviesHelper {
+    fun provideLoadMoviesHelper(
+        context: Context,
+        mainPrefs: MainPrefs,
+        api: Api,
+        appDatabase: AppDatabase,
+        loadMoviesListenerHelper: LoadMoviesListenerHelper
+    ): LoadMoviesHelper {
         return LoadMoviesHelper(context, mainPrefs, api, appDatabase, loadMoviesListenerHelper)
     }
 
     @Singleton
     @Provides
     fun provideMainPrefs(context: Context): MainPrefs {
-        return MainPrefs.get(context)
+        return MainPrefs(context)
     }
 
     @Singleton

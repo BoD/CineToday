@@ -7,7 +7,7 @@
  *                              /___/
  * repository.
  *
- * Copyright (C) 2015 Benoit 'BoD' Lubek (BoD@JRAF.org)
+ * Copyright (C) 2015-present Benoit 'BoD' Lubek (BoD@JRAF.org)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,19 +24,19 @@
  */
 package org.jraf.android.cinetoday.prefs
 
-import org.jraf.android.prefs.DefaultBoolean
-import org.jraf.android.prefs.Prefs
+import android.content.Context
+import org.jraf.android.kprefs.Prefs
 
-@Prefs(useAndroidX = true)
-class Main {
+class MainPrefs(context: Context) {
+    private val prefs = Prefs(context)
+
     /**
      * Last time an update was successfully called.
      */
-    var lastUpdateDate: Long? = null
+    var lastUpdateDate by prefs.Long()
 
     /**
      * Show a notification on new movie release day.
      */
-    @DefaultBoolean(true)
-    var showNewReleasesNotification: Boolean? = null
+    var showNewReleasesNotification by prefs.Boolean(true)
 }

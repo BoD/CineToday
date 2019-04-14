@@ -7,7 +7,7 @@
  *                              /___/
  * repository.
  *
- * Copyright (C) 2015 Benoit 'BoD' Lubek (BoD@JRAF.org)
+ * Copyright (C) 2015-present Benoit 'BoD' Lubek (BoD@JRAF.org)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -180,11 +180,11 @@ class MainActivity : BaseActivity(), MovieListCallbacks, TheaterFavoritesCallbac
         when (menuItem.itemId) {
             R.id.main_action_add_favorite -> startTheaterSearchActivity()
 
-            R.id.main_action_directions -> openDirectionsToTheater(mTheaterFavoritesFragment.currentVisibleTheater!!.address)
+            R.id.main_action_directions -> openDirectionsToTheater(theaterFavoritesFragment.currentVisibleTheater!!.address)
 
-            R.id.main_action_web -> openTheaterWebsite(mTheaterFavoritesFragment.currentVisibleTheater!!.name)
+            R.id.main_action_web -> openTheaterWebsite(theaterFavoritesFragment.currentVisibleTheater!!.name)
 
-            R.id.main_action_delete -> confirmDeleteTheater(mTheaterFavoritesFragment.currentVisibleTheater!!.id)
+            R.id.main_action_delete -> confirmDeleteTheater(theaterFavoritesFragment.currentVisibleTheater!!.id)
         }
         binding.actionDrawer.controller.closeDrawer()
         return false
@@ -233,26 +233,26 @@ class MainActivity : BaseActivity(), MovieListCallbacks, TheaterFavoritesCallbac
     // region Fragments.
     //--------------------------------------------------------------------------
 
-    private val mMovieListFragment: MovieListFragment by FragmentDelegate(R.id.conFragment, "MovieList") {
+    private val movieListFragment: MovieListFragment by FragmentDelegate(R.id.conFragment, "MovieList") {
         MovieListFragment.newInstance()
     }
 
-    private val mTheaterFavoritesFragment: TheaterFavoritesFragment by FragmentDelegate(
+    private val theaterFavoritesFragment: TheaterFavoritesFragment by FragmentDelegate(
         R.id.conFragment,
         "TheaterFavorites"
     ) {
         TheaterFavoritesFragment.newInstance()
     }
 
-    private val mPreferencesFragment: PreferencesFragment by FragmentDelegate(R.id.conFragment, "Preferences") {
+    private val preferencesFragment: PreferencesFragment by FragmentDelegate(R.id.conFragment, "Preferences") {
         PreferencesFragment.newInstance()
     }
 
     private fun showMovieListFragment() {
         supportFragmentManager.beginTransaction()
-            .hide(mTheaterFavoritesFragment)
-            .hide(mPreferencesFragment)
-            .show(mMovieListFragment)
+            .hide(theaterFavoritesFragment)
+            .hide(preferencesFragment)
+            .show(movieListFragment)
             .commit()
 
         binding.actionDrawer.controller.closeDrawer()
@@ -261,9 +261,9 @@ class MainActivity : BaseActivity(), MovieListCallbacks, TheaterFavoritesCallbac
 
     private fun showTheaterFavoritesFragment() {
         supportFragmentManager.beginTransaction()
-            .hide(mMovieListFragment)
-            .hide(mPreferencesFragment)
-            .show(mTheaterFavoritesFragment)
+            .hide(movieListFragment)
+            .hide(preferencesFragment)
+            .show(theaterFavoritesFragment)
             .commit()
 
         binding.actionDrawer.setIsLocked(false)
@@ -272,9 +272,9 @@ class MainActivity : BaseActivity(), MovieListCallbacks, TheaterFavoritesCallbac
 
     private fun showPreferencesFragment() {
         supportFragmentManager.beginTransaction()
-            .hide(mMovieListFragment)
-            .hide(mTheaterFavoritesFragment)
-            .show(mPreferencesFragment)
+            .hide(movieListFragment)
+            .hide(theaterFavoritesFragment)
+            .show(preferencesFragment)
             .commit()
 
         binding.actionDrawer.controller.closeDrawer()

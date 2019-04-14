@@ -7,7 +7,7 @@
  *                              /___/
  * repository.
  *
- * Copyright (C) 2016 Benoit 'BoD' Lubek (BoD@JRAF.org)
+ * Copyright (C) 2016-present Benoit 'BoD' Lubek (BoD@JRAF.org)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -223,11 +223,11 @@ class LoadMoviesHelper(
         loadMoviesListenerHelper.setIdle()
 
         // 4/ Show a notification (if prefs say so)
-        if (mainPrefs.isShowNewReleasesNotification) {
+        if (mainPrefs.showNewReleasesNotification) {
             val newMovieTitles = movies
                 .filter { it.isNew }
                 .map { it.localTitle }
-            if (!newMovieTitles.isEmpty()) showNotification(newMovieTitles)
+            if (newMovieTitles.isNotEmpty()) showNotification(newMovieTitles)
         }
     }
 
