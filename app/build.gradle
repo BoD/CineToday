@@ -2,9 +2,6 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'com.getkeepsafe.dexcount'
-// Commented for now because of https://issuetracker.google.com/issues/79122163
-//apply plugin: 'com.google.android.gms.strict-version-matcher-plugin'
-
 
 android {
     compileSdkVersion versions.build.compileSdk
@@ -126,15 +123,14 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-extensions:$versions.androidxLifecycle"
     implementation "androidx.lifecycle:lifecycle-common-java8:$versions.androidxLifecycle"
     implementation "androidx.room:room-runtime:$versions.androidxRoom"
+    implementation "androidx.constraintlayout:constraintlayout:$versions.androidxConstraintLayout"
     kapt "androidx.room:room-compiler:$versions.androidxRoom"
+    implementation "androidx.work:work-runtime-ktx:$versions.androidxWorkManager"
 
     //  Wear
     implementation "com.google.android.support:wearable:$versions.androidWearable"
     implementation "com.google.android.wearable:wearable:$versions.androidWearable"
     implementation "androidx.wear:wear:$versions.androidxWear"
-
-    // Play Services
-    implementation "com.google.android.gms:play-services-gcm:$versions.playServices"
 
     // JRAF
     implementation "org.jraf:kprefs:$versions.kprefs"

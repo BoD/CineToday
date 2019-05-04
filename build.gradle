@@ -12,8 +12,6 @@ buildscript {
         classpath "com.github.ben-manes:gradle-versions-plugin:$versions.plugins.gradleVersions"
         classpath "com.getkeepsafe.dexcount:dexcount-gradle-plugin:$versions.plugins.dexCount"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$versions.kotlin"
-        // See https://android-developers.googleblog.com/2018/05/announcing-new-sdk-versioning.html
-        classpath "com.google.android.gms:strict-version-matcher-plugin:$versions.plugins.gmsStrictVersionMatcher"
 
         // XXX Needed temporarily because of https://issuetracker.google.com/issues/119776863
         // XXX REMOVE when fixed
