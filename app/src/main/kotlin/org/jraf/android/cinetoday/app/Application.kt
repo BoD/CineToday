@@ -29,6 +29,7 @@ import android.os.Build
 import android.os.Handler
 import android.os.StrictMode
 import org.jraf.android.cinetoday.BuildConfig
+import org.jraf.android.cinetoday.app.loadmovies.LoadMoviesWorker
 import org.jraf.android.cinetoday.dagger.Components
 import org.jraf.android.util.log.Log
 
@@ -51,6 +52,9 @@ class Application : android.app.Application() {
 
         // Sqlite debug logs (don't do it for >= P because it uses reflection, which shows a nasty dialog)
         if (BuildConfig.DEBUG_LOGS && Build.VERSION.SDK_INT <= Build.VERSION_CODES.O_MR1) enableSqliteDebugLogs(false)
+
+        // Schedule load movies task
+        LoadMoviesWorker.scheduleTask()
     }
 
     private fun setupStrictMode() {
