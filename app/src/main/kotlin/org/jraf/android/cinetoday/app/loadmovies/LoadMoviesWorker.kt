@@ -28,6 +28,7 @@ import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.work.Constraints
+import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.Operation
 import androidx.work.PeriodicWorkRequestBuilder
@@ -69,7 +70,8 @@ class LoadMoviesWorker(
                 .addTag(TAG)
                 .build()
 
-            val operation = WorkManager.getInstance().enqueue(workRequest)
+            val operation = WorkManager.getInstance()
+                .enqueueUniquePeriodicWork(TAG, ExistingPeriodicWorkPolicy.REPLACE, workRequest)
             operation.state.observeAndLog()
         }
 
