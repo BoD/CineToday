@@ -55,6 +55,7 @@ import org.jraf.android.cinetoday.model.theater.Theater
 import org.jraf.android.cinetoday.util.async.doAsync
 import org.jraf.android.cinetoday.util.base.BaseActivity
 import org.jraf.android.cinetoday.util.fragment.FragmentDelegate
+import org.jraf.android.cinetoday.util.fragment.PlatformFragmentDelegate
 import org.jraf.android.cinetoday.util.uri.setData
 import org.jraf.android.util.dialog.AlertDialogListener
 import org.jraf.android.util.dialog.FrameworkAlertDialogFragment
@@ -248,7 +249,7 @@ class MainActivity : BaseActivity(), MovieListCallbacks, TheaterFavoritesCallbac
         TheaterFavoritesFragment.newInstance()
     }
 
-    private val preferencesFragment: PreferencesFragment by FragmentDelegate(
+    private val preferencesFragment: PreferencesFragment by PlatformFragmentDelegate(
         R.id.conFragment,
         "Preferences"
     ) {
@@ -258,9 +259,12 @@ class MainActivity : BaseActivity(), MovieListCallbacks, TheaterFavoritesCallbac
     private fun showMovieListFragment() {
         supportFragmentManager.commit {
             hide(theaterFavoritesFragment)
-            hide(preferencesFragment)
             show(movieListFragment)
         }
+
+        fragmentManager.beginTransaction()
+            .hide(preferencesFragment)
+            .commit()
 
         binding.actionDrawer.controller.closeDrawer()
         binding.actionDrawer.setIsLocked(true)
@@ -269,9 +273,13 @@ class MainActivity : BaseActivity(), MovieListCallbacks, TheaterFavoritesCallbac
     private fun showTheaterFavoritesFragment() {
         supportFragmentManager.commit {
             hide(movieListFragment)
-            hide(preferencesFragment)
             show(theaterFavoritesFragment)
         }
+
+        fragmentManager.beginTransaction()
+            .hide(preferencesFragment)
+            .commit()
+
 
         binding.actionDrawer.setIsLocked(false)
         peekAndHideActionDrawer = true
@@ -281,8 +289,11 @@ class MainActivity : BaseActivity(), MovieListCallbacks, TheaterFavoritesCallbac
         supportFragmentManager.commit {
             hide(movieListFragment)
             hide(theaterFavoritesFragment)
-            show(preferencesFragment)
         }
+
+        fragmentManager.beginTransaction()
+            .show(preferencesFragment)
+            .commit()
 
         binding.actionDrawer.controller.closeDrawer()
         binding.actionDrawer.setIsLocked(true)

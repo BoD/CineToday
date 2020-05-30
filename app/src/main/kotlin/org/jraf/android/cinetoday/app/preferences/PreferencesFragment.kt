@@ -25,9 +25,8 @@
 package org.jraf.android.cinetoday.app.preferences
 
 import android.os.Bundle
+import android.preference.PreferenceFragment
 import android.text.format.DateUtils
-import androidx.preference.Preference
-import androidx.preference.PreferenceFragmentCompat
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import org.jraf.android.cinetoday.BuildConfig
@@ -39,7 +38,8 @@ import org.jraf.android.cinetoday.prefs.MainPrefs
 import org.jraf.android.util.about.AboutActivityIntentBuilder
 import javax.inject.Inject
 
-class PreferencesFragment : PreferenceFragmentCompat() {
+// XXX This should be a PreferenceFragmentCompat but can't because of https://issuetracker.google.com/issues/73183201
+class PreferencesFragment : PreferenceFragment() {
     companion object {
         fun newInstance(): PreferencesFragment {
             return PreferencesFragment()
@@ -48,27 +48,30 @@ class PreferencesFragment : PreferenceFragmentCompat() {
 
     @Inject
     lateinit var loadMoviesHelper: LoadMoviesHelper
+
     @Inject
     lateinit var mainPrefs: MainPrefs
+
     @Inject
     lateinit var loadMoviesListenerHelper: LoadMoviesListenerHelper
 
     private var loadMoviesStarted: Boolean = false
     private lateinit var progressSubscription: Disposable
 
-    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
         Components.application.inject(this)
         addPreferencesFromResource(R.xml.preferences)
 
         // Refresh
-        findPreference<Preference>("refresh")!!.setOnPreferenceClickListener {
+        findPreference("refresh")!!.setOnPreferenceClickListener {
             if (!loadMoviesStarted) loadMoviesHelper.startLoadMoviesIntentService()
             true
         }
         setLastUpdateDateSummary()
 
         // About
-        findPreference<Preference>("about")!!.setOnPreferenceClickListener {
+        findPreference("about")!!.setOnPreferenceClickListener {
             val builder = AboutActivityIntentBuilder()
                 .setAppName(getString(R.string.app_name))
                 .setBuildDate(BuildConfig.BUILD_DATE)
@@ -97,12 +100,12 @@ class PreferencesFragment : PreferenceFragmentCompat() {
 
                     is LoadMoviesListenerHelper.ProgressInfo.PreLoading -> {
                         loadMoviesStarted = true
-                        findPreference<Preference>("refresh")!!.isEnabled = false
+                        findPreference("refresh")!!.isEnabled = false
                     }
 
                     is LoadMoviesListenerHelper.ProgressInfo.Loading -> {
                         loadMoviesStarted = true
-                        with(findPreference<Preference>("refresh")!!) {
+                        with(findPreference("refresh")!!) {
                             isEnabled = false
                             summary = getString(
                                 R.string.preference_refresh_summary_ongoing,
@@ -122,7 +125,7 @@ class PreferencesFragment : PreferenceFragmentCompat() {
 
     private fun setLastUpdateDateSummary() {
         val lastUpdateDate = mainPrefs.lastUpdateDate
-        val refreshPref = findPreference<Preference>("refresh")!!
+        val refreshPref = findPreference("refresh")!!
         if (lastUpdateDate == null) {
             refreshPref.setSummary(R.string.preference_refresh_summary_none)
         } else {

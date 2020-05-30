@@ -24,12 +24,11 @@
  */
 package org.jraf.android.cinetoday.util.fragment
 
+import android.app.Fragment
 import androidx.annotation.IdRes
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.commit
 import kotlin.reflect.KProperty
 
-class FragmentDelegate<out F : Fragment>(
+class PlatformFragmentDelegate<out F : Fragment>(
     @IdRes private val containerResId: Int,
     private val tag: String,
     private val provideFragmentInstance: () -> F
@@ -43,9 +42,9 @@ class FragmentDelegate<out F : Fragment>(
             if (cached == null) {
                 val fragmentInstance = provideFragmentInstance()
                 cached = fragmentInstance
-                thisRef.supportFragmentManager.commit {
-                    add(containerResId, fragmentInstance, tag)
-                }
+                thisRef.fragmentManager.beginTransaction()
+                    .add(containerResId, fragmentInstance, tag)
+                    .commit()
             }
         }
         return cached!!
