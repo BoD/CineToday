@@ -2,6 +2,7 @@ import ca.rmen.lfrc.FrenchRevolutionaryCalendar
 import org.gradle.api.Project
 import java.io.File
 import java.io.FileInputStream
+import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.GregorianCalendar
@@ -36,6 +37,20 @@ fun MutableMap<String, String>.loadFromFile(file: File) {
     }
     for ((k, v) in properties) {
         put(k.toString(), v.toString())
+    }
+}
+
+/**
+ * Store a Map<String, String> into a propertoes file.
+ */
+fun Map<String, String>.storeToFile(file: File) {
+    val properties = Properties()
+    for ((k, v) in this) {
+        properties.setProperty(k, v)
+    }
+    val fileOutputStream = FileOutputStream(file)
+    fileOutputStream.use {
+        properties.store(it, null)
     }
 }
 

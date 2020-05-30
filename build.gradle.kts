@@ -25,17 +25,15 @@ allprojects {
     }
 
     // Show a report in the log when running tests
-    tasks.withType(Test::class) {
-        // TODO
-//        testLogging {
-//            events "passed", "skipped", "failed", "standardOut", "standardError"
-//        }
+    tasks.withType<Test> {
+        testLogging {
+            events("passed", "skipped", "failed", "standardOut", "standardError")
+        }
     }
 }
 
-// Run `./gradlew dependencyUpdates` to see latest versions of dependencies
 tasks {
-    register("clean", Delete::class) {
+    register<Delete>("clean") {
         delete(rootProject.buildDir)
     }
 
@@ -45,19 +43,12 @@ tasks {
     }
 
     // Configuration for gradle-versions-plugin
+    // Run `./gradlew dependencyUpdates` to see latest versions of dependencies
     withType<DependencyUpdatesTask> {
         resolutionStrategy {
             componentSelection {
                 all {
-                    if (setOf(
-                            "alpha",
-                            "beta",
-                            "rc",
-                            "preview",
-                            "eap",
-                            "m1"
-                        ).any { candidate.version.contains(it, true) }
-                    ) {
+                    if (setOf("alpha", "beta", "rc", "preview", "eap", "m1").any { candidate.version.contains(it, true) }) {
                         reject("Non stable")
                     }
                 }
@@ -70,10 +61,29 @@ tasks {
 AppConfig.buildProperties.loadFromFile(getOrCreateFile("build.properties"))
 
 // Build number
+val buildNumberPropertiesFile = getOrCreateFile("build.number")
 val buildNumberProperties = mutableMapOf<String, String>().apply {
-    loadFromFile(getOrCreateFile("build.number"))
+    loadFromFile(buildNumberPropertiesFile)
 }
 AppConfig.buildNumber = buildNumberProperties["buildNumber"]!!.toInt()
+
+// Add a 'incrementBuildNumber' task that increments the build number
+val incrementBuildNumberTask = tasks.register("incrementBuildNumber") {
+    doFirst {
+        buildNumberProperties["buildNumber"] = (AppConfig.buildNumber + 1).toString()
+        buildNumberProperties.storeToFile(buildNumberPropertiesFile)
+    }
+}
+
+// Make the 'assembleRelease' task depend on the 'incrementBuildNumber' task of every subproject
+subprojects {
+    tasks.whenTaskAdded {
+        if (name == "assembleRelease") {
+            dependsOn(incrementBuildNumberTask)
+        }
+    }
+}
+
 
 // Splash screen
 printSplashScreen()
