@@ -39,6 +39,7 @@ import org.jraf.android.util.about.AboutActivityIntentBuilder
 import javax.inject.Inject
 
 // XXX This should be a PreferenceFragmentCompat but can't because of https://issuetracker.google.com/issues/73183201
+// Revert commit e1f5786bbe08cc0e8f528171c7e29a54332ba78f if one day this issue is resolved...
 class PreferencesFragment : PreferenceFragment() {
     companion object {
         fun newInstance(): PreferencesFragment {
