@@ -89,7 +89,7 @@ class LoadMoviesHelper(
     private fun requestHighBandwidthNetwork(timeout: Long, unit: TimeUnit): Boolean {
         val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val activeNetwork = connectivityManager.activeNetwork
-        if (activeNetwork == null || connectivityManager.getNetworkCapabilities(activeNetwork).linkDownstreamBandwidthKbps < MIN_BANDWIDTH_KBPS) {
+        if (activeNetwork == null || connectivityManager.getNetworkCapabilities(activeNetwork)!!.linkDownstreamBandwidthKbps < MIN_BANDWIDTH_KBPS) {
             val res = AtomicBoolean(false)
             val countDownLatch = CountDownLatch(1)
 
