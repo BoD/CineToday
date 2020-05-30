@@ -22,8 +22,8 @@ versions.buildLibs = buildLibs
 def build = [:]
 build.with {
     gradle = '6.4.1'
-    compileSdk = 28
-    targetSdk = 28
+    compileSdk = 29
+    targetSdk = 29
     minSdk = 25
 }
 versions.build = build
