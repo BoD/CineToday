@@ -40,9 +40,6 @@ interface ShowtimeDao {
     @Query("DELETE FROM Showtime")
     fun deleteAll()
 
-    @Query("SELECT * FROM Showtime WHERE movieId = :movieId")
-    fun showtimesByMovieIdLive(movieId: String): LiveData<Array<Showtime>>
-
     @Query(
         "SELECT "
                 + "Showtime.theaterId, "

@@ -122,8 +122,10 @@ class NetworkModule {
 
         // Logs
         if (BuildConfig.DEBUG_LOGS) builder.addInterceptor(
-            HttpLoggingInterceptor(HttpLoggingInterceptor.Logger { message ->
-                Log.d(message)
+            HttpLoggingInterceptor(object : HttpLoggingInterceptor.Logger {
+                override fun log(message: String) {
+                    Log.d(message)
+                }
             }).setLevel(HttpLoggingInterceptor.Level.HEADERS)
         )
 

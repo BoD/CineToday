@@ -29,7 +29,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Observer
+import androidx.lifecycle.observe
 import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.wear.widget.CurvingLayoutCallback
@@ -53,21 +53,21 @@ class TheaterSearchFragment : BaseFragment<TheaterSearchCallbacks>() {
         // Apply an offset + scale on the items depending on their distance from the center (only for Round screens)
         if (ScreenShapeHelper.get(context).isRound) {
             binding.rclList.layoutManager =
-                    WearableLinearLayoutManager(context, object : CurvingLayoutCallback(context) {
-                        private val FACTOR = .75f
+                WearableLinearLayoutManager(context, object : CurvingLayoutCallback(context) {
+                    private val FACTOR = .75f
 
-                        override fun onLayoutFinished(child: View, parent: RecyclerView) {
-                            super.onLayoutFinished(child, parent)
+                    override fun onLayoutFinished(child: View, parent: RecyclerView) {
+                        super.onLayoutFinished(child, parent)
 
-                            val childTop = child.y + child.height / 2f
-                            val childOffsetFromCenter = childTop - parent.height / 2f
-                            val childOffsetFromCenterRatio = Math.abs(childOffsetFromCenter / parent.height)
-                            val childOffsetFromCenterRatioNormalized = childOffsetFromCenterRatio * FACTOR
+                        val childTop = child.y + child.height / 2f
+                        val childOffsetFromCenter = childTop - parent.height / 2f
+                        val childOffsetFromCenterRatio = Math.abs(childOffsetFromCenter / parent.height)
+                        val childOffsetFromCenterRatioNormalized = childOffsetFromCenterRatio * FACTOR
 
-                            child.scaleX = 1 - childOffsetFromCenterRatioNormalized
-                            child.scaleY = 1 - childOffsetFromCenterRatioNormalized
-                        }
-                    })
+                        child.scaleX = 1 - childOffsetFromCenterRatioNormalized
+                        child.scaleY = 1 - childOffsetFromCenterRatioNormalized
+                    }
+                })
 
             // Also snaps
             LinearSnapHelper().attachToRecyclerView(binding.rclList)
@@ -79,7 +79,7 @@ class TheaterSearchFragment : BaseFragment<TheaterSearchCallbacks>() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        adapter = TheaterSearchAdapter(activity!!, callbacks)
+        adapter = TheaterSearchAdapter(requireActivity(), callbacks)
         binding.rclList.adapter = adapter
     }
 
@@ -88,10 +88,10 @@ class TheaterSearchFragment : BaseFragment<TheaterSearchCallbacks>() {
         val args = Bundle()
         args.putString("query", query)
         theaterSearchLiveData.query = query
-        theaterSearchLiveData.observe(this, Observer {
+        theaterSearchLiveData.observe(viewLifecycleOwner) {
             adapter.setLoading(false)
             adapter.setResults(it)
-        })
+        }
     }
 
 }

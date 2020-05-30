@@ -30,7 +30,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.TextView
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Observer
+import androidx.lifecycle.observe
 import org.jraf.android.cinetoday.R
 import org.jraf.android.cinetoday.dagger.Components
 import org.jraf.android.cinetoday.database.AppDatabase
@@ -63,9 +63,8 @@ class MovieDetailsActivity : BaseActivity() {
         binding.conMovie.setOnScrollChangeListener(mOnScrollChangeListener)
 
         val movieId = intent.data!!.contentId
-        database.movieDao.movieByIdLive(movieId).observe(this, Observer { if (it != null) onMovieResult(it) })
-        database.showtimeDao.showtimesWithTheaterByMovieIdLive(movieId)
-            .observe(this, Observer { if (it != null) onShowtimesResult(it) })
+        database.movieDao.movieByIdLive(movieId).observe(this) { if (it != null) onMovieResult(it) }
+        database.showtimeDao.showtimesWithTheaterByMovieIdLive(movieId).observe(this, ::onShowtimesResult)
     }
 
     private fun onMovieResult(movie: Movie) {

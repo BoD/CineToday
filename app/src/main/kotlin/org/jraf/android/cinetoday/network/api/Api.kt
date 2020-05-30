@@ -147,7 +147,7 @@ class Api(
             val jsonTheaters = jsonFeed.getJSONArray("theater")
             val len = jsonTheaters.length()
             val res = mutableListOf<Theater>()
-            for (i in 0..len - 1) {
+            for (i in 0 until len) {
                 val jsonTheater = jsonTheaters.getJSONObject(i)
                 val theater = Theater(
                     id = "",
@@ -174,7 +174,7 @@ class Api(
         if (!useCache) urlBuilder.cacheControl(CacheControl.FORCE_NETWORK)
         val request = urlBuilder.build()
         val response = cachingOkHttpClient.newCall(request).execute()
-        return response.body()?.string() ?: ""
+        return response.body?.string() ?: ""
     }
 
     private fun getBaseBuilder(path: String): HttpUrl.Builder {

@@ -12,10 +12,6 @@ buildscript {
         classpath "com.github.ben-manes:gradle-versions-plugin:$versions.plugins.gradleVersions"
         classpath "com.getkeepsafe.dexcount:dexcount-gradle-plugin:$versions.plugins.dexCount"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$versions.kotlin"
-
-        // XXX Needed temporarily because of https://issuetracker.google.com/issues/119776863
-        // XXX REMOVE when fixed
-        classpath 'com.android.tools.build.jetifier:jetifier-processor:1.0.0-beta04'
     }
 }
 

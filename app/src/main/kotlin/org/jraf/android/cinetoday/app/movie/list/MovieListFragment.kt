@@ -33,7 +33,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.ColorInt
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Observer
+import androidx.lifecycle.observe
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -49,7 +49,6 @@ import org.jraf.android.cinetoday.util.base.BaseFragment
 import org.jraf.android.cinetoday.widget.RotaryPagerSnapHelper
 import javax.inject.Inject
 
-
 class MovieListFragment : BaseFragment<MovieListCallbacks>(), PaletteListener {
     companion object {
         fun newInstance(): MovieListFragment {
@@ -59,6 +58,7 @@ class MovieListFragment : BaseFragment<MovieListCallbacks>(), PaletteListener {
 
     @Inject
     lateinit var database: AppDatabase
+
     @Inject
     lateinit var loadMoviesListenerHelper: LoadMoviesListenerHelper
 
@@ -74,12 +74,6 @@ class MovieListFragment : BaseFragment<MovieListCallbacks>(), PaletteListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Components.application.inject(this)
-        database.movieDao.allMoviesLive().observe(this, Observer { if (it != null) onMoviesResult(it) })
-    }
-
-    override fun onDestroy() {
-        progressSubscription.dispose()
-        super.onDestroy()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -92,9 +86,9 @@ class MovieListFragment : BaseFragment<MovieListCallbacks>(), PaletteListener {
         binding.rclList.addOnScrollListener(onScrollListener)
 
         progressSubscription =
-                loadMoviesListenerHelper.progressInfo
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe {
+            loadMoviesListenerHelper.progressInfo
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
                     when (it) {
                         is LoadMoviesListenerHelper.ProgressInfo.Idle -> {
                             loadMoviesStarted = false
@@ -130,6 +124,10 @@ class MovieListFragment : BaseFragment<MovieListCallbacks>(), PaletteListener {
         return binding.root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        database.movieDao.allMoviesLive().observe(viewLifecycleOwner, ::onMoviesResult)
+    }
+
     private fun onMoviesResult(movies: Array<Movie>) {
         binding.pgbLoading.visibility = View.GONE
         if (movies.isEmpty()) {
@@ -152,7 +150,7 @@ class MovieListFragment : BaseFragment<MovieListCallbacks>(), PaletteListener {
 
             var adapter: MovieListAdapter? = adapter
             if (adapter == null) {
-                adapter = MovieListAdapter(context!!, callbacks, this)
+                adapter = MovieListAdapter(requireContext(), callbacks, this)
                 this.adapter = adapter
                 binding.rclList.adapter = adapter
             }
@@ -219,5 +217,10 @@ class MovieListFragment : BaseFragment<MovieListCallbacks>(), PaletteListener {
             val resultColor = argbEvaluator.evaluate(firstItemRatio, firstItemColor, nextItemColor) as Int
             binding.conRoot.setBackgroundColor(resultColor)
         }
+    }
+
+    override fun onDestroy() {
+        progressSubscription.dispose()
+        super.onDestroy()
     }
 }

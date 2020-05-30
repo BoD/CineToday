@@ -32,6 +32,7 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.view.ViewTreeObserver
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.commit
 import androidx.wear.widget.ConfirmationOverlay
 import androidx.wear.widget.drawer.WearableDrawerLayout
 import androidx.wear.widget.drawer.WearableDrawerView
@@ -65,7 +66,8 @@ import java.net.URLEncoder
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-class MainActivity : BaseActivity(), MovieListCallbacks, TheaterFavoritesCallbacks, MenuItem.OnMenuItemClickListener,
+class MainActivity : BaseActivity(), MovieListCallbacks, TheaterFavoritesCallbacks,
+    MenuItem.OnMenuItemClickListener,
     AlertDialogListener {
 
     companion object {
@@ -76,6 +78,7 @@ class MainActivity : BaseActivity(), MovieListCallbacks, TheaterFavoritesCallbac
 
     @Inject
     lateinit var database: AppDatabase
+
     @Inject
     lateinit var loadMoviesHelper: LoadMoviesHelper
 
@@ -105,15 +108,13 @@ class MainActivity : BaseActivity(), MovieListCallbacks, TheaterFavoritesCallbac
 
         // Workaround for http://stackoverflow.com/questions/42141631
         // XXX If the screen is round, we consider the height *must* be the same as the width
-        if (ScreenShapeHelper.get(this).isRound) binding.conFragment.layoutParams.height =
-                ScreenShapeHelper.get(this).width
+        if (ScreenShapeHelper.get(this).isRound) binding.conFragment.layoutParams.height = ScreenShapeHelper.get(this).width
 
         showMovieListFragment()
         ensureFavoriteTheaters()
 
         // Peek navigation drawer when app starts
-        binding.drawerLayout.viewTreeObserver.addOnGlobalLayoutListener(object :
-            ViewTreeObserver.OnGlobalLayoutListener {
+        binding.drawerLayout.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
                 binding.navigationDrawer.controller.peekDrawer()
                 binding.drawerLayout.viewTreeObserver.removeOnGlobalLayoutListener(this)
@@ -122,7 +123,10 @@ class MainActivity : BaseActivity(), MovieListCallbacks, TheaterFavoritesCallbac
 
         // Peek action drawer when on the theaters section
         binding.drawerLayout.setDrawerStateCallback(object : WearableDrawerLayout.DrawerStateCallback() {
-            override fun onDrawerClosed(layout: WearableDrawerLayout, drawerView: WearableDrawerView) {
+            override fun onDrawerClosed(
+                layout: WearableDrawerLayout,
+                drawerView: WearableDrawerView
+            ) {
                 if (drawerView === binding.navigationDrawer && peekAndHideActionDrawer) {
                     binding.actionDrawer.controller.peekDrawer()
                     scheduleHideActionDrawer()
@@ -143,11 +147,11 @@ class MainActivity : BaseActivity(), MovieListCallbacks, TheaterFavoritesCallbac
     }
 
     private fun scheduleHideActionDrawer() {
-        HandlerUtil.getMainHandler().removeCallbacks(mHideActionDrawerRunnable)
-        HandlerUtil.getMainHandler().postDelayed(mHideActionDrawerRunnable, DELAY_HIDE_ACTION_DRAWER_MS)
+        HandlerUtil.getMainHandler().removeCallbacks(hideActionDrawerRunnable)
+        HandlerUtil.getMainHandler().postDelayed(hideActionDrawerRunnable, DELAY_HIDE_ACTION_DRAWER_MS)
     }
 
-    private val mHideActionDrawerRunnable = Runnable {
+    private val hideActionDrawerRunnable = Runnable {
         if (binding.actionDrawer.isPeeking) {
             binding.actionDrawer.controller.closeDrawer()
         }
@@ -179,11 +183,8 @@ class MainActivity : BaseActivity(), MovieListCallbacks, TheaterFavoritesCallbac
         Log.d()
         when (menuItem.itemId) {
             R.id.main_action_add_favorite -> startTheaterSearchActivity()
-
             R.id.main_action_directions -> openDirectionsToTheater(theaterFavoritesFragment.currentVisibleTheater!!.address)
-
             R.id.main_action_web -> openTheaterWebsite(theaterFavoritesFragment.currentVisibleTheater!!.name)
-
             R.id.main_action_delete -> confirmDeleteTheater(theaterFavoritesFragment.currentVisibleTheater!!.id)
         }
         binding.actionDrawer.controller.closeDrawer()
@@ -233,7 +234,10 @@ class MainActivity : BaseActivity(), MovieListCallbacks, TheaterFavoritesCallbac
     // region Fragments.
     //--------------------------------------------------------------------------
 
-    private val movieListFragment: MovieListFragment by FragmentDelegate(R.id.conFragment, "MovieList") {
+    private val movieListFragment: MovieListFragment by FragmentDelegate(
+        R.id.conFragment,
+        "MovieList"
+    ) {
         MovieListFragment.newInstance()
     }
 
@@ -244,38 +248,41 @@ class MainActivity : BaseActivity(), MovieListCallbacks, TheaterFavoritesCallbac
         TheaterFavoritesFragment.newInstance()
     }
 
-    private val preferencesFragment: PreferencesFragment by FragmentDelegate(R.id.conFragment, "Preferences") {
+    private val preferencesFragment: PreferencesFragment by FragmentDelegate(
+        R.id.conFragment,
+        "Preferences"
+    ) {
         PreferencesFragment.newInstance()
     }
 
     private fun showMovieListFragment() {
-        supportFragmentManager.beginTransaction()
-            .hide(theaterFavoritesFragment)
-            .hide(preferencesFragment)
-            .show(movieListFragment)
-            .commit()
+        supportFragmentManager.commit {
+            hide(theaterFavoritesFragment)
+            hide(preferencesFragment)
+            show(movieListFragment)
+        }
 
         binding.actionDrawer.controller.closeDrawer()
         binding.actionDrawer.setIsLocked(true)
     }
 
     private fun showTheaterFavoritesFragment() {
-        supportFragmentManager.beginTransaction()
-            .hide(movieListFragment)
-            .hide(preferencesFragment)
-            .show(theaterFavoritesFragment)
-            .commit()
+        supportFragmentManager.commit {
+            hide(movieListFragment)
+            hide(preferencesFragment)
+            show(theaterFavoritesFragment)
+        }
 
         binding.actionDrawer.setIsLocked(false)
         peekAndHideActionDrawer = true
     }
 
     private fun showPreferencesFragment() {
-        supportFragmentManager.beginTransaction()
-            .hide(movieListFragment)
-            .hide(theaterFavoritesFragment)
-            .show(preferencesFragment)
-            .commit()
+        supportFragmentManager.commit {
+            hide(movieListFragment)
+            hide(theaterFavoritesFragment)
+            show(preferencesFragment)
+        }
 
         binding.actionDrawer.controller.closeDrawer()
         binding.actionDrawer.setIsLocked(true)
@@ -294,10 +301,7 @@ class MainActivity : BaseActivity(), MovieListCallbacks, TheaterFavoritesCallbac
 
     override fun onMovieClick(movie: Movie) {
         Log.d()
-        startActivity(
-            Intent(this, MovieDetailsActivity::class.java)
-                .setData(movie)
-        )
+        startActivity(Intent(this, MovieDetailsActivity::class.java).setData(movie))
     }
 
     // endregion

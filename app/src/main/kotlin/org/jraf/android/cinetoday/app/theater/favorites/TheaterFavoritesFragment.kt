@@ -29,7 +29,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Observer
+import androidx.lifecycle.observe
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import org.jraf.android.cinetoday.R
@@ -58,7 +58,6 @@ class TheaterFavoritesFragment : BaseFragment<TheaterFavoritesCallbacks>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Components.application.inject(this)
-        database.theaterDao.allTheatersLive().observe(this, Observer { if (it != null) onTheatersResult(it) })
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -73,11 +72,15 @@ class TheaterFavoritesFragment : BaseFragment<TheaterFavoritesCallbacks>() {
         return binding.root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        database.theaterDao.allTheatersLive().observe(viewLifecycleOwner, ::onTheatersResult)
+    }
+
     private fun onTheatersResult(theaters: Array<Theater>) {
         binding.pgbLoading.visibility = View.GONE
         var adapter: TheaterFavoritesAdapter? = adapter
         if (adapter == null) {
-            adapter = TheaterFavoritesAdapter(context!!)
+            adapter = TheaterFavoritesAdapter(requireContext())
             this.adapter = adapter
             binding.rclList.adapter = adapter
         }

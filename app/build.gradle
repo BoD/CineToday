@@ -56,8 +56,8 @@ android {
         }
     }
 
-    dataBinding {
-        enabled = true
+    buildFeatures{
+        dataBinding = true
     }
 
     lintOptions {
@@ -71,8 +71,12 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility 1.8
-        targetCompatibility 1.8
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8.toString()
     }
 }
 
@@ -115,16 +119,16 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$versions.kotlin"
 
     // AndroidX
-    implementation "androidx.fragment:fragment:$versions.androidxFragment"
+    implementation "androidx.fragment:fragment-ktx:$versions.androidxFragment"
     implementation "androidx.annotation:annotation:$versions.androidxAnnotation"
     implementation "androidx.percentlayout:percentlayout:$versions.androidxPercentLayout"
     implementation "androidx.palette:palette:$versions.androidxPalette"
-    implementation "androidx.preference:preference:$versions.androidxPreference"
-    implementation "androidx.lifecycle:lifecycle-extensions:$versions.androidxLifecycle"
-    implementation "androidx.lifecycle:lifecycle-common-java8:$versions.androidxLifecycle"
+    implementation "androidx.preference:preference-ktx:$versions.androidxPreference"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$versions.androidxLifecycle"
     implementation "androidx.room:room-runtime:$versions.androidxRoom"
-    implementation "androidx.constraintlayout:constraintlayout:$versions.androidxConstraintLayout"
     kapt "androidx.room:room-compiler:$versions.androidxRoom"
+    implementation "androidx.room:room-ktx:$versions.androidxRoom"
+    implementation "androidx.constraintlayout:constraintlayout:$versions.androidxConstraintLayout"
     implementation "androidx.work:work-runtime-ktx:$versions.androidxWorkManager"
 
     //  Wear
