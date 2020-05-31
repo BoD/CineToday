@@ -67,7 +67,7 @@ val buildNumberProperties = mutableMapOf<String, String>().apply {
 }
 AppConfig.buildNumber = buildNumberProperties["buildNumber"]!!.toInt()
 
-// Add a 'incrementBuildNumber' task that increments the build number
+// Add an 'incrementBuildNumber' task that increments the build number
 val incrementBuildNumberTask = tasks.register("incrementBuildNumber") {
     doFirst {
         buildNumberProperties["buildNumber"] = (AppConfig.buildNumber + 1).toString()
