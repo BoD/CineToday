@@ -119,51 +119,51 @@ dependencies {
     implementation(kotlin("stdlib", Versions.KOTLIN))
 
     // AndroidX
-    implementation("androidx.fragment:fragment-ktx:${Versions.ANDROIDX_FRAGMENT}")
-    implementation("androidx.annotation:annotation:${Versions.ANDROIDX_ANNOTATION}")
-    implementation("androidx.percentlayout:percentlayout:${Versions.ANDROIDX_PERCENT_LAYOUT}")
-    implementation("androidx.palette:palette:${Versions.ANDROIDX_PALETTE}")
-    implementation("androidx.preference:preference-ktx:${Versions.ANDROIDX_PREFERENCE}")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:${Versions.ANDROIDX_LIFECYCLE}")
-    implementation("androidx.room:room-runtime:${Versions.ANDROIDX_ROOM}")
-    kapt("androidx.room:room-compiler:${Versions.ANDROIDX_ROOM}")
-    implementation("androidx.room:room-ktx:${Versions.ANDROIDX_ROOM}")
-    implementation("androidx.constraintlayout:constraintlayout:${Versions.ANDROIDX_CONSTRAINT_LAYOUT}")
-    implementation("androidx.work:work-runtime-ktx:${Versions.ANDROIDX_WORK_MANAGER}")
+    implementation("androidx.fragment", "fragment-ktx", Versions.ANDROIDX_FRAGMENT)
+    implementation("androidx.annotation", "annotation", Versions.ANDROIDX_ANNOTATION)
+    implementation("androidx.percentlayout", "percentlayout", Versions.ANDROIDX_PERCENT_LAYOUT)
+    implementation("androidx.palette", "palette", Versions.ANDROIDX_PALETTE)
+    implementation("androidx.preference", "preference-ktx", Versions.ANDROIDX_PREFERENCE)
+    implementation("androidx.lifecycle", "lifecycle-livedata-ktx", Versions.ANDROIDX_LIFECYCLE)
+    implementation("androidx.room", "room-runtime", Versions.ANDROIDX_ROOM)
+    kapt("androidx.room", "room-compiler", Versions.ANDROIDX_ROOM)
+    implementation("androidx.room", "room-ktx", Versions.ANDROIDX_ROOM)
+    implementation("androidx.constraintlayout", "constraintlayout", Versions.ANDROIDX_CONSTRAINT_LAYOUT)
+    implementation("androidx.work", "work-runtime-ktx", Versions.ANDROIDX_WORK_MANAGER)
 
     //  Wear
-    implementation("com.google.android.support:wearable:${Versions.ANDROID_WEARABLE}")
-    implementation("com.google.android.wearable:wearable:${Versions.ANDROID_WEARABLE}")
-    implementation("androidx.wear:wear:${Versions.ANDROIDX_WEAR}")
+    implementation("com.google.android.support", "wearable", Versions.ANDROID_WEARABLE)
+    implementation("com.google.android.wearable", "wearable", Versions.ANDROID_WEARABLE)
+    implementation("androidx.wear", "wear", Versions.ANDROIDX_WEAR)
 
     // JRAF
-    implementation("org.jraf:kprefs:${Versions.KPREFS}")
-    implementation("com.github.BoD:jraf-android-util:-SNAPSHOT")
+    implementation("org.jraf", "kprefs", Versions.KPREFS)
+    implementation("com.github.BoD", "jraf-android-util", "-SNAPSHOT")
 
     // OkHttp
-    implementation("com.squareup.okhttp3:okhttp:${Versions.OK_HTTP}")
-    implementation("com.squareup.okhttp3:logging-interceptor:${Versions.OK_HTTP}")
+    implementation("com.squareup.okhttp3", "okhttp", Versions.OK_HTTP)
+    implementation("com.squareup.okhttp3", "logging-interceptor", Versions.OK_HTTP)
 
     // Glide
-    implementation("com.github.bumptech.glide:glide:${Versions.GLIDE}")
-    kapt("com.github.bumptech.glide:compiler:${Versions.GLIDE}")
-    implementation("com.github.bumptech.glide:okhttp3-integration:${Versions.GLIDE}")
+    implementation("com.github.bumptech.glide", "glide", Versions.GLIDE)
+    kapt("com.github.bumptech.glide", "compiler", Versions.GLIDE)
+    implementation("com.github.bumptech.glide", "okhttp3-integration", Versions.GLIDE)
 
     // Dagger
-    implementation("com.google.dagger:dagger:${Versions.DAGGER}")
-    kapt("com.google.dagger:dagger-compiler:${Versions.DAGGER}")
-    compileOnly("javax.annotation:jsr250-api:${Versions.JSR_250}")
+    implementation("com.google.dagger", "dagger", Versions.DAGGER)
+    kapt("com.google.dagger", "dagger-compiler", Versions.DAGGER)
+    compileOnly("javax.annotation", "jsr250-api", Versions.JSR_250)
 
     // Rx
-    implementation("io.reactivex.rxjava2:rxandroid:${Versions.RX_ANDROID}")
-    implementation("io.reactivex.rxjava2:rxjava:${Versions.RX_JAVA}")
+    implementation("io.reactivex.rxjava2", "rxandroid", Versions.RX_ANDROID)
+    implementation("io.reactivex.rxjava2", "rxjava", Versions.RX_JAVA)
 
 
     // Testing
-    androidTestImplementation("androidx.test.espresso:espresso-core:${Versions.ESPRESSO}") {
+    androidTestImplementation("androidx.test.espresso", "espresso-core", Versions.ESPRESSO) {
         exclude(group = "com.android.support", module = "support-annotations")
     }
-    testImplementation("junit:junit:${Versions.JUNIT}")
-    testImplementation("org.robolectric:robolectric:${Versions.ROBOLECTRIC}")
-    testImplementation("org.easytesting:fest-assert-core:${Versions.FEST}")
+    testImplementation("junit", "junit", Versions.JUNIT)
+    testImplementation("org.robolectric", "robolectric", Versions.ROBOLECTRIC)
+    testImplementation("org.easytesting", "fest-assert-core", Versions.FEST)
 }

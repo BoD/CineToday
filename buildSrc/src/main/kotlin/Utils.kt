@@ -63,12 +63,20 @@ private fun exec(vararg command: String): String = ProcessBuilder(*command)
 /**
  * Returns the SHA1 of the current git commit.
  */
-fun Project.getGitSha1(): String = exec("git", "--git-dir=${rootDir}/.git", "--work-tree=${rootDir}", "rev-parse", "--short", "HEAD")
+fun Project.getGitSha1(): String = try {
+    exec("git", "--git-dir=${rootDir}/.git", "--work-tree=${rootDir}", "rev-parse", "--short", "HEAD")
+} catch (t: Throwable) {
+    "(Unknown)"
+}
 
 /**
  * Returns the name of the current git branch.
  */
-fun Project.getGitBranch(): String = exec("git", "--git-dir=${rootDir}/.git", "--work-tree=${rootDir}", "rev-parse", "--abbrev-ref", "HEAD")
+fun Project.getGitBranch(): String = try {
+    exec("git", "--git-dir=${rootDir}/.git", "--work-tree=${rootDir}", "rev-parse", "--abbrev-ref", "HEAD")
+} catch (t: Throwable) {
+    "(Unknown)"
+}
 
 /**
  * The current date/time formatted in UTC.
