@@ -180,9 +180,7 @@ class LoadMoviesHelper(
                         api.getMovieInfo(movieFromApi)
                         Log.d(movieFromApi.toString())
                     } catch (e: Exception) {
-                        Log.e(e, "Could not load movie info: movie = %s", movieFromApi)
-                        loadMoviesListenerHelper.pushError(e)
-                        throw e
+                        Log.w(e, "Could not load movie info: movie = %s - skipping", movieFromApi)
                     }
                 }
 

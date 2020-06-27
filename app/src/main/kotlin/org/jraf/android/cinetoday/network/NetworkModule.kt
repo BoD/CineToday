@@ -37,9 +37,15 @@ import org.jraf.android.cinetoday.network.api.codec.showtime.ShowtimeCodec
 import org.jraf.android.cinetoday.network.api.codec.theater.TheaterCodec
 import org.jraf.android.util.log.Log
 import java.io.File
+import java.security.SecureRandom
+import java.security.cert.X509Certificate
 import java.util.concurrent.TimeUnit
 import javax.inject.Named
 import javax.inject.Singleton
+import javax.net.ssl.HostnameVerifier
+import javax.net.ssl.SSLContext
+import javax.net.ssl.TrustManager
+import javax.net.ssl.X509TrustManager
 
 
 @Module
@@ -129,7 +135,26 @@ class NetworkModule {
             }).setLevel(HttpLoggingInterceptor.Level.HEADERS)
         )
 
+        // Ignore any SSL problem
+        builder.ignoreAllSSLErrors()
 
         return builder.build()
     }
+}
+
+private fun OkHttpClient.Builder.ignoreAllSSLErrors(): OkHttpClient.Builder {
+    val naiveTrustManager = object : X509TrustManager {
+        override fun getAcceptedIssuers(): Array<X509Certificate> = arrayOf()
+        override fun checkClientTrusted(certs: Array<X509Certificate>, authType: String) = Unit
+        override fun checkServerTrusted(certs: Array<X509Certificate>, authType: String) = Unit
+    }
+
+    val insecureSocketFactory = SSLContext.getInstance("TLS").apply {
+        val trustAllCerts = arrayOf<TrustManager>(naiveTrustManager)
+        init(null, trustAllCerts, SecureRandom())
+    }.socketFactory
+
+    sslSocketFactory(insecureSocketFactory, naiveTrustManager)
+    hostnameVerifier(HostnameVerifier { _, _ -> true })
+    return this
 }
