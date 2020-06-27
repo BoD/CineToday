@@ -1,12 +1,12 @@
 object Versions {
     // Misc and plugins
-    const val GRADLE = "6.4.1"
+    const val GRADLE = "6.5"
     const val KOTLIN = "1.3.72"
     const val BEN_MANES_VERSIONS_PLUGIN = "0.28.0"
     const val ANDROID_GRADLE_PLUGIN = "4.0.0"
 
     // App dependencies
-    const val ANDROIDX_FRAGMENT = "1.2.4"
+    const val ANDROIDX_FRAGMENT = "1.2.5"
     const val ANDROIDX_ANNOTATION = "1.1.0"
     const val ANDROIDX_PERCENT_LAYOUT = "1.0.0"
     const val ANDROIDX_PALETTE = "1.0.0"
@@ -18,7 +18,7 @@ object Versions {
     const val ANDROIDX_CONSTRAINT_LAYOUT = "1.1.3"
     const val RX_JAVA = "2.2.19"
     const val RX_ANDROID = "2.1.1"
-    const val DAGGER = "2.28"
+    const val DAGGER = "2.28.1"
     const val ANDROID_WEARABLE = "2.7.0"
     const val KPREFS = "1.3.0"
     const val OK_HTTP = "4.7.2"
