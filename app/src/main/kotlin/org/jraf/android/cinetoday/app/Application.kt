@@ -54,7 +54,7 @@ class Application : android.app.Application() {
         if (BuildConfig.DEBUG_LOGS && Build.VERSION.SDK_INT <= Build.VERSION_CODES.O_MR1) enableSqliteDebugLogs(false)
 
         // Schedule load movies task
-        LoadMoviesWorker.scheduleTask()
+        LoadMoviesWorker.scheduleTask(this)
     }
 
     private fun setupStrictMode() {

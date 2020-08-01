@@ -30,6 +30,7 @@ import android.view.MotionEvent
 import android.view.View
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
+import kotlin.math.roundToInt
 
 class RotaryPagerSnapHelper : PagerSnapHelper() {
     private var snapHandler = Handler()
@@ -39,11 +40,11 @@ class RotaryPagerSnapHelper : PagerSnapHelper() {
         super.attachToRecyclerView(recyclerView)
 
         // Handle snap with the rotary input
+        recyclerView?.requestFocus()
         recyclerView?.setOnGenericMotionListener(View.OnGenericMotionListener { v, motionEvent ->
             if (motionEvent.action == MotionEvent.ACTION_SCROLL && RotaryEncoder.isFromRotaryEncoder(motionEvent)) {
-                val delta =
-                    -RotaryEncoder.getRotaryAxisValue(motionEvent) * RotaryEncoder.getScaledScrollFactor(v.context) * 1.5f
-                v.scrollBy(0, Math.round(delta))
+                val delta = -RotaryEncoder.getRotaryAxisValue(motionEvent) * RotaryEncoder.getScaledScrollFactor(v.context) * 1.5f
+                v.scrollBy(0, delta.roundToInt())
 
                 // Snap
                 snapRunnable?.let { snapHandler.removeCallbacks(it) }
@@ -56,7 +57,7 @@ class RotaryPagerSnapHelper : PagerSnapHelper() {
                         }
                     }
                 }
-                snapHandler.postDelayed(snapRunnable, 100)
+                snapRunnable?.let { snapHandler.postDelayed(it, 100) }
 
                 return@OnGenericMotionListener true
             }

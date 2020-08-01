@@ -28,6 +28,7 @@ import android.text.Html
 import org.jraf.android.cinetoday.model.movie.Movie
 import org.jraf.android.cinetoday.network.api.Api
 import org.jraf.android.cinetoday.network.api.ParseException
+import org.jraf.android.cinetoday.util.json.stringOrNull
 import org.jraf.android.util.log.Log
 import org.json.JSONException
 import org.json.JSONObject
@@ -39,16 +40,16 @@ class MovieCodec {
             movie.id = jsonMovie.getString("code")
             movie.localTitle = jsonMovie.getString("title")
             // Original title defaults to local title
-            movie.originalTitle = jsonMovie.optString("originalTitle", null) ?: movie.localTitle
-            movie.synopsis = jsonMovie.optString("synopsis", null)?.let {
+            movie.originalTitle = jsonMovie.stringOrNull("originalTitle") ?: movie.localTitle
+            movie.synopsis = jsonMovie.stringOrNull("synopsis")?.let {
                 // Strip html
                 @Suppress("DEPRECATION")
                 Html.fromHtml(it).toString().trim()
             }
 
             jsonMovie.optJSONObject("castingShort")?.let {
-                movie.directors = it.optString("directors", null)
-                movie.actors = it.optString("actors", null)
+                movie.directors = it.stringOrNull("directors")
+                movie.actors = it.stringOrNull("actors")
             }
 
             movie.releaseDate = jsonMovie.optJSONObject("release")?.let {

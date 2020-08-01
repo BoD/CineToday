@@ -59,7 +59,7 @@ class LoadMoviesWorker(
     companion object {
         private val TAG = LoadMoviesWorker::class.java.simpleName
 
-        fun scheduleTask() {
+        fun scheduleTask(context: Context) {
             Log.d()
             val workRequest = PeriodicWorkRequestBuilder<LoadMoviesWorker>(12, TimeUnit.HOURS)
                 .setConstraints(
@@ -70,7 +70,7 @@ class LoadMoviesWorker(
                 .addTag(TAG)
                 .build()
 
-            val operation = WorkManager.getInstance()
+            val operation = WorkManager.getInstance(context)
                 .enqueueUniquePeriodicWork(TAG, ExistingPeriodicWorkPolicy.REPLACE, workRequest)
             operation.state.observeAndLog()
         }
