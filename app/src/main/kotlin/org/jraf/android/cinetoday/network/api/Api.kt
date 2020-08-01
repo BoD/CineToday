@@ -24,6 +24,7 @@
  */
 package org.jraf.android.cinetoday.network.api
 
+import android.util.Base64
 import androidx.annotation.VisibleForTesting
 import androidx.annotation.VisibleForTesting.PRIVATE
 import androidx.annotation.WorkerThread
@@ -36,6 +37,7 @@ import org.jraf.android.cinetoday.model.theater.Theater
 import org.jraf.android.cinetoday.network.api.codec.movie.MovieCodec
 import org.jraf.android.cinetoday.network.api.codec.showtime.ShowtimeCodec
 import org.jraf.android.cinetoday.network.api.codec.theater.TheaterCodec
+import org.jraf.android.cinetoday.util.sha1.sha1
 import org.jraf.android.util.log.Log
 import org.json.JSONException
 import org.json.JSONObject
@@ -57,7 +59,7 @@ class Api(
     fun getMovieList(movies: MutableSet<Movie>, theaterId: String, date: Date) {
         val url = getBaseBuilder(PATH_SHOWTIMELIST)
             .addQueryParameter(QUERY_THEATERS_KEY, theaterId)
-            .addQueryParameter(QUERY_DATE_KEY, SIMPLE_DATE_FORMAT.format(date))
+            .addQueryParameter(QUERY_DATE_KEY, MAIN_DATE_FORMAT.format(date))
             .build()
         val jsonStr = call(url, false)
         parseMovieList(movies, jsonStr, theaterId, date)
@@ -169,8 +171,21 @@ class Api(
     @WorkerThread
     @Throws(IOException::class)
     private fun call(url: HttpUrl, useCache: Boolean): String {
-        Log.d("url=%s", url)
-        val urlBuilder = Request.Builder().url(url)
+        Log.d("url=$url")
+        val method = url.encodedPathSegments.lastOrNull()
+        val paramList = url.encodedQuery
+        val signatureBase = method + paramList + SIGNATURE_SECRET
+        val signatureSha1 = sha1(signatureBase)
+        val signatureBase64 = Base64.encodeToString(signatureSha1, Base64.NO_WRAP)
+
+        Log.d("method=$method paramList=$paramList signatureBase=$signatureBase signatureBase64=$signatureBase64")
+
+        val urlWithSignature = url.newBuilder()
+            .addQueryParameter(QUERY_SIGNATURE_KEY, signatureBase64)
+            .build()
+        Log.d("urlWithSignature=$urlWithSignature")
+
+        val urlBuilder = Request.Builder().url(urlWithSignature)
         if (!useCache) urlBuilder.cacheControl(CacheControl.FORCE_NETWORK)
         val request = urlBuilder.build()
         val response = cachingOkHttpClient.newCall(request).execute()
@@ -186,31 +201,56 @@ class Api(
             .addPathSegment(path)
             .addQueryParameter(QUERY_PARTNER_KEY, QUERY_PARTNER_VALUE)
             .addQueryParameter(QUERY_FORMAT_KEY, QUERY_FORMAT_VALUE)
+            .addQueryParameter(QUERY_SED_DATE_KEY, SED_DATE_FORMAT.format(Date()))
     }
 
     companion object {
-        val SIMPLE_DATE_FORMAT = SimpleDateFormat("yyyy-MM-dd", Locale.US)
+        val MAIN_DATE_FORMAT = SimpleDateFormat("yyyy-MM-dd", Locale.US)
+        private val SED_DATE_FORMAT = SimpleDateFormat("yyyyMMdd", Locale.US)
+
+        private const val SIGNATURE_SECRET = "1a1ed8c1bed24d60ae3472eed1da33eb"
 
         private const val SCHEME = "http"
         private const val HOST = "api.allocine.fr"
         private const val PATH_REST = "rest"
         private const val PATH_V3 = "v3"
+
         private const val QUERY_PARTNER_KEY = "partner"
-        private const val QUERY_PARTNER_VALUE = "YW5kcm9pZC12M3M"
+        private const val QUERY_PARTNER_VALUE = "100ED1DA33EB"
+
         private const val QUERY_FORMAT_KEY = "format"
         private const val QUERY_FORMAT_VALUE = "json"
+
+        private const val QUERY_SIGNATURE_KEY = "sig"
+
+        private const val QUERY_SED_DATE_KEY = "sed"
+
+
+        // Show time list
         private const val PATH_SHOWTIMELIST = "showtimelist"
+
         private const val QUERY_THEATERS_KEY = "theaters"
+
         private const val QUERY_DATE_KEY = "date"
+
+        // Movie
         private const val PATH_MOVIE = "movie"
-        private const val QUERY_CODE_KEY = "code"
+
         private const val QUERY_STRIPTAGS_KEY = "striptags"
         private const val QUERY_STRIPTAGS_VALUE = "true"
+
+        private const val QUERY_CODE_KEY = "code"
+
+
+        // Theater search
         private const val PATH_SEARCH = "search"
+
         private const val QUERY_COUNT_KEY = "count"
         private const val QUERY_COUNT_VALUE = "15"
-        private const val QUERY_QUERY_KEY = "q"
+
         private const val QUERY_FILTER_KEY = "filter"
         private const val QUERY_FILTER_VALUE = "theater"
+
+        private const val QUERY_QUERY_KEY = "q"
     }
 }

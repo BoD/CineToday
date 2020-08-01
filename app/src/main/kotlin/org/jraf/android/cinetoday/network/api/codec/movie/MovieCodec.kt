@@ -54,7 +54,7 @@ class MovieCodec {
             movie.releaseDate = jsonMovie.optJSONObject("release")?.let {
                 val releaseDateStr = it.getString("releaseDate")
                 try {
-                    Api.SIMPLE_DATE_FORMAT.parse(releaseDateStr)
+                    Api.MAIN_DATE_FORMAT.parse(releaseDateStr)
                 } catch (e: java.text.ParseException) {
                     Log.d(e, "Invalid releaseDate %s in movie %s", releaseDateStr, movie.id)
                     null

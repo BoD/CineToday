@@ -24,7 +24,6 @@
  */
 package org.jraf.android.cinetoday.network.api;
 
-import okhttp3.OkHttpClient;
 import org.fest.assertions.api.Assertions;
 import org.jraf.android.cinetoday.mobile.TestUtil;
 import org.jraf.android.cinetoday.model.movie.Movie;
@@ -42,6 +41,8 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
+import okhttp3.OkHttpClient;
+
 @RunWith(RobolectricTestRunner.class)
 @Config(sdk = 21)
 public class ApiTest {
@@ -55,7 +56,7 @@ public class ApiTest {
         String json = TestUtil.readTestResource(filename);
         Set<Movie> movies = new HashSet<>();
         Api api = new Api(new OkHttpClient.Builder().build(), new MovieCodec(), new ShowtimeCodec(), new TheaterCodec());
-        api.parseMovieList(movies, json, "Test", Api.Companion.getSIMPLE_DATE_FORMAT().parse("2016-04-10"));
+        api.parseMovieList(movies, json, "Test", Api.Companion.getMAIN_DATE_FORMAT().parse("2016-04-10"));
         Assertions.assertThat(movies).hasSize(movieCount);
         for (Movie movie : movies) {
             MovieAssert.assertThat(movie).hasRequiredMovieListFields();
