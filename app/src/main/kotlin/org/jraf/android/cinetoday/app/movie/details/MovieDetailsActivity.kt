@@ -24,13 +24,17 @@
  */
 package org.jraf.android.cinetoday.app.movie.details
 
+import android.content.Intent
 import android.graphics.drawable.GradientDrawable
+import android.net.Uri
 import android.os.Bundle
+import android.support.wearable.view.ConfirmationOverlay
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.TextView
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.observe
+import com.google.android.wearable.intent.RemoteIntent
 import org.jraf.android.cinetoday.R
 import org.jraf.android.cinetoday.dagger.Components
 import org.jraf.android.cinetoday.database.AppDatabase
@@ -44,6 +48,7 @@ import java.text.DateFormat
 import java.util.Calendar
 import java.util.Date
 import javax.inject.Inject
+
 
 class MovieDetailsActivity : BaseActivity() {
 
@@ -60,7 +65,7 @@ class MovieDetailsActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         Components.application.inject(this)
         binding = DataBindingUtil.setContentView(this, R.layout.movie_details)
-        binding.conMovie.setOnScrollChangeListener(mOnScrollChangeListener)
+        binding.conMovie.setOnScrollChangeListener(onScrollChangeListener)
 
         val movieId = intent.data!!.contentId
         database.movieDao.movieByIdLive(movieId).observe(this) { if (it != null) onMovieResult(it) }
@@ -83,6 +88,9 @@ class MovieDetailsActivity : BaseActivity() {
         val gradientColors = intArrayOf(color, 0)
         val gradientDrawable = GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, gradientColors)
         binding.vieTheaterNameGradient.background = gradientDrawable
+
+        // Open on phone
+        binding.btnOpenOnPhone.setOnClickListener { openMovieOnPhone(movie) }
     }
 
     private fun onShowtimesResult(showtimes: Array<ShowtimeWithTheater>) {
@@ -116,8 +124,7 @@ class MovieDetailsActivity : BaseActivity() {
         }
     }
 
-
-    private val mOnScrollChangeListener = View.OnScrollChangeListener { _, _, scrollY, _, _ ->
+    private val onScrollChangeListener = View.OnScrollChangeListener { _, _, scrollY, _, _ ->
         if (scrollY < binding.conShowtimes.y + txtTheaterNameList[0].y - binding.txtTheaterName.paddingTop) {
             binding.txtTheaterName.visibility = View.GONE
             binding.conTheaterName.visibility = View.GONE
@@ -135,6 +142,18 @@ class MovieDetailsActivity : BaseActivity() {
                 }
             }
         }
+    }
+
+    private fun openMovieOnPhone(movie: Movie) {
+        val intent: Intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.com/search?q=movie+${movie.originalTitle}"))
+            .addCategory(Intent.CATEGORY_BROWSABLE)
+        RemoteIntent.startRemoteActivity(this, intent, null)
+
+        // 'Open on phone' confirmation overlay
+        ConfirmationOverlay()
+            .setType(ConfirmationOverlay.OPEN_ON_PHONE_ANIMATION)
+            .setMessage(getString(org.jraf.android.util.R.string.wear_about_confirmation_openedOnPhone))
+            .showOn(this)
     }
 }
 

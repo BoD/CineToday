@@ -40,10 +40,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:paddingBottom="@{ScreenShapeHelper.get(context).safeMargin * 1.5F + @dimen/movie_details_padding_vertical}"
                 android:paddingLeft="@{ScreenShapeHelper.get(context).safeMargin / 2F + @dimen/movie_details_padding_horizontal}"
-                android:paddingRight="@{ScreenShapeHelper.get(context).safeMargin / 2F + @dimen/movie_details_padding_horizontal}"
                 android:paddingTop="@{ScreenShapeHelper.get(context).safeMargin * 1.5F + @dimen/movie_details_padding_vertical}"
+                android:paddingRight="@{ScreenShapeHelper.get(context).safeMargin / 2F + @dimen/movie_details_padding_horizontal}"
+                android:paddingBottom="@{ScreenShapeHelper.get(context).safeMargin * 1.5F + @dimen/movie_details_padding_vertical}"
                 tools:paddingBottom="40dp"
                 tools:paddingTop="40dp">
 
@@ -132,6 +132,14 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical" />
 
+                <Button
+                    android:id="@+id/btnOpenOnPhone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:drawableStart="@drawable/ic_open_on_phone_white_24"
+                    android:text="@string/movie_card_openOnPhone" />
+
             </LinearLayout>
 
         </ScrollView>
@@ -152,10 +160,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ellipsize="marquee"
-                android:singleLine="true"
                 android:paddingLeft="@{ScreenShapeHelper.get(context).safeMargin / 2F + @dimen/movie_details_padding_horizontal}"
-                android:paddingRight="@{ScreenShapeHelper.get(context).safeMargin / 2F + @dimen/movie_details_padding_horizontal}"
                 android:paddingTop="@{ScreenShapeHelper.get(context).safeMargin + @dimen/movie_details_padding_vertical}"
+                android:paddingRight="@{ScreenShapeHelper.get(context).safeMargin / 2F + @dimen/movie_details_padding_horizontal}"
+                android:singleLine="true"
                 android:textColor="@android:color/transparent"
                 tools:text="MK2 Bibliothèque" />
 
@@ -173,10 +181,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ellipsize="marquee"
-            android:singleLine="true"
             android:paddingLeft="@{ScreenShapeHelper.get(context).safeMargin / 2F + @dimen/movie_details_padding_horizontal}"
-            android:paddingRight="@{ScreenShapeHelper.get(context).safeMargin / 2F + @dimen/movie_details_padding_horizontal}"
             android:paddingTop="@{ScreenShapeHelper.get(context).safeMargin + @dimen/movie_details_padding_vertical}"
+            android:paddingRight="@{ScreenShapeHelper.get(context).safeMargin / 2F + @dimen/movie_details_padding_horizontal}"
+            android:singleLine="true"
             android:visibility="invisible"
             tools:text="MK2 Bibliothèque" />
 
