@@ -36,6 +36,8 @@ import org.json.JSONObject
 class MovieCodec {
     @Throws(ParseException::class)
     fun fill(movie: Movie, jsonMovie: JSONObject) {
+        Log.d(jsonMovie.toString(4))
+
         try {
             movie.id = jsonMovie.getString("code")
             movie.localTitle = jsonMovie.getString("title")

@@ -128,6 +128,13 @@ class MovieListFragment : BaseFragment<MovieListCallbacks>(), PaletteListener {
         database.movieDao.allMoviesLive().observe(viewLifecycleOwner, ::onMoviesResult)
     }
 
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+
+        // Necessary to make rotary input work
+        if (!hidden) binding.rclList.requestFocus()
+    }
+
     private fun onMoviesResult(movies: Array<Movie>) {
         binding.pgbLoading.visibility = View.GONE
         if (movies.isEmpty()) {

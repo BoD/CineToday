@@ -76,6 +76,13 @@ class TheaterFavoritesFragment : BaseFragment<TheaterFavoritesCallbacks>() {
         database.theaterDao.allTheatersLive().observe(viewLifecycleOwner, ::onTheatersResult)
     }
 
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+
+        // Necessary to make rotary input work
+        if (!hidden) binding.rclList.requestFocus()
+    }
+
     private fun onTheatersResult(theaters: Array<Theater>) {
         binding.pgbLoading.visibility = View.GONE
         var adapter: TheaterFavoritesAdapter? = adapter

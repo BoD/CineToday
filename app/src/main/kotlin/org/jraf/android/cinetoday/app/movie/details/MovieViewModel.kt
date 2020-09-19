@@ -27,6 +27,7 @@ package org.jraf.android.cinetoday.app.movie.details
 import android.content.Context
 import org.jraf.android.cinetoday.R
 import org.jraf.android.cinetoday.model.movie.Movie
+import java.util.Calendar
 
 class MovieViewModel(movie: Movie, private val context: Context) {
 
@@ -38,6 +39,13 @@ class MovieViewModel(movie: Movie, private val context: Context) {
     val durationFormatted = movie.durationSeconds?.let { formatDuration(it) }
     val genres = movie.genres
     val genresFormatted = movie.genres.joinToString(" · ")
+    val originalReleaseYear: Int?
+
+    init {
+        val releaseYear = movie.releaseDate?.let { Calendar.getInstance().apply { time = it } }?.get(Calendar.YEAR)
+        val currentYear = Calendar.getInstance()[Calendar.YEAR]
+        originalReleaseYear = if (releaseYear == currentYear) null else releaseYear
+    }
 
     private fun formatDuration(durationSeconds: Int): String {
         if (durationSeconds < 60 * 60) return context.getString(R.string.durationMinutes, durationSeconds / 60)

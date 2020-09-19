@@ -23,6 +23,11 @@
         tools:ignore="AllowBackup,GoogleAppIndexingWarning"
         android:networkSecurityConfig="@xml/network_security_config">
 
+        <!-- Wearable library -->
+        <uses-library
+            android:name="com.google.android.wearable"
+            android:required="false" />
+
         <!-- Wear standalone -->
         <meta-data
             android:name="com.google.android.wearable.standalone"

@@ -11,6 +11,7 @@
     <string name="movie_card_actors"><![CDATA[Avec <i>%1$s</i>]]></string>
     <string name="movie_card_duration"><![CDATA[Durée : <i>%1$s</i>]]></string>
     <string name="movie_card_originalTitle"><![CDATA[Titre original : <i>%1$s</i>]]></string>
+    <string name="movie_card_originalReleaseYear"><![CDATA[%1$s]]></string>
 
     <!-- Notif -->
     <string name="notif_title">Nouvelles sorties !</string>

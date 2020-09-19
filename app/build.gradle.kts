@@ -42,6 +42,8 @@ android {
 
     buildTypes {
         getByName("debug") {
+            applicationIdSuffix = ".debug"
+
             buildConfigField("String", "GIT_SHA1", "\"dev\"")
             buildConfigField("String", "BUILD_DATE", "\"dev\"")
         }
@@ -133,7 +135,7 @@ dependencies {
 
     //  Wear
     implementation("com.google.android.support", "wearable", Versions.ANDROID_WEARABLE)
-    implementation("com.google.android.wearable", "wearable", Versions.ANDROID_WEARABLE)
+    compileOnly("com.google.android.wearable", "wearable", Versions.ANDROID_WEARABLE)
     implementation("androidx.wear", "wear", Versions.ANDROIDX_WEAR)
 
     // JRAF

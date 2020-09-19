@@ -28,6 +28,8 @@ import android.os.Handler
 import android.support.wearable.input.RotaryEncoder
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewConfiguration
+import androidx.core.view.ViewConfigurationCompat
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import kotlin.math.roundToInt
@@ -38,12 +40,16 @@ class RotaryPagerSnapHelper : PagerSnapHelper() {
 
     override fun attachToRecyclerView(recyclerView: RecyclerView?) {
         super.attachToRecyclerView(recyclerView)
+        if (recyclerView == null) return
 
         // Handle snap with the rotary input
-        recyclerView?.requestFocus()
-        recyclerView?.setOnGenericMotionListener(View.OnGenericMotionListener { v, motionEvent ->
+        val context = recyclerView.context
+        val scaledVerticalScrollFactor = ViewConfigurationCompat.getScaledVerticalScrollFactor(ViewConfiguration.get(context), context)
+        recyclerView.requestFocus()
+        recyclerView.setOnGenericMotionListener(View.OnGenericMotionListener { v, motionEvent ->
             if (motionEvent.action == MotionEvent.ACTION_SCROLL && RotaryEncoder.isFromRotaryEncoder(motionEvent)) {
-                val delta = -RotaryEncoder.getRotaryAxisValue(motionEvent) * RotaryEncoder.getScaledScrollFactor(v.context) * 1.5f
+
+                val delta = -RotaryEncoder.getRotaryAxisValue(motionEvent) * scaledVerticalScrollFactor * 1.5f
                 v.scrollBy(0, delta.roundToInt())
 
                 // Snap
@@ -56,8 +62,7 @@ class RotaryPagerSnapHelper : PagerSnapHelper() {
                             recyclerView.smoothScrollBy(0, snapDistance[1])
                         }
                     }
-                }
-                snapRunnable?.let { snapHandler.postDelayed(it, 100) }
+                }.apply { snapHandler.postDelayed(this, 100) }
 
                 return@OnGenericMotionListener true
             }
