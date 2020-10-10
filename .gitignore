@@ -9,6 +9,6 @@ build.properties
 etc/apk
 etc/proguard
 
-.idea
+.idea/*
 !.idea/codeStyles
 !.idea/copyright
