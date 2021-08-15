@@ -82,7 +82,7 @@ class MovieDetailsActivity : BaseActivity() {
         binding.movie = movieViewModel
 
         // Use the movie color in certain elements
-        val color = movie.color ?: getColor(R.color.background)
+        val color = movie.colorDark ?: getColor(R.color.background)
         binding.root.setBackgroundColor(color)
         binding.txtTheaterNameInvisible.setBackgroundColor(color)
         val gradientColors = intArrayOf(color, 0)

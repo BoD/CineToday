@@ -40,6 +40,7 @@ import android.text.TextUtils
 import androidx.annotation.RequiresApi
 import androidx.annotation.WorkerThread
 import androidx.core.app.NotificationCompat
+import androidx.wear.tiles.TileProviderService
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
@@ -47,6 +48,7 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import org.jraf.android.cinetoday.R
 import org.jraf.android.cinetoday.app.main.MainActivity
+import org.jraf.android.cinetoday.app.tile.MoviesTodayTile
 import org.jraf.android.cinetoday.database.AppDatabase
 import org.jraf.android.cinetoday.glide.GlideApp
 import org.jraf.android.cinetoday.model.knownmovie.KnownMovie
@@ -123,7 +125,7 @@ class LoadMoviesHelper(
 
     @WorkerThread
     @Throws(Exception::class)
-    internal fun loadMovies() {
+    fun loadMovies() {
         wantStop = false
         loadMoviesListenerHelper.setPreloading()
 
@@ -227,6 +229,9 @@ class LoadMoviesHelper(
                 .map { it.localTitle }
             if (newMovieTitles.isNotEmpty()) showNotification(newMovieTitles)
         }
+
+        // 5/ Refresh tile
+        TileProviderService.getUpdater(context).requestUpdate(MoviesTodayTile::class.java)
     }
 
     private fun downloadPoster(movie: Movie) {
@@ -277,7 +282,9 @@ class LoadMoviesHelper(
                                 Log.w("Could not generate palette")
                                 return@generate
                             }
-                            movie.color = palette.getDarkVibrantColor(context.getColor(R.color.movie_list_bg))
+                            val defaultColor = context.getColor(R.color.movie_list_bg)
+                            movie.colorDark = palette.getDarkVibrantColor(defaultColor)
+                            movie.colorLight = palette.getLightMutedColor(defaultColor)
                             discard(bitmap)
                         }
                         return false

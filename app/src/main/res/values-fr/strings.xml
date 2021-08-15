@@ -73,4 +73,8 @@
     <string name="about_sources_text">Code source sur Github</string>
     <string name="about_artwork_text">Contacter David Rodriguez</string>
 
+    <!-- Tile -->
+    <string name="tile_label">CineToday</string>
+    <string name="tile_description">Les films à l\'affiche aujourd\'hui</string>
+
 </resources>

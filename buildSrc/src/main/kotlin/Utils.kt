@@ -11,6 +11,36 @@ import java.util.Properties
 import java.util.TimeZone
 
 /**
+ * Replace all elements in this collection by the given ones.
+ */
+fun <E> MutableCollection<E>.set(elements: Collection<E>) {
+    clear()
+    addAll(elements)
+}
+
+/**
+ * Replace all elements in this collection by the given ones.
+ */
+fun <E> MutableCollection<E>.set(vararg elements: E) = set(elements.asList())
+
+/**
+ * Replace all elements in this map by the given ones.
+ */
+fun <K, V> MutableMap<K, V>.set(from: Map<K, V>) {
+    clear()
+    putAll(from)
+}
+
+/**
+ * Replace all elements in this map by the given ones.
+ */
+fun <K, V> MutableMap<K, V>.set(vararg pairs: Pair<K, V>) {
+    clear()
+    putAll(pairs)
+}
+
+
+/**
  * Returns a file on the project's root - creates it from a sample if it doesn't exist.
  */
 fun Project.getOrCreateFile(fileName: String): File {
@@ -115,7 +145,7 @@ fun Project.printSplashScreen() {
             / // / , _/ __ |/ _/_/ _ \/ __/ _ `/
             \___/_/¦_/_/ |_/_/ (_)___/_/  \_, /
                                          /___/
-            ${ansiReset}
+            $ansiReset
             Building ${rootProject.name}.
             
             ${getFrenchDate()}

@@ -81,4 +81,8 @@
     <string name="about_shareText_subject">Checkout out this app!</string>
     <string name="about_shareText_body">This app lists movies showing at your favorite theater, on your watch.\nCheck it out here:\nhttp://play.google.com/store/apps/details?id=%s</string>
 
+    <!-- Tile -->
+    <string name="tile_label">CineToday</string>
+    <string name="tile_description">Movies playing today</string>
+
 </resources>

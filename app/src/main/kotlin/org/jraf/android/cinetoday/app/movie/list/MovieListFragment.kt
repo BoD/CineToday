@@ -33,7 +33,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.ColorInt
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.observe
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -165,9 +164,9 @@ class MovieListFragment : BaseFragment<MovieListCallbacks>(), PaletteListener {
         }
     }
 
-    override fun onPaletteAvailable(id: String, @ColorInt color: Int, cached: Boolean) {
+    override fun onPaletteAvailable(id: String, @ColorInt colorDark: Int, @ColorInt colorLight: Int, cached: Boolean) {
         if (palette.containsKey(id)) return
-        palette[id] = color
+        palette[id] = colorDark
         var firstItemPosition = (binding.rclList.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
         if (firstItemPosition == RecyclerView.NO_POSITION) firstItemPosition = 0
         val firstItemId = adapter!!.data[firstItemPosition].id
@@ -177,7 +176,7 @@ class MovieListFragment : BaseFragment<MovieListCallbacks>(), PaletteListener {
         if (!cached) {
             // Save the value
             doAsync {
-                database.movieDao.updateColor(id, color)
+                database.movieDao.updateColor(id = id, colorDark = colorDark, colorLight = colorLight)
             }
         }
     }

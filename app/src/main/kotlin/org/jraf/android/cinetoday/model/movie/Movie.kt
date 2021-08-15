@@ -24,6 +24,7 @@
  */
 package org.jraf.android.cinetoday.model.movie
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
@@ -59,11 +60,31 @@ data class Movie(
     var synopsis: String?,
 
     var isNew: Boolean,
-    var color: Int?
+
+    @field:ColumnInfo(name = "color")
+    var colorDark: Int?,
+
+    var colorLight: Int?,
 ) : HasId {
 
     @Ignore
-    constructor() : this("", "", "", null, null, null, null, emptyArray<String>(), null, null, "", null, false, null)
+    constructor() : this(
+        id = "",
+        originalTitle = "",
+        localTitle = "",
+        directors = null,
+        actors = null,
+        releaseDate = null,
+        durationSeconds = null,
+        genres = emptyArray<String>(),
+        posterUri = null,
+        trailerUri = null,
+        webUri = "",
+        synopsis = null,
+        isNew = false,
+        colorDark = null,
+        colorLight = null,
+    )
 
     /**
      * Keys: id of the theater.

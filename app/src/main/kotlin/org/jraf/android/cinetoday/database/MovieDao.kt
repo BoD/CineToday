@@ -57,6 +57,6 @@ interface MovieDao {
     )
     fun deleteWithNoShowtimes()
 
-    @Query("UPDATE Movie SET color = :color WHERE id = :id")
-    fun updateColor(id: String, color: Int)
+    @Query("UPDATE Movie SET color = :colorDark, colorLight = :colorLight WHERE id = :id")
+    fun updateColor(id: String, colorDark: Int, colorLight: Int)
 }

@@ -24,7 +24,7 @@ android {
         resConfigs("en", "fr")
 
         // Useful for api keys in the manifest (Maps, Crashlytics, ...)
-        manifestPlaceholders = AppConfig.buildProperties as Map<String, Any>
+        manifestPlaceholders.set(AppConfig.buildProperties as Map<String, Any>)
 
         // Setting this to true disables the png generation at buildtime
         // (see http://android-developers.blogspot.fr/2016/02/android-support-library-232.html)
@@ -73,7 +73,6 @@ android {
     }
 
     compileOptions {
-        incremental = true
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
@@ -84,6 +83,7 @@ android {
 
     sourceSets {
         getByName("main").java.srcDirs("src/main/kotlin")
+        getByName("debug").java.srcDirs("src/debug/kotlin")
     }
 }
 
@@ -137,6 +137,8 @@ dependencies {
     implementation("com.google.android.support", "wearable", Versions.ANDROID_WEARABLE)
     compileOnly("com.google.android.wearable", "wearable", Versions.ANDROID_WEARABLE)
     implementation("androidx.wear", "wear", Versions.ANDROIDX_WEAR)
+    implementation("androidx.wear.tiles", "tiles", Versions.ANDROIDX_WEAR_TILES)
+    debugImplementation("androidx.wear.tiles", "tiles-renderer", Versions.ANDROIDX_WEAR_TILES)
 
     // JRAF
     implementation("org.jraf", "kprefs", Versions.KPREFS)
@@ -160,6 +162,8 @@ dependencies {
     implementation("io.reactivex.rxjava2", "rxandroid", Versions.RX_ANDROID)
     implementation("io.reactivex.rxjava2", "rxjava", Versions.RX_JAVA)
 
+    // Guava / ListenableFutures (needed by Tiles...)
+    implementation("androidx.concurrent", "concurrent-futures-ktx", Versions.ANDROIDX_CONCURRENT)
 
     // Testing
     androidTestImplementation("androidx.test.espresso", "espresso-core", Versions.ESPRESSO) {

@@ -34,6 +34,7 @@ import org.jraf.android.cinetoday.app.movie.list.MovieListFragment
 import org.jraf.android.cinetoday.app.preferences.PreferencesFragment
 import org.jraf.android.cinetoday.app.theater.favorites.TheaterFavoritesFragment
 import org.jraf.android.cinetoday.app.theater.search.TheaterSearchLiveData
+import org.jraf.android.cinetoday.app.tile.MoviesTodayTile
 import org.jraf.android.cinetoday.network.NetworkModule
 import org.jraf.android.cinetoday.prefs.MainPrefs
 import javax.inject.Named
@@ -65,4 +66,6 @@ interface ApplicationComponent {
     fun inject(movieDetailsActivity: MovieDetailsActivity)
 
     fun inject(theaterSearchLiveData: TheaterSearchLiveData)
+
+    fun inject(moviesTodayTile: MoviesTodayTile)
 }

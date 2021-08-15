@@ -59,18 +59,23 @@ class MovieListAdapter(
 
     class ViewHolder(val itemBinding: MovieListItemBinding) : RecyclerView.ViewHolder(itemBinding.root)
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieListAdapter.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding =
             DataBindingUtil.inflate<MovieListItemBinding>(layoutInflater, R.layout.movie_list_item, parent, false)
         return ViewHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: MovieListAdapter.ViewHolder, @SuppressLint("RecyclerView") position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, @SuppressLint("RecyclerView") position: Int) {
         val movie = data[position]
         holder.itemBinding.movie = movie
         holder.itemBinding.callbacks = movieListCallbacks
-        movie.color?.let {
-            paletteListener.onPaletteAvailable(movie.id, it, true)
+        if (movie.colorDark != null && movie.colorLight != null) {
+            paletteListener.onPaletteAvailable(
+                id = movie.id,
+                colorDark = movie.colorDark!!,
+                colorLight = movie.colorLight!!,
+                cached = true
+            )
         }
 
         holder.itemBinding.executePendingBindings()
@@ -92,15 +97,22 @@ class MovieListAdapter(
                 dataSource: DataSource?,
                 isFirstResource: Boolean
             ): Boolean {
-                if (movie.color == null) {
+                if (movie.colorDark == null || movie.colorLight == null) {
                     // Generate the color
                     Palette.from((resource as BitmapDrawable).bitmap).generate { palette ->
                         if (palette == null) {
                             Log.w("Could not generate palette")
                             return@generate
                         }
-                        val color = palette.getDarkVibrantColor(context.getColor(R.color.movie_list_bg))
-                        paletteListener.onPaletteAvailable(movie.id, color, false)
+                        val defaultColor = context.getColor(R.color.movie_list_bg)
+                        val colorDark = palette.getDarkVibrantColor(defaultColor)
+                        val colorLight = palette.getLightMutedColor(defaultColor)
+                        paletteListener.onPaletteAvailable(
+                            id = movie.id,
+                            colorDark = colorDark,
+                            colorLight = colorLight,
+                            cached = false
+                        )
                     }
                 }
 

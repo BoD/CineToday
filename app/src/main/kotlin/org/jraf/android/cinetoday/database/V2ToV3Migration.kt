@@ -7,7 +7,7 @@
  *                              /___/
  * repository.
  *
- * Copyright (C) 2017-present Benoit 'BoD' Lubek (BoD@JRAF.org)
+ * Copyright (C) 2019-present Benoit 'BoD' Lubek (BoD@JRAF.org)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,10 +22,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jraf.android.cinetoday.app.movie.list
+package org.jraf.android.cinetoday.database
 
-import androidx.annotation.ColorInt
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 
-interface PaletteListener {
-    fun onPaletteAvailable(id: String, @ColorInt colorDark: Int, @ColorInt colorLight: Int, cached: Boolean)
+class V2ToV3Migration : Migration(2, 3) {
+    override fun migrate(database: SupportSQLiteDatabase) {
+        database.execSQL("ALTER TABLE `Movie` ADD COLUMN `colorLight` INTEGER")
+    }
 }
