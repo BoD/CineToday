@@ -74,7 +74,8 @@
     <string name="about_artwork_text">Contacter David Rodriguez</string>
 
     <!-- Tile -->
-    <string name="tile_label">CineToday</string>
+    <string name="tile_label">Les films à l\'affiche</string>
     <string name="tile_description">Les films à l\'affiche aujourd\'hui</string>
+    <string name="tile_pleaseSetup">Clickez ici pour configurer vos salles favorites</string>
 
 </resources>

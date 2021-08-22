@@ -82,7 +82,8 @@
     <string name="about_shareText_body">This app lists movies showing at your favorite theater, on your watch.\nCheck it out here:\nhttp://play.google.com/store/apps/details?id=%s</string>
 
     <!-- Tile -->
-    <string name="tile_label">CineToday</string>
+    <string name="tile_label">Today\'s movies</string>
     <string name="tile_description">Movies playing today</string>
+    <string name="tile_pleaseSetup">Click here to setup your favorite theaters</string>
 
 </resources>

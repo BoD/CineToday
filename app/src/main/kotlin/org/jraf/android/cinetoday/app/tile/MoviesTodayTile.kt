@@ -46,6 +46,7 @@ import androidx.wear.tiles.TileProviderService
 import androidx.wear.tiles.TimelineBuilders.Timeline
 import androidx.wear.tiles.TimelineBuilders.TimelineEntry
 import com.google.common.util.concurrent.ListenableFuture
+import org.jraf.android.cinetoday.R
 import org.jraf.android.cinetoday.app.main.MainActivity
 import org.jraf.android.cinetoday.dagger.Components
 import org.jraf.android.cinetoday.database.AppDatabase
@@ -107,17 +108,27 @@ class MoviesTodayTile : TileProviderService() {
         box.setHeight(DimensionBuilders.expand())
 
         val column = Column.builder()
-        for (movie in movies) {
+        if (movies.isEmpty()) {
             column
                 .addContent(
                     Text.builder()
-                        .setText("· ${movie.localTitle} ·")
-                        .setFontStyle(FontStyles.caption2(deviceParameters).apply {
-                            movie.colorLight?.let { setColor(ColorBuilders.argb(it)) }
-                        })
+                        .setText(getString(R.string.tile_pleaseSetup))
+                        .setFontStyle(FontStyles.caption2(deviceParameters))
                         .setMaxLines(2)
-                        .setOverflow(TEXT_OVERFLOW_ELLIPSIZE_END)
                 )
+        } else {
+            for (movie in movies) {
+                column
+                    .addContent(
+                        Text.builder()
+                            .setText("· ${movie.localTitle} ·")
+                            .setFontStyle(FontStyles.caption2(deviceParameters).apply {
+                                movie.colorLight?.let { setColor(ColorBuilders.argb(it)) }
+                            })
+                            .setMaxLines(2)
+                            .setOverflow(TEXT_OVERFLOW_ELLIPSIZE_END)
+                    )
+            }
         }
         box.setModifiers(
             Modifiers.builder()

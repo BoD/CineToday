@@ -47,12 +47,15 @@ import org.jraf.android.cinetoday.util.async.doAsync
 import org.jraf.android.cinetoday.util.base.BaseFragment
 import org.jraf.android.cinetoday.widget.RotaryPagerSnapHelper
 import javax.inject.Inject
+import kotlin.math.abs
 
 class MovieListFragment : BaseFragment<MovieListCallbacks>(), PaletteListener {
     companion object {
         fun newInstance(): MovieListFragment {
             return MovieListFragment()
         }
+
+        private const val SCROLL_SCALE_FACTOR = 8F
     }
 
     @Inject
@@ -75,14 +78,16 @@ class MovieListFragment : BaseFragment<MovieListCallbacks>(), PaletteListener {
         Components.application.inject(this)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.movie_list, container, false)
         binding.callbacks = callbacks
 
-        binding.rclList.setHasFixedSize(true)
-        binding.rclList.layoutManager = LinearLayoutManager(context)
-        RotaryPagerSnapHelper().attachToRecyclerView(binding.rclList)
-        binding.rclList.addOnScrollListener(onScrollListener)
+        binding.rclList.apply {
+            setHasFixedSize(true)
+            layoutManager = LinearLayoutManager(context)
+            RotaryPagerSnapHelper().attachToRecyclerView(this)
+            addOnScrollListener(onScrollListener)
+        }
 
         progressSubscription =
             loadMoviesListenerHelper.progressInfo
@@ -207,12 +212,14 @@ class MovieListFragment : BaseFragment<MovieListCallbacks>(), PaletteListener {
             val firstItemPosition = linearLayoutManager.findFirstVisibleItemPosition()
             val firstItem = linearLayoutManager.findViewByPosition(firstItemPosition)!!
             val firstItemTop = firstItem.y
-            val firstItemRatio = Math.abs(firstItemTop / recyclerView.height)
+            val firstItemRatio = abs(firstItemTop / recyclerView.height)
 
             val adapter = this@MovieListFragment.adapter!!
 
             val nextItemPosition = firstItemPosition + 1
             if (nextItemPosition >= adapter.itemCount) return
+
+            val nextItem = linearLayoutManager.findViewByPosition(nextItemPosition)
 
             val firstItemId = adapter.data[firstItemPosition].id
             val firstItemColor = palette[firstItemId] ?: return
@@ -222,6 +229,17 @@ class MovieListFragment : BaseFragment<MovieListCallbacks>(), PaletteListener {
 
             val resultColor = argbEvaluator.evaluate(firstItemRatio, firstItemColor, nextItemColor) as Int
             binding.conRoot.setBackgroundColor(resultColor)
+
+            // A scale effect while scrolling
+            val firstItemScale = 1F - firstItemRatio / SCROLL_SCALE_FACTOR
+            firstItem.scaleX = firstItemScale
+            firstItem.scaleY = firstItemScale
+
+            if (nextItem != null) {
+                val nextItemScale = 1F - (1F / SCROLL_SCALE_FACTOR) + firstItemRatio / SCROLL_SCALE_FACTOR
+                nextItem.scaleX = nextItemScale
+                nextItem.scaleY = nextItemScale
+            }
         }
     }
 
