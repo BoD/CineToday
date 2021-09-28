@@ -67,6 +67,7 @@
         <service
             android:name=".app.tile.MoviesTodayTile"
             android:description="@string/tile_description"
+            android:exported="true"
             android:label="@string/tile_label"
             android:permission="com.google.android.wearable.permission.BIND_TILE_PROVIDER">
             <intent-filter>

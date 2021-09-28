@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest package="org.jraf.android.cinetoday"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="org.jraf.android.cinetoday">
 
     <application>
         <!-- Tile preview -->
-        <activity android:name=".app.tile.preview.TilePreviewActivity">
+        <activity
+            android:name=".app.tile.preview.TilePreviewActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

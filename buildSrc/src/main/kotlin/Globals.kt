@@ -1,9 +1,9 @@
 object Versions {
     // Misc and plugins
-    const val GRADLE = "7.1.1"
-    const val KOTLIN = "1.5.21"
+    const val GRADLE = "7.2"
+    const val KOTLIN = "1.5.31"
     const val BEN_MANES_VERSIONS_PLUGIN = "0.39.0"
-    const val ANDROID_GRADLE_PLUGIN = "7.0.0"
+    const val ANDROID_GRADLE_PLUGIN = "7.0.2"
 
     // App dependencies
     const val ANDROIDX_FRAGMENT = "1.3.6"
@@ -11,12 +11,12 @@ object Versions {
     const val ANDROIDX_PERCENT_LAYOUT = "1.0.0"
     const val ANDROIDX_PALETTE = "1.0.0"
     const val ANDROIDX_PREFERENCE = "1.1.1"
-    const val ANDROIDX_WEAR = "1.1.0"
+    const val ANDROIDX_WEAR = "1.2.0"
     const val ANDROIDX_WEAR_TILES = "1.0.0-alpha09"
     const val ANDROIDX_LIFECYCLE = "2.3.1"
     const val ANDROIDX_ROOM = "2.3.0"
-    const val ANDROIDX_WORK_MANAGER = "2.5.0"
-    const val ANDROIDX_CONSTRAINT_LAYOUT = "2.1.0"
+    const val ANDROIDX_WORK_MANAGER = "2.6.0"
+    const val ANDROIDX_CONSTRAINT_LAYOUT = "2.1.1"
     const val ANDROIDX_CONCURRENT = "1.1.0"
     const val RX_JAVA = "2.2.21"
     const val RX_ANDROID = "2.1.1"
@@ -37,8 +37,8 @@ object Versions {
 
 object AppConfig {
     const val APPLICATION_ID = "org.jraf.android.cinetoday"
-    const val COMPILE_SDK = 30
-    const val TARGET_SDK = 30
+    const val COMPILE_SDK = 31
+    const val TARGET_SDK = 31
     const val MIN_SDK = 26
 
     var buildNumber: Int = 0
