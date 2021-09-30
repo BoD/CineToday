@@ -2,15 +2,16 @@ plugins {
     id("com.android.application")
     kotlin("android")
     kotlin("kapt")
+    id("com.apollographql.apollo") version Versions.APOLLO
 }
 
 android {
-    compileSdkVersion(AppConfig.COMPILE_SDK)
+    compileSdk = AppConfig.COMPILE_SDK
 
     defaultConfig {
         applicationId = AppConfig.APPLICATION_ID
-        minSdkVersion(AppConfig.MIN_SDK)
-        targetSdkVersion(AppConfig.TARGET_SDK)
+        minSdk = AppConfig.MIN_SDK
+        targetSdk = AppConfig.TARGET_SDK
         versionCode = AppConfig.buildNumber
         versionName = AppConfig.buildProperties["versionName"]
 
@@ -21,7 +22,7 @@ android {
         // For now we enable debug logs all the configs
         buildConfigField("boolean", "DEBUG_LOGS", "true")
 
-        resConfigs("en", "fr")
+        resourceConfigurations.addAll(listOf("en", "fr"))
 
         // Useful for api keys in the manifest (Maps, Crashlytics, ...)
         manifestPlaceholders.set(AppConfig.buildProperties as Map<String, Any>)
@@ -66,7 +67,7 @@ android {
         dataBinding = true
     }
 
-    lintOptions {
+    lint {
         isAbortOnError = true
         textReport = true
         isIgnoreWarnings = true
@@ -114,6 +115,16 @@ afterEvaluate {
             }
         }
     }
+}
+
+apollo {
+    generateKotlinModels.set(true)
+    customTypeMapping.set(
+        mapOf(
+            "DateInterval" to "kotlin.Long",
+            "DateTime" to "java.util.Date"
+        )
+    )
 }
 
 dependencies {
@@ -164,6 +175,10 @@ dependencies {
 
     // Guava / ListenableFutures (needed by Tiles...)
     implementation("androidx.concurrent", "concurrent-futures-ktx", Versions.ANDROIDX_CONCURRENT)
+
+    // Apollo
+    implementation("com.apollographql.apollo", "apollo-runtime", Versions.APOLLO)
+    implementation("com.apollographql.apollo", "apollo-coroutines-support", Versions.APOLLO)
 
     // Testing
     androidTestImplementation("androidx.test.espresso", "espresso-core", Versions.ESPRESSO) {

@@ -158,7 +158,7 @@ class LoadMoviesHelper(
                 return
             }
 
-            // 2/ Retrieve more details about each movie
+            // 2/ Get each movie's poster, and mark as new if not already in DB
             val size = movies.size
             var i = 0
             for (movieFromApi in movies) {
@@ -168,22 +168,15 @@ class LoadMoviesHelper(
                     currentMovieTitle = movieFromApi.localTitle
                 )
 
-                // Check if we already have this movie in the db
+                // Check if we already have this movie in the db (from a previous theater call)
                 val movieFromDb = allMoviesFromDb[movieFromApi.id]
                 if (movieFromDb != null) {
                     // Already in db: keep it (with updated showtimes)
-                    movieFromDb.isNew = false
                     movieFromDb.todayShowtimes.putAll(movieFromApi.todayShowtimes)
                     moviesFromDbToKeep += movieFromDb
                 } else {
-                    // Not in db: get movie info
+                    // Do we already know this movie from before?
                     movieFromApi.isNew = appDatabase.knownMovieDao.knownMovieById(movieFromApi.id) == null
-                    try {
-                        api.getMovieInfo(movieFromApi)
-                        Log.d(movieFromApi.toString())
-                    } catch (e: Exception) {
-                        Log.w(e, "Could not load movie info: movie = %s - skipping", movieFromApi)
-                    }
                 }
 
                 if (wantStop) {

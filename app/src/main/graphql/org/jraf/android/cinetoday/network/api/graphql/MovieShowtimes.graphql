@@ -1,0 +1,65 @@
+query MovieShowtimes($theaterId: String!, $from: DateTime!, $to: DateTime!) {
+    movieShowtimeList(
+        theater: $theaterId
+        from: $from
+        to: $to
+        first: 50
+        displayPreview: false
+        order: [REVERSE_RELEASE_DATE, WEEKLY_POPULARITY]
+    ) {
+        totalCount
+        pageInfo {
+            hasNextPage
+            endCursor
+        }
+        edges {
+            node {
+                movie {
+                    id
+                    title
+                    originalTitle
+                    credits(first: 3, activity: DIRECTOR) {
+                        edges {
+                            node {
+                                person {
+                                    stringValue
+                                }
+                            }
+                        }
+                    }
+                    cast(first: 5) {
+                        edges {
+                            node {
+                                actor {
+                                    stringValue
+                                }
+                            }
+                        }
+                    }
+                    releases(type: [RELEASED], country: FRANCE) {
+                        releaseDate {
+                            date
+                        }
+                    }
+                    genres
+                    runtime
+                    videos(type: [TRAILER], first: 1) {
+                        files(quality: [STANDARD]) {
+                            url
+                        }
+                    }
+                    poster {
+                        url
+                    }
+                    synopsis(long: true)
+                }
+                showtimes {
+                    id
+                    startsAt
+                    projection
+                    diffusionVersion
+                }
+            }
+        }
+    }
+}

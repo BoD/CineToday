@@ -7,7 +7,7 @@
  *                              /___/
  * repository.
  *
- * Copyright (C) 2017-present Benoit 'BoD' Lubek (BoD@JRAF.org)
+ * Copyright (C) 2021-present Benoit 'BoD' Lubek (BoD@JRAF.org)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,9 +22,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jraf.android.cinetoday.network.api
+package org.jraf.android.cinetoday.util.datetime
 
-class ParseException : Exception {
-    constructor() : super()
-    constructor(cause: Throwable) : super(cause)
-}
+import java.util.Calendar
+import java.util.Date
+
+fun Date.atMidnight(): Date = Calendar.getInstance().apply {
+    time = this@atMidnight
+    this[Calendar.HOUR_OF_DAY] = 0
+    this[Calendar.MINUTE] = 0
+    this[Calendar.SECOND] = 0
+    this[Calendar.MILLISECOND] = 0
+}.time
+
+
+fun Date.nextDay(): Date = Calendar.getInstance().apply {
+    time = this@nextDay
+    add(Calendar.DATE, 1)
+}.time

@@ -100,12 +100,13 @@ class MoviesTodayTile : TileProviderService() {
     }
 
     private fun getTodaysMovies(): List<Movie> {
-        return database.movieDao.allMovies().take(7)
+        return database.movieDao.allMovies().take(6)
     }
 
     private fun createLayout(movies: List<Movie>, deviceParameters: DeviceParameters): Builder {
         val box = LayoutElementBuilders.Box.builder()
         box.setHeight(DimensionBuilders.expand())
+        box.setWidth(DimensionBuilders.expand())
 
         val column = Column.builder()
         if (movies.isEmpty()) {
@@ -113,7 +114,7 @@ class MoviesTodayTile : TileProviderService() {
                 .addContent(
                     Text.builder()
                         .setText(getString(R.string.tile_pleaseSetup))
-                        .setFontStyle(FontStyles.caption2(deviceParameters))
+                        .setFontStyle(FontStyles.caption1(deviceParameters))
                         .setMaxLines(2)
                 )
         } else {
@@ -122,7 +123,7 @@ class MoviesTodayTile : TileProviderService() {
                     .addContent(
                         Text.builder()
                             .setText("· ${movie.localTitle} ·")
-                            .setFontStyle(FontStyles.caption2(deviceParameters).apply {
+                            .setFontStyle(FontStyles.caption1(deviceParameters).apply {
                                 movie.colorLight?.let { setColor(ColorBuilders.argb(it)) }
                             })
                             .setMaxLines(2)
