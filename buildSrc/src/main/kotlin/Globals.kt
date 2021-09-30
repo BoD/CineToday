@@ -27,6 +27,7 @@ object Versions {
     const val OK_HTTP = "4.9.1"
     const val GLIDE = "4.12.0"
     const val JSR_250 = "1.0"
+    const val APOLLO = "2.5.9"
 
     // Testing dependencies
     const val ESPRESSO = "3.4.0"

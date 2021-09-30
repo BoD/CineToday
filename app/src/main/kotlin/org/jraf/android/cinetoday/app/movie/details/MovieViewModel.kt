@@ -25,6 +25,7 @@
 package org.jraf.android.cinetoday.app.movie.details
 
 import android.content.Context
+import android.text.Html
 import org.jraf.android.cinetoday.R
 import org.jraf.android.cinetoday.model.movie.Movie
 import java.util.Calendar
@@ -35,7 +36,7 @@ class MovieViewModel(movie: Movie, private val context: Context) {
     val localTitle = movie.localTitle
     val directors = movie.directors
     val actors = movie.actors
-    val synopsis = movie.synopsis
+    val synopsis: CharSequence? = movie.synopsis?.let { Html.fromHtml(it, Html.FROM_HTML_MODE_LEGACY) }
     val durationFormatted = movie.durationSeconds?.let { formatDuration(it) }
     val genres = movie.genres
     val genresFormatted = movie.genres.joinToString(" · ")

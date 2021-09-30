@@ -56,6 +56,7 @@ data class Movie(
     var posterUri: String?,
     var trailerUri: String?,
 
+    @Deprecated("No longer used")
     var webUri: String,
     var synopsis: String?,
 

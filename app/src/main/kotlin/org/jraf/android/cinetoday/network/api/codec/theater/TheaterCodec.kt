@@ -24,6 +24,7 @@
  */
 package org.jraf.android.cinetoday.network.api.codec.theater
 
+import android.util.Base64
 import org.jraf.android.cinetoday.model.theater.Theater
 import org.jraf.android.cinetoday.network.api.ParseException
 import org.json.JSONException
@@ -42,5 +43,10 @@ class TheaterCodec {
         } catch (e: JSONException) {
             throw ParseException(e)
         }
+    }
+
+
+    fun toGraphqlTheaterId(dbTheaterId: String): String {
+        return Base64.encodeToString("Theater:$dbTheaterId".toByteArray(), Base64.NO_WRAP)
     }
 }

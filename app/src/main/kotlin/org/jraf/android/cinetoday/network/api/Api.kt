@@ -25,18 +25,24 @@
 package org.jraf.android.cinetoday.network.api
 
 import android.util.Base64
-import androidx.annotation.VisibleForTesting
-import androidx.annotation.VisibleForTesting.PRIVATE
 import androidx.annotation.WorkerThread
+import com.apollographql.apollo.ApolloCall
+import com.apollographql.apollo.ApolloClient
+import com.apollographql.apollo.api.Response
+import com.apollographql.apollo.exception.ApolloException
 import okhttp3.CacheControl
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.jraf.android.cinetoday.model.movie.Movie
+import org.jraf.android.cinetoday.model.showtime.Showtime
 import org.jraf.android.cinetoday.model.theater.Theater
 import org.jraf.android.cinetoday.network.api.codec.movie.MovieCodec
 import org.jraf.android.cinetoday.network.api.codec.showtime.ShowtimeCodec
 import org.jraf.android.cinetoday.network.api.codec.theater.TheaterCodec
+import org.jraf.android.cinetoday.network.api.graphql.MovieShowtimesQuery
+import org.jraf.android.cinetoday.util.datetime.atMidnight
+import org.jraf.android.cinetoday.util.datetime.nextDay
 import org.jraf.android.cinetoday.util.sha1.sha1
 import org.jraf.android.util.log.Log
 import org.json.JSONException
@@ -46,87 +52,60 @@ import java.text.SimpleDateFormat
 import java.util.ArrayList
 import java.util.Date
 import java.util.Locale
+import java.util.concurrent.CountDownLatch
 
 class Api(
     private val cachingOkHttpClient: OkHttpClient,
+    private val apolloClient: ApolloClient,
     private val movieCodec: MovieCodec,
     private val showTimeCodec: ShowtimeCodec,
     private val theaterCodec: TheaterCodec
 ) {
 
-    @WorkerThread
-    @Throws(IOException::class, ParseException::class)
-    fun getMovieList(movies: MutableSet<Movie>, theaterId: String, date: Date) {
-        val url = getBaseBuilder(PATH_SHOWTIMELIST)
-            .addQueryParameter(QUERY_THEATERS_KEY, theaterId)
-            .addQueryParameter(QUERY_DATE_KEY, MAIN_DATE_FORMAT.format(date))
-            .build()
-        val jsonStr = call(url, false)
-        parseMovieList(movies, jsonStr, theaterId, date)
-    }
+    private fun <T> ApolloCall<T>.blockingAwait(): Response<T> {
+        val countDownLatch = CountDownLatch(1)
+        var callbackResponse: Response<T>? = null
+        var callbackException: ApolloException? = null
 
-    @VisibleForTesting(otherwise = PRIVATE)
-    @Throws(ParseException::class)
-    fun parseMovieList(movies: MutableSet<Movie>, jsonStr: String, theaterId: String, date: Date) {
-        try {
-            val jsonRoot = JSONObject(jsonStr)
-            val jsonFeed = jsonRoot.getJSONObject("feed")
-            val jsonTheaterShowtimes = jsonFeed.getJSONArray("theaterShowtimes")
-            val jsonTheaterShowtime = jsonTheaterShowtimes.getJSONObject(0)
-            val jsonMovieShowtimes = jsonTheaterShowtime.optJSONArray("movieShowtimes") ?: return
-            val len = jsonMovieShowtimes.length()
-            for (i in 0 until len) {
-                val jsonMovieShowtime = jsonMovieShowtimes.getJSONObject(i)
-                val jsonOnShow = jsonMovieShowtime.getJSONObject("onShow")
-                val jsonMovie = jsonOnShow.getJSONObject("movie")
-                var movie = Movie()
-
-                // Movie (does not include showtimes, only the movie details)
-                movieCodec.fill(movie, jsonMovie)
-                // See if the movie was already in the set, if yes use this one, so the showtimes are merged
-                if (movies.contains(movie)) {
-                    // Already in the set: find it
-                    for (m in movies) {
-                        if (m == movie) {
-                            // Found it: discard the new one, use the old one instead
-                            movie = m
-                            break
-                        }
-                    }
-                }
-
-                // Showtimes
-                showTimeCodec.fill(movie, jsonMovieShowtime, theaterId, date)
-
-                // If there is no showtimes for today, skip the movie
-                if (movie.todayShowtimes.size == 0) {
-                    Log.w("Movie %s has no showtimes: skip it", movie.id)
-                } else {
-                    movies.add(movie)
-                }
+        enqueue(object : ApolloCall.Callback<T>() {
+            override fun onResponse(response: Response<T>) {
+                callbackResponse = response
+                countDownLatch.countDown()
             }
-        } catch (e: JSONException) {
-            throw ParseException(e)
-        }
 
+            override fun onFailure(e: ApolloException) {
+                callbackException = e
+                countDownLatch.countDown()
+            }
+        })
+        countDownLatch.await()
+        callbackException?.let { throw it }
+        return callbackResponse!!
     }
 
     @WorkerThread
-    @Throws(IOException::class, ParseException::class)
-    fun getMovieInfo(movie: Movie) {
-        val url = getBaseBuilder(PATH_MOVIE)
-            .addQueryParameter(QUERY_STRIPTAGS_KEY, QUERY_STRIPTAGS_VALUE)
-            .addQueryParameter(QUERY_CODE_KEY, movie.id)
-            .build()
-        val jsonStr = call(url, true)
-        try {
-            val jsonRoot = JSONObject(jsonStr)
-            val jsonMovie = jsonRoot.getJSONObject("movie")
-            movieCodec.fill(movie, jsonMovie)
-        } catch (e: JSONException) {
-            throw ParseException(e)
-        }
+    fun getMovieList(movies: MutableSet<Movie>, theaterId: String, date: Date) {
+        val todayAtMidnight = date.atMidnight()
+        val tomorrowAtMidnight = todayAtMidnight.nextDay()
+        val response: Response<MovieShowtimesQuery.Data> = apolloClient
+            .query(MovieShowtimesQuery(theaterCodec.toGraphqlTheaterId(theaterId), todayAtMidnight, tomorrowAtMidnight))
+            .blockingAwait()
+        if (response.hasErrors()) throw ParseException()
+        for (movieShowtimeEdge in response.data!!.movieShowtimeList!!.edges!!) {
+            val graphqlMovie = movieShowtimeEdge!!.node!!.movie!!
+            // Reuse existing movie if present (from previous Theater call), otherwise create one now
+            val movie = movies.find { it.id == graphqlMovie.id } ?: Movie().apply {
+                movieCodec.fill(this, graphqlMovie)
+            }
 
+            val graphqlShowtimes = movieShowtimeEdge.node!!.showtimes!!
+            val showtimes = mutableListOf<Showtime>()
+            for (graphqlShowtime in graphqlShowtimes) {
+                showtimes += showTimeCodec.convert(graphqlShowtime!!, movieId = graphqlMovie.id, theaterId = theaterId)
+            }
+            movie.todayShowtimes[theaterId] = showtimes
+            movies.add(movie)
+        }
     }
 
     @WorkerThread
@@ -225,21 +204,18 @@ class Api(
 
         private const val QUERY_SED_DATE_KEY = "sed"
 
+        // GraphQL
+        const val GRAPHQL_URL = "https://graph.allocine.fr/v1/mobile"
+        const val HEADER_AUTHORIZATION_KEY = "Authorization"
 
-        // Show time list
-        private const val PATH_SHOWTIMELIST = "showtimelist"
+        // Unfortunately this will expire in June 2023 (see https://jwt.io/)
+        const val HEADER_AUTHORIZATION_VALUE =
+            "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE1NzE4NDM5NTcsInVzZXJuYW1lIjoiYW5vbnltb3VzIiwiYXBwbGljYXRpb25fbmFtZSI6Im1vYmlsZSIsInV1aWQiOiJmMDg3YTZiZi05YTdlLTQ3YTUtYjc5YS0zMDNiNWEwOWZkOWYiLCJzY29wZSI6bnVsbCwiZXhwIjoxNjg2NzAwNzk5fQ.oRS_jzmvfFAQ47wH0pU3eKKnlCy93FhblrBXxPZx2iwUUINibd70MBkI8C8wmZ-AeRhVCR8kavW8dLIqs5rUfA6piFwdYpt0lsAhTR417ABOxVrZ8dv0FX3qg1JLIzan-kSN4TwUZ3yeTjls0PB3OtSBKzoywGvFAu2jMYG1IZyBjxnkfi1nf1qGXbYsBfEaSjrj-LDV6Jjq_MPyMVvngNYKWzFNyzVAKIpAZ-UzzAQujAKwNQcg2j3Y3wfImydZEOW_wqkOKCyDOw9sWCWE2D-SObbFOSrjqKBywI-Q9GlfsUz-rW7ptea_HzLnjZ9mymXc6yq7KMzbgG4W9CZd8-qvHejCXVN9oM2RJ7Xrq5tDD345NoZ5plfCmhwSYA0DSZLw21n3SL3xl78fMITNQqpjlUWRPV8YqZA1o-UNgwMpOWIoojLWx-XBX33znnWlwSa174peZ1k60BQ3ZdCt9A7kyOukzvjNn3IOIVVgS04bBxl4holc5lzcEZSgjoP6dDIEJKib1v_AAxA34alVqWngeDYhd0wAO-crYW1HEd8ogtCoBjugwSy7526qrh68mSJxY66nr4Cle21z1wLC5lOsex0FbuwvOeFba0ycaI8NJPTUriOdvtHAjhDRSem4HjypGvKs5AzlZ3LAJACCHICNwo3NzYjcxfT4Wo1ur-M"
+        const val HEADER_AC_AUTH_TOKEN_KEY = "AC-Auth-Token"
 
-        private const val QUERY_THEATERS_KEY = "theaters"
-
-        private const val QUERY_DATE_KEY = "date"
-
-        // Movie
-        private const val PATH_MOVIE = "movie"
-
-        private const val QUERY_STRIPTAGS_KEY = "striptags"
-        private const val QUERY_STRIPTAGS_VALUE = "true"
-
-        private const val QUERY_CODE_KEY = "code"
+        // This value was found by looking at the official app's network
+        const val HEADER_AC_AUTH_TOKEN_VALUE =
+            "fRCoWAfDyLs:APA91bF0V8MX1qMRDgG51FLWSZOYzec9vqTR74iWZdcrRUs-VeDF1LZoRmHcDhdNOr-7Z0WNnUi5TBTncvyRse4XbkpiEjvMgvVpBgAmeMMtW6wa8bKEcEUuXEw6xbW3ddhnrrpCYOrx"
 
 
         // Theater search

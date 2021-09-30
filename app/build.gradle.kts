@@ -2,6 +2,7 @@ plugins {
     id("com.android.application")
     kotlin("android")
     kotlin("kapt")
+    id("com.apollographql.apollo") version Versions.APOLLO
 }
 
 android {
@@ -116,6 +117,16 @@ afterEvaluate {
     }
 }
 
+apollo {
+    generateKotlinModels.set(true)
+    customTypeMapping.set(
+        mapOf(
+            "DateInterval" to "kotlin.Long",
+            "DateTime" to "java.util.Date"
+        )
+    )
+}
+
 dependencies {
     // Kotlin
     implementation(kotlin("stdlib", Versions.KOTLIN))
@@ -164,6 +175,10 @@ dependencies {
 
     // Guava / ListenableFutures (needed by Tiles...)
     implementation("androidx.concurrent", "concurrent-futures-ktx", Versions.ANDROIDX_CONCURRENT)
+
+    // Apollo
+    implementation("com.apollographql.apollo", "apollo-runtime", Versions.APOLLO)
+    implementation("com.apollographql.apollo", "apollo-coroutines-support", Versions.APOLLO)
 
     // Testing
     androidTestImplementation("androidx.test.espresso", "espresso-core", Versions.ESPRESSO) {

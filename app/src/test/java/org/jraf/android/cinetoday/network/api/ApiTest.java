@@ -55,7 +55,7 @@ public class ApiTest {
     private void testParseMovieListFile(String filename, int movieCount) throws IOException, JSONException, ParseException, java.text.ParseException {
         String json = TestUtil.readTestResource(filename);
         Set<Movie> movies = new HashSet<>();
-        Api api = new Api(new OkHttpClient.Builder().build(), new MovieCodec(), new ShowtimeCodec(), new TheaterCodec());
+        Api api = new Api(new OkHttpClient.Builder().build(), apolloClient, new MovieCodec(), new ShowtimeCodec(), new TheaterCodec());
         api.parseMovieList(movies, json, "Test", Api.Companion.getMAIN_DATE_FORMAT().parse("2016-04-10"));
         Assertions.assertThat(movies).hasSize(movieCount);
         for (Movie movie : movies) {

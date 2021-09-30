@@ -24,65 +24,42 @@
  */
 package org.jraf.android.cinetoday.network.api.codec.movie
 
-import android.text.Html
 import org.jraf.android.cinetoday.model.movie.Movie
-import org.jraf.android.cinetoday.network.api.Api
 import org.jraf.android.cinetoday.network.api.ParseException
-import org.jraf.android.cinetoday.util.json.stringOrNull
-import org.jraf.android.util.log.Log
-import org.json.JSONException
-import org.json.JSONObject
+import org.jraf.android.cinetoday.network.api.graphql.MovieShowtimesQuery
+import java.text.SimpleDateFormat
+import java.util.Date
 
 class MovieCodec {
+    private val graphqlDateFormat = SimpleDateFormat("yyyy-MM-dd")
+
     @Throws(ParseException::class)
-    fun fill(movie: Movie, jsonMovie: JSONObject) {
+    fun fill(movie: Movie, graphqlMovie: MovieShowtimesQuery.Movie) {
         // Log.d(jsonMovie.toString(4))
         try {
-            movie.id = jsonMovie.getString("code")
-            movie.localTitle = jsonMovie.getString("title")
-            // Original title defaults to local title
-            movie.originalTitle = jsonMovie.stringOrNull("originalTitle") ?: movie.localTitle
-            movie.synopsis = jsonMovie.stringOrNull("synopsis")?.let {
-                // Strip html
-                @Suppress("DEPRECATION")
-                Html.fromHtml(it).toString().trim()
+            movie.apply {
+                id = graphqlMovie.id
+                originalTitle = graphqlMovie.originalTitle ?: graphqlMovie.title!!
+                localTitle = graphqlMovie.title!!
+                directors =
+                    graphqlMovie.credits?.let { credits -> credits.edges!!.map { creditEdge -> creditEdge!!.node!!.person!!.stringValue }.joinToString() }
+                actors =
+                    graphqlMovie.cast?.let { casts -> casts.edges!!.map { castEdge -> castEdge!!.node!!.actor?.stringValue }.filterNotNull().joinToString() }
+                releaseDate = graphqlMovie.releases?.getOrNull(0)?.releaseDate?.date?.let { graphqlDateStringToDate(it) }
+                durationSeconds = graphqlMovie.runtime?.toInt()
+                genres = graphqlMovie.genres.orEmpty().map { genre -> genre!!.name.lowercase().capitalize() }.toTypedArray()
+                posterUri = graphqlMovie.poster?.url
+                trailerUri = graphqlMovie.videos?.getOrNull(0)?.files?.getOrNull(0)?.url
+                synopsis = graphqlMovie.synopsis
             }
 
-            jsonMovie.optJSONObject("castingShort")?.let {
-                movie.directors = it.stringOrNull("directors")
-                movie.actors = it.stringOrNull("actors")
-            }
-
-            movie.releaseDate = jsonMovie.optJSONObject("release")?.let {
-                val releaseDateStr = it.getString("releaseDate")
-                try {
-                    Api.MAIN_DATE_FORMAT.parse(releaseDateStr)
-                } catch (e: java.text.ParseException) {
-                    Log.d(e, "Invalid releaseDate %s in movie %s", releaseDateStr, movie.id)
-                    null
-                }
-            }
-
-            movie.durationSeconds = jsonMovie.optInt("runtime", -1).let { if (it == -1) null else it }
-
-            val jsonGenreArray = jsonMovie.getJSONArray("genre")
-            val len = jsonGenreArray.length()
-            val genres = mutableListOf<String>()
-            for (i in 0 until len) {
-                val jsonGenre = jsonGenreArray.getJSONObject(i)
-                genres.add(jsonGenre.getString("$"))
-            }
-            movie.genres = genres.toTypedArray()
-
-            movie.posterUri = jsonMovie.optJSONObject("poster")?.getString("href")
-            movie.trailerUri = jsonMovie.optJSONObject("trailer")?.getString("href")
-
-            val jsonLinkArray = jsonMovie.getJSONArray("link")
-            val jsonLink = jsonLinkArray.getJSONObject(0)
-            movie.webUri = jsonLink.getString("href")
-
-        } catch (e: JSONException) {
+        } catch (e: Exception) {
             throw ParseException(e)
         }
     }
+
+    private fun graphqlDateStringToDate(graphQLDateString: String): Date? {
+        return graphqlDateFormat.parse(graphQLDateString)
+    }
+
 }
