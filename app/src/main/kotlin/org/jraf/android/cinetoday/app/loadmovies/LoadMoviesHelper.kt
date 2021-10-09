@@ -172,6 +172,7 @@ class LoadMoviesHelper(
                 val movieFromDb = allMoviesFromDb[movieFromApi.id]
                 if (movieFromDb != null) {
                     // Already in db: keep it (with updated showtimes)
+                    movieFromDb.isNew = false
                     movieFromDb.todayShowtimes.putAll(movieFromApi.todayShowtimes)
                     moviesFromDbToKeep += movieFromDb
                 } else {

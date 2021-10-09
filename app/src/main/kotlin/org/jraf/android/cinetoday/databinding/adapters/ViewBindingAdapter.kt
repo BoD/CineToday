@@ -37,6 +37,6 @@ object ViewBindingAdapter {
     @JvmStatic
     @BindingAdapter("visible")
     fun setVisibleIfNotNull(view: View, obj: Any?) {
-        view.visibility = if (obj != null) View.VISIBLE else View.GONE
+        view.visibility = if (obj != null && !(obj is String && obj.isBlank())) View.VISIBLE else View.GONE
     }
 }

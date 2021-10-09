@@ -24,7 +24,9 @@
  */
 package org.jraf.android.cinetoday.app.tile
 
+import androidx.annotation.ColorInt
 import androidx.concurrent.futures.CallbackToFutureAdapter
+import androidx.core.graphics.ColorUtils
 import androidx.wear.tiles.ActionBuilders.AndroidActivity
 import androidx.wear.tiles.ActionBuilders.LaunchAction
 import androidx.wear.tiles.ColorBuilders
@@ -124,7 +126,7 @@ class MoviesTodayTile : TileProviderService() {
                         Text.builder()
                             .setText("· ${movie.localTitle} ·")
                             .setFontStyle(FontStyles.caption1(deviceParameters).apply {
-                                movie.colorLight?.let { setColor(ColorBuilders.argb(it)) }
+                                movie.colorLight?.let { setColor(ColorBuilders.argb(ensureLightEnough(it))) }
                             })
                             .setMaxLines(2)
                             .setOverflow(TEXT_OVERFLOW_ELLIPSIZE_END)
@@ -148,6 +150,14 @@ class MoviesTodayTile : TileProviderService() {
 
         box.addContent(column)
         return box
+    }
+
+    @ColorInt
+    private fun ensureLightEnough(@ColorInt color: Int): Int {
+        val hsl = FloatArray(3)
+        ColorUtils.colorToHSL(color, hsl)
+        hsl[2] = hsl[2].coerceAtLeast(.8F)
+        return ColorUtils.HSLToColor(hsl)
     }
 
 }

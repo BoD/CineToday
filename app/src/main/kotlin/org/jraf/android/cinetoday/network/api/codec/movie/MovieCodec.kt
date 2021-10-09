@@ -47,7 +47,7 @@ class MovieCodec {
                     graphqlMovie.cast?.let { casts -> casts.edges!!.map { castEdge -> castEdge!!.node!!.actor?.stringValue }.filterNotNull().joinToString() }
                 releaseDate = graphqlMovie.releases?.getOrNull(0)?.releaseDate?.date?.let { graphqlDateStringToDate(it) }
                 durationSeconds = graphqlMovie.runtime?.toInt()
-                genres = graphqlMovie.genres.orEmpty().map { genre -> genre!!.name.lowercase().capitalize() }.toTypedArray()
+                genres = graphqlMovie.genres.orEmpty().map { genre -> genre!!.name.lowercase().capitalize().replace('_', ' ') }.toTypedArray()
                 posterUri = graphqlMovie.poster?.url
                 trailerUri = graphqlMovie.videos?.getOrNull(0)?.files?.getOrNull(0)?.url
                 synopsis = graphqlMovie.synopsis
