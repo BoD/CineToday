@@ -24,23 +24,16 @@
  */
 package org.jraf.android.cinetoday.network
 
-//import com.apollographql.apollo3.Logger
 import android.content.Context
 import com.apollographql.apollo3.ApolloClient
-import com.apollographql.apollo3.api.ApolloRequest
-import com.apollographql.apollo3.api.ApolloResponse
-import com.apollographql.apollo3.api.CustomTypeAdapter
-import com.apollographql.apollo3.api.CustomTypeValue
-import com.apollographql.apollo3.api.Operation
-import com.apollographql.apollo3.api.http.HttpHeader
-import com.apollographql.apollo3.api.http.httpHeaders
-import com.apollographql.apollo3.interceptor.ApolloInterceptor
-import com.apollographql.apollo3.interceptor.ApolloInterceptorChain
-import com.apollographql.apollo3.network.NetworkTransport
+import com.apollographql.apollo3.api.Adapter
+import com.apollographql.apollo3.api.CustomScalarAdapters
+import com.apollographql.apollo3.api.http.httpHeader
+import com.apollographql.apollo3.api.json.JsonReader
+import com.apollographql.apollo3.api.json.JsonWriter
 import com.apollographql.apollo3.network.http.HttpNetworkTransport
 import dagger.Module
 import dagger.Provides
-import kotlinx.coroutines.flow.Flow
 import okhttp3.Cache
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -110,55 +103,36 @@ class NetworkModule {
     @Singleton
     @Provides
     fun provideApolloClient(@Named("CachingOkHttpClient") cachingOkHttpClient: OkHttpClient): ApolloClient {
-        return ApolloClient.builder()
-//            .logger(object : Logger {
-//                override fun log(priority: Int, message: String, t: Throwable?, vararg args: Any) {
-//                    Log.d(t, message)
-//                }
-//            })
-            .addInterceptor(object : ApolloInterceptor {
-                override fun <D : Operation.Data> intercept(request: ApolloRequest<D>, chain: ApolloInterceptorChain): Flow<ApolloResponse<D>> {
-                    return chain.proceed(
-                        request
-                            .newBuilder()
-                            .httpHeaders(
-                                request.httpHeaders
-                                        // TODO DON'T HARDCODE THIS!!!!!!!!!!!!!!!
-                                        + HttpHeader(
-                                    Api.HEADER_AUTHORIZATION_KEY,
-                                    Api.HEADER_AUTHORIZATION_VALUE
-                                )
-                                        + HttpHeader(
-                                    Api.HEADER_AC_AUTH_TOKEN_KEY,
-                                    Api.HEADER_AC_AUTH_TOKEN_VALUE
-                                )
-                            )
-                            .build()
-                    )
-                }
-            })
-            .addCustomTypeAdapter(DateInterval.type, object : CustomTypeAdapter<Long> {
-                override fun decode(value: CustomTypeValue<*>): Long {
-                    val isoDurationStr = value.value.toString()
+        return ApolloClient.Builder()
+            .httpHeader(
+                Api.HEADER_AUTHORIZATION_KEY,
+                Api.HEADER_AUTHORIZATION_VALUE
+            )
+            .httpHeader(
+                Api.HEADER_AC_AUTH_TOKEN_KEY,
+                Api.HEADER_AC_AUTH_TOKEN_VALUE
+            )
+            .addCustomScalarAdapter(DateInterval.type, object : Adapter<Long> {
+                override fun fromJson(reader: JsonReader, customScalarAdapters: CustomScalarAdapters): Long {
+                    val isoDurationStr = reader.nextString()
                     val duration = Duration.parse(isoDurationStr)
                     return duration.get(ChronoUnit.SECONDS)
                 }
 
-                override fun encode(value: Long): CustomTypeValue<*> {
-                    // Not supported
+                override fun toJson(writer: JsonWriter, customScalarAdapters: CustomScalarAdapters, value: Long) {
                     throw UnsupportedOperationException()
                 }
             })
-            .addCustomTypeAdapter(DateTime.type, object : CustomTypeAdapter<Date> {
+            .addCustomScalarAdapter(DateTime.type, object : Adapter<Date> {
                 private val DATE_FORMAT = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
 
-                override fun decode(value: CustomTypeValue<*>): Date {
-                    val isoDateStr = value.value.toString()
+                override fun fromJson(reader: JsonReader, customScalarAdapters: CustomScalarAdapters): Date {
+                    val isoDateStr = reader.nextString()!!
                     return DATE_FORMAT.parse(isoDateStr)!!
                 }
 
-                override fun encode(value: Date): CustomTypeValue<*> {
-                    return CustomTypeValue.GraphQLString(DATE_FORMAT.format(value))
+                override fun toJson(writer: JsonWriter, customScalarAdapters: CustomScalarAdapters, value: Date) {
+                    writer.value(DATE_FORMAT.format(value))
                 }
             })
             .networkTransport(HttpNetworkTransport(Api.GRAPHQL_URL, cachingOkHttpClient))
