@@ -2,7 +2,7 @@ plugins {
     id("com.android.application")
     kotlin("android")
     kotlin("kapt")
-    id("com.apollographql.apollo") version Versions.APOLLO
+    id("com.apollographql.apollo3") version Versions.APOLLO
 }
 
 android {
@@ -118,8 +118,8 @@ afterEvaluate {
 }
 
 apollo {
-    generateKotlinModels.set(true)
-    customTypeMapping.set(
+    packageName.set("org.jraf.android.cinetoday.network.api.graphql")
+    customScalarsMapping.set(
         mapOf(
             "DateInterval" to "kotlin.Long",
             "DateTime" to "java.util.Date"
@@ -177,8 +177,7 @@ dependencies {
     implementation("androidx.concurrent", "concurrent-futures-ktx", Versions.ANDROIDX_CONCURRENT)
 
     // Apollo
-    implementation("com.apollographql.apollo", "apollo-runtime", Versions.APOLLO)
-    implementation("com.apollographql.apollo", "apollo-coroutines-support", Versions.APOLLO)
+    implementation("com.apollographql.apollo3", "apollo-runtime", Versions.APOLLO)
 
     // Testing
     androidTestImplementation("androidx.test.espresso", "espresso-core", Versions.ESPRESSO) {

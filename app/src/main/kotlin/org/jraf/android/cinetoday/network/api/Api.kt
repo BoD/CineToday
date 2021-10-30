@@ -26,10 +26,9 @@ package org.jraf.android.cinetoday.network.api
 
 import android.util.Base64
 import androidx.annotation.WorkerThread
-import com.apollographql.apollo.ApolloCall
-import com.apollographql.apollo.ApolloClient
-import com.apollographql.apollo.api.Response
-import com.apollographql.apollo.exception.ApolloException
+import com.apollographql.apollo3.ApolloClient
+import com.apollographql.apollo3.api.ApolloResponse
+import kotlinx.coroutines.runBlocking
 import okhttp3.CacheControl
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
@@ -52,7 +51,6 @@ import java.text.SimpleDateFormat
 import java.util.ArrayList
 import java.util.Date
 import java.util.Locale
-import java.util.concurrent.CountDownLatch
 
 class Api(
     private val cachingOkHttpClient: OkHttpClient,
@@ -62,34 +60,15 @@ class Api(
     private val theaterCodec: TheaterCodec
 ) {
 
-    private fun <T> ApolloCall<T>.blockingAwait(): Response<T> {
-        val countDownLatch = CountDownLatch(1)
-        var callbackResponse: Response<T>? = null
-        var callbackException: ApolloException? = null
-
-        enqueue(object : ApolloCall.Callback<T>() {
-            override fun onResponse(response: Response<T>) {
-                callbackResponse = response
-                countDownLatch.countDown()
-            }
-
-            override fun onFailure(e: ApolloException) {
-                callbackException = e
-                countDownLatch.countDown()
-            }
-        })
-        countDownLatch.await()
-        callbackException?.let { throw it }
-        return callbackResponse!!
-    }
-
     @WorkerThread
     fun getMovieList(movies: MutableSet<Movie>, theaterId: String, date: Date) {
         val todayAtMidnight = date.atMidnight()
         val tomorrowAtMidnight = todayAtMidnight.nextDay()
-        val response: Response<MovieShowtimesQuery.Data> = apolloClient
-            .query(MovieShowtimesQuery(theaterCodec.toGraphqlTheaterId(theaterId), todayAtMidnight, tomorrowAtMidnight))
-            .blockingAwait()
+        val response: ApolloResponse<MovieShowtimesQuery.Data> = runBlocking {
+            apolloClient
+                .query(MovieShowtimesQuery(theaterCodec.toGraphqlTheaterId(theaterId), todayAtMidnight, tomorrowAtMidnight))
+                .execute()
+        }
         if (response.hasErrors()) throw ParseException()
         for (movieShowtimeEdge in response.data!!.movieShowtimeList!!.edges!!) {
             val graphqlMovie = movieShowtimeEdge!!.node!!.movie!!

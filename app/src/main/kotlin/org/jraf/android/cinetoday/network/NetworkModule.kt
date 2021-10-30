@@ -24,15 +24,23 @@
  */
 package org.jraf.android.cinetoday.network
 
+//import com.apollographql.apollo3.Logger
 import android.content.Context
-import com.apollographql.apollo.ApolloClient
-import com.apollographql.apollo.Logger
-import com.apollographql.apollo.api.CustomTypeAdapter
-import com.apollographql.apollo.api.CustomTypeValue
-import com.apollographql.apollo.interceptor.ApolloInterceptor
-import com.apollographql.apollo.interceptor.ApolloInterceptorChain
+import com.apollographql.apollo3.ApolloClient
+import com.apollographql.apollo3.api.ApolloRequest
+import com.apollographql.apollo3.api.ApolloResponse
+import com.apollographql.apollo3.api.CustomTypeAdapter
+import com.apollographql.apollo3.api.CustomTypeValue
+import com.apollographql.apollo3.api.Operation
+import com.apollographql.apollo3.api.http.HttpHeader
+import com.apollographql.apollo3.api.http.httpHeaders
+import com.apollographql.apollo3.interceptor.ApolloInterceptor
+import com.apollographql.apollo3.interceptor.ApolloInterceptorChain
+import com.apollographql.apollo3.network.NetworkTransport
+import com.apollographql.apollo3.network.http.HttpNetworkTransport
 import dagger.Module
 import dagger.Provides
+import kotlinx.coroutines.flow.Flow
 import okhttp3.Cache
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -41,7 +49,8 @@ import org.jraf.android.cinetoday.network.api.Api
 import org.jraf.android.cinetoday.network.api.codec.movie.MovieCodec
 import org.jraf.android.cinetoday.network.api.codec.showtime.ShowtimeCodec
 import org.jraf.android.cinetoday.network.api.codec.theater.TheaterCodec
-import org.jraf.android.cinetoday.network.api.graphql.type.CustomType
+import org.jraf.android.cinetoday.network.api.graphql.type.DateInterval
+import org.jraf.android.cinetoday.network.api.graphql.type.DateTime
 import org.jraf.android.util.log.Log
 import java.io.File
 import java.security.SecureRandom
@@ -50,7 +59,6 @@ import java.text.SimpleDateFormat
 import java.time.Duration
 import java.time.temporal.ChronoUnit
 import java.util.Date
-import java.util.concurrent.Executor
 import java.util.concurrent.TimeUnit
 import javax.inject.Named
 import javax.inject.Singleton
@@ -103,45 +111,33 @@ class NetworkModule {
     @Provides
     fun provideApolloClient(@Named("CachingOkHttpClient") cachingOkHttpClient: OkHttpClient): ApolloClient {
         return ApolloClient.builder()
-            .serverUrl(Api.GRAPHQL_URL)
-            .logger(object : Logger {
-                override fun log(priority: Int, message: String, t: Throwable?, vararg args: Any) {
-                    Log.d(t, message)
-                }
-            })
-            .addApplicationInterceptor(object : ApolloInterceptor {
-                override fun interceptAsync(
-                    request: ApolloInterceptor.InterceptorRequest,
-                    chain: ApolloInterceptorChain,
-                    dispatcher: Executor,
-                    callBack: ApolloInterceptor.CallBack
-                ) {
-                    chain.proceedAsync(
+//            .logger(object : Logger {
+//                override fun log(priority: Int, message: String, t: Throwable?, vararg args: Any) {
+//                    Log.d(t, message)
+//                }
+//            })
+            .addInterceptor(object : ApolloInterceptor {
+                override fun <D : Operation.Data> intercept(request: ApolloRequest<D>, chain: ApolloInterceptorChain): Flow<ApolloResponse<D>> {
+                    return chain.proceed(
                         request
-                            .toBuilder()
-                            .requestHeaders(
-                                request.requestHeaders
-                                    .toBuilder()
-                                    // TODO DON'T HARDCODE THIS!!!!!!!!!!!!!!!
-                                    .addHeader(
-                                        Api.HEADER_AUTHORIZATION_KEY,
-                                        Api.HEADER_AUTHORIZATION_VALUE
-                                    )
-                                    .addHeader(
-                                        Api.HEADER_AC_AUTH_TOKEN_KEY,
-                                        Api.HEADER_AC_AUTH_TOKEN_VALUE
-                                    )
-                                    .build()
+                            .newBuilder()
+                            .httpHeaders(
+                                request.httpHeaders
+                                        // TODO DON'T HARDCODE THIS!!!!!!!!!!!!!!!
+                                        + HttpHeader(
+                                    Api.HEADER_AUTHORIZATION_KEY,
+                                    Api.HEADER_AUTHORIZATION_VALUE
+                                )
+                                        + HttpHeader(
+                                    Api.HEADER_AC_AUTH_TOKEN_KEY,
+                                    Api.HEADER_AC_AUTH_TOKEN_VALUE
+                                )
                             )
-                            .build(),
-                        dispatcher,
-                        callBack
+                            .build()
                     )
                 }
-
-                override fun dispose() {}
             })
-            .addCustomTypeAdapter(CustomType.DATEINTERVAL, object : CustomTypeAdapter<Long> {
+            .addCustomTypeAdapter(DateInterval.type, object : CustomTypeAdapter<Long> {
                 override fun decode(value: CustomTypeValue<*>): Long {
                     val isoDurationStr = value.value.toString()
                     val duration = Duration.parse(isoDurationStr)
@@ -153,7 +149,7 @@ class NetworkModule {
                     throw UnsupportedOperationException()
                 }
             })
-            .addCustomTypeAdapter(CustomType.DATETIME, object : CustomTypeAdapter<Date> {
+            .addCustomTypeAdapter(DateTime.type, object : CustomTypeAdapter<Date> {
                 private val DATE_FORMAT = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
 
                 override fun decode(value: CustomTypeValue<*>): Date {
@@ -165,7 +161,7 @@ class NetworkModule {
                     return CustomTypeValue.GraphQLString(DATE_FORMAT.format(value))
                 }
             })
-            .okHttpClient(cachingOkHttpClient)
+            .networkTransport(HttpNetworkTransport(Api.GRAPHQL_URL, cachingOkHttpClient))
             .build()
     }
 
