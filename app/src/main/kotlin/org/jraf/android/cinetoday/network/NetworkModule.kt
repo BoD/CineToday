@@ -28,10 +28,9 @@ import android.content.Context
 import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.Adapter
 import com.apollographql.apollo3.api.CustomScalarAdapters
-import com.apollographql.apollo3.api.http.httpHeader
 import com.apollographql.apollo3.api.json.JsonReader
 import com.apollographql.apollo3.api.json.JsonWriter
-import com.apollographql.apollo3.network.http.HttpNetworkTransport
+import com.apollographql.apollo3.network.okHttpClient
 import dagger.Module
 import dagger.Provides
 import okhttp3.Cache
@@ -104,11 +103,12 @@ class NetworkModule {
     @Provides
     fun provideApolloClient(@Named("CachingOkHttpClient") cachingOkHttpClient: OkHttpClient): ApolloClient {
         return ApolloClient.Builder()
-            .httpHeader(
+            .serverUrl(Api.GRAPHQL_URL)
+            .addHttpHeader(
                 Api.HEADER_AUTHORIZATION_KEY,
                 Api.HEADER_AUTHORIZATION_VALUE
             )
-            .httpHeader(
+            .addHttpHeader(
                 Api.HEADER_AC_AUTH_TOKEN_KEY,
                 Api.HEADER_AC_AUTH_TOKEN_VALUE
             )
@@ -135,7 +135,7 @@ class NetworkModule {
                     writer.value(DATE_FORMAT.format(value))
                 }
             })
-            .networkTransport(HttpNetworkTransport(Api.GRAPHQL_URL, cachingOkHttpClient))
+            .okHttpClient(cachingOkHttpClient)
             .build()
     }
 
